@@ -6,13 +6,10 @@ public class AccessToken {
 
     @SerializedName("access_token")
     private final String accessToken;
-
     @SerializedName("expires_in")
     private final int expiresIn;
-
     @SerializedName("scope")
     private final String scope;
-
     @SerializedName("token_type")
     private final String tokenType;
 
@@ -21,5 +18,21 @@ public class AccessToken {
         this.expiresIn = expiresIn;
         this.scope = scope;
         this.tokenType = tokenType;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public int getExpiresIn() {
+        return expiresIn;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public String getTokenType() {
+        return tokenType;
     }
 }
