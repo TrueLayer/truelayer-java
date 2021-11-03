@@ -10,6 +10,8 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id "io.freefair.lombok" version "6.2.0"
+    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 
 repositories {
