@@ -16,7 +16,10 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class LibraryTest {
+/**
+ * Test class to test the imported kotlin library
+ */
+public class SignatureTest {
 
     static String KID = "45fc75cf-5649-4134-84b3-192c2c78e990";
 
