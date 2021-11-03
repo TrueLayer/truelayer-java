@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ConfigurationTest {
 
     @Test
@@ -12,7 +14,10 @@ public class ConfigurationTest {
     public void itShouldYeldAProperConfigClass() throws ConfigurationException {
         var sut = new Configuration();
 
-        Assertions.assertEquals("test-client-id", sut.getClientId());
-        Assertions.assertEquals("test-client-secret", sut.getClientSecret());
+        assertEquals("test-client-id", sut.getClientId());
+        assertEquals("test-client-secret", sut.getClientSecret());
+        assertEquals("paydirect", sut.getScope());
+        assertEquals("client_credentials", sut.getGrantType());
+
     }
 }
