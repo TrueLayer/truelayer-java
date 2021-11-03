@@ -16,9 +16,14 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation(platform('org.junit:junit-bom:5.8.1'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
