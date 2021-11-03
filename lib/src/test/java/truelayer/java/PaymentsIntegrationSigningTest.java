@@ -25,6 +25,8 @@ public class PaymentsIntegrationSigningTest {
     private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzU5Njc0MjMsImV4cCI6MTYzNTk3MTAyMywiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOlsicGF5ZGlyZWN0X2FwaSIsInBheW1lbnRzX2FwaSJdLCJjbGllbnRfaWQiOiJnaXVsaW9sZXNvLTg5OTNjOSIsImp0aSI6IkMxQUMzOEY5RDA2OUMxQ0IyMjAyQzQ0QjM3NDIxMDY2IiwiaWF0IjoxNjM1OTY3NDIzLCJzY29wZSI6WyJwYXlkaXJlY3QiLCJwYXltZW50cyJdfQ.lAkBP384vhAMqV9FZfVi7C2IotOhWg32wiOTyQbtqnBkwo9GkNyquk5gbwXy3jUROYuNRYyS3KSOJiR64qfsZFVHn880AiokfBAmO-0uv7wVL0a9jiN-uijVLrGiPTlJqd0UGKNMjmcEUERC6U1e11rAWawPpWcghtONrpI8zMIXXxBzrhgknaMNq1sNbff4GQ1z16RbeG1F8W6SxKXP1_abF1SF2v8wfBD-7FFmyt0xQi0yMqFBjih2GD2DQDo740XBQOi6lpdKWYZnyRBaV7CtITvFJCqsgmAdtSk5vHzlUaQAkjvpOc4zHX71sSBljHUCcAwLcMharAndveToIg";
     private static final String KID = "7695796e-e718-457d-845b-4a6be00ca454";
 
+
+    //todo we need to pull all the config params out of this class
     @Test
     public void createAndRetrievePayment() throws IOException, ParseException {
         String idempotencyKey = "idemp-2076717c-9005-4811-a321-9e0787fa0382";
