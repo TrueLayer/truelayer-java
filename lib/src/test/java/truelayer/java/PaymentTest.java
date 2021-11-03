@@ -22,14 +22,12 @@ import java.nio.file.Path;
 
 public class PaymentTest {
 
-    //static String KID = "7695796e-e718-457d-845b-4a6be00ca454";
-    static String KID = "df8b1385-488c-4e6f-9188-fc47b53b35fe";
+    static String KID = "7695796e-e718-457d-845b-4a6be00ca454";
 
     @Test
     public void createTestPayment() throws IOException, JOSEException {
         String idempotencyKey = "idemp-2076717c-9005-4811-a321-9e0787fa0382";
-        //byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
-        byte[] privateKey = Files.readAllBytes(Path.of("/Users/luca/Work/paydirect-signing-examples/ec512-private-key.pem"));
+        byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
         String accessToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzU5NjIyMjAsImV4cCI6MTYzNTk2NTgyMCwiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOiJwYXltZW50c19hcGkiLCJjbGllbnRfaWQiOiJsdWNhYmFnZ2ktNzAzNzgxIiwianRpIjoiN0Q4M0U0RTNBMDA2ODc2NUQwMkI1Q0NGNDAxRjJFQzIiLCJpYXQiOjE2MzU5NjIyMjAsInNjb3BlIjpbInBheW1lbnRzIl19.r0y9VFWe809FBG-62LxBNit-hxlweOLX1-CJk_m14XokH1B_iL6O9PD_SNFU0MM7ZHpJMKLZms_m-P7_i04rHr_5KMOWA9CoWl-7yaKiU5W-0ikuejtE2Gvyn9Nwrzjf4xcVss8Im7uWz9JO-S6jPvCRPaK2hQsP0KwyEnhm3jnZAGMw9PsaagJuqFSOOP22mApSLuwkl51qpiXrvxEnjosBc98q0WtQPNFenY6YDslx4CD-kCq35sm3A5wjmguLwhRVd-0iNPSsXvf_H6lplNCgs39SKZoxSnjmfyfFbh7J-o5TbM6BRijKNd8Ky72QsWdaf6ASO1-DdAJCS8g7nQ";
 
         String path = "/payments";
