@@ -26,8 +26,8 @@ public class SignatureTest {
     @Test
     public void fullSignature() throws IOException {
         //place your certificates in the test/resources folder
-        byte[] privateKey = Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem"));
-        byte[] publicKey = Files.readAllBytes(Path.of("src/test/resources/ec512-public-key.pem"));
+        byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
+        byte[] publicKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-public-key.pem"));
 
         byte[] body = "{\"currency\":\"GBP\",\"max_amount_in_minor\":5000000}".getBytes(StandardCharsets.UTF_8);
         String idempotencyKey = "idemp-2076717c-9005-4811-a321-9e0787fa0382";

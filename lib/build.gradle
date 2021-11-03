@@ -59,4 +59,7 @@ dependencies {
 
     //Json serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+
 }
