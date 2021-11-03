@@ -25,9 +25,28 @@ public class Authentication implements IAuthentication{
     }
 
     @Override
-    public AccessToken getOauthToken(String grantType, String scope, String clientId, String clientSecret) {
-        //todo implement
-        return null;
+    public AccessToken getOauthToken(String grantType, String scope, String clientId, String clientSecret) throws AuthenticationException{
+        var formData = new HashMap<String, String>();
+        formData.put("client_id", clientId);
+        formData.put("client_secret", clientSecret);
+        formData.put("grant_type", grantType);
+        formData.put("scope", scope);
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(configuration.getTokenEndpoint()))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(ofFormData(formData))
+                .build();
+
+        var httpClient = HttpClient.newHttpClient();
+        try {
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() >= 400)
+                throw new AuthenticationException(String.valueOf(response.statusCode()), response.body());
+            return new Gson().fromJson(response.body(), AccessToken.class);
+        } catch (Exception e) {
+            throw new AuthenticationException(e);
+        }
     }
 
     private static HttpRequest.BodyPublisher ofFormData(Map<String, String> data) {
