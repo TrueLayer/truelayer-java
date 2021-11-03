@@ -21,6 +21,7 @@ public class LibraryTest {
 
     @Test
     public void fullSignature() throws IOException {
+        //place your certificates in the test/resources folder
         byte[] privateKey = Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem"));
         byte[] publicKey = Files.readAllBytes(Path.of("src/test/resources/ec512-public-key.pem"));
 
