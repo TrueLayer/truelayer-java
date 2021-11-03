@@ -8,15 +8,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import truelayer.signing.Signer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.junit.Assert.*;
 
 public class PaymentTest {
 
@@ -74,11 +73,11 @@ public class PaymentTest {
         for (Header header : httpPost.getAllHeaders()) {
             System.out.println(header.getName() + ": " + header.getValue());
         }
-        
+
         System.out.println("response" + EntityUtils.toString(response.getEntity(), "UTF-8"));
         System.out.println("TL signature: " + signature);
 
-        assertEquals(response.getStatusLine().getStatusCode(), 201);
+        Assertions.assertEquals(response.getStatusLine().getStatusCode(), 201);
         client.close();
     }
 
@@ -100,7 +99,7 @@ public class PaymentTest {
 
         System.out.println("response" + response);
 
-        assertEquals(response.getStatusLine().getStatusCode(), 200);
+        Assertions.assertEquals(response.getStatusLine().getStatusCode(), 200);
         client.close();
     }
 }
