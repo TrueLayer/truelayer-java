@@ -3,7 +3,7 @@
  */
 package truelayer.java;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import truelayer.signing.Signer;
 import truelayer.signing.Verifier;
 
@@ -13,7 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class LibraryTest {
 
@@ -46,12 +47,6 @@ public class LibraryTest {
                 .verify(tlSignature);
 
         assertTrue(verified);
-    }
-
-
-    @Test
-    public void stupidTest() throws IOException {
-        assertTrue(true);
     }
 }
 
