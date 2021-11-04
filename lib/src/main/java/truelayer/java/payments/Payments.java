@@ -6,12 +6,12 @@ import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-import truelayer.java.auth.Authentication;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.exception.PaymentsException;
 import truelayer.signing.Signer;
 
 import java.io.IOException;
@@ -28,8 +28,6 @@ public class Payments implements IPayments {
     private static final List<String> SCOPES = ImmutableList.of("paydirect");
     private static final String KID = "7695796e-e718-457d-845b-4a6be00ca454";
     private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments/";
-    private static final String A_CLIENT_ID = "giulioleso-8993c9";
-    private static final String A_SECRET = "66a627c7-abbc-4f9e-9f7c-87673c5b896e";
 
     private RestTemplate restTemplate;
     private IAuthentication authentication;
@@ -59,10 +57,14 @@ public class Payments implements IPayments {
     public Payment getPayment(String paymentId) throws AuthenticationException {
         HttpEntity<String> entity = new HttpEntity<>(getPaymentRetrievalHttpHeaders(getAccessToken()));
 
-        ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL + paymentId, HttpMethod.GET,
-                entity, Payment.class);
+        try {
+            ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL + paymentId, HttpMethod.GET,
+                    entity, Payment.class);
 
-        return exchange.getBody();
+            return exchange.getBody();
+        } catch (Exception exception) {
+            throw new PaymentsException(exception);
+        }
     }
 
     @NotNull
