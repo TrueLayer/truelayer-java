@@ -1,6 +1,7 @@
 package truelayer.java;
 
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -75,8 +75,8 @@ public class PaymentsIntegrationSigningTest {
         assertEquals(response.getStatusLine().getStatusCode(), 201);
 
         //retrieve the payment id
-        Map<String, Object> jsonMapResponse = JSONObjectUtils.parse(EntityUtils.toString(response.getEntity()));
-        String newPaymentId = (String) jsonMapResponse.get("id");
+        JsonObject json = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+        String newPaymentId = json.get("id").getAsString();
 
         //get the newly created payment using the id
         HttpGet httpGet = new HttpGet("https://test-pay-api.t7r.dev/payments/" + newPaymentId);
