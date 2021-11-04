@@ -15,7 +15,7 @@ public class TrueLayerClientTests {
     public static final String A_SIGNING_PRIVATE_KEY = "<a_real_private_key>";
 
     @Test
-    public void itShouldBuildAnAuthenticationClient() throws IOException {
+    public void itShouldBuildAnAuthenticationClient() {
         //Given
         var trueLayerClient = TrueLayerClient.builder()
                 .clientId(A_CLIENT_ID)
@@ -27,5 +27,20 @@ public class TrueLayerClientTests {
 
         //Then
         Assertions.assertNotNull(trueLayerClient.Auth());
+    }
+
+    @Test
+    public void itShouldBuildAPaymentsClient() {
+        //Given
+        var trueLayerClient = TrueLayerClient.builder()
+                .clientId(A_CLIENT_ID)
+                .clientSecret(A_CLIENT_SECRET)
+                .build();
+
+        //When
+        var paymentsClient = trueLayerClient.Payments();
+
+        //Then
+        Assertions.assertNotNull(paymentsClient);
     }
 }
