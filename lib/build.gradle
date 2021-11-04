@@ -6,7 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 
-version = '0.1.4'
+version = '0.1.5'
 archivesBaseName = 'truelayer-java'
 
 repositories {

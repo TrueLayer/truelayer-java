@@ -25,6 +25,7 @@ public class CreatePaymentRequest {
 
     @Builder
     @Getter
+    @JsonInclude(Include.NON_NULL)
     public static class Method {
 
         private String type; //todo: enum ?
@@ -39,6 +40,7 @@ public class CreatePaymentRequest {
     }
 
     @Builder
+    @JsonInclude(Include.NON_NULL)
     public static class ProviderFilter{
         @JsonProperty("release_channel")
         private String releaseChannel;
@@ -47,6 +49,7 @@ public class CreatePaymentRequest {
 
     @Builder
     @Getter
+    @JsonInclude(Include.NON_NULL)
     public static class Beneficiary {
 
         private String type; //todo: enum ?
@@ -58,6 +61,7 @@ public class CreatePaymentRequest {
 
     @Builder
     @Getter
+    @JsonInclude(Include.NON_NULL)
     public static class User {
 
         private String type;
