@@ -5,14 +5,13 @@ import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PaymentsTest {
 
     @Test
-    void createPayment() throws IOException, URISyntaxException, InterruptedException {
+    void createPayment() throws IOException {
         Payments payments = new Payments();
         CreatePaymentRequest createPaymentRequest = getCreatePaymentRequest();
 
@@ -22,7 +21,7 @@ class PaymentsTest {
     }
 
     @Test
-    void getePayment() {
+    void getPayment() {
         Payments payments = new Payments();
 
         Payment payment = payments.getPayment("1");
@@ -37,6 +36,7 @@ class PaymentsTest {
                 new CreatePaymentRequest.PaymentBeneficiary("merchant_account", "c54104a5-fdd1-4277-8793-dbfa511c898b");
         CreatePaymentRequest.PaymentUser paymentUser =
                 new CreatePaymentRequest.PaymentUser("new", "Giulio Leso");
+        paymentUser.setEmail("g@gmail.com");
 
         CreatePaymentRequest createPaymentRequest = new CreatePaymentRequest();
         createPaymentRequest.setAmountInMinor(1);

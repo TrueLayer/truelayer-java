@@ -1,8 +1,6 @@
 package truelayer.java.payments;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.gson.Gson;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -22,36 +20,16 @@ public class Payments implements IPayments {
     private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
     //todo replace with call to auth
-    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzU5NzgxMDgsImV4cCI6MTYzNTk4MTcwOCwiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOlsicGF5ZGlyZWN0X2FwaSIsInBheW1lbnRzX2FwaSJdLCJjbGllbnRfaWQiOiJnaXVsaW9sZXNvLTg5OTNjOSIsImp0aSI6IjExQzFFMjA5MkMwMkI4MUY0QjA1MjdFQjVGREJEQUZFIiwiaWF0IjoxNjM1OTc4MTA4LCJzY29wZSI6WyJwYXlkaXJlY3QiLCJwYXltZW50cyJdfQ.i2wCCiG8Fa4H0UK4sTyU1T90AREWRugdqewSj7Ncn1VmBCPYTOS8Shquxuuv0rbmWTMnogvGGpgW7N1Z0zFpgKsgr0Bnc_rbwah0XVvsm0xY5kjGUaNNz9Ae3o_iSJz5djbVjMtnqVs-rPzRHVfSFZw2KaYNszOWLDFGZ1sHPkFCCKjf16hPrw9zQarXBkGbeau5P45ddwEsHasmZQZAhuzc_MJYX3UzGGGkZn9byKbAprm7hKM4hu4huk2okv01FkpK0lNT6TlT_W93tjCGSA53xmuTB-yAZtnrOsYwi8GyNIZ4IjlR9O6goSusRV0G48jwLT9u0gfmf-ixnW5ipg";
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzYwMjA0MTAsImV4cCI6MTYzNjAyNDAxMCwiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOlsicGF5ZGlyZWN0X2FwaSIsInBheW1lbnRzX2FwaSJdLCJjbGllbnRfaWQiOiJnaXVsaW9sZXNvLTg5OTNjOSIsImp0aSI6IkI0MUYwQ0Y2MEUxQTM3NjE2RDZFQjczNjQyMTBBNkE3IiwiaWF0IjoxNjM2MDIwNDEwLCJzY29wZSI6WyJwYXlkaXJlY3QiLCJwYXltZW50cyJdfQ.LCM4hOiwcT8sXYjdF-LjzEFwr-R2hOaRCUJxOxbP_AcxeHiClZXG7jsOrtjsrkhkSqIT8u0feKDBTY5NYJnKaALfvQC_sJRvCkTyzJDVqYE0HzrKIcmYoPsEVPytnceT0wTZ2PW2E49DDJ0aN8gDAtMPFdtjArD9FQR7mPBeSma35aZ9usR4ECSSINzv-j4wlSWHPVHB-e0EApfgvOYkHjKiSng6T_xOMeJ1TrPyf05Iygr4Yrre2dm5v7XnG1U4cxjnJ7k5e_ppbyQ0fyVEUjonxmjkQWH2c-e6j9NvwKCjJMgpFqB5vVzC4S5tJnJr8Ln2fvqGioIXfPmAfgha-A";
 
     @Override
-    public Payment createPayment(CreatePaymentRequest request) throws IOException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException {
         UUID idempotencyKey = generateIdempotencyKey();
 
-        String signature = signRequest(idempotencyKey, request, "/payments");
+        String createRequestJsonString = requestToJsonString(createPaymentRequest);
+        byte[] createRequestJsonBytes = createRequestJsonString.getBytes(StandardCharsets.UTF_8);
 
-
-        //-------there is a problem between the JSON used as a body in the call and the one used in the signature
-        //just a test
-        String body = "{\n" +
-                "\"amount_in_minor\": 177,\n" +
-                "\"currency\": \"GBP\",\n" +
-                "\"payment_method\": {\n" +
-                "\"type\": \"bank_transfer\"\n" +
-                "},\n" +
-                "\"beneficiary\": {\n" +
-                "\"type\": \"merchant_account\",\n" +
-                "\"id\": \"c54104a5-fdd1-4277-8793-dbfa511c898b\",\n" +
-                "\"name\": \"Some merchant\"\n" +
-                "},\n" +
-                "\"user\": {\n" +
-                "\"type\": \"new\",\n" +
-                "\"name\": \"Wajid Malik\",\n" +
-                "\"email\": \"wajid.malik@truelayer.com\"\n" +
-                "}\n" +
-                "}\n";
-        //delete
-
+        String signature = signRequest(idempotencyKey, createRequestJsonBytes, "/payments");
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Idempotency-Key", idempotencyKey.toString());
@@ -61,7 +39,9 @@ public class Payments implements IPayments {
         headers.add("Accept", "application/json");
 
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> httpRequest = new HttpEntity<>(body, headers);
+        HttpEntity<String> httpRequest = new HttpEntity<>(createRequestJsonString, headers);
+
+        //todo in Payments and Auth we are using 2 different type HttpClients - let's decide for 1 and use it everywhere
         ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL, HttpMethod.POST, httpRequest, Payment.class);
 
         return exchange.getBody();
@@ -82,42 +62,19 @@ public class Payments implements IPayments {
     }
 
 
-    private String signRequest(UUID idempotencyKey, CreatePaymentRequest request, String path) throws IOException {
+    private String signRequest(UUID idempotencyKey, byte[] jsonRequestBytes, String path) throws IOException {
         byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
-
-//        String jsonRequest = requestToJsonString(request);
-//        byte[] jsonRequestBytes = jsonRequest.getBytes(StandardCharsets.UTF_8);
-
-        String body = "{\n" +
-                "\"amount_in_minor\": 177,\n" +
-                "\"currency\": \"GBP\",\n" +
-                "\"payment_method\": {\n" +
-                "\"type\": \"bank_transfer\"\n" +
-                "},\n" +
-                "\"beneficiary\": {\n" +
-                "\"type\": \"merchant_account\",\n" +
-                "\"id\": \"c54104a5-fdd1-4277-8793-dbfa511c898b\",\n" +
-                "\"name\": \"Some merchant\"\n" +
-                "},\n" +
-                "\"user\": {\n" +
-                "\"type\": \"new\",\n" +
-                "\"name\": \"Wajid Malik\",\n" +
-                "\"email\": \"wajid.malik@truelayer.com\"\n" +
-                "}\n" +
-                "}\n";
-        byte[] bodyInBytes = body.getBytes(StandardCharsets.UTF_8);
 
         return Signer.from(KID, privateKey)
                 .header("Idempotency-Key", idempotencyKey.toString())
                 .method("post")
                 .path(path)
-                .body(bodyInBytes)
+                .body(jsonRequestBytes)
                 .sign();
     }
 
-    private String requestToJsonString(CreatePaymentRequest request) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(request);
+    private String requestToJsonString(CreatePaymentRequest createPaymentRequest) {
+        return new Gson().toJson(createPaymentRequest);
     }
 
     //todo we need to understand how to generate this in a meaningful way
