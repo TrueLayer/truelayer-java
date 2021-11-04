@@ -3,8 +3,7 @@ package truelayer.java;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import truelayer.java.TrueLayerClient.SigningOptions;
 
 public class TrueLayerClientTests {
 
@@ -13,7 +12,7 @@ public class TrueLayerClientTests {
 
     @Test
     @DisplayName("It should yield an authentication client")
-    public void itShouldBuildAnAuthenticationClient() throws IOException {
+    public void itShouldBuildAnAuthenticationClient() {
         //Given
         var trueLayerClient = TrueLayerClient.builder()
                 .clientId(A_CLIENT_ID)
@@ -29,7 +28,7 @@ public class TrueLayerClientTests {
 
     @Test
     @DisplayName("It should yield a payment client")
-    public void itShouldBuildAPaymentClient() throws IOException {
+    public void itShouldBuildAPaymentClient() {
         //Given
         var trueLayerClient = TrueLayerClient.builder()
                 .clientId(A_CLIENT_ID)

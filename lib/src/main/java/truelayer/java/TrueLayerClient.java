@@ -1,13 +1,14 @@
 package truelayer.java;
 
 import lombok.Builder;
+import org.springframework.web.client.RestTemplate;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.payments.IPayments;
 import truelayer.java.payments.Payments;
 
 @Builder
-public class TrueLayerClient implements ITrueLayerClient{
+public class TrueLayerClient implements ITrueLayerClient {
 
     private String clientId;
 
@@ -25,11 +26,21 @@ public class TrueLayerClient implements ITrueLayerClient{
     @Override
     public IPayments payments() {
         return Payments.builder()
+                .authentication(auth())
                 .clientId(clientId)
                 .clientSecret(clientSecret)
-                //todo: it makes sense to add this as an HTTP client option if ALL dispositive requests
-                // are to be signed (eg POST, DELETE...)
-                .signingOptions(signingOptions)
+                .restTemplate(new RestTemplate())
                 .build();
+    }
+
+    /**
+     * Optional configuration used for signed requests only.
+     */
+    @Builder
+    static class SigningOptions {
+        private String keyId;
+
+        //todo: use a proper type
+        private String privateKey;
     }
 }
