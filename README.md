@@ -46,6 +46,10 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 var client = TrueLayerClient.builder()
     .clientId(A_CLIENT_ID)
     .clientSecret(A_CLIENT_SECRET)
+    .signingOptions(SigningOptions.builder()
+        .keyId("my-key-id")
+        .privateKey("my-private-key-content") //temporary
+        .build())
     .build();
 ```
 
