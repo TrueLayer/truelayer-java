@@ -1,15 +1,22 @@
 package truelayer.java.auth;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.exceptions.AuthenticationException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+//todo: I see 2 possible approaches here for testsing. One being a more "unit" like test where
+//we verify the ability of the SUT to create proper HTTP requests and handle responses, given specific inputs. I would wait the HTTP client
+//to be injected ad SUT construction time before actually taking care.
+//Additionally, we should define an integration tests and use Wiremock to stub Pay API responses.
+//The latter could also be tested as part of a more generic integration test on the whole library.
+//By extracting the HTTP client from the Authentication class we would get the ability to also test that in isolation, especially
+//around more complex stuff (for instance fault tolerance)
 public class AuthenticationTests {
 
     public static final String A_SCOPE = "paydirect";
