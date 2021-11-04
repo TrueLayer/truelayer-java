@@ -1,7 +1,6 @@
 package truelayer.java.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import lombok.Builder;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;

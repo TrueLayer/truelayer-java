@@ -1,7 +1,7 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,26 +11,26 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Getter
 public class CreatePaymentRequest {
 
-    @SerializedName("amount_in_minor")
+    @JsonProperty("amount_in_minor")
     private int amountInMinor;
 
-    @SerializedName("currency")
+    @JsonProperty("currency")
     private String currency;
 
-    @SerializedName("payment_method")
+    @JsonProperty("payment_method")
     private PaymentMethod paymentMethod;
 
-    @SerializedName("beneficiary")
+    @JsonProperty("beneficiary")
     private PaymentBeneficiary beneficiary;
 
-    @SerializedName("user")
+    @JsonProperty("user")
     private PaymentUser user;
 
     @Setter
     @Getter
     public static class PaymentMethod {
 
-        @SerializedName("type")
+        @JsonProperty("type")
         private String type;
 
         public PaymentMethod(String type) {
@@ -42,14 +42,14 @@ public class CreatePaymentRequest {
     @Getter
     public static class PaymentBeneficiary {
 
-        @SerializedName("type")
+        @JsonProperty("type")
         private String type;
 
-        @SerializedName("id")
+        @JsonProperty("id")
         private String id;
 
         @JsonInclude(Include.NON_NULL)
-        @SerializedName("name")
+        @JsonProperty("name")
         private String name;
 
         public PaymentBeneficiary(String type, String id) {
@@ -62,18 +62,18 @@ public class CreatePaymentRequest {
     @Getter
     public static class PaymentUser {
 
-        @SerializedName("type")
+        @JsonProperty("type")
         private String type;
 
-        @SerializedName("name")
+        @JsonProperty("name")
         private String name;
 
-        @SerializedName("email")
+        @JsonProperty("email")
         @JsonInclude(Include.NON_NULL)
         private String email;
 
         @JsonInclude(Include.NON_NULL)
-        @SerializedName("phone")
+        @JsonProperty("phone")
         private String phone;
 
         public PaymentUser(String type, String name) {

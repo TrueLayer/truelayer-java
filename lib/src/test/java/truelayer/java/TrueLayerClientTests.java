@@ -3,7 +3,10 @@ package truelayer.java;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.TrueLayerClient.SigningOptions;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class TrueLayerClientTests {
 
@@ -28,14 +31,14 @@ public class TrueLayerClientTests {
 
     @Test
     @DisplayName("It should yield a payment client")
-    public void itShouldBuildAPaymentClient() {
+    public void itShouldBuildAPaymentClient() throws IOException {
         //Given
         var trueLayerClient = TrueLayerClient.builder()
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_CLIENT_SECRET)
                 .signingOptions(SigningOptions.builder()
                         .keyId("my-key-id")
-                        .privateKey("my-private-key")
+                        .privateKey(Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
                         .build())
                 .build();
 
