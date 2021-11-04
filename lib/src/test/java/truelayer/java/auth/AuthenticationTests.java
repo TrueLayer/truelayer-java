@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //todo: I see 2 possible approaches here for testsing. One being a more "unit" like test where
-//we verify the ability of the SUT to create proper HTTP requests, given specific inputs. I would wait the HTTP client
+//we verify the ability of the SUT to create proper HTTP requests and handle responses, given specific inputs. I would wait the HTTP client
 //to be injected ad SUT construction time before actually taking care.
 //Additionally, we should define an integration tests and use Wiremock to stub Pay API responses.
 //The latter could also be tested as part of a more generic integration test on the whole library
