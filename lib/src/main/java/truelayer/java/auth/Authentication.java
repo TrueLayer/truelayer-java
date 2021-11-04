@@ -1,5 +1,6 @@
 package truelayer.java.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.Builder;
 import org.apache.http.HttpHeaders;
@@ -52,7 +53,7 @@ public class Authentication implements IAuthentication{
             if(response.statusCode() >= 400)
                 throw new AuthenticationException(String.valueOf(response.statusCode()), response.body());
 
-            return new Gson().fromJson(response.body(), AccessToken.class);
+            return new ObjectMapper().readValue(response.body(), AccessToken.class);
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }

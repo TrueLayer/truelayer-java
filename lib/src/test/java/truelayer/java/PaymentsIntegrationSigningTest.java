@@ -1,5 +1,6 @@
 package truelayer.java;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -9,7 +10,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
-import truelayer.signing.Signer;
+import truelayer.java.signing.Signer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,9 +29,9 @@ public class PaymentsIntegrationSigningTest {
 
     //todo we need to pull all the config params out of this class
     @Test
-    public void createAndRetrievePayment() throws IOException, ParseException {
+    public void createAndRetrievePayment() throws IOException, ParseException, JOSEException {
         String idempotencyKey = "idemp-2076717c-9005-4811-a321-9e0787fa038d";
-        byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
+        byte[] privateKey = Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem"));
 
         String path = "/payments";
         String body = "{\n" +
@@ -50,14 +51,13 @@ public class PaymentsIntegrationSigningTest {
                 "\"email\": \"wajid.malik@truelayer.com\"\n" +
                 "}\n" +
                 "}\n";
-        byte[] bodyInBytes = body.getBytes(StandardCharsets.UTF_8);
 
-        String signature = Signer.from(KID, privateKey)
-                .header("Idempotency-Key", idempotencyKey)
-                .method("post")
-                .path(path)
-                .body(bodyInBytes)
-                .sign();
+        var signature = new Signer.Builder(KID, privateKey)
+                .addHeader("Idempotency-Key", idempotencyKey.toString())
+                .addHttpMethod("post")
+                .addPath(path)
+                .addBody(body)
+                .getSignature();
 
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("https://test-pay-api.t7r.dev/payments");

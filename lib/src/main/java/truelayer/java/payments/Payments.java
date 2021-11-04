@@ -2,22 +2,24 @@ package truelayer.java.payments;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentsException;
-import truelayer.signing.Signer;
+import truelayer.java.signing.Signer;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,15 +35,15 @@ public class Payments implements IPayments {
     private IAuthentication authentication;
     private String clientId;
     private String clientSecret;
+    private SigningOptions signingOptions;
 
     @Override
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException, ParseException, JOSEException {
         UUID idempotencyKey = generateIdempotencyKey();
 
         String createRequestJsonString = requestToJsonString(createPaymentRequest);
-        byte[] createRequestJsonBytes = createRequestJsonString.getBytes(StandardCharsets.UTF_8);
 
-        String signature = signRequest(idempotencyKey, createRequestJsonBytes, "/payments");
+        String signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
         HttpHeaders headers = getPaymentCreationHttpHeaders(idempotencyKey, signature, getAccessToken());
 
@@ -75,15 +77,15 @@ public class Payments implements IPayments {
     }
 
 
-    private String signRequest(UUID idempotencyKey, byte[] jsonRequestBytes, String path) throws IOException {
-        byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
+    private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws IOException, ParseException, JOSEException {
+        byte[] privateKey = signingOptions.getPrivateKey();
 
-        return Signer.from(KID, privateKey)
-                .header("Idempotency-Key", idempotencyKey.toString())
-                .method("post")
-                .path(path)
-                .body(jsonRequestBytes)
-                .sign();
+        return new Signer.Builder(KID, privateKey)
+                .addHeader("Idempotency-Key", idempotencyKey.toString())
+                .addHttpMethod("post")
+                .addPath(path)
+                .addBody(jsonRequest)
+                .getSignature();
     }
 
     private String requestToJsonString(CreatePaymentRequest createPaymentRequest) {

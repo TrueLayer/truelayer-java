@@ -1,5 +1,6 @@
 package truelayer.java.payments;
 
+import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
@@ -11,6 +12,7 @@ import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentsException;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +41,7 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void createPayment() throws IOException, AuthenticationException {
+    void createPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
         CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
 
         Payment payment = payments.createPayment(createPaymentRequest);
@@ -48,7 +50,7 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void createAndRetrieveAPayment() throws IOException, AuthenticationException {
+    void createAndRetrieveAPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
         CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
 
         Payment createdPayment = payments.createPayment(createPaymentRequest);
