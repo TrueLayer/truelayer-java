@@ -1,6 +1,5 @@
 package truelayer.java.payments;
 
-import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
