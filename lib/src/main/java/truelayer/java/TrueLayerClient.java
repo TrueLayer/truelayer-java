@@ -8,7 +8,7 @@ import truelayer.java.payments.IPayments;
 import truelayer.java.payments.Payments;
 
 @Builder
-public class TrueLayerClient implements ITrueLayerClient{
+public class TrueLayerClient implements ITrueLayerClient {
 
     private String clientId;
 
@@ -17,14 +17,16 @@ public class TrueLayerClient implements ITrueLayerClient{
     private SigningOptions signingOptions;
 
     @Override
-    public IAuthentication Auth() {
-        return Authentication.builder().clientId(clientId).clientSecret(clientSecret).build();
+    public IAuthentication auth() {
+        return Authentication.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret).build();
     }
 
     @Override
-    public IPayments Payments() {
+    public IPayments payments() {
         return Payments.builder()
-                .authentication(Auth())
+                .authentication(auth())
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .restTemplate(new RestTemplate())
