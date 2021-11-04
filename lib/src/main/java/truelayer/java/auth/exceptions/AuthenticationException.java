@@ -1,14 +1,15 @@
 package truelayer.java.auth.exceptions;
 
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+
+@Value
+@RequiredArgsConstructor
 public class AuthenticationException extends Exception {
 
-    private final String errorCode;
-    private final String errorMessage;
+    String errorCode;
 
-    public AuthenticationException(String errorCode, String errorMessage) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-    }
+    String errorMessage;
 
     public AuthenticationException(Exception e){
         this.errorCode = "GENERIC_ERROR";

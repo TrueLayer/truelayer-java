@@ -4,6 +4,7 @@ import lombok.Builder;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.payments.IPayments;
+import truelayer.java.payments.Payments;
 
 @Builder
 public class TrueLayerClient implements ITrueLayerClient{
@@ -15,23 +16,20 @@ public class TrueLayerClient implements ITrueLayerClient{
     private SigningOptions signingOptions;
 
     @Override
-    public IAuthentication Auth() {
-        return Authentication.builder().clientId(clientId).clientSecret(clientSecret).build();
+    public IAuthentication auth() {
+        return Authentication.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret).build();
     }
 
     @Override
-    public IPayments Payments() {
-        return null;
-    }
-
-    /**
-     * Optional configuration used for signed requests only.
-     */
-    @Builder
-    static class SigningOptions {
-        private String keyId;
-
-        //todo: use a proper type
-        private String privateKey;
+    public IPayments payments() {
+        return Payments.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                //todo: it makes sense to add this as an HTTP client option if ALL dispositive requests
+                // are to be signed (eg POST, DELETE...)
+                .signingOptions(signingOptions)
+                .build();
     }
 }

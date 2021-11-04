@@ -50,6 +50,7 @@ public class Authentication implements IAuthentication{
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() >= 400)
                 throw new AuthenticationException(String.valueOf(response.statusCode()), response.body());
+
             return new Gson().fromJson(response.body(), AccessToken.class);
         } catch (Exception e) {
             throw new AuthenticationException(e);

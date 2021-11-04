@@ -1,26 +1,37 @@
 package truelayer.java.payments.entities;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Builder;
 
+@Builder
 public class CreatePaymentRequest {
 
     @SerializedName("amount_in_minor")
     private int amountInMinor;
 
-    @SerializedName("currency")
-    private String currency;
+    private Currency currency;
 
     @SerializedName("payment_method")
     private PaymentMethod paymentMethod;
 
+    @Builder
+    public static class PaymentMethod {
 
-    static class PaymentMethod {
+        private Type type;
 
-        @SerializedName("type")
-        private String type;
+        private String statement_reference;
 
-        public PaymentMethod(String type) {
-            this.type = type;
+        enum Type {
+            @SerializedName("bank_transfer")
+            BANK_TRANSFER
         }
+
+    }
+
+    public enum Currency {
+        @SerializedName("GBP")
+        GBP,
+        @SerializedName("EUR")
+        EUR
     }
 }

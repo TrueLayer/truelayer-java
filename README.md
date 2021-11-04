@@ -41,10 +41,29 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 ### Configure Settings
 
 
-### Initialize TrueLayer.NET
+### Initialize TrueLayerClient
+```
+var client = TrueLayerClient.builder()
+    .clientId(A_CLIENT_ID)
+    .clientSecret(A_CLIENT_SECRET)
+    .build();
+```
 
 ### Make a payment
+```
+var paymentRequest = CreatePaymentRequest.builder()
+    .amountInMinor(100)
+    .currency(CreatePaymentRequest.Currency.GBP)
+    .paymentMethod(PaymentMethod.builder()
+            .statement_reference("a-payment-ref")
+            .type(BANK_TRANSFER)
+            .build())
+    .build();
 
+var payment = client
+    .payments()
+    .createPayment(paymentRequest);
+```
 
 ## Building locally
 
