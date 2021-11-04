@@ -1,9 +1,9 @@
 package truelayer.java.payments;
 
+import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.client.RestTemplate;
-import truelayer.java.TestsUtil;
+import truelayer.java.SigningOptions;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -11,6 +11,10 @@ import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentsException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,13 +22,19 @@ class PaymentsIntegrationTest {
 
     //todo these are integration tests, we need to mock the external dependency
 
-    private static final String A_CLIENT_ID = "giulioleso-8993c9";
-    private static final String A_SECRET = "66a627c7-abbc-4f9e-9f7c-87673c5b896e";
+    private static final String A_CLIENT_ID = "<a_client_id>";
+    private static final String A_SECRET = "<a_client_secret>";
+    private static final String A_KEY_ID = "<a_key_id>";
 
     private static Payments payments;
 
     @BeforeAll
-    static void init() {
+    static void init() throws IOException {
+        var signingOptions = SigningOptions.builder()
+                .privateKey(Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
+                .keyId(A_KEY_ID)
+                .build();
+
         Authentication authentication = Authentication.builder()
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_SECRET)
@@ -34,30 +44,61 @@ class PaymentsIntegrationTest {
                 .authentication(authentication)
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_SECRET)
-                .restTemplate(new RestTemplate())
+                .signingOptions(signingOptions)
                 .build();
     }
 
     @Test
-    void createPayment() throws IOException, AuthenticationException {
-        CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
+    void createPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+        var paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(101)
+                .currency("GBP")
+                .paymentMethod(CreatePaymentRequest.Method.builder()
+                        .type("bank_transfer")
+                        .build())
+                .beneficiary(CreatePaymentRequest.Beneficiary.builder()
+                        .type("merchant_account")
+                        //.name("Luca") todo: by setting this we broke the signature. involve paymetns api
+                        .id(UUID.randomUUID().toString())
+                        .build())
+                .user(CreatePaymentRequest.User.builder()
+                        .name("Andrea")
+                        .type("new")
+                        .email("andrea@truelayer.com") // if we don't set this one we get a signature check failure. todo: provide feedback to payments api
+                        .build())
+                .build();
 
-        Payment payment = payments.createPayment(createPaymentRequest);
+        Payment payment = payments.createPayment(paymentRequest);
 
         assertNotNull(payment.getPaymentId());
     }
 
     @Test
-    void createAndRetrieveAPayment() throws IOException, AuthenticationException {
-        CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
+    void createAndRetrieveAPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+        // Given
+        var paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(101)
+                .currency("GBP")
+                .paymentMethod(CreatePaymentRequest.Method.builder()
+                        .type("bank_transfer")
+                        .build())
+                .beneficiary(CreatePaymentRequest.Beneficiary.builder()
+                        .type("merchant_account")
+                        .name("Luca")
+                        .id(UUID.randomUUID().toString())
+                        .build())
+                .user(CreatePaymentRequest.User.builder()
+                        .name("Andrea")
+                        .type("new")
+                        .build())
+                .build();
+        var payment = payments.createPayment(paymentRequest);
 
-        Payment createdPayment = payments.createPayment(createPaymentRequest);
+        //When
+        Payment retrievedPayment = payments.getPayment(payment.getPaymentId());
 
-        assertNotNull(createdPayment);
-
-        Payment retrievedPayment = payments.getPayment(createdPayment.getPaymentId());
-
-        assertEquals(createdPayment.getPaymentId(), retrievedPayment.getPaymentId());
+        //Then
+        assertEquals(payment.getPaymentId(), retrievedPayment.getPaymentId());
     }
 
     @Test

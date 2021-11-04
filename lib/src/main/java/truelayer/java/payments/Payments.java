@@ -1,93 +1,97 @@
 package truelayer.java.payments;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
+import org.apache.http.entity.ContentType;
+import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthentication;
-import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentsException;
-import truelayer.signing.Signer;
+import truelayer.java.signing.Signer;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Builder
 public class Payments implements IPayments {
 
     //todo get from a config
-    private static final List<String> SCOPES = ImmutableList.of("paydirect");
-    private static final String KID = "7695796e-e718-457d-845b-4a6be00ca454";
-    private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments/";
+    private static final List<String> SCOPES = List.of("paydirect");
+    private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
-    private RestTemplate restTemplate;
     private IAuthentication authentication;
     private String clientId;
     private String clientSecret;
+    private SigningOptions signingOptions;
 
     @Override
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException, ParseException, JOSEException {
         UUID idempotencyKey = generateIdempotencyKey();
 
         String createRequestJsonString = requestToJsonString(createPaymentRequest);
-        byte[] createRequestJsonBytes = createRequestJsonString.getBytes(StandardCharsets.UTF_8);
 
-        String signature = signRequest(idempotencyKey, createRequestJsonBytes, "/payments");
+        String signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
-        HttpHeaders headers = getPaymentCreationHttpHeaders(idempotencyKey, signature, getAccessToken());
+        var httpRequestBuilder = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(DEV_PAYMENTS_URL))
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(createRequestJsonString));
+        var headers = getPaymentCreationHttpHeaders(idempotencyKey, signature, getAccessToken());
+        headers.forEach(httpRequestBuilder::header);
 
-        HttpEntity<String> httpRequest = new HttpEntity<>(createRequestJsonString, headers);
-
-        //todo in Payments and Auth we are using 2 different type HttpClients - let's decide for 1 and use it everywhere
-        ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL, HttpMethod.POST, httpRequest, Payment.class);
-
-        //todo missing error handling
-        return exchange.getBody();
-    }
-
-    public Payment getPayment(String paymentId) throws AuthenticationException {
-        HttpEntity<String> entity = new HttpEntity<>(getPaymentRetrievalHttpHeaders(getAccessToken()));
-
+        var httpClient = HttpClient.newHttpClient();
         try {
-            ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL + paymentId, HttpMethod.GET,
-                    entity, Payment.class);
+            var response = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() >= 400)
+                throw new PaymentsException(String.valueOf(response.statusCode()), response.body());
 
-            return exchange.getBody();
-        } catch (Exception exception) {
-            throw new PaymentsException(exception);
+            return new ObjectMapper().readValue(response.body(), Payment.class);
+        } catch (Exception e) {
+            throw new PaymentsException(e);
         }
     }
 
-    @NotNull
-    private HttpHeaders getPaymentRetrievalHttpHeaders(AccessToken accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken.getAccessToken());
-        return headers;
+    public Payment getPayment(String paymentId) throws AuthenticationException {
+        var httpRequest = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(DEV_PAYMENTS_URL + "/" + paymentId))
+                .header("Authorization", "Bearer " + getAccessToken())
+                .GET()
+                .build();
+        var httpClient = HttpClient.newHttpClient();
+        try {
+            var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() >= 400)
+                throw new PaymentsException(String.valueOf(response.statusCode()), response.body());
+
+            return new ObjectMapper().readValue(response.body(), Payment.class);
+        } catch (Exception e) {
+            throw new PaymentsException(e);
+        }
     }
 
 
-    private String signRequest(UUID idempotencyKey, byte[] jsonRequestBytes, String path) throws IOException {
-        byte[] privateKey = Files.readAllBytes(Path.of("/Users/giulio.leso/Desktop/ec512-private-key.pem"));
+    private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws IOException, ParseException, JOSEException {
+        byte[] privateKey = signingOptions.getPrivateKey();
 
-        return Signer.from(KID, privateKey)
-                .header("Idempotency-Key", idempotencyKey.toString())
-                .method("post")
-                .path(path)
-                .body(jsonRequestBytes)
-                .sign();
+        return new Signer.Builder(signingOptions.getKeyId(), privateKey)
+                .addHeader("Idempotency-Key", idempotencyKey.toString())
+                .addHttpMethod("post")
+                .addPath(path)
+                .addBody(jsonRequest)
+                .getSignature();
     }
 
-    private String requestToJsonString(CreatePaymentRequest createPaymentRequest) {
-        return new Gson().toJson(createPaymentRequest);
+    private String requestToJsonString(CreatePaymentRequest createPaymentRequest) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(createPaymentRequest);
     }
 
     //todo we need to understand how to generate this in a meaningful way
@@ -95,17 +99,17 @@ public class Payments implements IPayments {
         return UUID.randomUUID();
     }
 
-    private AccessToken getAccessToken() throws AuthenticationException {
-        return authentication.getOauthToken(SCOPES);
+    private String getAccessToken() throws AuthenticationException {
+        return authentication.getOauthToken(SCOPES).getAccessToken();
     }
 
-    private HttpHeaders getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, AccessToken oauthToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Idempotency-Key", idempotencyKey.toString());
-        headers.add("Tl-Signature", signature);
-        headers.add("Authorization", "Bearer " + oauthToken.getAccessToken());
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
-        return headers;
+    private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, String accessToken) {
+        return Map.of(
+                "Idempotency-Key", idempotencyKey.toString(),
+                "Tl-Signature", signature,
+                "Authorization", "Bearer " + accessToken,
+                org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString(),
+                org.apache.http.HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString()
+        );
     }
 }
