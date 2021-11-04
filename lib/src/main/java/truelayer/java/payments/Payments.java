@@ -1,6 +1,8 @@
 package truelayer.java.payments;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -20,7 +22,13 @@ public class Payments implements IPayments {
     private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
     //todo replace with call to auth
-    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzYwMjA0MTAsImV4cCI6MTYzNjAyNDAxMCwiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOlsicGF5ZGlyZWN0X2FwaSIsInBheW1lbnRzX2FwaSJdLCJjbGllbnRfaWQiOiJnaXVsaW9sZXNvLTg5OTNjOSIsImp0aSI6IkI0MUYwQ0Y2MEUxQTM3NjE2RDZFQjczNjQyMTBBNkE3IiwiaWF0IjoxNjM2MDIwNDEwLCJzY29wZSI6WyJwYXlkaXJlY3QiLCJwYXltZW50cyJdfQ.LCM4hOiwcT8sXYjdF-LjzEFwr-R2hOaRCUJxOxbP_AcxeHiClZXG7jsOrtjsrkhkSqIT8u0feKDBTY5NYJnKaALfvQC_sJRvCkTyzJDVqYE0HzrKIcmYoPsEVPytnceT0wTZ2PW2E49DDJ0aN8gDAtMPFdtjArD9FQR7mPBeSma35aZ9usR4ECSSINzv-j4wlSWHPVHB-e0EApfgvOYkHjKiSng6T_xOMeJ1TrPyf05Iygr4Yrre2dm5v7XnG1U4cxjnJ7k5e_ppbyQ0fyVEUjonxmjkQWH2c-e6j9NvwKCjJMgpFqB5vVzC4S5tJnJr8Ln2fvqGioIXfPmAfgha-A";
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVCM0ExQzhGODMyOTlEQjJCNTE3NUVGMDBGQjYwOTc2QTkwQTMzMjFSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6Ild6b2NqNE1wbmJLMUYxN3dEN1lKZHFrS015RSJ9.eyJuYmYiOjE2MzYwMjQ4MTcsImV4cCI6MTYzNjAyODQxNywiaXNzIjoiaHR0cHM6Ly9hdXRoLnQ3ci5kZXYiLCJhdWQiOlsicGF5ZGlyZWN0X2FwaSIsInBheW1lbnRzX2FwaSJdLCJjbGllbnRfaWQiOiJnaXVsaW9sZXNvLTg5OTNjOSIsImp0aSI6IkQ1MkQ3QTA2Q0VDNDg5MDg5OUMyNkJBRDBBNTVENzMzIiwiaWF0IjoxNjM2MDI0ODE3LCJzY29wZSI6WyJwYXlkaXJlY3QiLCJwYXltZW50cyJdfQ.n2H3NKtMqPP8rPhVnNzplVwwXMsn_C668IQ0HvzLPEhtjx4V5Ii_54FXQR12CRUJfKIA5n-7vKP0q9NoLiBkX2OeTQU_nQzshfaQhzcLLJcOOQkkaFObwr63nx3zzwNH9HbPNuw6BtGigZAmkw1W4tiiO6Q53duxhdkw1GqGH4b6jVszHtQp96yE6YB29LnAEzoNDxIeXH10_66u1Z0M4h16HR3ZxOtpsfxS46GgtJ1uNvc1OXuVWjS0S7MYDXkdaBKHoxwZKCKLoEnboO3O1yQeG2p435kePhDBEah6Km9SQv0WHtaqz0ywJ8cUyUf1hPP6zi_MyiBrzL59vt9ViA";
+
+    private final RestTemplate restTemplate;
+
+    public Payments() {
+        this.restTemplate = new RestTemplate();;
+    }
 
     @Override
     public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException {
@@ -31,14 +39,8 @@ public class Payments implements IPayments {
 
         String signature = signRequest(idempotencyKey, createRequestJsonBytes, "/payments");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Idempotency-Key", idempotencyKey.toString());
-        headers.add("Tl-Signature", signature);
-        headers.add("Authorization", "Bearer " + ACCESS_TOKEN);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Accept", "application/json");
+        HttpHeaders headers = getPaymentCreationHttpHeaders(idempotencyKey, signature);
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = new HttpEntity<>(createRequestJsonString, headers);
 
         //todo in Payments and Auth we are using 2 different type HttpClients - let's decide for 1 and use it everywhere
@@ -47,18 +49,30 @@ public class Payments implements IPayments {
         return exchange.getBody();
     }
 
-    public Payment getPayment(String paymentId) {
-
+    private HttpHeaders getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature) {
         HttpHeaders headers = new HttpHeaders();
+        headers.add("Idempotency-Key", idempotencyKey.toString());
+        headers.add("Tl-Signature", signature);
         headers.add("Authorization", "Bearer " + ACCESS_TOKEN);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON));
+        return headers;
+    }
 
-        RestTemplate restTemplate = new RestTemplate();
+    public Payment getPayment(String paymentId) {
+        HttpEntity<String> entity = new HttpEntity<>(getPaymentRetrievalHttpHeaders());
 
         ResponseEntity<Payment> exchange = restTemplate.exchange(DEV_PAYMENTS_URL + "/" + paymentId, HttpMethod.GET,
                 entity, Payment.class);
 
         return exchange.getBody();
+    }
+
+    @NotNull
+    private HttpHeaders getPaymentRetrievalHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + ACCESS_TOKEN);
+        return headers;
     }
 
 
