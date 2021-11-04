@@ -4,7 +4,6 @@ import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import truelayer.java.SigningOptions;
-import truelayer.java.TestsUtil;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,24 +50,54 @@ class PaymentsIntegrationTest {
 
     @Test
     void createPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
-        CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
+        var paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(101)
+                .currency("GBP")
+                .paymentMethod(CreatePaymentRequest.Method.builder()
+                        .type("bank_transfer")
+                        .build())
+                .beneficiary(CreatePaymentRequest.Beneficiary.builder()
+                        .type("merchant_account")
+                        .name("Luca")
+                        .id(UUID.randomUUID().toString())
+                        .build())
+                .user(CreatePaymentRequest.User.builder()
+                        .name("Andrea")
+                        .type("new")
+                        .build())
+                .build();
 
-        Payment payment = payments.createPayment(createPaymentRequest);
+        Payment payment = payments.createPayment(paymentRequest);
 
         assertNotNull(payment.getPaymentId());
     }
 
     @Test
     void createAndRetrieveAPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
-        CreatePaymentRequest createPaymentRequest = TestsUtil.getCreatePaymentRequest();
+        // Given
+        var paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(101)
+                .currency("GBP")
+                .paymentMethod(CreatePaymentRequest.Method.builder()
+                        .type("bank_transfer")
+                        .build())
+                .beneficiary(CreatePaymentRequest.Beneficiary.builder()
+                        .type("merchant_account")
+                        .name("Luca")
+                        .id(UUID.randomUUID().toString())
+                        .build())
+                .user(CreatePaymentRequest.User.builder()
+                        .name("Andrea")
+                        .type("new")
+                        .build())
+                .build();
+        var payment = payments.createPayment(paymentRequest);
 
-        Payment createdPayment = payments.createPayment(createPaymentRequest);
+        //When
+        Payment retrievedPayment = payments.getPayment(payment.getPaymentId());
 
-        assertNotNull(createdPayment);
-
-        Payment retrievedPayment = payments.getPayment(createdPayment.getPaymentId());
-
-        assertEquals(createdPayment.getPaymentId(), retrievedPayment.getPaymentId());
+        //Then
+        assertEquals(payment.getPaymentId(), retrievedPayment.getPaymentId());
     }
 
     @Test

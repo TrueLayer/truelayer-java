@@ -1,84 +1,68 @@
 package truelayer.java.payments.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@Setter
+@Builder
 @Getter
 public class CreatePaymentRequest {
 
     @JsonProperty("amount_in_minor")
     private int amountInMinor;
 
-    @JsonProperty("currency")
     private String currency;
 
     @JsonProperty("payment_method")
-    private PaymentMethod paymentMethod;
+    private Method paymentMethod;
 
-    @JsonProperty("beneficiary")
-    private PaymentBeneficiary beneficiary;
+    private Beneficiary beneficiary;
 
-    @JsonProperty("user")
-    private PaymentUser user;
+    private User user;
 
-    @Setter
+    @Builder
     @Getter
-    public static class PaymentMethod {
+    public static class Method {
 
-        @JsonProperty("type")
-        private String type;
+        private String type; //todo: enum ?
 
-        public PaymentMethod(String type) {
-            this.type = type;
-        }
+        @JsonProperty("statement_reference")
+        private String statementReference;
+
+        @JsonProperty("provider_filter")
+        private ProviderFilter providerFilter;
+
+
     }
 
-    @Setter
+    @Builder
+    public static class ProviderFilter{
+        @JsonProperty("release_channel")
+        private String releaseChannel;
+        //todo complete
+    }
+
+    @Builder
     @Getter
-    public static class PaymentBeneficiary {
+    public static class Beneficiary {
 
-        @JsonProperty("type")
-        private String type;
+        private String type; //todo: enum ?
 
-        @JsonProperty("id")
         private String id;
 
-        @JsonInclude(Include.NON_NULL)
-        @JsonProperty("name")
         private String name;
-
-        public PaymentBeneficiary(String type, String id) {
-            this.type = type;
-            this.id = id;
-        }
     }
 
-    @Setter
+    @Builder
     @Getter
-    public static class PaymentUser {
+    public static class User {
 
-        @JsonProperty("type")
         private String type;
 
-        @JsonProperty("name")
         private String name;
 
-        @JsonProperty("email")
-        @JsonInclude(Include.NON_NULL)
         private String email;
 
-        @JsonInclude(Include.NON_NULL)
-        @JsonProperty("phone")
         private String phone;
-
-        public PaymentUser(String type, String name) {
-            this.type = type;
-            this.name = name;
-        }
     }
 }
