@@ -28,6 +28,7 @@ public class TrueLayerHttpClient {
 
     private HttpClient httpClient;
 
+    //todo missing unit test
     public HttpResponse<String> sendOauthRequest(List<String> scopes) throws IOException, InterruptedException {
         var formData = new HashMap<String, String>();
         formData.put("client_id", clientId);
@@ -45,7 +46,7 @@ public class TrueLayerHttpClient {
     }
 
 
-    //todo unit test
+    //todo missing unit test
     private static HttpRequest.BodyPublisher ofFormData(Map<String, String> data) {
         var formUrlEncoded = data.keySet().stream()
                 .map(key -> key + "=" + URLEncoder.encode(data.get(key), StandardCharsets.UTF_8))
