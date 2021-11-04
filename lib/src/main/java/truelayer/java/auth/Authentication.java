@@ -39,6 +39,7 @@ public class Authentication implements IAuthentication{
         formData.put("grant_type", GRANT_TYPE_CLIENT_CREDENTIALS);
         formData.put("scope", scopes.stream().collect(joining(" ")));
 
+        //todo: inject this client at construction time: + testability, + flexibility
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(TOKEN_ENDPOINT))
                 .header(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.toString())
