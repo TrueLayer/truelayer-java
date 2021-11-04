@@ -1,14 +1,14 @@
 package truelayer.java.auth;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.exceptions.AuthenticationException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthenticationTests {
 
