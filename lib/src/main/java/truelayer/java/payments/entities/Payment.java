@@ -13,4 +13,7 @@ public class Payment {
 
     @JsonProperty("status")
     private final String status;
+
+    @JsonProperty("resource_token")
+    private final String resourceToken;
 }
