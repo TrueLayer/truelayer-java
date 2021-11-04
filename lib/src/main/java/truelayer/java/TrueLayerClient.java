@@ -1,9 +1,11 @@
 package truelayer.java;
 
 import lombok.Builder;
+import org.springframework.web.client.RestTemplate;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.payments.IPayments;
+import truelayer.java.payments.Payments;
 
 @Builder
 public class TrueLayerClient implements ITrueLayerClient{
@@ -21,7 +23,12 @@ public class TrueLayerClient implements ITrueLayerClient{
 
     @Override
     public IPayments Payments() {
-        return null;
+        return Payments.builder()
+                .authentication(Auth())
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .restTemplate(new RestTemplate())
+                .build();
     }
 
     /**
