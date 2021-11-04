@@ -2,13 +2,11 @@ package truelayer.java.payments;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthentication;
-import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
@@ -28,7 +26,7 @@ import java.util.UUID;
 public class Payments implements IPayments {
 
     //todo get from a config
-    private static final List<String> SCOPES = ImmutableList.of("paydirect");
+    private static final List<String> SCOPES = List.of("paydirect");
     private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
     private IAuthentication authentication;
