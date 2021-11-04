@@ -40,7 +40,6 @@ dependencies {
 
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
 
-
     //Jws library support
     implementation("com.nimbusds:nimbus-jose-jwt:9.15.2")
 
@@ -48,12 +47,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.0'
 
-
-    // Use the Kotlin JDK 8 standard library.
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-
-    //Json serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
