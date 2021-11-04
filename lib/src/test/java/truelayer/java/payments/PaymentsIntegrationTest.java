@@ -2,6 +2,8 @@ package truelayer.java.payments;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.client.RestTemplate;
+import truelayer.java.auth.Authentication;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
@@ -11,13 +13,26 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class PaymentsTest {
+class PaymentsIntegrationTest {
+
+    private static final String A_CLIENT_ID = "giulioleso-8993c9";
+    private static final String A_SECRET = "66a627c7-abbc-4f9e-9f7c-87673c5b896e";
 
     private static Payments payments;
 
     @BeforeAll
     static void init() {
-        payments = new Payments();
+        Authentication authentication = Authentication.builder()
+                .clientId(A_CLIENT_ID)
+                .clientSecret(A_SECRET)
+                .build();
+
+        payments = Payments.builder()
+                .authentication(authentication)
+                .clientId(A_CLIENT_ID)
+                .clientSecret(A_SECRET)
+                .restTemplate(new RestTemplate())
+                .build();
     }
 
     @Test

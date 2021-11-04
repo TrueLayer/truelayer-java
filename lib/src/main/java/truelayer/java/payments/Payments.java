@@ -2,10 +2,12 @@ package truelayer.java.payments;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import truelayer.java.auth.Authentication;
+import truelayer.java.auth.IAuthentication;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
+@Builder
 public class Payments implements IPayments {
 
     //todo get from a config
@@ -28,16 +31,10 @@ public class Payments implements IPayments {
     private static final String A_CLIENT_ID = "giulioleso-8993c9";
     private static final String A_SECRET = "66a627c7-abbc-4f9e-9f7c-87673c5b896e";
 
-    private final RestTemplate restTemplate;
-    private final Authentication authentication;
-
-    public Payments() {
-        this.restTemplate = new RestTemplate();
-        this.authentication = Authentication.builder()
-                .clientId(A_CLIENT_ID)
-                .clientSecret(A_SECRET)
-                .build();
-    }
+    private RestTemplate restTemplate;
+    private IAuthentication authentication;
+    private String clientId;
+    private String clientSecret;
 
     @Override
     public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException {
