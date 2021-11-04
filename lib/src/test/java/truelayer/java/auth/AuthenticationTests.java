@@ -1,19 +1,20 @@
 package truelayer.java.auth;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.exceptions.AuthenticationException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthenticationTests {
 
     public static final String A_SCOPE = "paydirect";
     public static final String A_CLIENT_ID = "<a_client_id>";
-    public static final String A_SECRET = "<a_real_secret>";
+    public static final String A_SECRET = "<a_client_secret>";
 
     @Test
     @DisplayName("It should yield and access token if correct credentials are supplied")
@@ -25,6 +26,9 @@ public class AuthenticationTests {
 
         var token= sut.getOauthToken(List.of(A_SCOPE));
 
-        assertNotNull(token.getAccessToken());
+        assertFalse(token.getAccessToken().isEmpty());
+        assertFalse(token.getTokenType().isEmpty());
+        assertFalse(token.getAccessToken().isEmpty());
+        assertTrue(token.getExpiresIn() > 0);
     }
 }
