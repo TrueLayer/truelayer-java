@@ -1,18 +1,27 @@
 package truelayer.java.payments;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PaymentsTest {
 
+    private static Payments payments;
+
+    @BeforeAll
+    static void init() {
+        payments = new Payments();
+    }
+
     @Test
-    void createPayment() throws IOException {
-        Payments payments = new Payments();
+    void createPayment() throws IOException, AuthenticationException {
         CreatePaymentRequest createPaymentRequest = getCreatePaymentRequest();
 
         Payment payment = payments.createPayment(createPaymentRequest);
@@ -21,9 +30,20 @@ class PaymentsTest {
     }
 
     @Test
-    void getPayment() {
-        Payments payments = new Payments();
+    void createAndRetrieveAPayment() throws IOException, AuthenticationException {
+        CreatePaymentRequest createPaymentRequest = getCreatePaymentRequest();
 
+        Payment createdPayment = payments.createPayment(createPaymentRequest);
+
+        assertNotNull(createdPayment);
+
+        Payment retrievedPayment = payments.getPayment(createdPayment.getPaymentId());
+
+        assertEquals(createdPayment.getPaymentId(), retrievedPayment.getPaymentId());
+    }
+
+    @Test
+    void getPayment() throws AuthenticationException {
         Payment payment = payments.getPayment("1");
 
         assertNotNull(payment.getPaymentId());
