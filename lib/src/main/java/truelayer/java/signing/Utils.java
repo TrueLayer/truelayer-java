@@ -13,7 +13,7 @@ public class Utils {
     }
 
     public static String buildPayload(String httpMethod, String path, String body, Map<String, String> headers) {
-        var builder = new StringBuilder(httpMethod + " " + path);
+        var builder = new StringBuilder(httpMethod.toUpperCase() + " " + path);
         if(headers != null)
             builder.append("\n")
                     .append(parseHeaders(headers));

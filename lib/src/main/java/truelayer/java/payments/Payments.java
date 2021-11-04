@@ -29,8 +29,7 @@ public class Payments implements IPayments {
 
     //todo get from a config
     private static final List<String> SCOPES = ImmutableList.of("paydirect");
-    private static final String KID = "7695796e-e718-457d-845b-4a6be00ca454";
-    private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments/";
+    private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
     private IAuthentication authentication;
     private String clientId;
@@ -65,7 +64,7 @@ public class Payments implements IPayments {
 
     public Payment getPayment(String paymentId) throws AuthenticationException {
         var httpRequest = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create(DEV_PAYMENTS_URL + paymentId))
+                .uri(URI.create(DEV_PAYMENTS_URL + "/" + paymentId))
                 .header("Authorization", "Bearer " + getAccessToken())
                 .GET()
                 .build();
@@ -85,7 +84,7 @@ public class Payments implements IPayments {
     private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws IOException, ParseException, JOSEException {
         byte[] privateKey = signingOptions.getPrivateKey();
 
-        return new Signer.Builder(KID, privateKey)
+        return new Signer.Builder(signingOptions.getKeyId(), privateKey)
                 .addHeader("Idempotency-Key", idempotencyKey.toString())
                 .addHttpMethod("post")
                 .addPath(path)
@@ -102,15 +101,15 @@ public class Payments implements IPayments {
         return UUID.randomUUID();
     }
 
-    private AccessToken getAccessToken() throws AuthenticationException {
-        return authentication.getOauthToken(SCOPES);
+    private String getAccessToken() throws AuthenticationException {
+        return authentication.getOauthToken(SCOPES).getAccessToken();
     }
 
-    private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, AccessToken oauthToken) {
+    private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, String accessToken) {
         return Map.of(
                 "Idempotency-Key", idempotencyKey.toString(),
                 "Tl-Signature", signature,
-                "Authorization", "Bearer " + oauthToken.getAccessToken(),
+                "Authorization", "Bearer " + accessToken,
                 org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString(),
                 org.apache.http.HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString()
         );

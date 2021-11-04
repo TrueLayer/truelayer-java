@@ -22,9 +22,9 @@ class PaymentsIntegrationTest {
 
     //todo these are integration tests, we need to mock the external dependency
 
-    private static final String A_CLIENT_ID = "giulioleso-8993c9";
-    private static final String A_SECRET = "66a627c7-abbc-4f9e-9f7c-87673c5b896e";
-    private static final String A_KEY_ID = "a_key_id";
+    private static final String A_CLIENT_ID = "<a_client_id>";
+    private static final String A_SECRET = "<a_client_secret>";
+    private static final String A_KEY_ID = "<a_key_id>";
 
     private static Payments payments;
 
