@@ -9,6 +9,9 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class Verifier {
 
@@ -108,7 +111,7 @@ public class Verifier {
         if(tlHeadersParam == null)
             return false;
 
-        var tlHeadersList = Arrays.stream(tlHeadersParam.toString().split(",")).toList();
+        var tlHeadersList = Arrays.stream(tlHeadersParam.toString().split(",")).collect(toList());
         return tlHeadersList.containsAll(requiredHeaderNames);
     }
 }
