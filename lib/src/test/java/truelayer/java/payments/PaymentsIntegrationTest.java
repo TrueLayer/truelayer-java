@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 import truelayer.java.TestsUtil;
+import truelayer.java.TrueLayerHttpClient;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.exceptions.AuthenticationException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -11,6 +12,7 @@ import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentsException;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,9 +27,14 @@ class PaymentsIntegrationTest {
 
     @BeforeAll
     static void init() {
-        Authentication authentication = Authentication.builder()
+        TrueLayerHttpClient trueLayerHttpClient = TrueLayerHttpClient.builder()
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_SECRET)
+                .httpClient(HttpClient.newHttpClient())
+                .build();
+
+        Authentication authentication = Authentication.builder()
+                .httpClient(trueLayerHttpClient)
                 .build();
 
         payments = Payments.builder()

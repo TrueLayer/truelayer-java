@@ -7,6 +7,8 @@ import truelayer.java.auth.IAuthentication;
 import truelayer.java.payments.IPayments;
 import truelayer.java.payments.Payments;
 
+import java.net.http.HttpClient;
+
 @Builder
 public class TrueLayerClient implements ITrueLayerClient{
 
@@ -18,7 +20,16 @@ public class TrueLayerClient implements ITrueLayerClient{
 
     @Override
     public IAuthentication Auth() {
-        return Authentication.builder().clientId(clientId).clientSecret(clientSecret).build();
+        //todo extract
+        TrueLayerHttpClient trueLayerHttpClient = TrueLayerHttpClient.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .httpClient(HttpClient.newHttpClient())
+                .build();
+
+        return Authentication.builder()
+                .httpClient(trueLayerHttpClient)
+                .build();
     }
 
     @Override

@@ -69,4 +69,10 @@ dependencies {
     //rest template
     implementation group: 'org.springframework', name: 'spring-web', version: '5.3.12'
 
+
+    //mocks
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.0.0'
+    testImplementation group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.8.1'
+
+
 }
