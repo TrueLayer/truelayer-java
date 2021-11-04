@@ -64,6 +64,7 @@ class PaymentsIntegrationTest {
                 .user(CreatePaymentRequest.User.builder()
                         .name("Andrea")
                         .type("new")
+                        .email("andrea@truelayer.com") // if we don't set this one we get a signature check failure. todo: provide feedback to payments api
                         .build())
                 .build();
 
