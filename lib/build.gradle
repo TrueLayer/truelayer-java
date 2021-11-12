@@ -6,6 +6,9 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 
+version = '0.1.9'
+archivesBaseName = 'truelayer-java'
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
