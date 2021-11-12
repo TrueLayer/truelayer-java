@@ -1,84 +1,75 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@Setter
+@Builder
 @Getter
+@JsonInclude(Include.NON_NULL)
 public class CreatePaymentRequest {
 
-    @SerializedName("amount_in_minor")
+    @JsonProperty("amount_in_minor")
     private int amountInMinor;
 
-    @SerializedName("currency")
     private String currency;
 
-    @SerializedName("payment_method")
-    private PaymentMethod paymentMethod;
+    @JsonProperty("payment_method")
+    private Method paymentMethod;
 
-    @SerializedName("beneficiary")
-    private PaymentBeneficiary beneficiary;
+    private Beneficiary beneficiary;
 
-    @SerializedName("user")
-    private PaymentUser user;
+    private User user;
 
-    @Setter
+    @Builder
     @Getter
-    public static class PaymentMethod {
+    @JsonInclude(Include.NON_NULL)
+    public static class Method {
 
-        @SerializedName("type")
-        private String type;
+        private String type; //todo: enum ?
 
-        public PaymentMethod(String type) {
-            this.type = type;
-        }
+        @JsonProperty("statement_reference")
+        private String statementReference;
+
+        @JsonProperty("provider_filter")
+        private ProviderFilter providerFilter;
+
+
     }
 
-    @Setter
+    @Builder
+    @JsonInclude(Include.NON_NULL)
+    public static class ProviderFilter{
+        @JsonProperty("release_channel")
+        private String releaseChannel;
+        //todo complete
+    }
+
+    @Builder
     @Getter
-    public static class PaymentBeneficiary {
+    @JsonInclude(Include.NON_NULL)
+    public static class Beneficiary {
 
-        @SerializedName("type")
-        private String type;
+        private String type; //todo: enum ?
 
-        @SerializedName("id")
         private String id;
 
-        @JsonInclude(Include.NON_NULL)
-        @SerializedName("name")
         private String name;
-
-        public PaymentBeneficiary(String type, String id) {
-            this.type = type;
-            this.id = id;
-        }
     }
 
-    @Setter
+    @Builder
     @Getter
-    public static class PaymentUser {
+    @JsonInclude(Include.NON_NULL)
+    public static class User {
 
-        @SerializedName("type")
         private String type;
 
-        @SerializedName("name")
         private String name;
 
-        @SerializedName("email")
-        @JsonInclude(Include.NON_NULL)
         private String email;
 
-        @JsonInclude(Include.NON_NULL)
-        @SerializedName("phone")
         private String phone;
-
-        public PaymentUser(String type, String name) {
-            this.type = type;
-            this.name = name;
-        }
     }
 }

@@ -1,16 +1,16 @@
 package truelayer.java.auth.entities;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 @Value
 public class AccessToken {
-    @SerializedName("access_token")
+    @JsonProperty("access_token")
     String accessToken;
-    @SerializedName("expires_in")
+    @JsonProperty("expires_in")
     int expiresIn;
-    @SerializedName("scope")
+    @JsonProperty("scope")
     String scope;
-    @SerializedName("token_type")
+    @JsonProperty("token_type")
     String tokenType;
 }
