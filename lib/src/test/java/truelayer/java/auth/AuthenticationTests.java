@@ -1,6 +1,7 @@
 package truelayer.java.auth;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ public class AuthenticationTests {
         assertEquals(token.getExpiresIn(), expiresIn);
     }
 
-    private String getAccessTokenJsonString() {
-        return new Gson().toJson(new AccessToken(accessToken, expiresIn, scope, tokenType));
+    private String getAccessTokenJsonString() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(new AccessToken(accessToken, expiresIn, scope, tokenType));
     }
 }
