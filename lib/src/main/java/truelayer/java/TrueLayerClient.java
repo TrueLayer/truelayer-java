@@ -1,7 +1,6 @@
 package truelayer.java;
 
 import lombok.Builder;
-import org.springframework.web.client.RestTemplate;
 import truelayer.java.auth.Authentication;
 import truelayer.java.auth.IAuthentication;
 import truelayer.java.payments.IPayments;
@@ -19,7 +18,7 @@ public class TrueLayerClient implements ITrueLayerClient{
     private SigningOptions signingOptions;
 
     @Override
-    public IAuthentication Auth() {
+    public IAuthentication auth() {
         //todo extract
         TrueLayerHttpClient trueLayerHttpClient = TrueLayerHttpClient.builder()
                 .clientId(clientId)
@@ -33,23 +32,12 @@ public class TrueLayerClient implements ITrueLayerClient{
     }
 
     @Override
-    public IPayments Payments() {
+    public IPayments payments() {
         return Payments.builder()
-                .authentication(Auth())
+                .authentication(auth())
                 .clientId(clientId)
                 .clientSecret(clientSecret)
-                .restTemplate(new RestTemplate())
+                .signingOptions(signingOptions)
                 .build();
-    }
-
-    /**
-     * Optional configuration used for signed requests only.
-     */
-    @Builder
-    static class SigningOptions {
-        private String keyId;
-
-        //todo: use a proper type
-        private String privateKey;
     }
 }
