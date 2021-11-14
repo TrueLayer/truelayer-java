@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 
-public interface IPayments {
+public interface IPaymentHandler {
 
     Payment createPayment(CreatePaymentRequest request) throws IOException, URISyntaxException, InterruptedException, AuthenticationException, ParseException, JOSEException;
 }

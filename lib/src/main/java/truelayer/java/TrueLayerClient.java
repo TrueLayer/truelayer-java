@@ -1,42 +1,32 @@
 package truelayer.java;
 
 import lombok.Builder;
-import truelayer.java.auth.Authentication;
-import truelayer.java.auth.IAuthentication;
-import truelayer.java.payments.IPayments;
-import truelayer.java.payments.Payments;
-
-import java.net.http.HttpClient;
+import truelayer.java.auth.AuthenticationHandler;
+import truelayer.java.auth.IAuthenticationHandler;
+import truelayer.java.auth.IAuthenticationApi;
+import truelayer.java.payments.IPaymentHandler;
+import truelayer.java.payments.PaymentHandler;
 
 @Builder
 public class TrueLayerClient implements ITrueLayerClient{
-
-    private String clientId;
-
-    private String clientSecret;
-
+    private ClientCredentialsOptions clientCredentialsOptions;
     private SigningOptions signingOptions;
 
     @Override
-    public IAuthentication auth() {
-        //todo extract
-        TrueLayerHttpClient trueLayerHttpClient = TrueLayerHttpClient.builder()
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .httpClient(HttpClient.newHttpClient())
-                .build();
+    public IAuthenticationHandler auth() {
+        var authenticationApi = HttpClientFactory.getInstance()
+                .create("https://auth.t7r.dev").create(IAuthenticationApi.class);
 
-        return Authentication.builder()
-                .httpClient(trueLayerHttpClient)
+        return AuthenticationHandler.builder()
+                .authenticationApi(authenticationApi)
+                .clientCredentialsOptions(clientCredentialsOptions)
                 .build();
     }
 
     @Override
-    public IPayments payments() {
-        return Payments.builder()
-                .authentication(auth())
-                .clientId(clientId)
-                .clientSecret(clientSecret)
+    public IPaymentHandler payments() {
+        return PaymentHandler.builder()
+                .authenticationHandler(auth())
                 .signingOptions(signingOptions)
                 .build();
     }

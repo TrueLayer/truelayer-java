@@ -37,6 +37,11 @@ dependencies {
 
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+
+
     //Jws library support
     implementation("com.nimbusds:nimbus-jose-jwt:9.15.2")
 
@@ -48,5 +53,6 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.0.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.0.0'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.0.0'
 }
