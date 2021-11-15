@@ -1,19 +1,16 @@
 package truelayer.java.auth;
 
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.TrueLayerException;
+import truelayer.java.auth.entities.AccessToken;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import static java.util.List.of;
-import static org.junit.jupiter.api.Assertions.*;
-import static retrofit2.Response.error;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static retrofit2.Response.success;
 import static truelayer.java.TestUtils.getClientCredentialsOptions;
 import static truelayer.java.TestUtils.stubApiResponse;
