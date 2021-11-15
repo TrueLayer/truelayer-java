@@ -23,7 +23,7 @@ public class HttpClientFactory implements IHttpClientFactory {
         var clientBuilder = new OkHttpClient.Builder()
                 .followRedirects(true);
 
-        //todo replace with non deprecated implementation
+        //todo replace with non deprecated or custom implementation
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(interceptor);
