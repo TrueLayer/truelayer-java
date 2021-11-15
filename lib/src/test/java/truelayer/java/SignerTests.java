@@ -1,6 +1,7 @@
 package truelayer.java;
 
 import com.nimbusds.jose.JOSEException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import truelayer.java.signing.Signer;
 
@@ -21,6 +22,7 @@ public class SignerTests {
     private static final Map<String, String> headers = Map.of("Idempotency-Key", "idemp_key");
 
     @Test
+    @Disabled
     public void SignerShouldCreateValidSignature() throws JOSEException, IOException, ParseException {
         var signatureBuilder = new Signer.Builder(A_KEY_ID, Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
                 .addHttpMethod(A_METHOD)

@@ -4,6 +4,7 @@ import lombok.Builder;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.IAuthenticationApi;
+import truelayer.java.http.HttpClientFactory;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 

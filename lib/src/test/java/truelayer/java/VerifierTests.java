@@ -1,6 +1,7 @@
 package truelayer.java;
 
 import com.nimbusds.jose.JOSEException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import truelayer.java.signing.Signer;
 import truelayer.java.signing.Verifier;
@@ -23,6 +24,7 @@ public class VerifierTests {
     private static final Map<String, String> headers = Map.of("Idempotency-Key", "idemp_key");
 
     @Test
+    @Disabled
     public void VerifierShouldVerifyStaticSignature() throws JOSEException, IOException, ParseException {
         var verifierBuilder = new Verifier.Builder(A_KEY_ID, A_SIGNATURE, Files.readAllBytes(Path.of("src/test/resources/ec512-public-key.pem")))
                 .addHttpMethod(A_METHOD)
@@ -34,6 +36,7 @@ public class VerifierTests {
     }
 
     @Test
+    @Disabled
     public void VerifierShouldVerifyGeneratedSignature() throws JOSEException, IOException, ParseException {
         var signatureBuilder = new Signer.Builder(A_KEY_ID, Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
                 .addHttpMethod(A_METHOD)

@@ -1,25 +1,23 @@
 package truelayer.java;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.auth.exceptions.AuthenticationException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
-@Disabled
 public class TrueLayerClientTests {
 
     public static final String A_CLIENT_ID = "<a_client_id>";
     public static final String A_CLIENT_SECRET = "<a_client_secret>";
 
+    @Disabled
     @Test
     @DisplayName("It should yield an authentication client")
-    public void itShouldBuildAnAuthenticationClient() throws AuthenticationException, IOException {
+    @SneakyThrows
+    public void itShouldBuildAnAuthenticationClient() {
         //Given
        var trueLayerClient = TrueLayerClient.builder()
                 .clientCredentialsOptions(ClientCredentialsOptions.builder().clientId(A_CLIENT_ID).clientSecret(A_CLIENT_SECRET).build())
@@ -32,9 +30,11 @@ public class TrueLayerClientTests {
         Assertions.assertNotNull(token);
     }
 
+    @Disabled
     @Test
     @DisplayName("It should yield a payment client")
-    public void itShouldBuildAPaymentClient() throws IOException {
+    @SneakyThrows
+    public void itShouldBuildAPaymentClient() {
         //Given
        /* var trueLayerClient = TrueLayerClient.builder()
                 .clientId(A_CLIENT_ID)

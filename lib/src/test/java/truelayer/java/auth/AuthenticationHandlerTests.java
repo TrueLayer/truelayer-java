@@ -6,7 +6,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import truelayer.java.TrueLayerException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -24,7 +24,7 @@ public class AuthenticationHandlerTests {
 
     @Test
     @DisplayName("It should yield and access token if correct credentials are supplied")
-    public void itShouldYieldAnAccessToken() throws IOException, AuthenticationException {
+    public void itShouldYieldAnAccessToken() throws IOException, TrueLayerException {
         var token = AccessToken.builder()
                 .accessToken(UUID.randomUUID().toString())
                 .expiresIn(RandomUtils.nextInt()) //todo possibly remove apache commons?
@@ -39,22 +39,5 @@ public class AuthenticationHandlerTests {
         var oauthToken = authentication.getOauthToken(of(A_SCOPE));
 
         assertEquals(token, oauthToken);
-    }
-
-    @Test
-    @DisplayName("It should throw an authentication exception if a 400 is returned by the token endpoint")
-    public void itShouldThrowAnAuthenticationException() {
-        AuthenticationHandler authentication = new AuthenticationHandler(
-                (clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(error(400, ResponseBody.create("{\"error\": \"invalid_client\"}", MediaType.parse("application/json")))),
-                getClientCredentialsOptions()
-        );
-
-        var exception = assertThrows(AuthenticationException.class, () -> {
-            authentication.getOauthToken(of(A_SCOPE));
-        });
-
-        assertNotNull(exception);
-        assertTrue(exception.getMessage().contains("invalid_client"));
     }
 }

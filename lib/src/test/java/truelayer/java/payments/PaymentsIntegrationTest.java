@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.AuthenticationHandler;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentException;
@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.getClientCredentialsOptions;
 
 //todo review this completely
-@Disabled
 class PaymentsIntegrationTest {
     //todo these are integration tests, we need to mock the external dependency
 
@@ -56,7 +55,8 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void getToken() throws AuthenticationException, IOException {
+    @Disabled
+    void getToken() throws TrueLayerException, IOException {
         var authenticationHandler = AuthenticationHandler.builder()
                 .authenticationApi((clientId, clientSecret, grantType, scopes) -> null)
                 .clientCredentialsOptions(getClientCredentialsOptions())
@@ -68,7 +68,8 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void createPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+    @Disabled
+    void createPayment() throws IOException, TrueLayerException, ParseException, JOSEException {
         var paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(101)
                 .currency("GBP")
@@ -93,7 +94,8 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void createAndRetrieveAPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+    @Disabled
+    void createAndRetrieveAPayment() throws IOException, TrueLayerException, ParseException, JOSEException {
         // Given
         var paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(101)
@@ -121,6 +123,7 @@ class PaymentsIntegrationTest {
     }
 
     @Test
+    @Disabled
     void getPaymentExceptionWhenTryingToGetMissingPayment() {
         //when
         PaymentException exception = assertThrows(PaymentException.class, () -> {

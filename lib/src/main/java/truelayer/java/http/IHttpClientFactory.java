@@ -1,4 +1,4 @@
-package truelayer.java;
+package truelayer.java.http;
 
 import retrofit2.Retrofit;
 

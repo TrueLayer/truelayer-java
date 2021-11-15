@@ -1,7 +1,7 @@
 package truelayer.java.payments;
 
 import com.nimbusds.jose.JOSEException;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
@@ -11,5 +11,5 @@ import java.text.ParseException;
 
 public interface IPaymentHandler {
 
-    Payment createPayment(CreatePaymentRequest request) throws IOException, URISyntaxException, InterruptedException, AuthenticationException, ParseException, JOSEException;
+    Payment createPayment(CreatePaymentRequest request) throws IOException, URISyntaxException, InterruptedException, TrueLayerException, ParseException, JOSEException;
 }

@@ -7,7 +7,7 @@ import lombok.Builder;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentException;
@@ -33,7 +33,7 @@ public class PaymentHandler implements IPaymentHandler {
     private SigningOptions signingOptions;
 
     @Override
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException, ParseException, JOSEException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, TrueLayerException, ParseException, JOSEException {
         UUID idempotencyKey = generateIdempotencyKey();
 
         String createRequestJsonString = requestToJsonString(createPaymentRequest);
@@ -58,7 +58,7 @@ public class PaymentHandler implements IPaymentHandler {
         }
     }
 
-    public Payment getPayment(String paymentId) throws AuthenticationException, IOException {
+    public Payment getPayment(String paymentId) throws TrueLayerException, IOException {
         var httpRequest = java.net.http.HttpRequest.newBuilder()
                 .uri(URI.create(DEV_PAYMENTS_URL + "/" + paymentId))
                 .header("Authorization", "Bearer " + getAccessToken())
@@ -97,7 +97,7 @@ public class PaymentHandler implements IPaymentHandler {
         return UUID.randomUUID();
     }
 
-    private String getAccessToken() throws AuthenticationException, IOException {
+    private String getAccessToken() throws TrueLayerException, IOException {
         return authenticationHandler.getOauthToken(SCOPES).getAccessToken();
     }
 
