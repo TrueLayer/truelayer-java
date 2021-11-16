@@ -9,9 +9,6 @@ import truelayer.java.http.HttpClientFactory;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
-
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
