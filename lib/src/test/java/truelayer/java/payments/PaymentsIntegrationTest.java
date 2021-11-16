@@ -1,55 +1,73 @@
 package truelayer.java.payments;
 
 import com.nimbusds.jose.JOSEException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import truelayer.java.SigningOptions;
-import truelayer.java.auth.Authentication;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import org.junit.jupiter.api.*;
+import truelayer.java.auth.AuthenticationHandler;
+import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
-import truelayer.java.payments.exception.PaymentsException;
+import truelayer.java.payments.exception.PaymentException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.ParseException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static truelayer.java.TestUtils.getClientCredentialsOptions;
 
+//todo review this completely
+@Tag("integration")
 class PaymentsIntegrationTest {
-
     //todo these are integration tests, we need to mock the external dependency
 
     private static final String A_CLIENT_ID = "<a_client_id>";
     private static final String A_SECRET = "<a_client_secret>";
     private static final String A_KEY_ID = "<a_key_id>";
 
-    private static Payments payments;
+    private static PaymentHandler payments;
 
     @BeforeAll
     static void init() throws IOException {
-        var signingOptions = SigningOptions.builder()
+       /* var signingOptions = SigningOptions.builder()
                 .privateKey(Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
                 .keyId(A_KEY_ID)
                 .build();
-
-        Authentication authentication = Authentication.builder()
+        TrueLayerHttpClient trueLayerHttpClient = TrueLayerHttpClient.builder()
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_SECRET)
-                .build();
+                .httpClient(HttpClient.newHttpClient())
+                .build();*/
 
-        payments = Payments.builder()
+        /*Authentication authentication = Authentication.builder()
+                .clientId(A_CLIENT_ID)
+                .clientSecret(A_SECRET)
+                .build();*/
+
+       /* payments = Payments.builder()
                 .authentication(authentication)
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_SECRET)
                 .signingOptions(signingOptions)
-                .build();
+                .build();*/
     }
 
     @Test
-    void createPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+    @Disabled
+    void getToken() throws TrueLayerException, IOException {
+        var authenticationHandler = AuthenticationHandler.builder()
+                .authenticationApi((clientId, clientSecret, grantType, scopes) -> null)
+                .clientCredentialsOptions(getClientCredentialsOptions())
+                .build();
+
+
+        var oauthToken = authenticationHandler.getOauthToken(List.of("paydirect"));
+        Assertions.assertEquals("", oauthToken.getAccessToken());
+    }
+
+    @Test
+    @Disabled
+    void createPayment() throws IOException, TrueLayerException, ParseException, JOSEException {
         var paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(101)
                 .currency("GBP")
@@ -74,7 +92,8 @@ class PaymentsIntegrationTest {
     }
 
     @Test
-    void createAndRetrieveAPayment() throws IOException, AuthenticationException, ParseException, JOSEException {
+    @Disabled
+    void createAndRetrieveAPayment() throws IOException, TrueLayerException, ParseException, JOSEException {
         // Given
         var paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(101)
@@ -102,9 +121,10 @@ class PaymentsIntegrationTest {
     }
 
     @Test
+    @Disabled
     void getPaymentExceptionWhenTryingToGetMissingPayment() {
         //when
-        PaymentsException exception = assertThrows(PaymentsException.class, () -> {
+        PaymentException exception = assertThrows(PaymentException.class, () -> {
             payments.getPayment("1");
         });
 
