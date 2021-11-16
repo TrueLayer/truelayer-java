@@ -36,7 +36,7 @@ public class IntegrationTests {
         stubFor(
                 post("/connect/token").willReturn(
                         badRequest()
-                                .withBodyFile("400.invalid_client.json")
+                                .withBodyFile("auth/400.invalid_client.json")
                 )
         );
 
@@ -53,7 +53,7 @@ public class IntegrationTests {
     public void shouldReturnAnAccessToken() {
         stubFor(
                 post("/connect/token").willReturn(
-                        ok().withBodyFile("200.access_token.json")
+                        ok().withBodyFile("auth/200.access_token.json")
                 )
         );
 
