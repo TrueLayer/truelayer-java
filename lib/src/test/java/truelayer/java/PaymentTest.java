@@ -10,6 +10,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import truelayer.java.signing.Signer;
 //import truelayer.signing.Signer;
@@ -19,6 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
 
+@Disabled
+@Tag("integration")
+//todo review this completely
 public class PaymentTest {
 
     static String KID = "7695796e-e718-457d-845b-4a6be00ca454";

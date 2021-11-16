@@ -71,6 +71,20 @@ var payment = client
 
 ## Building locally
 
+## Testing
+### Unit tests
+
+To run unit tests: 
+```
+./gradlew unit-tests
+```
+
+### Integration tests
+
+To run integration tests:
+```
+./gradlew integration-tests
+```
 
 ## Library Documentation
 

@@ -6,11 +6,11 @@ import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
-import truelayer.java.auth.IAuthentication;
-import truelayer.java.auth.exceptions.AuthenticationException;
+import truelayer.java.auth.IAuthenticationHandler;
+import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
-import truelayer.java.payments.exception.PaymentsException;
+import truelayer.java.payments.exception.PaymentException;
 import truelayer.java.signing.Signer;
 
 import java.io.IOException;
@@ -23,19 +23,17 @@ import java.util.Map;
 import java.util.UUID;
 
 @Builder
-public class Payments implements IPayments {
+public class PaymentHandler implements IPaymentHandler {
 
-    //todo get from a config
+    //todo make this configurable/flexible
     private static final List<String> SCOPES = List.of("paydirect");
     private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
 
-    private IAuthentication authentication;
-    private String clientId;
-    private String clientSecret;
+    private IAuthenticationHandler authenticationHandler;
     private SigningOptions signingOptions;
 
     @Override
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, AuthenticationException, ParseException, JOSEException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, TrueLayerException, ParseException, JOSEException {
         UUID idempotencyKey = generateIdempotencyKey();
 
         String createRequestJsonString = requestToJsonString(createPaymentRequest);
@@ -52,15 +50,15 @@ public class Payments implements IPayments {
         try {
             var response = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() >= 400)
-                throw new PaymentsException(String.valueOf(response.statusCode()), response.body());
+                throw new PaymentException(String.valueOf(response.statusCode()), response.body());
 
             return new ObjectMapper().readValue(response.body(), Payment.class);
         } catch (Exception e) {
-            throw new PaymentsException(e);
+            throw new PaymentException(e);
         }
     }
 
-    public Payment getPayment(String paymentId) throws AuthenticationException {
+    public Payment getPayment(String paymentId) throws TrueLayerException, IOException {
         var httpRequest = java.net.http.HttpRequest.newBuilder()
                 .uri(URI.create(DEV_PAYMENTS_URL + "/" + paymentId))
                 .header("Authorization", "Bearer " + getAccessToken())
@@ -70,16 +68,16 @@ public class Payments implements IPayments {
         try {
             var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if(response.statusCode() >= 400)
-                throw new PaymentsException(String.valueOf(response.statusCode()), response.body());
+                throw new PaymentException(String.valueOf(response.statusCode()), response.body());
 
             return new ObjectMapper().readValue(response.body(), Payment.class);
         } catch (Exception e) {
-            throw new PaymentsException(e);
+            throw new PaymentException(e);
         }
     }
 
 
-    private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws IOException, ParseException, JOSEException {
+    private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws ParseException, JOSEException {
         byte[] privateKey = signingOptions.getPrivateKey();
 
         return new Signer.Builder(signingOptions.getKeyId(), privateKey)
@@ -99,8 +97,8 @@ public class Payments implements IPayments {
         return UUID.randomUUID();
     }
 
-    private String getAccessToken() throws AuthenticationException {
-        return authentication.getOauthToken(SCOPES).getAccessToken();
+    private String getAccessToken() throws TrueLayerException, IOException {
+        return authenticationHandler.getOauthToken(SCOPES).getAccessToken();
     }
 
     private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, String accessToken) {

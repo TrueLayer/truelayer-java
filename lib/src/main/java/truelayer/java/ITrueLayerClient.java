@@ -1,10 +1,10 @@
 package truelayer.java;
 
-import truelayer.java.auth.IAuthentication;
-import truelayer.java.payments.IPayments;
+import truelayer.java.auth.IAuthenticationHandler;
+import truelayer.java.payments.IPaymentHandler;
 
 public interface ITrueLayerClient {
-    IAuthentication auth();
+    IAuthenticationHandler auth();
 
-    IPayments payments();
+    IPaymentHandler payments();
 }

@@ -1,0 +1,6 @@
+{
+  "access_token": "eyJ***",
+  "expires_in": 3600,
+  "scope": "accounts balance beneficiaries cards direct_debits info paydirect paydirect:read payments payouts products standing_orders tracking transactions",
+  "token_type": "Bearer"
+}
