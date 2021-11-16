@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+//todo review to exclude fs references
 public class SignerTests {
 
     private static final String A_PAYLOAD = "{\"foo\":\"bar\"}";

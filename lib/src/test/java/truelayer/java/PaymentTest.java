@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 
 @Disabled
+//todo review this completely
 public class PaymentTest {
 
     static String KID = "7695796e-e718-457d-845b-4a6be00ca454";

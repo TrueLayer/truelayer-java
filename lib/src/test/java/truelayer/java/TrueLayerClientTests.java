@@ -6,49 +6,25 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 public class TrueLayerClientTests {
 
-    public static final String A_CLIENT_ID = "<a_client_id>";
-    public static final String A_CLIENT_SECRET = "<a_client_secret>";
-
-    @Disabled
     @Test
-    @DisplayName("It should yield an authentication client")
+    @DisplayName("It should yield an authentication handler")
     @SneakyThrows
-    public void itShouldBuildAnAuthenticationClient() {
-        //Given
+    public void itShouldBuildAnAuthenticationHandler() {
        var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(ClientCredentialsOptions.builder().clientId(A_CLIENT_ID).clientSecret(A_CLIENT_SECRET).build())
+                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .build();
 
-        //When
-        var token = trueLayerClient.auth().getOauthToken(List.of("paydirect"));
+        var auth = trueLayerClient.auth();
 
-        //Then
-        Assertions.assertNotNull(token);
+        Assertions.assertNotNull(auth);
     }
 
     @Disabled
     @Test
-    @DisplayName("It should yield a payment client")
-    @SneakyThrows
+    @DisplayName("It should yield a payment handler")
     public void itShouldBuildAPaymentClient() {
-        //Given
-       /* var trueLayerClient = TrueLayerClient.builder()
-                .clientId(A_CLIENT_ID)
-                .clientSecret(A_CLIENT_SECRET)
-                .signingOptions(SigningOptions.builder()
-                        .keyId("my-key-id")
-                        .privateKey(Files.readAllBytes(Path.of("src/test/resources/ec512-private-key.pem")))
-                        .build())
-                .build();
-
-        //When
-        var payments = trueLayerClient.payments();
-
-        //Then
-        Assertions.assertNotNull(payments);*/
+        //todo
     }
 }

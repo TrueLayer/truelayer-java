@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+//todo review to exclude fs references
 public class VerifierTests {
 
     private static final String A_SIGNATURE = "eyJhbGciOiJFUzUxMiIsImtpZCI6ImFfa2V5X2lkIiwidGxfdmVyc2lvbiI6IjIiLCJ0bF9oZWFkZXJzIjoiSWRlbXBvdGVuY3ktS2V5In0=..Aam_czHB89OBWZux0BVYwEIrhoZFfFYJFJoX4T0WvGAO79LWdbLs472HzfWVhQzGstPOr3gMWSQxL682baocWmbkAcOVY7oGOvtM7DbTJ40SFUolEhP7KCJFzcLqxViBAgaIEOw-bFogHL3BirrFJcobi_xS2m_rT2TDlaBm5wby0NYG";
