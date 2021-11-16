@@ -11,6 +11,7 @@ public class AccessToken {
     String accessToken;
     @JsonProperty("expires_in")
     int expiresIn;
+    @JsonProperty("scope")
     String scope;
     @JsonProperty("token_type")
     String tokenType;
