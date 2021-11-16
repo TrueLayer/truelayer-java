@@ -3,43 +3,69 @@ package truelayer.java;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @WireMockTest
 public class IntegrationTests {
 
-    TrueLayerClient tlClient;
+    private TrueLayerClient tlClient;
 
     @SneakyThrows
     @BeforeEach
-    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo){
+    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         tlClient = TrueLayerClient.builder()
                 .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .build();
 
+        // don't try this at home
         writeField(tlClient, "endpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
     }
 
     @Test
-    public void shouldReturnAnUnauthorizedError(){
-        stubFor(post("/connect/token").willReturn(unauthorized()));
+    @DisplayName("It should throw a TrueLayer exception in case on an authorized error from the auth API.")
+    public void shouldThrowAnUnauthorizedError() {
+        stubFor(
+                post("/connect/token").willReturn(
+                        badRequest()
+                                .withBodyFile("400.invalid_client.json")
+                )
+        );
 
         var thrown = Assertions.assertThrows(TrueLayerException.class,
-                ()-> tlClient.auth().getOauthToken(List.of("paydirect")));
+                () -> tlClient.auth().getOauthToken(List.of("paydirect")));
 
         assertNotNull(thrown);
+        assertTrue(thrown.getMessage().contains("\"error\": \"invalid_client\""));
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should yield an access token in case of 200")
+    public void shouldReturnAnAccessToken() {
+        stubFor(
+                post("/connect/token").willReturn(
+                        ok().withBodyFile("200.access_token.json")
+                )
+        );
+
+        var accessToken = tlClient.auth().getOauthToken(List.of("paydirect"));
+
+        assertNotNull(accessToken);
+        assertTrue(!accessToken.getAccessToken().isEmpty());
+        assertTrue(!accessToken.getTokenType().isEmpty());
+        assertTrue(!accessToken.getScope().isEmpty());
+        assertTrue(accessToken.getExpiresIn() > 0);
     }
 
 }
