@@ -17,6 +17,6 @@ jobs:
       - name: Build
         run: ./gradlew build -x test
       - name: Unit tests
-          run: ./gradlew unit-test
+        run: ./gradlew unit-testa
       - name: Integration tests
-          run: ./gradlew integration-test
+        run: ./gradlew integration-tests
