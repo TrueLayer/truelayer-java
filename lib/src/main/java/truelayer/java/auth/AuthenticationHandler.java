@@ -3,7 +3,6 @@ package truelayer.java.auth;
 import lombok.Builder;
 import truelayer.java.ClientCredentialsOptions;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.TrueLayerException;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,11 +20,5 @@ public class AuthenticationHandler implements IAuthenticationHandler {
                         ClientCredentialsOptions.GRANT_TYPE,
                         scopes)
                 .execute().body();
-/*
-        //todo extract to a more generic error handling logic
-        if (oauthTokenResponse.isSuccessful()) {
-            return oauthTokenResponse.body();
-        }
-        throw new AuthenticationException(oauthTokenResponse.errorBody().string());*/
     }
 }
