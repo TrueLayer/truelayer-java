@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @WireMockTest
-@Tag("IntegrationTest")
+@Tag("integration")
 public class IntegrationTests {
 
     private TrueLayerClient tlClient;

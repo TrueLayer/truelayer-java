@@ -20,8 +20,7 @@ public class HttpClientFactory implements IHttpClientFactory {
 
     @Override
     public Retrofit create(String baseUrl) {
-        var clientBuilder = new OkHttpClient.Builder()
-                .followRedirects(true);
+        var clientBuilder = new OkHttpClient.Builder();
 
         //todo replace with non deprecated or custom implementation
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

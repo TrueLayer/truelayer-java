@@ -19,7 +19,7 @@ public class ErrorHandlerInterceptor implements Interceptor {
             //todo avoid sending original messages as they may leak sensible info
             throw new TrueLayerException(exception.getMessage());
         }
-        if(!response.isSuccessful() && !response.isRedirect()){
+        if(!response.isSuccessful()){
             throw new TrueLayerException(response.body() != null ? response.body().string() : "");
         }
 

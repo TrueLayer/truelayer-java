@@ -1,10 +1,7 @@
 package truelayer.java.payments;
 
 import com.nimbusds.jose.JOSEException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.CreatePaymentRequest;
@@ -20,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.getClientCredentialsOptions;
 
 //todo review this completely
+@Tag("integration")
 class PaymentsIntegrationTest {
     //todo these are integration tests, we need to mock the external dependency
 
