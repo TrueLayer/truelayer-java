@@ -3,10 +3,7 @@ package truelayer.java;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -17,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @WireMockTest
+@Tag("IntegrationTest")
 public class IntegrationTests {
 
     private TrueLayerClient tlClient;
