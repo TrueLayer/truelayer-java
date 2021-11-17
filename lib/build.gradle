@@ -10,7 +10,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
-version = '0.2.1-pre3'
+version = '0.2.1-pre4'
 archivesBaseName = 'truelayer-java'
 
 shadowJar {
