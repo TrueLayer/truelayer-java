@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
+import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
@@ -32,8 +33,9 @@ public class PaymentHandler implements IPaymentHandler {
     private IAuthenticationHandler authenticationHandler;
     private SigningOptions signingOptions;
 
+    @SneakyThrows
     @Override
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) throws IOException, TrueLayerException, ParseException, JOSEException {
+    public Payment createPayment(CreatePaymentRequest createPaymentRequest) {
         UUID idempotencyKey = generateIdempotencyKey();
 
         String createRequestJsonString = requestToJsonString(createPaymentRequest);
