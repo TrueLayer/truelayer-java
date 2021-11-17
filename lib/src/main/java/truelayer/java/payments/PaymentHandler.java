@@ -49,22 +49,6 @@ public class PaymentHandler implements IPaymentHandler {
                 buildAuthorizationHeader(oauthToken.getAccessToken()),
                 paymentId
         ).execute().body();
-/*
-        var httpRequest = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create("DEV_PAYMENTS_URL" + "/" + paymentId))
-                .header("Authorization", "Bearer " + buildAuthorizationHeader(""))
-                .GET()
-                .build();
-        var httpClient = HttpClient.newHttpClient();
-        try {
-            var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 400)
-                throw new PaymentException(String.valueOf(response.statusCode()), response.body());
-
-            return new ObjectMapper().readValue(response.body(), Payment.class);
-        } catch (Exception e) {
-            throw new PaymentException(e);
-        }*/
     }
 
 
