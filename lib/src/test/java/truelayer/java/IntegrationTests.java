@@ -25,10 +25,13 @@ public class IntegrationTests {
     public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         tlClient = TrueLayerClient.builder()
                 .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
         // don't try this at home
-        writeField(tlClient, "endpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
+        writeField(tlClient, "authEndpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
+        writeField(tlClient, "paymentsEndpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
+
     }
 
     @Test
@@ -67,6 +70,7 @@ public class IntegrationTests {
         assertTrue(accessToken.getExpiresIn() > 0);
     }
 
+    @Disabled
     @Test
     @DisplayName("It should return a payment in case of 200")
     public void shouldReturnAPayment(){

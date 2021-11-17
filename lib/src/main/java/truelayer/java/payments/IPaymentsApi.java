@@ -12,7 +12,7 @@ public interface IPaymentsApi {
     @POST("/payments")
     Call<Payment> createPayment(
             @Header("Idempotency-Key") String idempotencyKey,
-            @Header("Signature") String signature,
+            @Header("Tl-Signature") String signature,
             @Header("Authorization") String authorization,
             @Body CreatePaymentRequest body);
 }

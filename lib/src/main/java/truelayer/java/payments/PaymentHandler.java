@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
-import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.TrueLayerException;
+import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.payments.exception.PaymentException;
@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,28 +38,16 @@ public class PaymentHandler implements IPaymentHandler {
     @SneakyThrows
     @Override
     public Payment createPayment(CreatePaymentRequest createPaymentRequest) {
-        UUID idempotencyKey = generateIdempotencyKey();
+        var idempotencyKey = UUID.randomUUID().toString();
+        var createRequestJsonString = requestToJsonString(createPaymentRequest);
+        var signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
-        String createRequestJsonString = requestToJsonString(createPaymentRequest);
-
-        String signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
-
-        var httpRequestBuilder = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create("DEV_PAYMENTS_URL"))
-                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(createRequestJsonString));
-        var headers = getPaymentCreationHttpHeaders(idempotencyKey, signature, getAccessToken());
-        headers.forEach(httpRequestBuilder::header);
-
-        var httpClient = HttpClient.newHttpClient();
-        try {
-            var response = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() >= 400)
-                throw new PaymentException(String.valueOf(response.statusCode()), response.body());
-
-            return new ObjectMapper().readValue(response.body(), Payment.class);
-        } catch (Exception e) {
-            throw new PaymentException(e);
-        }
+        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        return paymentsApi.createPayment(idempotencyKey,
+                        signature,
+                        new StringBuilder("Bearer").append(" ").append(oauthToken.getAccessToken()).toString(),
+                        createPaymentRequest)
+                .execute().body();
     }
 
     public Payment getPayment(String paymentId) throws TrueLayerException, IOException {
@@ -70,7 +59,7 @@ public class PaymentHandler implements IPaymentHandler {
         var httpClient = HttpClient.newHttpClient();
         try {
             var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() >= 400)
+            if (response.statusCode() >= 400)
                 throw new PaymentException(String.valueOf(response.statusCode()), response.body());
 
             return new ObjectMapper().readValue(response.body(), Payment.class);
@@ -80,11 +69,11 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
 
-    private String signRequest(UUID idempotencyKey, String jsonRequest, String path) throws ParseException, JOSEException {
+    private String signRequest(String idempotencyKey, String jsonRequest, String path) throws ParseException, JOSEException {
         byte[] privateKey = signingOptions.getPrivateKey();
 
         return new Signer.Builder(signingOptions.getKeyId(), privateKey)
-                .addHeader("Idempotency-Key", idempotencyKey.toString())
+                .addHeader("Idempotency-Key", idempotencyKey)
                 .addHttpMethod("post")
                 .addPath(path)
                 .addBody(jsonRequest)
@@ -93,11 +82,6 @@ public class PaymentHandler implements IPaymentHandler {
 
     private String requestToJsonString(CreatePaymentRequest createPaymentRequest) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(createPaymentRequest);
-    }
-
-    //todo we need to understand how to generate this in a meaningful way
-    private UUID generateIdempotencyKey() {
-        return UUID.randomUUID();
     }
 
     private String getAccessToken() throws TrueLayerException, IOException {
