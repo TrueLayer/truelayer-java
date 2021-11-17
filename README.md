@@ -44,25 +44,37 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 ### Initialize TrueLayerClient
 ```
 var client = TrueLayerClient.builder()
-    .clientId(A_CLIENT_ID)
-    .clientSecret(A_CLIENT_SECRET)
-    .signingOptions(SigningOptions.builder()
-        .keyId("my-key-id")
-        .privateKey("my-private-key-content") //temporary
-        .build())
-    .build();
+                .useSandbox(true) // optional: to use TL sandbox environment
+                .clientCredentialsOptions(
+                        ClientCredentialsOptions.builder()
+                                .clientId("a-client-id")
+                                .clientSecret("a-secret").build())
+                .signingOptions(
+                        SigningOptions.builder()
+                                .keyId("a-key-id")
+                                .privateKey(Files.readAllBytes(Path.of("my-private-key.pem")))
+                                .build())
+                .build();
 ```
 
 ### Make a payment
 ```
 var paymentRequest = CreatePaymentRequest.builder()
-    .amountInMinor(100)
-    .currency(CreatePaymentRequest.Currency.GBP)
-    .paymentMethod(PaymentMethod.builder()
-            .statement_reference("a-payment-ref")
-            .type(BANK_TRANSFER)
-            .build())
-    .build();
+        .amountInMinor(101)
+        .currency("GBP")
+        .paymentMethod(CreatePaymentRequest.Method.builder()
+                .type("bank_transfer")
+                .build())
+        .beneficiary(CreatePaymentRequest.Beneficiary.builder()
+                .type("merchant_account")
+                .id(UUID.randomUUID().toString())
+                .build())
+        .user(CreatePaymentRequest.User.builder()
+                .name("Andrea Di Lisio")
+                .type("new")
+                .email("andrea@truelayer.com")
+                .build())
+        .build();
 
 var payment = client
     .payments()

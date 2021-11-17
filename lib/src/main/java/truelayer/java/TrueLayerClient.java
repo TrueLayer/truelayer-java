@@ -26,6 +26,7 @@ public class TrueLayerClient implements ITrueLayerClient{
     @Builder
     public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
                            SigningOptions signingOptions, boolean useSandbox){
+        //todo useSandbox() to replace useSandbox(true|false)
         notNull(clientCredentialsOptions, "client credentials options must be set.");
         notEmpty(clientCredentialsOptions.getClientId(), "client id must be not empty");
         notEmpty(clientCredentialsOptions.getClientSecret(), "client secret must be not empty.");
