@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
@@ -24,13 +25,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @Builder
+@Getter
 public class PaymentHandler implements IPaymentHandler {
 
-    //todo make this configurable/flexible
-    private static final List<String> SCOPES = List.of("paydirect");
-    private static final String DEV_PAYMENTS_URL = "https://test-pay-api.t7r.dev/payments";
-
     private IAuthenticationHandler authenticationHandler;
+    private IPaymentsApi paymentsApi;
+    private String[] paymentsScopes;
+
     private SigningOptions signingOptions;
 
     @SneakyThrows
@@ -43,7 +44,7 @@ public class PaymentHandler implements IPaymentHandler {
         String signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
         var httpRequestBuilder = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create(DEV_PAYMENTS_URL))
+                .uri(URI.create("DEV_PAYMENTS_URL"))
                 .POST(java.net.http.HttpRequest.BodyPublishers.ofString(createRequestJsonString));
         var headers = getPaymentCreationHttpHeaders(idempotencyKey, signature, getAccessToken());
         headers.forEach(httpRequestBuilder::header);
@@ -62,7 +63,7 @@ public class PaymentHandler implements IPaymentHandler {
 
     public Payment getPayment(String paymentId) throws TrueLayerException, IOException {
         var httpRequest = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create(DEV_PAYMENTS_URL + "/" + paymentId))
+                .uri(URI.create("DEV_PAYMENTS_URL" + "/" + paymentId))
                 .header("Authorization", "Bearer " + getAccessToken())
                 .GET()
                 .build();
@@ -100,7 +101,7 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     private String getAccessToken() throws TrueLayerException, IOException {
-        return authenticationHandler.getOauthToken(SCOPES).getAccessToken();
+        return authenticationHandler.getOauthToken(List.of("SCOPES")).getAccessToken();
     }
 
     private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, String accessToken) {

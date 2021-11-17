@@ -15,6 +15,12 @@ public class TestUtils {
                 .clientSecret("a-secret").build();
     }
 
+    public static SigningOptions getSigningOptions(){
+        return SigningOptions.builder()
+                .keyId("a-key-id")
+                .privateKey("a-private-key".getBytes()).build();
+    }
+
     @SneakyThrows
     public static <T> Call<T> stubApiResponse(Response<T> response){
         var mockApiResponse = (Call<T>) Mockito.mock(Call.class);

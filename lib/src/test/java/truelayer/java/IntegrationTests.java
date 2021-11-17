@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
+import truelayer.java.payments.entities.CreatePaymentRequest;
 
 import java.util.List;
 
@@ -64,6 +65,15 @@ public class IntegrationTests {
         assertTrue(!accessToken.getTokenType().isEmpty());
         assertTrue(!accessToken.getScope().isEmpty());
         assertTrue(accessToken.getExpiresIn() > 0);
+    }
+
+    @Test
+    @DisplayName("It should return a payment in case of 200")
+    public void shouldReturnAPayment(){
+
+        var payment = tlClient.payments().createPayment(CreatePaymentRequest.builder().build());
+
+        assertNotNull(payment);
     }
 
 }
