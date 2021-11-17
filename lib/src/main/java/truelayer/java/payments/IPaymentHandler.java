@@ -11,5 +11,5 @@ import java.text.ParseException;
 
 public interface IPaymentHandler {
 
-    Payment createPayment(CreatePaymentRequest request) throws IOException, URISyntaxException, InterruptedException, TrueLayerException, ParseException, JOSEException;
+    Payment createPayment(CreatePaymentRequest request);
 }
