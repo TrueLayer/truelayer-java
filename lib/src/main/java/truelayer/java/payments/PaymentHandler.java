@@ -6,23 +6,14 @@ import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.apache.http.entity.ContentType;
 import truelayer.java.SigningOptions;
-import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
-import truelayer.java.payments.exception.PaymentException;
 import truelayer.java.signing.Signer;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Builder
@@ -35,8 +26,8 @@ public class PaymentHandler implements IPaymentHandler {
 
     private SigningOptions signingOptions;
 
-    @SneakyThrows
     @Override
+    @SneakyThrows
     public Payment createPayment(CreatePaymentRequest createPaymentRequest) {
         var idempotencyKey = UUID.randomUUID().toString();
         var createRequestJsonString = requestToJsonString(createPaymentRequest);
@@ -45,15 +36,23 @@ public class PaymentHandler implements IPaymentHandler {
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
         return paymentsApi.createPayment(idempotencyKey,
                         signature,
-                        new StringBuilder("Bearer").append(" ").append(oauthToken.getAccessToken()).toString(),
+                        buildAuthorizationHeader(oauthToken.getAccessToken()),
                         createPaymentRequest)
                 .execute().body();
     }
 
-    public Payment getPayment(String paymentId) throws TrueLayerException, IOException {
+    @Override
+    @SneakyThrows
+    public Payment getPayment(String paymentId) {
+        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        return paymentsApi.getPayment(
+                buildAuthorizationHeader(oauthToken.getAccessToken()),
+                paymentId
+        ).execute().body();
+/*
         var httpRequest = java.net.http.HttpRequest.newBuilder()
                 .uri(URI.create("DEV_PAYMENTS_URL" + "/" + paymentId))
-                .header("Authorization", "Bearer " + getAccessToken())
+                .header("Authorization", "Bearer " + buildAuthorizationHeader(""))
                 .GET()
                 .build();
         var httpClient = HttpClient.newHttpClient();
@@ -65,7 +64,7 @@ public class PaymentHandler implements IPaymentHandler {
             return new ObjectMapper().readValue(response.body(), Payment.class);
         } catch (Exception e) {
             throw new PaymentException(e);
-        }
+        }*/
     }
 
 
@@ -84,17 +83,7 @@ public class PaymentHandler implements IPaymentHandler {
         return new ObjectMapper().writeValueAsString(createPaymentRequest);
     }
 
-    private String getAccessToken() throws TrueLayerException, IOException {
-        return authenticationHandler.getOauthToken(List.of("SCOPES")).getAccessToken();
-    }
-
-    private Map<String, String> getPaymentCreationHttpHeaders(UUID idempotencyKey, String signature, String accessToken) {
-        return Map.of(
-                "Idempotency-Key", idempotencyKey.toString(),
-                "Tl-Signature", signature,
-                "Authorization", "Bearer " + accessToken,
-                org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString(),
-                org.apache.http.HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString()
-        );
+    private String buildAuthorizationHeader(String token) {
+        return new StringBuilder("Bearer").append(" ").append(token).toString();
     }
 }

@@ -12,4 +12,6 @@ import java.text.ParseException;
 public interface IPaymentHandler {
 
     Payment createPayment(CreatePaymentRequest request);
+
+    Payment getPayment(String paymentId);
 }
