@@ -44,17 +44,17 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 ### Initialize TrueLayerClient
 ```
 var client = TrueLayerClient.builder()
-                .useSandbox(true) // optional: to use TL sandbox environment
-                .clientCredentialsOptions(
-                        ClientCredentialsOptions.builder()
-                                .clientId("a-client-id")
-                                .clientSecret("a-secret").build())
-                .signingOptions(
-                        SigningOptions.builder()
-                                .keyId("a-key-id")
-                                .privateKey(Files.readAllBytes(Path.of("my-private-key.pem")))
-                                .build())
-                .build();
+        .useSandbox(true) // optional: to use TL sandbox environment
+        .clientCredentialsOptions(
+                ClientCredentialsOptions.builder()
+                        .clientId("a-client-id")
+                        .clientSecret("a-secret").build())
+        .signingOptions(
+                SigningOptions.builder()
+                        .keyId("a-key-id")
+                        .privateKey(Files.readAllBytes(Path.of("my-private-key.pem")))
+                        .build())
+        .build();
 ```
 
 ### Make a payment
