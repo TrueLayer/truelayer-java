@@ -1,14 +1,11 @@
 package truelayer.java.auth;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TestUtils;
 import truelayer.java.TrueLayerException;
-import truelayer.java.auth.entities.AccessToken;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
