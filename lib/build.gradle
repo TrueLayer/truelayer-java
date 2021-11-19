@@ -10,7 +10,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
-version = '0.2.0-pre2'
+version = '0.2.2-pre3'
 archivesBaseName = 'truelayer-java'
 
 shadowJar {
@@ -33,12 +33,14 @@ testlogger {
 }
 
 tasks.register('unit-tests', Test) {
+    outputs.upToDateWhen { false }
     useJUnitPlatform{
         excludeTags "integration"
     }
 }
 
 tasks.register('integration-tests', Test) {
+    outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "integration"
     }
