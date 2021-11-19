@@ -44,7 +44,7 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 ### Initialize TrueLayerClient
 ```
 var client = TrueLayerClient.builder()
-        .useSandbox(true) // optional: to use TL sandbox environment
+        .useSandbox() // optional: to use TL sandbox environment
         .clientCredentialsOptions(
                 ClientCredentialsOptions.builder()
                         .clientId("a-client-id")
