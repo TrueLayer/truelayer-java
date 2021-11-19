@@ -109,6 +109,11 @@ public class TrueLayerClient implements ITrueLayerClient {
         public static final String PAYMENTS_SCOPES = "tl.payments.scopes";
     }
 
+    /**
+     * Builder class for TrueLayerClient instances. This is deliberately not managed
+     * with Lombok annotations as its building phase is customized and slightly deviate from
+     * the way Lombok builds stuff.
+     */
     public static class TrueLayerClientBuilder {
         private ClientCredentialsOptions clientCredentialsOptions;
 
