@@ -33,12 +33,14 @@ testlogger {
 }
 
 tasks.register('unit-tests', Test) {
+    outputs.upToDateWhen { false }
     useJUnitPlatform{
         excludeTags "integration"
     }
 }
 
 tasks.register('integration-tests', Test) {
+    outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "integration"
     }

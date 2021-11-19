@@ -3,6 +3,7 @@ package truelayer.java;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.jupiter.api.*;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.*;
+import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 
 
 @WireMockTest
@@ -24,14 +26,19 @@ public class IntegrationTests {
     @BeforeEach
     public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         tlClient = TrueLayerClient.builder()
+
                 .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
         // don't try this at home
-        writeField(tlClient, "authEndpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
-        writeField(tlClient, "paymentsEndpointUrl", wireMockRuntimeInfo.getHttpBaseUrl(), true);
-
+        var properties = new PropertiesConfiguration();
+        properties.addProperty(AUTH_ENDPOINT_URL_LIVE, wireMockRuntimeInfo.getHttpBaseUrl());
+        properties.addProperty(AUTH_ENDPOINT_URL_SANDBOX, wireMockRuntimeInfo.getHttpBaseUrl());
+        properties.addProperty(PAYMENTS_ENDPOINT_URL_LIVE, wireMockRuntimeInfo.getHttpBaseUrl());
+        properties.addProperty(PAYMENTS_ENDPOINT_URL_SANDBOX, wireMockRuntimeInfo.getHttpBaseUrl());
+        properties.addProperty(PAYMENTS_SCOPES, "paydirect");
+        writeField(tlClient, "configuration", properties, true);
     }
 
     @Test
@@ -72,7 +79,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should create and return a payment")
-    public void shouldCreateAndReturnAPayment(){
+    public void shouldCreateAndReturnAPayment() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -95,7 +102,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should throw an exception if the signature is not valid")
-    public void shouldThrowIfSignatureIsInvalid(){
+    public void shouldThrowIfSignatureIsInvalid() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -119,7 +126,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should get a payment")
-    public void shouldReturnAPayment(){
+    public void shouldReturnAPayment() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -141,7 +148,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should throw an exception if a payment is not found")
-    public void shouldThrowIfPaymentNotFound(){
+    public void shouldThrowIfPaymentNotFound() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")

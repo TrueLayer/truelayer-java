@@ -1,7 +1,9 @@
 package truelayer.java;
 
-import lombok.*;
+import lombok.SneakyThrows;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationApi;
 import truelayer.java.auth.IAuthenticationHandler;
@@ -10,74 +12,136 @@ import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.payments.PaymentHandler;
 
-import java.util.List;
+import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
+import static truelayer.java.TrueLayerClient.ConfigurationKeys.PAYMENTS_SCOPES;
 
-public class TrueLayerClient implements ITrueLayerClient{
-    private ClientCredentialsOptions clientCredentialsOptions;
+public class TrueLayerClient implements ITrueLayerClient {
+    private final ClientCredentialsOptions clientCredentialsOptions;
+    private final Optional<SigningOptions> signingOptions;
+    private final PropertiesConfiguration configuration;
+    private final boolean useSandbox;
 
-    //todo wrap this into an optional and define a custom builder, not relying on lombok
-    private SigningOptions signingOptions;
-
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String authEndpointUrl;
-
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String paymentsEndpointUrl;
-
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String[] paymentsScopes;
+    private IAuthenticationHandler authenticationHandler;
+    private IPaymentHandler paymentHandler;
 
     @SneakyThrows
-    @Builder
     public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
-                           SigningOptions signingOptions, boolean useSandbox){
+                           Optional<SigningOptions> signingOptions, boolean useSandbox) {
         this.clientCredentialsOptions = clientCredentialsOptions;
         this.signingOptions = signingOptions;
+        this.useSandbox = useSandbox;
 
-        var properties = new Configurations().properties("application.properties");
-        this.authEndpointUrl = properties.getString(String.format("tl.auth.endpoint.%s", useSandbox? "sandbox":"live"));
-        this.paymentsEndpointUrl = properties.getString(String.format("tl.payments.endpoint.%s", useSandbox? "sandbox":"live"));
-        this.paymentsScopes = properties.getStringArray("tl.payments.scopes");
+        this.configuration = new Configurations().properties("application.properties");
+    }
+
+    public static TrueLayerClientBuilder builder() {
+        return new TrueLayerClientBuilder();
     }
 
     @Override
     @SneakyThrows
     public IAuthenticationHandler auth() {
-        //todo: avoid building every time auth() is called
-        notNull(clientCredentialsOptions, "client credentials options must be set.");
-        notEmpty(clientCredentialsOptions.getClientId(), "client id must be not empty");
-        notEmpty(clientCredentialsOptions.getClientSecret(), "client secret must be not empty.");
+        if (ObjectUtils.isEmpty(this.authenticationHandler)) {
+            notNull(clientCredentialsOptions, "client credentials options must be set.");
+            notEmpty(clientCredentialsOptions.getClientId(), "client id must be not empty");
+            notEmpty(clientCredentialsOptions.getClientSecret(), "client secret must be not empty.");
 
-        var authenticationApi = HttpClientFactory.getInstance()
-                .create(getAuthEndpointUrl()).create(IAuthenticationApi.class);
+            var authenticationApi = HttpClientFactory.getInstance()
+                    .create(getAuthEndpointUrl()).create(IAuthenticationApi.class);
 
-        return AuthenticationHandler.builder()
-                .authenticationApi(authenticationApi)
-                .clientCredentialsOptions(clientCredentialsOptions)
-                .build();
+            this.authenticationHandler = AuthenticationHandler.builder()
+                    .authenticationApi(authenticationApi)
+                    .clientCredentialsOptions(clientCredentialsOptions)
+                    .build();
+        }
+        return this.authenticationHandler;
     }
 
     @Override
     public IPaymentHandler payments() {
-        var paymentHandlerBuilder = PaymentHandler.builder()
-                .authenticationHandler(auth());
+        if (ObjectUtils.isEmpty(this.paymentHandler)) {
+            var paymentHandlerBuilder = PaymentHandler.builder()
+                    .authenticationHandler(auth());
 
-        //todo: avoid building every time payments() is called
-        notNull(signingOptions, "signing options must be set.");
-        notEmpty(signingOptions.getKeyId(), "key id must be not empty");
-        notNull(signingOptions.getPrivateKey(), "private key must be set.");
+            var signingOptions = this.signingOptions.orElseThrow(() ->
+                    new TrueLayerException("signing options must be set."));
+            notEmpty(signingOptions.getKeyId(), "key id must be not empty");
+            notNull(signingOptions.getPrivateKey(), "private key must be set.");
 
-        var paymentsApi = HttpClientFactory.getInstance()
-                .create(getPaymentsEndpointUrl()).create(IPaymentsApi.class);
-        return paymentHandlerBuilder.paymentsApi(paymentsApi)
-                .paymentsScopes(paymentsScopes)
-                .signingOptions(signingOptions)
-                .build();
+            var paymentsApi = HttpClientFactory.getInstance()
+                    .create(getPaymentsEndpointUrl()).create(IPaymentsApi.class);
+            this.paymentHandler = paymentHandlerBuilder.paymentsApi(paymentsApi)
+                    .paymentsScopes(getPaymentsScopes())
+                    .signingOptions(signingOptions)
+                    .build();
+        }
+        return paymentHandler;
+    }
+
+    public boolean useSandbox(){
+        return this.useSandbox;
+    }
+
+    private String getAuthEndpointUrl() {
+        var endpointTemplate = ConfigurationKeys.AUTH_ENDPOINT_URL_LIVE.replace("live", "%s");
+        return this.configuration.getString(String.format(endpointTemplate, useSandbox ? "sandbox" : "live"));
+    }
+
+    private String getPaymentsEndpointUrl() {
+        var endpointTemplate = ConfigurationKeys.PAYMENTS_ENDPOINT_URL_LIVE.replace("live", "%s");
+        return this.configuration.getString(String.format(endpointTemplate, useSandbox ? "sandbox" : "live"));
+    }
+
+    private String[] getPaymentsScopes() {
+        return this.configuration.getStringArray(PAYMENTS_SCOPES);
+    }
+
+    public static class ConfigurationKeys {
+        public static final String AUTH_ENDPOINT_URL_LIVE = "tl.auth.endpoint.live";
+        public static final String AUTH_ENDPOINT_URL_SANDBOX = "tl.auth.endpoint.live";
+
+        public static final String PAYMENTS_ENDPOINT_URL_LIVE = "tl.payments.endpoint.live";
+        public static final String PAYMENTS_ENDPOINT_URL_SANDBOX = "tl.payments.endpoint.live";
+        public static final String PAYMENTS_SCOPES = "tl.payments.scopes";
+    }
+
+    public static class TrueLayerClientBuilder {
+        private ClientCredentialsOptions clientCredentialsOptions;
+
+        private SigningOptions signingOptions;
+
+        private boolean useSandbox;
+
+        public TrueLayerClientBuilder() {
+
+        }
+
+        public TrueLayerClientBuilder clientCredentialsOptions(ClientCredentialsOptions credentialsOptions) {
+            this.clientCredentialsOptions = credentialsOptions;
+            return this;
+        }
+
+        public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
+            this.signingOptions = signingOptions;
+            return this;
+        }
+
+        public TrueLayerClientBuilder useSandbox() {
+            this.useSandbox = true;
+            return this;
+        }
+
+        public TrueLayerClient build() {
+            var client = new TrueLayerClient(
+                    this.clientCredentialsOptions,
+                    ofNullable(this.signingOptions),
+                    this.useSandbox
+            );
+            return client;
+        }
     }
 }

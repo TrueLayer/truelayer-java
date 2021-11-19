@@ -14,12 +14,11 @@ public class TrueLayerClientTests {
     @DisplayName("It should yield an authentication handler")
     @SneakyThrows
     public void itShouldBuildAnAuthenticationHandler() {
-       var trueLayerClient = TrueLayerClient.builder()
+        var trueLayerClient = TrueLayerClient.builder()
                 .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .build();
 
         var authenticationHandler = (AuthenticationHandler) trueLayerClient.auth();
-
 
         assertNotNull(authenticationHandler);
         assertNotNull(authenticationHandler.getAuthenticationApi());
@@ -27,15 +26,17 @@ public class TrueLayerClientTests {
     }
 
     @Test
-    @DisplayName("It should throw an exception if credentials options are missing")
+    @DisplayName("It should yield the same instance of the authentication handler if auth() is called multiple times")
     @SneakyThrows
-    public void itShouldBuildAnExceptionIfCredentialsOptionMissing() {
+    public void itShouldYieldTheSameAuthenticationHandler() {
         var trueLayerClient = TrueLayerClient.builder()
+                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .build();
 
-        var thrown = assertThrows(NullPointerException.class, () -> trueLayerClient.auth());
+        var authenticationHandler1 = trueLayerClient.auth();
+        var authenticationHandler2 = trueLayerClient.auth();
 
-        assertEquals("client credentials options must be set.", thrown.getMessage());
+        assertTrue(authenticationHandler1 == authenticationHandler2);
     }
 
     @Test
@@ -55,6 +56,33 @@ public class TrueLayerClientTests {
     }
 
     @Test
+    @DisplayName("It should yield the same instance of the payment handler if payment() is called multiple times")
+    @SneakyThrows
+    public void itShouldYieldTheSamePaymentHandler() {
+        var trueLayerClient = TrueLayerClient.builder()
+                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .signingOptions(TestUtils.getSigningOptions())
+                .build();
+
+        var paymentHandler1 = trueLayerClient.payments();
+        var paymentHandler2 = trueLayerClient.payments();
+
+        assertTrue(paymentHandler1 == paymentHandler2);
+    }
+
+    @Test
+    @DisplayName("It should throw an exception if credentials options are missing")
+    @SneakyThrows
+    public void itShouldBuildASandboxTrueLaterClient() {
+        var trueLayerClient = TrueLayerClient.builder()
+                .build();
+
+        var thrown = assertThrows(NullPointerException.class, () -> trueLayerClient.auth());
+
+        assertEquals("client credentials options must be set.", thrown.getMessage());
+    }
+
+    @Test
     @DisplayName("It should throw an exception if signing options are missing")
     @SneakyThrows
     public void itShouldBuildAnExceptionIfSigningOptionMissing() {
@@ -62,7 +90,7 @@ public class TrueLayerClientTests {
                 .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
                 .build();
 
-        var thrown = assertThrows(NullPointerException.class, () -> trueLayerClient.payments());
+        var thrown = assertThrows(TrueLayerException.class, () -> trueLayerClient.payments());
 
         assertEquals("signing options must be set.", thrown.getMessage());
     }
