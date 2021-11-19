@@ -1,0 +1,7 @@
+{
+  "type":"https://docs.truelayer.com/docs/error-types#unauthenticated",
+  "title":"Unauthenticated",
+  "status":401,
+  "detail":"Invalid request signature.",
+  "trace_id":"19b0baf32dc01e4***"
+}
