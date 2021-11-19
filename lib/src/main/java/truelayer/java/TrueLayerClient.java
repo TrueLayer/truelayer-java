@@ -17,7 +17,7 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
-import static truelayer.java.TrueLayerClient.ConfigurationKeys.PAYMENTS_SCOPES;
+import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 
 public class TrueLayerClient implements ITrueLayerClient {
     private final ClientCredentialsOptions clientCredentialsOptions;
@@ -87,13 +87,13 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     private String getAuthEndpointUrl() {
-        var endpointTemplate = ConfigurationKeys.AUTH_ENDPOINT_URL_LIVE.replace("live", "%s");
-        return this.configuration.getString(String.format(endpointTemplate, useSandbox ? "sandbox" : "live"));
+        var endpointKey = useSandbox ? AUTH_ENDPOINT_URL_SANDBOX: AUTH_ENDPOINT_URL_LIVE;
+        return this.configuration.getString(endpointKey);
     }
 
-    private String getPaymentsEndpointUrl() {
-        var endpointTemplate = ConfigurationKeys.PAYMENTS_ENDPOINT_URL_LIVE.replace("live", "%s");
-        return this.configuration.getString(String.format(endpointTemplate, useSandbox ? "sandbox" : "live"));
+    private String getPaymentsEndpointUrl(){
+        var endpointKey = useSandbox ? PAYMENTS_ENDPOINT_URL_SANDBOX: PAYMENTS_ENDPOINT_URL_LIVE;
+        return this.configuration.getString(endpointKey);
     }
 
     private String[] getPaymentsScopes() {
@@ -104,8 +104,8 @@ public class TrueLayerClient implements ITrueLayerClient {
         public static final String AUTH_ENDPOINT_URL_LIVE = "tl.auth.endpoint.live";
         public static final String AUTH_ENDPOINT_URL_SANDBOX = "tl.auth.endpoint.live";
 
-        public static final String PAYMENTS_ENDPOINT_URL_LIVE = "tl.payments.endpoint.live";
-        public static final String PAYMENTS_ENDPOINT_URL_SANDBOX = "tl.payments.endpoint.live";
+        public static final String PAYMENTS_ENDPOINT_URL_LIVE = "tl.payments.endpoint.sandbox";
+        public static final String PAYMENTS_ENDPOINT_URL_SANDBOX = "tl.payments.endpoint.sandbox";
         public static final String PAYMENTS_SCOPES = "tl.payments.scopes";
     }
 
