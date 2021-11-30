@@ -27,12 +27,11 @@ public class HttpClientFactory implements IHttpClientFactory {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(interceptor);
 
-        clientBuilder.addInterceptor(new ErrorHandlerInterceptor());
-
         return new Retrofit.Builder()
                 .client(clientBuilder.build())
                 .baseUrl(baseUrl)
                 .addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(new ApiResponseCallAdapterFactory())
                 .build();
     }
 }

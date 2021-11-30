@@ -2,6 +2,7 @@ package truelayer.java.payments;
 
 import com.nimbusds.jose.JOSEException;
 import truelayer.java.TrueLayerException;
+import truelayer.java.http.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
@@ -11,7 +12,7 @@ import java.text.ParseException;
 
 public interface IPaymentHandler {
 
-    Payment createPayment(CreatePaymentRequest request);
+    ApiResponse<Payment> createPayment(CreatePaymentRequest request);
 
-    Payment getPayment(String paymentId);
+    ApiResponse<Payment> getPayment(String paymentId);
 }

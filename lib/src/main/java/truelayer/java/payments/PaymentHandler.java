@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
+import truelayer.java.http.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.signing.Signer;
@@ -28,25 +29,25 @@ public class PaymentHandler implements IPaymentHandler {
 
     @Override
     @SneakyThrows
-    public Payment createPayment(CreatePaymentRequest createPaymentRequest) {
+    public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
         var idempotencyKey = UUID.randomUUID().toString();
         var createRequestJsonString = requestToJsonString(createPaymentRequest);
         var signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
-        return paymentsApi.createPayment(idempotencyKey,
+        return (ApiResponse<Payment>) paymentsApi.createPayment(idempotencyKey,
                         signature,
-                        buildAuthorizationHeader(oauthToken.getAccessToken()),
+                        buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
                         createPaymentRequest)
                 .execute().body();
     }
 
     @Override
     @SneakyThrows
-    public Payment getPayment(String paymentId) {
+    public ApiResponse<Payment> getPayment(String paymentId) {
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
-        return paymentsApi.getPayment(
-                buildAuthorizationHeader(oauthToken.getAccessToken()),
+        return (ApiResponse<Payment>) paymentsApi.getPayment(
+                buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
                 paymentId
         ).execute().body();
     }
