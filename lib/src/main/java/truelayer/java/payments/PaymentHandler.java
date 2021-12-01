@@ -2,18 +2,17 @@ package truelayer.java.payments;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JOSEException;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import truelayer.java.SigningOptions;
+import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 import truelayer.java.signing.Signer;
 
-import java.text.ParseException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -28,32 +27,38 @@ public class PaymentHandler implements IPaymentHandler {
     private SigningOptions signingOptions;
 
     @Override
-    @SneakyThrows //todo review
     public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
         var idempotencyKey = UUID.randomUUID().toString();
         var createRequestJsonString = requestToJsonString(createPaymentRequest);
         var signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
-        return (ApiResponse<Payment>) paymentsApi.createPayment(idempotencyKey,
-                        signature,
-                        buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
-                        createPaymentRequest)
-                .execute().body();
+        try {
+            return (ApiResponse<Payment>) paymentsApi.createPayment(idempotencyKey,
+                            signature,
+                            buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
+                            createPaymentRequest)
+                    .execute().body();
+        } catch (IOException e) {
+            throw new TrueLayerException("unable to create payment", e);
+        }
     }
 
     @Override
-    @SneakyThrows //todo review
     public ApiResponse<Payment> getPayment(String paymentId) {
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
-        return (ApiResponse<Payment>) paymentsApi.getPayment(
-                buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
-                paymentId
-        ).execute().body();
+        try {
+            return (ApiResponse<Payment>) paymentsApi.getPayment(
+                    buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
+                    paymentId
+            ).execute().body();
+        } catch (IOException e) {
+            throw new TrueLayerException("unable to get payment", e);
+        }
     }
 
 
-    private String signRequest(String idempotencyKey, String jsonRequest, String path) throws ParseException, JOSEException {
+    private String signRequest(String idempotencyKey, String jsonRequest, String path) {
         byte[] privateKey = signingOptions.getPrivateKey();
 
         return new Signer.Builder(signingOptions.getKeyId(), privateKey)
@@ -64,8 +69,12 @@ public class PaymentHandler implements IPaymentHandler {
                 .getSignature();
     }
 
-    private String requestToJsonString(CreatePaymentRequest createPaymentRequest) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(createPaymentRequest);
+    private String requestToJsonString(CreatePaymentRequest createPaymentRequest) {
+        try {
+            return new ObjectMapper().writeValueAsString(createPaymentRequest);
+        } catch (JsonProcessingException e) {
+            throw new TrueLayerException("unable to parse request as JSON");
+        }
     }
 
     private String buildAuthorizationHeader(String token) {
