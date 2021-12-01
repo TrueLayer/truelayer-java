@@ -1,4 +1,4 @@
-package truelayer.java.http;
+package truelayer.java.http.adapters;
 
 import org.junit.jupiter.api.Disabled;
 
