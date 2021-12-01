@@ -5,8 +5,8 @@ import org.apache.commons.lang3.RandomUtils;
 import org.mockito.Mockito;
 import retrofit2.Response;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.http.ApiResponse;
-import truelayer.java.http.ApiResponseCallAdapter.ApiCall;
+import truelayer.java.http.adapters.ApiCall;
+import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.Payment;
 
 import java.nio.file.Files;
@@ -56,7 +56,9 @@ public class TestUtils {
                 .expiresIn(RandomUtils.nextInt())
                 .tokenType(UUID.randomUUID().toString())
                 .build();
-        return new ApiResponse<>(accessToken, null);
+        return ApiResponse.<AccessToken>builder()
+                .data(accessToken)
+                .build();
     }
 
     public static Payment buildPayment(){

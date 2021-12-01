@@ -28,7 +28,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentHandler paymentHandler;
 
-    @SneakyThrows
+    @SneakyThrows //todo review
     public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
                            Optional<SigningOptions> signingOptions, boolean useSandbox) {
         this.clientCredentialsOptions = clientCredentialsOptions;
@@ -43,7 +43,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     @Override
-    @SneakyThrows
+    @SneakyThrows //todo review
     public IAuthenticationHandler auth() {
         if (ObjectUtils.isEmpty(this.authenticationHandler)) {
             notNull(clientCredentialsOptions, "client credentials options must be set.");

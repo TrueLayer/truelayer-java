@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
 
 public class HttpClientFactory implements IHttpClientFactory {
 

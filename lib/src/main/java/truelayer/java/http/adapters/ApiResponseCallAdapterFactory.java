@@ -1,9 +1,8 @@
-package truelayer.java.http;
+package truelayer.java.http.adapters;
 
-import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
-import truelayer.java.http.ApiResponseCallAdapter.ApiCall;
+import truelayer.java.http.entities.ApiResponse;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
