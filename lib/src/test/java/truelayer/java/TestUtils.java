@@ -7,6 +7,7 @@ import retrofit2.Response;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.Payment;
 
 import java.nio.file.Files;
@@ -66,6 +67,13 @@ public class TestUtils {
                 .paymentId(UUID.randomUUID().toString())
                 .resourceToken(UUID.randomUUID().toString())
                 .status(UUID.randomUUID().toString())
+                .build();
+    }
+
+    public static ProblemDetails buildError(){
+        return ProblemDetails
+                .builder()
+                .title("an-error")
                 .build();
     }
 
