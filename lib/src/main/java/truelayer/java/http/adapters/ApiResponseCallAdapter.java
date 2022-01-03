@@ -6,6 +6,10 @@ import truelayer.java.http.entities.ApiResponse;
 
 import java.lang.reflect.Type;
 
+/**
+ * This class is required to properly override Retrofit defaults when deserializing
+ * HTTP responses into objects.
+ */
 public class ApiResponseCallAdapter<T> implements CallAdapter<T, Call<ApiResponse<T>>> {
 
     private final Type responseType;

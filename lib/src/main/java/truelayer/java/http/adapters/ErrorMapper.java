@@ -30,6 +30,7 @@ public class ErrorMapper {
 
     public static ProblemDetails fromThrowable(Throwable throwable){
         //todo how to deal with non problem details errors ?
+        // auth api does not us this convention RN
         return ProblemDetails.builder()
                 .title(throwable.getMessage())
                 .build();

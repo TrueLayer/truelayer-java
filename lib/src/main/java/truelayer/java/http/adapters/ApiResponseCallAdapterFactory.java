@@ -8,6 +8,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * This class is required to properly override Retrofit defaults when deserializing
+ * HTTP responses into objects.
+ */
 public class ApiResponseCallAdapterFactory extends CallAdapter.Factory {
     @Override
     public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {

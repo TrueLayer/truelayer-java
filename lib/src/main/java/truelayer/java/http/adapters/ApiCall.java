@@ -10,6 +10,11 @@ import truelayer.java.http.entities.ApiResponse;
 
 import java.io.IOException;
 
+/**
+ * Meant to handle the conversion from a default Retrofit response
+ * to a custom response object holding a data or error value.
+ * @param <T> the type of response to handle
+ */
 @RequiredArgsConstructor
 public class ApiCall<T> implements Call<ApiResponse<T>> {
 
