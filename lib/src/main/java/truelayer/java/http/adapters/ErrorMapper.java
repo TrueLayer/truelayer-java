@@ -6,6 +6,7 @@ import truelayer.java.http.entities.ProblemDetails;
 
 import java.io.IOException;
 
+//todo tests for this class: deliberately postponed as we need to solve the implementation doubts first
 public class ErrorMapper {
     private static ObjectMapper ObjectMapperInstance = null;
 

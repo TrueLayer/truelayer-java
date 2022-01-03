@@ -55,7 +55,6 @@ public class IntegrationTests {
         var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
         assertTrue(response.isError());
-        //todo review
         assertTrue(response.getError().getTitle().contains("\"error\": \"invalid_client\""));
     }
 
