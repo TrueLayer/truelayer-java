@@ -23,5 +23,9 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
-      - name: Release
+      - name: Create release
         uses: softprops/action-gh-release@v1
+      - name: Publish package
+        run: ./gradlew -Pversion=${GITHUB_REF##*/} publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
