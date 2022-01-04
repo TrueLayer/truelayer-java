@@ -1,14 +1,12 @@
-name: Build
+name: Create release
 
 on:
   push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '+*'
+    tags:
+      - "**"
 
 jobs:
-  build:
+  create-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,3 +23,9 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+      - name: Publish package
+        run: ./gradlew -Pversion=${GITHUB_REF##*/} publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
