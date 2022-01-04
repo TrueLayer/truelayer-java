@@ -26,6 +26,6 @@ jobs:
       - name: Integration tests
         run: ./gradlew integration-tests
       - name: Publish package
-        run: ./gradlew publish
+        run: gradle publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
