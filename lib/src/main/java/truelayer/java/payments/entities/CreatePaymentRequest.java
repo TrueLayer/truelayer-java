@@ -24,12 +24,12 @@ public class CreatePaymentRequest {
     private PaymentMethod paymentMethod;
 
     @JsonProperty("beneficiary")
-    private IBaseBeneficiary beneficiary;
+    private BaseBeneficiary beneficiary;
 
     @JsonProperty("user")
     private User user;
 
-    private interface IBaseBeneficiary {
+    private static abstract class BaseBeneficiary {
     }
 
     @Builder
@@ -108,7 +108,7 @@ public class CreatePaymentRequest {
     @Builder
     @Getter
     @JsonInclude(Include.NON_NULL)
-    public static class MerchantAccount implements IBaseBeneficiary {
+    public static class MerchantAccount extends BaseBeneficiary {
         @JsonProperty("type")
         private final String type = "merchant_account";
 
@@ -122,7 +122,7 @@ public class CreatePaymentRequest {
     @Builder
     @Getter
     @JsonInclude(Include.NON_NULL)
-    public static class ExternalAccount implements IBaseBeneficiary {
+    public static class ExternalAccount extends BaseBeneficiary {
         @JsonProperty("type")
         private final String type = "external_account";
 
