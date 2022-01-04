@@ -91,7 +91,9 @@ public class IntegrationTests {
                 )
         );
 
-        var paymentRequest = CreatePaymentRequest.builder().build();
+        var paymentRequest = CreatePaymentRequest.builder()
+                .build();
+
         var response = tlClient.payments().createPayment(paymentRequest);
 
         assertFalse(response.isError());
