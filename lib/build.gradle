@@ -8,9 +8,10 @@ plugins {
     id 'com.adarshr.test-logger' version '3.1.0'
     // to build fat jars
     id "com.github.johnrengelman.shadow" version "7.1.0"
+    // to publish packages
+    id 'maven-publish'
 }
 
-version = '0.2.3-pre0'
 archivesBaseName = 'truelayer-java'
 
 shadowJar {
@@ -85,4 +86,22 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.0.0'
 
     testImplementation group: "com.github.tomakehurst", name:"wiremock-jre8", version: "2.31.0"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
