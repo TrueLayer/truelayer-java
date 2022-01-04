@@ -3,6 +3,7 @@ package truelayer.java.payments.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -51,8 +52,7 @@ public class CreatePaymentRequest {
     @Getter
     @JsonInclude(Include.NON_NULL)
     public static class Beneficiary {
-
-        private String type; //todo: enum ?
+        private String type; //evaluate oneOf-like approach
 
         private String id;
 
@@ -64,12 +64,28 @@ public class CreatePaymentRequest {
     @JsonInclude(Include.NON_NULL)
     public static class User {
 
-        private String type;
+        private Type type;
 
         private String name;
 
         private String email;
 
         private String phone;
+
+        public enum Type {
+            EXISTING("existing"),
+            NEW("new");
+
+            private String type;
+
+            Type(String type) {
+                this.type = type;
+            }
+
+            @JsonValue
+            public String getType() {
+                return type;
+            }
+        }
     }
 }
