@@ -12,7 +12,6 @@ plugins {
     id 'maven-publish'
 }
 
-version = '0.2.2-pre3'
 archivesBaseName = 'truelayer-java'
 
 shadowJar {
