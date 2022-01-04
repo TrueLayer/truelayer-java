@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @JsonInclude(Include.NON_NULL)
 public class CreatePaymentRequest {
-
     @JsonProperty("amount_in_minor")
     private int amountInMinor;
 
@@ -36,6 +35,7 @@ public class CreatePaymentRequest {
     @Getter
     @JsonInclude(Include.NON_NULL)
     public static class PaymentMethod {
+        @JsonProperty("type")
         private final String type = "bank_transfer";
 
         @JsonProperty("statement_reference")
