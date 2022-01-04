@@ -20,7 +20,7 @@ public class CreatePaymentRequest {
     private String currency;
 
     @JsonProperty("payment_method")
-    private PaymentMethod paymentMethod;
+    private BasePaymentMethod paymentMethod;
 
     @JsonProperty("beneficiary")
     private BaseBeneficiary beneficiary;
@@ -31,10 +31,13 @@ public class CreatePaymentRequest {
     private static abstract class BaseBeneficiary {
     }
 
+    private static abstract class BasePaymentMethod {
+    }
+
     @Builder
     @Getter
     @JsonInclude(Include.NON_NULL)
-    public static class PaymentMethod {
+    public static class BankTransfer extends BasePaymentMethod {
         @JsonProperty("type")
         private final String type = "bank_transfer";
 
