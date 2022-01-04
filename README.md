@@ -10,8 +10,52 @@ The library currently targets Java 11.
 ## Installation
 
 
-### Pre-release Packages
+### Unstable releases
 
+Unstable releases are published as Github package within this repository. 
+
+To use on of those release with Gradle, make sure you have the following repository listed in your build.gradle file: 
+```
+repositories {
+    // ... all your existing repos here
+
+    maven {
+        name = "GitHubPackages"
+        url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
+        credentials {
+            username = project.findProperty("gpr.user")
+            password = project.findProperty("gpr.key")
+        }
+    }
+}
+```
+
+Then include a gradle.properties file in your main module which includes your Github username and a personal access token:
+ 
+```
+# gradle.properties
+gpr.user=${your TL username}
+gpr.key=${your TL PAT}
+```
+
+Please note that the above personal access token should have at least the following scopes: 
+- repo
+- read:packages
+- read:org
+
+Finally make sure you declare the desired library version as dependency of your project: 
+
+```
+dependencies {
+    // ... your existing dependencies
+
+    // TL Java BE library
+    implementation 'truelayer-java:lib:v0.0.1'
+}
+```
+### Final releases
+
+TBD
 
 ## Documentation
 
