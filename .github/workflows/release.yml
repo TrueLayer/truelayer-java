@@ -5,7 +5,7 @@ on:
     types: [created]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,12 +19,6 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Build
-        run: ./gradlew build -x test
-      - name: Unit tests
-        run: ./gradlew unit-tests
-      - name: Integration tests
-        run: ./gradlew integration-tests
       - name: Publish package
         run: gradle publish
         env:
