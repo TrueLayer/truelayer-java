@@ -7,12 +7,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 
-@Builder
 @Value
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Payment {
     @JsonProperty("id")
-    private final String id;
+    private String id;
 
     @JsonProperty("amount_in_minor")
     private int amountInMinor;

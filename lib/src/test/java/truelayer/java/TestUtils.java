@@ -8,7 +8,10 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
+import truelayer.java.payments.entities.BankTransfer;
+import truelayer.java.payments.entities.MerchantAccount;
 import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.User;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,25 +55,26 @@ public class TestUtils {
     }
 
     public static ApiResponse<AccessToken> buildAccessToken() {
-        var accessToken = AccessToken.builder()
-                .accessToken(UUID.randomUUID().toString())
-                .expiresIn(RandomUtils.nextInt())
-                .tokenType(UUID.randomUUID().toString())
-                .build();
+        var accessToken = new AccessToken(UUID.randomUUID().toString(), RandomUtils.nextInt(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         return ApiResponse.<AccessToken>builder()
                 .data(accessToken)
                 .build();
     }
 
-    public static Payment buildPayment(){
-        return Payment.builder()
-                .id(UUID.randomUUID().toString())
-                .resourceToken(UUID.randomUUID().toString())
-                .status(UUID.randomUUID().toString())
-                .build();
+    public static Payment buildPayment() {
+        return new Payment(UUID.randomUUID().toString(),
+                100,
+                "GBP",
+                MerchantAccount.builder().build(),
+                User.builder().build(),
+                BankTransfer.builder().build(),
+                "2021-11-17T23:20:37.171915Z",
+                "authorization_required",
+                UUID.randomUUID().toString()
+        );
     }
 
-    public static ProblemDetails buildError(){
+    public static ProblemDetails buildError() {
         return ProblemDetails
                 .builder()
                 .title("an-error")
