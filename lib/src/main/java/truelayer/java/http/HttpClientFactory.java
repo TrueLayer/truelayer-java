@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
 
 public class HttpClientFactory implements IHttpClientFactory {
 
@@ -27,12 +28,11 @@ public class HttpClientFactory implements IHttpClientFactory {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(interceptor);
 
-        clientBuilder.addInterceptor(new ErrorHandlerInterceptor());
-
         return new Retrofit.Builder()
                 .client(clientBuilder.build())
                 .baseUrl(baseUrl)
                 .addConverterFactory(JacksonConverterFactory.create())
+                .addCallAdapterFactory(new ApiResponseCallAdapterFactory())
                 .build();
     }
 }

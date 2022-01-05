@@ -5,6 +5,7 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import truelayer.java.TrueLayerException;
 
 import java.text.ParseException;
 import java.util.Base64;
@@ -73,8 +74,12 @@ public class Signer {
             return this;
         }
 
-        public String getSignature() throws JOSEException, ParseException {
-            return signer.sign();
+        public String getSignature() {
+            try {
+                return signer.sign();
+            } catch (JOSEException | ParseException e) {
+                throw new TrueLayerException("unable to sign request", e);
+            }
         }
     }
 
