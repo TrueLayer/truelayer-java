@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import truelayer.java.payments.entities.CreatePaymentRequest;
+import truelayer.java.payments.entities.MerchantAccount;
 
 import java.util.List;
 
@@ -78,8 +79,8 @@ public class IntegrationTests {
     }
 
     @Test
-    @DisplayName("It should create and return a payment")
-    public void shouldCreateAndReturnAPayment() {
+    @DisplayName("It should create and return a payment with merchant account as beneficiary")
+    public void shouldCreateAndReturnAPaymentMerchantAccount() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -87,11 +88,12 @@ public class IntegrationTests {
         );
         stubFor(
                 post("/payments").willReturn(
-                        ok().withBodyFile("payments/2xx.payment.json")
+                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
                 )
         );
 
         var paymentRequest = CreatePaymentRequest.builder()
+                .beneficiary(MerchantAccount.builder().build())
                 .build();
 
         var response = tlClient.payments().createPayment(paymentRequest);
@@ -100,6 +102,37 @@ public class IntegrationTests {
         assertFalse(response.getData().getId().isEmpty());
         assertFalse(response.getData().getStatus().isEmpty());
         assertFalse(response.getData().getResourceToken().isEmpty());
+        assertTrue(response.getData().getBeneficiary().isMerchantAccount());
+        assertEquals("a-merchant", response.getData().getBeneficiary().merchantAccount().get().getName());
+        assertTrue(response.getData().getPaymentMethod().isBankTransfer());
+    }
+
+    @Test
+    @DisplayName("It should create and return a payment with external account as beneficiary")
+    public void shouldCreateAndReturnAPaymentExternalAccount() {
+        stubFor(
+                post("/connect/token").willReturn(
+                        ok().withBodyFile("auth/200.access_token.json")
+                )
+        );
+        stubFor(
+                post("/payments").willReturn(
+                        ok().withBodyFile("payments/2xx.payment.external_account.json")
+                )
+        );
+
+        var paymentRequest = CreatePaymentRequest.builder()
+                .beneficiary(MerchantAccount.builder().build())
+                .build();
+
+        var response = tlClient.payments().createPayment(paymentRequest);
+
+        assertFalse(response.isError());
+        assertFalse(response.getData().getId().isEmpty());
+        assertFalse(response.getData().getStatus().isEmpty());
+        assertFalse(response.getData().getResourceToken().isEmpty());
+        assertTrue(response.getData().getBeneficiary().isExternalAccount());
+        assertEquals("112233", response.getData().getBeneficiary().externalAccount().get().getSchemeIdentifier().getSortCode());
     }
 
     @Test
@@ -137,7 +170,7 @@ public class IntegrationTests {
         );
         stubFor(
                 get(urlPathMatching("/payments/.*")).willReturn(
-                        ok().withBodyFile("payments/2xx.payment.json")
+                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
                 )
         );
 
