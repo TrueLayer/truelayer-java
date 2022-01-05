@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Builder
-@Getter
 @ToString
 @EqualsAndHashCode
 @JsonInclude(Include.NON_NULL)

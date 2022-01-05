@@ -9,8 +9,6 @@ import lombok.Value;
 
 @Builder
 @Value
-@ToString
-@EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Payment {
     @JsonProperty("id")

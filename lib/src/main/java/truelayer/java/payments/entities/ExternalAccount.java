@@ -25,6 +25,11 @@ public class ExternalAccount implements BaseBeneficiary {
     @JsonProperty("scheme_identifier")
     private SchemeIdentifier schemeIdentifier;
 
+    @Builder
+    @Getter
+    @ToString
+    @EqualsAndHashCode
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SchemeIdentifier {
         @JsonProperty("type")
         private final String type = "sort_code_account_number";

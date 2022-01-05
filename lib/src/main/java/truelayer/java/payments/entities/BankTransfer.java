@@ -26,6 +26,8 @@ public class BankTransfer implements BasePaymentMethod {
     private ProviderFilter providerFilter;
 
     @Builder
+    @ToString
+    @EqualsAndHashCode
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ProviderFilter {
         @JsonProperty("countries")
@@ -78,6 +80,8 @@ public class BankTransfer implements BasePaymentMethod {
         }
 
         @Builder
+        @ToString
+        @EqualsAndHashCode
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class Excludes {
             @JsonProperty("provider_ids")
