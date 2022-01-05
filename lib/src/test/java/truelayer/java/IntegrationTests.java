@@ -4,7 +4,10 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 
 import java.util.List;
@@ -18,8 +21,6 @@ import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 @WireMockTest
 @Tag("integration")
 public class IntegrationTests {
-    // todo: error testing to be improved as soon as we improve the error handling
-
     private TrueLayerClient tlClient;
 
     @SneakyThrows
@@ -42,8 +43,8 @@ public class IntegrationTests {
     }
 
     @Test
-    @DisplayName("It should throw an exception in case on an authorized error from the auth API.")
-    public void shouldThrowIfUnauthorized() {
+    @DisplayName("It should return an error in case on an authorized error from the auth API.")
+    public void shouldReturnErrorIfUnauthorized() {
         stubFor(
                 post("/connect/token").willReturn(
                         badRequest()
@@ -51,11 +52,10 @@ public class IntegrationTests {
                 )
         );
 
-        var thrown = Assertions.assertThrows(TrueLayerException.class,
-                () -> tlClient.auth().getOauthToken(List.of("paydirect")));
+        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
-        assertNotNull(thrown);
-        assertTrue(thrown.getMessage().contains("\"error\": \"invalid_client\""));
+        assertTrue(response.isError());
+        assertTrue(response.getError().getTitle().contains("\"error\": \"invalid_client\""));
     }
 
     @SneakyThrows
@@ -68,13 +68,13 @@ public class IntegrationTests {
                 )
         );
 
-        var accessToken = tlClient.auth().getOauthToken(List.of("paydirect"));
+        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
-        assertNotNull(accessToken);
-        assertFalse(accessToken.getAccessToken().isEmpty());
-        assertFalse(accessToken.getTokenType().isEmpty());
-        assertFalse(accessToken.getScope().isEmpty());
-        assertTrue(accessToken.getExpiresIn() > 0);
+        assertFalse(response.isError());
+        assertFalse(response.getData().getAccessToken().isEmpty());
+        assertFalse(response.getData().getTokenType().isEmpty());
+        assertFalse(response.getData().getScope().isEmpty());
+        assertTrue(response.getData().getExpiresIn() > 0);
     }
 
     @Test
@@ -92,17 +92,17 @@ public class IntegrationTests {
         );
 
         var paymentRequest = CreatePaymentRequest.builder().build();
-        var payment = tlClient.payments().createPayment(paymentRequest);
+        var response = tlClient.payments().createPayment(paymentRequest);
 
-        assertNotNull(payment);
-        assertFalse(payment.getPaymentId().isEmpty());
-        assertFalse(payment.getStatus().isEmpty());
-        assertFalse(payment.getResourceToken().isEmpty());
+        assertFalse(response.isError());
+        assertFalse(response.getData().getPaymentId().isEmpty());
+        assertFalse(response.getData().getStatus().isEmpty());
+        assertFalse(response.getData().getResourceToken().isEmpty());
     }
 
     @Test
-    @DisplayName("It should throw an exception if the signature is not valid")
-    public void shouldThrowIfSignatureIsInvalid() {
+    @DisplayName("It should an error if the signature is not valid")
+    public void shouldReturnErrorIfSignatureIsInvalid() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -113,15 +113,16 @@ public class IntegrationTests {
                         unauthorized().withBodyFile("payments/401.invalid_signature.json")
                 )
         );
-
         var paymentRequest = CreatePaymentRequest.builder().build();
 
-        var thrown = Assertions.assertThrows(TrueLayerException.class,
-                () -> tlClient.payments().createPayment(paymentRequest));
+        var paymentResponse = tlClient.payments().createPayment(paymentRequest);
 
-        assertNotNull(thrown);
-        assertTrue(thrown.getMessage().contains("\"status\":401"));
-        assertTrue(thrown.getMessage().contains("\"detail\":\"Invalid request signature.\""));
+        assertTrue(paymentResponse.isError());
+        assertEquals(401, paymentResponse.getError().getStatus());
+        assertEquals("Invalid request signature.", paymentResponse.getError().getDetail());
+        assertEquals("https://docs.truelayer.com/docs/error-types#unauthenticated", paymentResponse.getError().getType());
+        assertEquals("Unauthenticated", paymentResponse.getError().getTitle());
+        assertFalse(paymentResponse.getError().getTraceId().isEmpty());
     }
 
     @Test
@@ -138,16 +139,16 @@ public class IntegrationTests {
                 )
         );
 
-        var payment = tlClient.payments().getPayment("a-payment-id");
+        var response = tlClient.payments().getPayment("a-payment-id");
 
-        assertNotNull(payment);
-        assertFalse(payment.getPaymentId().isEmpty());
-        assertFalse(payment.getStatus().isEmpty());
-        assertFalse(payment.getResourceToken().isEmpty());
+        assertFalse(response.isError());
+        assertFalse(response.getData().getPaymentId().isEmpty());
+        assertFalse(response.getData().getStatus().isEmpty());
+        assertFalse(response.getData().getResourceToken().isEmpty());
     }
 
     @Test
-    @DisplayName("It should throw an exception if a payment is not found")
+    @DisplayName("It should return an error if a payment is not found")
     public void shouldThrowIfPaymentNotFound() {
         stubFor(
                 post("/connect/token").willReturn(
@@ -159,14 +160,15 @@ public class IntegrationTests {
                         unauthorized().withBodyFile("payments/404.payment_not_found.json")
                 )
         );
-
         var paymentRequest = CreatePaymentRequest.builder().build();
 
-        var thrown = Assertions.assertThrows(TrueLayerException.class,
-                () -> tlClient.payments().createPayment(paymentRequest));
+        var response = tlClient.payments().createPayment(paymentRequest);
 
-        assertNotNull(thrown);
-        assertTrue(thrown.getMessage().contains("\"status\":404"));
-        assertTrue(thrown.getMessage().contains("\"detail\":\"Payment could not be found.\""));
+        assertTrue(response.isError());
+        assertEquals(404, response.getError().getStatus());
+        assertEquals("Payment could not be found.", response.getError().getDetail());
+        assertEquals("https://docs.truelayer.com/docs/error-types#not-found", response.getError().getType());
+        assertEquals("Not Found", response.getError().getTitle());
+        assertFalse(response.getError().getTraceId().isEmpty());
     }
 }

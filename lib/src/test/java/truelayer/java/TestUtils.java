@@ -3,9 +3,11 @@ package truelayer.java;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.mockito.Mockito;
-import retrofit2.Call;
 import retrofit2.Response;
 import truelayer.java.auth.entities.AccessToken;
+import truelayer.java.http.adapters.ApiCall;
+import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.Payment;
 
 import java.nio.file.Files;
@@ -33,8 +35,8 @@ public class TestUtils {
     }
 
     @SneakyThrows
-    public static <T> Call<T> stubApiResponse(Response<T> response) {
-        var mockApiResponse = (Call<T>) Mockito.mock(Call.class);
+    public static <T> ApiCall<T> stubApiResponse(Response<T> response) {
+        var mockApiResponse = Mockito.mock(ApiCall.class);
         when(mockApiResponse.execute()).thenReturn(response);
         return mockApiResponse;
     }
@@ -49,11 +51,14 @@ public class TestUtils {
         return Files.readAllBytes(Path.of(new StringBuilder(KEYS_LOCATION).append("ec512-public-key.pem").toString()));
     }
 
-    public static AccessToken buildAccessToken() {
-        return AccessToken.builder()
+    public static ApiResponse<AccessToken> buildAccessToken() {
+        var accessToken = AccessToken.builder()
                 .accessToken(UUID.randomUUID().toString())
                 .expiresIn(RandomUtils.nextInt())
                 .tokenType(UUID.randomUUID().toString())
+                .build();
+        return ApiResponse.<AccessToken>builder()
+                .data(accessToken)
                 .build();
     }
 
@@ -62,6 +67,13 @@ public class TestUtils {
                 .paymentId(UUID.randomUUID().toString())
                 .resourceToken(UUID.randomUUID().toString())
                 .status(UUID.randomUUID().toString())
+                .build();
+    }
+
+    public static ProblemDetails buildError(){
+        return ProblemDetails
+                .builder()
+                .title("an-error")
                 .build();
     }
 

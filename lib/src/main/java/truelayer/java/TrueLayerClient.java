@@ -1,8 +1,8 @@
 package truelayer.java;
 
-import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationApi;
@@ -22,20 +22,23 @@ import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 public class TrueLayerClient implements ITrueLayerClient {
     private final ClientCredentialsOptions clientCredentialsOptions;
     private final Optional<SigningOptions> signingOptions;
-    private final PropertiesConfiguration configuration;
     private final boolean useSandbox;
+    private PropertiesConfiguration configuration;
 
     private IAuthenticationHandler authenticationHandler;
     private IPaymentHandler paymentHandler;
 
-    @SneakyThrows
     public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
                            Optional<SigningOptions> signingOptions, boolean useSandbox) {
         this.clientCredentialsOptions = clientCredentialsOptions;
         this.signingOptions = signingOptions;
         this.useSandbox = useSandbox;
 
-        this.configuration = new Configurations().properties("application.properties");
+        try {
+            this.configuration = new Configurations().properties("application.properties");
+        } catch (ConfigurationException e) {
+            new TrueLayerException("Unable to load configuration", e);
+        }
     }
 
     public static TrueLayerClientBuilder builder() {
@@ -43,7 +46,6 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     @Override
-    @SneakyThrows
     public IAuthenticationHandler auth() {
         if (ObjectUtils.isEmpty(this.authenticationHandler)) {
             notNull(clientCredentialsOptions, "client credentials options must be set.");
