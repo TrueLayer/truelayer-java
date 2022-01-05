@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Optional;
 
 @JsonTypeInfo(
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "type",
         defaultImpl = MerchantAccount.class
