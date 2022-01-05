@@ -97,7 +97,7 @@ public class IntegrationTests {
         var response = tlClient.payments().createPayment(paymentRequest);
 
         assertFalse(response.isError());
-        assertFalse(response.getData().getPaymentId().isEmpty());
+        assertFalse(response.getData().getId().isEmpty());
         assertFalse(response.getData().getStatus().isEmpty());
         assertFalse(response.getData().getResourceToken().isEmpty());
     }
@@ -144,7 +144,7 @@ public class IntegrationTests {
         var response = tlClient.payments().getPayment("a-payment-id");
 
         assertFalse(response.isError());
-        assertFalse(response.getData().getPaymentId().isEmpty());
+        assertFalse(response.getData().getId().isEmpty());
         assertFalse(response.getData().getStatus().isEmpty());
         assertFalse(response.getData().getResourceToken().isEmpty());
     }

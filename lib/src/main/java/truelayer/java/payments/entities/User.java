@@ -14,6 +14,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("type")
     private Type type;
 

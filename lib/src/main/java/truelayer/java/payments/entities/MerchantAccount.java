@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MerchantAccount extends BaseBeneficiary {
+public class MerchantAccount implements BaseBeneficiary {
     @JsonProperty("type")
     private final String type = "merchant_account";
 

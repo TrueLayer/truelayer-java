@@ -1,5 +1,8 @@
 package truelayer.java.payments.entities;
 
-abstract class BasePaymentMethod {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = BankTransfer.class)
+interface BasePaymentMethod {
 
 }

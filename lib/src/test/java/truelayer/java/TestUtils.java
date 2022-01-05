@@ -64,7 +64,7 @@ public class TestUtils {
 
     public static Payment buildPayment(){
         return Payment.builder()
-                .paymentId(UUID.randomUUID().toString())
+                .id(UUID.randomUUID().toString())
                 .resourceToken(UUID.randomUUID().toString())
                 .status(UUID.randomUUID().toString())
                 .build();
