@@ -7,6 +7,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationApi;
 import truelayer.java.auth.IAuthenticationHandler;
+import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
+import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.http.HttpClientFactory;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
@@ -27,6 +29,7 @@ public class TrueLayerClient implements ITrueLayerClient {
 
     private IAuthenticationHandler authenticationHandler;
     private IPaymentHandler paymentHandler;
+    private IHostedPaymentPageLinkBuilder hppBuilder;
 
     public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
                            Optional<SigningOptions> signingOptions, boolean useSandbox) {
@@ -81,7 +84,17 @@ public class TrueLayerClient implements ITrueLayerClient {
                     .signingOptions(signingOptions)
                     .build();
         }
-        return paymentHandler;
+        return this.paymentHandler;
+    }
+
+    @Override
+    public IHostedPaymentPageLinkBuilder hpp() {
+        if (ObjectUtils.isEmpty(this.hppBuilder)) {
+            this.hppBuilder = HostedPaymentPageLinkBuilder.builder()
+                    .endpoint(getHppEndpointUrl())
+                    .build();
+        }
+        return this.hppBuilder;
     }
 
     public boolean useSandbox(){
@@ -98,6 +111,11 @@ public class TrueLayerClient implements ITrueLayerClient {
         return this.configuration.getString(endpointKey);
     }
 
+    private String getHppEndpointUrl(){
+        var endpointKey = useSandbox ? HPP_ENDPOINT_URL_SANDBOX: HPP_ENDPOINT_URL_LIVE;
+        return this.configuration.getString(endpointKey);
+    }
+
     private String[] getPaymentsScopes() {
         return this.configuration.getStringArray(PAYMENTS_SCOPES);
     }
@@ -109,6 +127,9 @@ public class TrueLayerClient implements ITrueLayerClient {
         public static final String PAYMENTS_ENDPOINT_URL_LIVE = "tl.payments.endpoint.live";
         public static final String PAYMENTS_ENDPOINT_URL_SANDBOX = "tl.payments.endpoint.sandbox";
         public static final String PAYMENTS_SCOPES = "tl.payments.scopes";
+
+        public static final String HPP_ENDPOINT_URL_LIVE = "tl.hpp.endpoint.live";
+        public static final String HPP_ENDPOINT_URL_SANDBOX = "tl.hpp.endpoint.sandbox";
     }
 
     /**

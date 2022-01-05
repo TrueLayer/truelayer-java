@@ -13,6 +13,7 @@ import truelayer.java.payments.entities.Payment;
 import truelayer.java.signing.Signer;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ public class PaymentHandler implements IPaymentHandler {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsApi;
     private String[] paymentsScopes;
+    private URI hostedPaymentPageEndpoint;
 
     private SigningOptions signingOptions;
 
@@ -56,7 +58,6 @@ public class PaymentHandler implements IPaymentHandler {
             throw new TrueLayerException("unable to get payment", e);
         }
     }
-
 
     private String signRequest(String idempotencyKey, String jsonRequest, String path) {
         byte[] privateKey = signingOptions.getPrivateKey();

@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.AuthenticationHandler;
+import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,6 +69,31 @@ public class TrueLayerClientTests {
         var paymentHandler2 = trueLayerClient.payments();
 
         assertTrue(paymentHandler1 == paymentHandler2);
+    }
+
+    @Test
+    @DisplayName("It should yield an HPP link builder")
+    public void itShouldBuildAnHppLinkBuilder() {
+        var trueLayerClient = TrueLayerClient.builder()
+                .build();
+
+        var hppLinkBuilder = (HostedPaymentPageLinkBuilder) trueLayerClient.hpp();
+
+        assertNotNull(hppLinkBuilder);
+        assertNotNull(hppLinkBuilder.getEndpoint());
+    }
+
+    @Test
+    @DisplayName("It should yield the same instance of the HPP link builder if hpp() is called multiple times")
+    @SneakyThrows
+    public void itShouldYieldTheSameHppLinkBuilder() {
+        var trueLayerClient = TrueLayerClient.builder()
+                .build();
+
+        var hpp1 = trueLayerClient.hpp();
+        var hpp2 = trueLayerClient.hpp();
+
+        assertTrue(hpp1 == hpp2);
     }
 
     @Test
