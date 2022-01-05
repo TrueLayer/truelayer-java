@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class HostedPaymentPageLinkBuilderTests {
 
     public static final String AN_ENDPOINT = "https://an-endpoint.com";
-    public static final String A_RETURN_URL = "https://a-redirect-url.com";
+    public static final String A_RETURN_URI = "https://a-redirect-uri.com";
     public static final String A_RESOURCE_TOKEN = "a-resource-token";
     public static final String A_PAYMENT_ID = "a-payment-id";
 
@@ -21,7 +21,7 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldYieldAnHppLink() {
         var sut = buildHppBuilder();
 
-        var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create(A_RETURN_URL));
+        var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
                 new StringBuilder(AN_ENDPOINT)
@@ -29,21 +29,21 @@ class HostedPaymentPageLinkBuilderTests {
                         .append(A_PAYMENT_ID)
                         .append("&resource_token=")
                         .append(A_RESOURCE_TOKEN)
-                        .append("&return_url=")
-                        .append(A_RETURN_URL)
+                        .append("&return_uri=")
+                        .append(A_RETURN_URI)
                         .toString(),
                 link.toString()
         );
     }
 
     @Test
-    @DisplayName("it should thrown an exception if redirect_url is empty")
+    @DisplayName("it should thrown an exception if redirect_uri is empty")
     public void itShouldThrowExceptionForEmptyRedirectUrl() {
         var sut = buildHppBuilder();
 
         var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create("")));
 
-        assertEquals("return_url must be set", thrown.getMessage());
+        assertEquals("return_uri must be set", thrown.getMessage());
     }
 
     @Test
@@ -51,7 +51,7 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyPaymentId() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink("", A_RESOURCE_TOKEN, URI.create(A_RETURN_URL)));
+        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink("", A_RESOURCE_TOKEN, URI.create(A_RETURN_URI)));
 
         assertEquals("payment_id must be set", thrown.getMessage());
     }
@@ -61,7 +61,7 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyResourceToken() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URL)));
+        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
 
         assertEquals("resource_token must be set", thrown.getMessage());
     }

@@ -14,7 +14,7 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
     private String endpoint;
 
     @Override
-    public URI getHostedPaymentPageLink(String paymentId, String resourceToken, URI returnUrl) {
+    public URI getHostedPaymentPageLink(String paymentId, String resourceToken, URI returnUri) {
         if(isEmpty(paymentId)){
             throw new TrueLayerException("payment_id must be set");
         }
@@ -23,15 +23,15 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
             throw new TrueLayerException("resource_token must be set");
         }
 
-        if(isEmpty(returnUrl) || isEmpty(returnUrl.toString())){
-            throw new TrueLayerException("return_url must be set");
+        if(isEmpty(returnUri) || isEmpty(returnUri.toString())){
+            throw new TrueLayerException("return_uri must be set");
         }
 
-        var link = String.format("%s/payments#payment_id=%s&resource_token=%s&return_url=%s",
+        var link = String.format("%s/payments#payment_id=%s&resource_token=%s&return_uri=%s",
                 endpoint,
                 paymentId,
                 resourceToken,
-                returnUrl);
+                returnUri);
         return URI.create(link);
     }
 }
