@@ -1,21 +1,36 @@
 package truelayer.java.payments.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Value;
 
 @Builder
 @Value
-@JsonIgnoreProperties(ignoreUnknown = true) //todo remove and complete the DTO
 public class Payment {
-
     @JsonProperty("id")
-    private final String paymentId;
+    private final String id;
+
+    @JsonProperty("amount_in_minor")
+    private int amountInMinor;
+
+    @JsonProperty("currency")
+    private String currency;
+
+    @JsonProperty("beneficiary")
+    private BaseBeneficiary beneficiary;
+
+    @JsonProperty("user")
+    private User user;
+
+    @JsonProperty("payment_method")
+    private BasePaymentMethod paymentMethod;
+
+    @JsonProperty("created_at")
+    private String createdAt;
 
     @JsonProperty("status")
-    private final String status;
+    private String status;
 
     @JsonProperty("resource_token")
-    private final String resourceToken;
+    private String resourceToken;
 }
