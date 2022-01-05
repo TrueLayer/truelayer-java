@@ -1,5 +1,6 @@
 package truelayer.java.payments.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.Optional;
 // every BasePaymentMethod instance
 @JsonDeserialize(as = BankTransfer.class)
 public abstract class BasePaymentMethod {
+    @JsonIgnore
     public boolean isBankTransfer(){
         return this instanceof BankTransfer;
     }

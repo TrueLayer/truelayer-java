@@ -1,5 +1,6 @@
 package truelayer.java.payments.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -18,12 +19,14 @@ import java.util.Optional;
         @JsonSubTypes.Type(value = MerchantAccount.class, name = "merchant_account"),
         @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account")
 })
-@JsonIgnoreProperties(value = { "externalAccount", "merchantAccount" })
 public abstract class BaseBeneficiary {
+
+    @JsonIgnore
     public boolean isMerchantAccount(){
         return this instanceof MerchantAccount;
     }
 
+    @JsonIgnore
     public boolean isExternalAccount(){
         return this instanceof ExternalAccount;
     }
