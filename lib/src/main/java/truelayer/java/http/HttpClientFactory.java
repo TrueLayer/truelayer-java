@@ -1,10 +1,17 @@
 package truelayer.java.http;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.jetbrains.annotations.NotNull;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
+import truelayer.java.http.interceptors.UserAgentInterceptor;
+
+import java.io.IOException;
 
 public class HttpClientFactory implements IHttpClientFactory {
 
@@ -22,6 +29,8 @@ public class HttpClientFactory implements IHttpClientFactory {
     @Override
     public Retrofit create(String baseUrl) {
         var clientBuilder = new OkHttpClient.Builder();
+
+        clientBuilder.addInterceptor(new UserAgentInterceptor());
 
         //todo replace with non deprecated or custom implementation
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
