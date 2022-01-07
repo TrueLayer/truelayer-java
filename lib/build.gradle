@@ -51,6 +51,7 @@ dependencies {
     // Use JUnit test framework.
     testImplementation(platform('org.junit:junit-bom:5.8.1'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation('org.awaitility:awaitility:4.1.1')
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'

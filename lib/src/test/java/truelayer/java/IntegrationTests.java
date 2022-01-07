@@ -8,12 +8,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import truelayer.java.auth.entities.AccessToken;
+import truelayer.java.http.IApiCallback;
+import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 
@@ -68,7 +76,17 @@ public class IntegrationTests {
                 )
         );
 
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
+        //var response = tlClient.auth().getOauthToken(List.of("paydirect"));
+
+        var task = tlClient.auth().getOauthToken(List.of("paydirect"), response -> {
+            if(response.isError()){
+                //handle error logic
+            }else{
+                //success case
+            }
+        });
+
+        task.cancel();
 
         assertFalse(response.isError());
         assertFalse(response.getData().getAccessToken().isEmpty());

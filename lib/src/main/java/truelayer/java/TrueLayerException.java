@@ -8,4 +8,8 @@ public class TrueLayerException extends RuntimeException {
     public TrueLayerException(String message, Throwable e){
         super(message, e);
     }
+
+    public TrueLayerException(Throwable e){
+        super(e);
+    }
 }
