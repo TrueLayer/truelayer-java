@@ -120,9 +120,20 @@ var paymentRequest = CreatePaymentRequest.builder()
                 .build())
         .build();
 
-var payment = client
+var paymentResponse = client
     .payments()
     .createPayment(paymentRequest);
+    
+if(paymentResponse.isError()){
+    // inspect the problem details and implement the error handling logic
+    var problemDetails = paymentResponse.getError();   
+    ...
+}else{
+    // logic for successful payment execution
+    var payment = paymentResponse.getData();
+    ...
+}    
+    
 ```
 
 ## Building locally
