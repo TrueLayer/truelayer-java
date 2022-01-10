@@ -18,6 +18,7 @@ shadowJar {
     archiveBaseName.set(archivesBaseName)
     archiveClassifier.set('')
     archiveVersion.set(version)
+    from sourceSets.main.allJava
 }
 
 repositories {
