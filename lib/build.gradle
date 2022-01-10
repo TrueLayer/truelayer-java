@@ -26,13 +26,12 @@ shadowJar {
 
 task createProperties(dependsOn: processResources) {
     doLast {
-        def versionInfo = new Properties()
-        def versionInfoFile = file("$buildDir/resources/main/version.properties");
-
-        versionInfo.load(versionInfoFile.newDataInputStream())
-        versionInfo.setProperty("name", archivesBaseName)
-        versionInfo.setProperty("version", version)
-        versionInfo.store(versionInfoFile.newWriter(), null)
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['name'] = archivesBaseName
+            p['version'] = project.version != "unspecified" ? project.version : "DEVELOPMENT"
+            p.store w, null
+        }
     }
 }
 
