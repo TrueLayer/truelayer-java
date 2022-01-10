@@ -9,9 +9,6 @@ import lombok.ToString;
 
 @Builder
 @Getter
-@ToString
-@EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExternalAccount extends BaseBeneficiary {
     @JsonProperty("type")
     private final String type = "external_account";

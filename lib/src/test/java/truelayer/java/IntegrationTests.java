@@ -4,10 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
@@ -103,7 +100,7 @@ public class IntegrationTests {
         assertFalse(response.getData().getStatus().isEmpty());
         assertFalse(response.getData().getResourceToken().isEmpty());
         assertTrue(response.getData().getBeneficiary().isMerchantAccount());
-        assertEquals("a-merchant", response.getData().getBeneficiary().merchantAccount().get().getName());
+        assertEquals("a-merchant", response.getData().getBeneficiary().asMerchantAccount().getName());
         assertTrue(response.getData().getPaymentMethod().isBankTransfer());
     }
 
@@ -132,11 +129,11 @@ public class IntegrationTests {
         assertFalse(response.getData().getStatus().isEmpty());
         assertFalse(response.getData().getResourceToken().isEmpty());
         assertTrue(response.getData().getBeneficiary().isExternalAccount());
-        assertEquals("112233", response.getData().getBeneficiary().externalAccount().get().getSchemeIdentifier().getSortCode());
+        assertEquals("112233", response.getData().getBeneficiary().asExternalAccount().getSchemeIdentifier().getSortCode());
     }
 
     @Test
-    @DisplayName("It should an error if the signature is not valid")
+    @DisplayName("It should return an error if the signature is not valid")
     public void shouldReturnErrorIfSignatureIsInvalid() {
         stubFor(
                 post("/connect/token").willReturn(
