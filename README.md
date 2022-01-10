@@ -50,7 +50,7 @@ dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'truelayer-java:lib:v0.0.1'
+    implementation 'truelayer-java:lib:0.0.5'
 }
 ```
 ### Final releases
