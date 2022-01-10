@@ -4,6 +4,7 @@
   "currency":"GBP",
   "beneficiary":{
     "type":"merchant_account",
+    "name": "a-merchant",
     "id":"a981e39a-5319-424a-99e9-***"
   },
   "user":{

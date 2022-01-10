@@ -1,0 +1,26 @@
+{
+  "id":"40d65bb9-642d-48e7-a743-***",
+  "amount_in_minor":101,
+  "currency":"GBP",
+  "beneficiary":{
+    "type":"external_account",
+    "name": "Elvis Presley",
+    "reference":"a981e39a-5319-424a-99e9-***",
+    "scheme_identifier": {
+      "type": "sort_code_account_number",
+      "sort_code": "112233",
+      "account_number": "11223344"
+    }
+  },
+  "user":{
+    "id":"332d7a9a-aaaa-4ae4-9d2f-***",
+    "name":"Andrea Di Lisio",
+    "email":"andrea@truelayer.com"
+  },
+  "payment_method":{
+    "type":"bank_transfer"
+  },
+  "resource_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***",
+  "status":"authorization_required",
+  "created_at":"2021-11-17T23:20:37.171915Z"
+}
