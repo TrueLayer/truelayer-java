@@ -13,12 +13,13 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.*;
-import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
+import static truelayer.java.ConfigurationKeys.*;
 
 
 @WireMockTest
 @Tag("integration")
 public class IntegrationTests {
+    public static final String LIBRARY_INFO = "truelayer-java/DEVELOPMENT";
     private TrueLayerClient tlClient;
 
     @SneakyThrows
@@ -38,6 +39,31 @@ public class IntegrationTests {
         properties.addProperty(PAYMENTS_ENDPOINT_URL_SANDBOX, wireMockRuntimeInfo.getHttpBaseUrl());
         properties.addProperty(PAYMENTS_SCOPES, "paydirect");
         writeField(tlClient, "configuration", properties, true);
+    }
+
+    @Test
+    @DisplayName("It should call every endpoint with a User-Agent header containing library info.")
+    public void shouldCallAnEndpointWithUserAgent(){
+        stubFor(
+                post("/connect/token").willReturn(
+                        ok().withBodyFile("auth/200.access_token.json")
+                )
+        );
+        stubFor(
+                post("/payments").willReturn(
+                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
+                )
+        );
+        var paymentRequest = CreatePaymentRequest.builder()
+                .beneficiary(MerchantAccount.builder().build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest);
+
+        verify(postRequestedFor(urlEqualTo("/connect/token"))
+                .withHeader("User-Agent", equalTo(LIBRARY_INFO)));
+        verify(postRequestedFor(urlEqualTo("/payments"))
+                .withHeader("User-Agent", equalTo(LIBRARY_INFO)));
     }
 
     @Test
