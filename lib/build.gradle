@@ -12,13 +12,31 @@ plugins {
     id 'maven-publish'
 }
 
-archivesBaseName = 'truelayer-java'
+archivesBaseName = "truelayer-java"
 
 shadowJar {
     archiveBaseName.set(archivesBaseName)
+
+    // avoid setting a default 'all' suffix to exported jar
     archiveClassifier.set('')
-    archiveVersion.set(version)
+
+    // include sources in the exported jar
     from sourceSets.main.allJava
+}
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['name'] = archivesBaseName
+            p['version'] = project.version != "unspecified" ? project.version : "DEVELOPMENT"
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
 }
 
 repositories {
