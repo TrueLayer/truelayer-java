@@ -14,8 +14,9 @@ public class UserAgentInterceptor implements Interceptor {
         Request newRequest;
 
         newRequest = request.newBuilder()
-                //todo make header info dynamic
-                .header("User-Agent", "truelayer-java/0.1.0")
+                .header("User-Agent", String.format("%s/%s",
+                        getClass().getPackage().getName(),
+                        getClass().getPackage().getImplementationVersion()))
                 .build();
         return chain.proceed(newRequest);
     }
