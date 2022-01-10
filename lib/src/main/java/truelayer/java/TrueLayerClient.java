@@ -16,15 +16,15 @@ import truelayer.java.payments.PaymentHandler;
 
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
-import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
+import static truelayer.java.ConfigurationKeys.*;
 
 public class TrueLayerClient implements ITrueLayerClient {
     private final ClientCredentialsOptions clientCredentialsOptions;
     private final Optional<SigningOptions> signingOptions;
     private final boolean useSandbox;
+    private VersionInfo versionInfo;
     private PropertiesConfiguration configuration;
 
     private IAuthenticationHandler authenticationHandler;
@@ -36,6 +36,17 @@ public class TrueLayerClient implements ITrueLayerClient {
         this.clientCredentialsOptions = clientCredentialsOptions;
         this.signingOptions = signingOptions;
         this.useSandbox = useSandbox;
+
+        try {
+            var versionInfoConfig = new Configurations().properties("version.properties");
+
+            this.versionInfo = VersionInfo.builder()
+                    .name(versionInfoConfig.getString(VersionInfo.Keys.NAME))
+                    .version(versionInfoConfig.getString(VersionInfo.Keys.VERSION))
+                    .build();
+        } catch (ConfigurationException e) {
+            new TrueLayerException("Unable to load version info file", e);
+        }
 
         try {
             this.configuration = new Configurations().properties("application.properties");
@@ -56,7 +67,7 @@ public class TrueLayerClient implements ITrueLayerClient {
             notEmpty(clientCredentialsOptions.getClientSecret(), "client secret must be not empty.");
 
             var authenticationApi = HttpClientFactory.getInstance()
-                    .create(getAuthEndpointUrl()).create(IAuthenticationApi.class);
+                    .create(getVersionInfo(), getAuthEndpointUrl()).create(IAuthenticationApi.class);
 
             this.authenticationHandler = AuthenticationHandler.builder()
                     .authenticationApi(authenticationApi)
@@ -78,7 +89,7 @@ public class TrueLayerClient implements ITrueLayerClient {
             notNull(signingOptions.getPrivateKey(), "private key must be set.");
 
             var paymentsApi = HttpClientFactory.getInstance()
-                    .create(getPaymentsEndpointUrl()).create(IPaymentsApi.class);
+                    .create(getVersionInfo(), getPaymentsEndpointUrl()).create(IPaymentsApi.class);
             this.paymentHandler = paymentHandlerBuilder.paymentsApi(paymentsApi)
                     .paymentsScopes(getPaymentsScopes())
                     .signingOptions(signingOptions)
@@ -97,79 +108,30 @@ public class TrueLayerClient implements ITrueLayerClient {
         return this.hppBuilder;
     }
 
-    public boolean useSandbox(){
+    public boolean useSandbox() {
         return this.useSandbox;
     }
 
     private String getAuthEndpointUrl() {
-        var endpointKey = useSandbox ? AUTH_ENDPOINT_URL_SANDBOX: AUTH_ENDPOINT_URL_LIVE;
+        var endpointKey = useSandbox ? AUTH_ENDPOINT_URL_SANDBOX : AUTH_ENDPOINT_URL_LIVE;
         return this.configuration.getString(endpointKey);
     }
 
-    private String getPaymentsEndpointUrl(){
-        var endpointKey = useSandbox ? PAYMENTS_ENDPOINT_URL_SANDBOX: PAYMENTS_ENDPOINT_URL_LIVE;
+    private String getPaymentsEndpointUrl() {
+        var endpointKey = useSandbox ? PAYMENTS_ENDPOINT_URL_SANDBOX : PAYMENTS_ENDPOINT_URL_LIVE;
         return this.configuration.getString(endpointKey);
     }
 
-    private String getHppEndpointUrl(){
-        var endpointKey = useSandbox ? HPP_ENDPOINT_URL_SANDBOX: HPP_ENDPOINT_URL_LIVE;
+    private String getHppEndpointUrl() {
+        var endpointKey = useSandbox ? HPP_ENDPOINT_URL_SANDBOX : HPP_ENDPOINT_URL_LIVE;
         return this.configuration.getString(endpointKey);
+    }
+
+    private VersionInfo getVersionInfo(){
+        return this.versionInfo;
     }
 
     private String[] getPaymentsScopes() {
         return this.configuration.getStringArray(PAYMENTS_SCOPES);
-    }
-
-    public static class ConfigurationKeys {
-        public static final String AUTH_ENDPOINT_URL_LIVE = "tl.auth.endpoint.live";
-        public static final String AUTH_ENDPOINT_URL_SANDBOX = "tl.auth.endpoint.sandbox";
-
-        public static final String PAYMENTS_ENDPOINT_URL_LIVE = "tl.payments.endpoint.live";
-        public static final String PAYMENTS_ENDPOINT_URL_SANDBOX = "tl.payments.endpoint.sandbox";
-        public static final String PAYMENTS_SCOPES = "tl.payments.scopes";
-
-        public static final String HPP_ENDPOINT_URL_LIVE = "tl.hpp.endpoint.live";
-        public static final String HPP_ENDPOINT_URL_SANDBOX = "tl.hpp.endpoint.sandbox";
-    }
-
-    /**
-     * Builder class for TrueLayerClient instances. This is deliberately not managed
-     * with Lombok annotations as its building phase is customized and slightly deviate from
-     * the way Lombok builds stuff.
-     */
-    public static class TrueLayerClientBuilder {
-        private ClientCredentialsOptions clientCredentialsOptions;
-
-        private SigningOptions signingOptions;
-
-        private boolean useSandbox;
-
-        public TrueLayerClientBuilder() {
-
-        }
-
-        public TrueLayerClientBuilder clientCredentialsOptions(ClientCredentialsOptions credentialsOptions) {
-            this.clientCredentialsOptions = credentialsOptions;
-            return this;
-        }
-
-        public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
-            this.signingOptions = signingOptions;
-            return this;
-        }
-
-        public TrueLayerClientBuilder useSandbox() {
-            this.useSandbox = true;
-            return this;
-        }
-
-        public TrueLayerClient build() {
-            var client = new TrueLayerClient(
-                    this.clientCredentialsOptions,
-                    ofNullable(this.signingOptions),
-                    this.useSandbox
-            );
-            return client;
-        }
     }
 }
