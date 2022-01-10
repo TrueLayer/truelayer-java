@@ -1,7 +1,12 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Optional;
 
@@ -9,6 +14,9 @@ import java.util.Optional;
 // type only, that is BankTransfer to which Jackson will deserialize
 // every BasePaymentMethod instance
 @JsonDeserialize(as = BankTransfer.class)
+@ToString
+@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BasePaymentMethod {
     @JsonIgnore
     public boolean isBankTransfer(){

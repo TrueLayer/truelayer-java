@@ -12,9 +12,6 @@ import java.util.List;
 
 @Builder
 @Getter
-@ToString
-@EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BankTransfer extends BasePaymentMethod {
     @JsonProperty("type")
     private final String type = "bank_transfer";

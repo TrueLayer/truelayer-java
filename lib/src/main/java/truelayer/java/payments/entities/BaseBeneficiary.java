@@ -1,8 +1,14 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import truelayer.java.TrueLayerException;
 
 import java.util.Optional;
 
@@ -18,6 +24,10 @@ import java.util.Optional;
         @JsonSubTypes.Type(value = MerchantAccount.class, name = "merchant_account"),
         @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account")
 })
+@Getter
+@ToString
+@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BaseBeneficiary {
 
     @JsonIgnore
@@ -30,17 +40,21 @@ public abstract class BaseBeneficiary {
         return this instanceof ExternalAccount;
     }
 
-    public Optional<MerchantAccount> merchantAccount(){
-        if(isMerchantAccount()){
-            return Optional.of((MerchantAccount) this);
+    public MerchantAccount asMerchantAccount(){
+        if(!isMerchantAccount()){
+            throw new TrueLayerException(buildErrorMessage());
         }
-        return Optional.empty();
+        return (MerchantAccount) this;
     }
 
-    public Optional<ExternalAccount> externalAccount(){
-        if(isExternalAccount()){
-            return Optional.of((ExternalAccount) this);
+    public ExternalAccount asExternalAccount(){
+        if(!isExternalAccount()){
+            throw new TrueLayerException(buildErrorMessage());
         }
-        return Optional.empty();
+        return (ExternalAccount) this;
+    }
+
+    private String buildErrorMessage(){
+        return String.format("beneficiary is of type %1$s. Consider using as%1$s() instead.", this.getClass().getSimpleName());
     }
 }
