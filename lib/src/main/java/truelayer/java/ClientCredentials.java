@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ClientCredentialsOptions {
+public class ClientCredentials {
     private String clientId;
 
     private String clientSecret;
