@@ -8,12 +8,13 @@ import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface IAuthenticationApi {
 
     @FormUrlEncoded
     @POST("/connect/token")
-    ApiCall<ApiResponse<AccessToken>> getOauthToken(
+    CompletableFuture<ApiResponse<AccessToken>> getOauthToken(
         @Field("client_id") String clientId,
         @Field("client_secret") String clientSecret,
         @Field("grant_type") String grantType,

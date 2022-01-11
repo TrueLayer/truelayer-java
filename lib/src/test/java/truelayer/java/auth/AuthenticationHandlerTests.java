@@ -6,6 +6,7 @@ import truelayer.java.TestUtils;
 import truelayer.java.TrueLayerException;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,8 @@ public class AuthenticationHandlerTests {
         var token = TestUtils.buildAccessToken();
         var authentication = AuthenticationHandler.builder()
                 .authenticationApi((clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(success(token)))
+                        CompletableFuture.completedFuture(token))
+                        //stubApiResponse(success(token)))
                 .clientCredentialsOptions(getClientCredentialsOptions())
                 .build();
 

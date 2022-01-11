@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import truelayer.java.SigningOptions;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
@@ -27,12 +28,13 @@ public class PaymentHandler implements IPaymentHandler {
     private SigningOptions signingOptions;
 
     @Override
+    @SneakyThrows //todo remove
     public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
         var idempotencyKey = UUID.randomUUID().toString();
         var createRequestJsonString = requestToJsonString(createPaymentRequest);
         var signature = signRequest(idempotencyKey, createRequestJsonString, "/payments");
 
-        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes)).get();
         try {
             return (ApiResponse<Payment>) paymentsApi.createPayment(idempotencyKey,
                             signature,
@@ -45,8 +47,9 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     @Override
+    @SneakyThrows //todo remove
     public ApiResponse<Payment> getPayment(String paymentId) {
-        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes)).get();
         try {
             return (ApiResponse<Payment>) paymentsApi.getPayment(
                     buildAuthorizationHeader(oauthToken.getData().getAccessToken()),

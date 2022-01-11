@@ -9,6 +9,8 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static retrofit2.Response.success;
@@ -50,7 +52,8 @@ class PaymentHandlerTests {
 
         var authenticationHandler = AuthenticationHandler.builder()
                 .authenticationApi((clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(success(TestUtils.buildAccessToken())))
+                        CompletableFuture.completedFuture(TestUtils.buildAccessToken()))
+                        //stubApiResponse(success(TestUtils.buildAccessToken())))
                 .clientCredentialsOptions(getClientCredentialsOptions())
                 .build();
         return PaymentHandler.builder()
@@ -60,12 +63,13 @@ class PaymentHandlerTests {
                 .paymentsApi(new IPaymentsApi() {
                     @Override
                     public ApiCall<ApiResponse<Payment>> createPayment(String idempotencyKey, String signature, String authorization, CreatePaymentRequest body) {
-                        return stubApiResponse(success(apiResponse));
+                        return TestUtils.stubApiResponseOld(success(apiResponse));
+
                     }
 
                     @Override
                     public ApiCall<ApiResponse<Payment>> getPayment(String authorization, String paymentId) {
-                        return stubApiResponse(success(apiResponse));
+                        return TestUtils.stubApiResponseOld(success(apiResponse));
                     }
                 })
                 .build();

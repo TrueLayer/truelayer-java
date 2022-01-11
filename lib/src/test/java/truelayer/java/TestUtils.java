@@ -13,6 +13,7 @@ import truelayer.java.payments.entities.Payment;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.when;
 
@@ -35,10 +36,14 @@ public class TestUtils {
     }
 
     @SneakyThrows
-    public static <T> ApiCall<T> stubApiResponse(Response<T> response) {
+    public static <T> ApiCall<T> stubApiResponseOld(Response<T> response) {
         var mockApiResponse = Mockito.mock(ApiCall.class);
         when(mockApiResponse.execute()).thenReturn(response);
         return mockApiResponse;
+    }
+
+    public static <T> CompletableFuture<Response<T>> stubApiResponse(Response<T> response) {
+        return CompletableFuture.completedFuture(response);
     }
 
     @SneakyThrows

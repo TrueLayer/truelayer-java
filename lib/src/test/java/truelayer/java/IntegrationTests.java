@@ -4,10 +4,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,7 +18,6 @@ import java.util.function.Consumer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TrueLayerClient.ConfigurationKeys.*;
 
@@ -51,6 +47,7 @@ public class IntegrationTests {
     }
 
     @Test
+    @SneakyThrows
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
     public void shouldReturnErrorIfUnauthorized() {
         stubFor(
@@ -60,7 +57,7 @@ public class IntegrationTests {
                 )
         );
 
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
+        var response = tlClient.auth().getOauthToken(List.of("paydirect")).get();
 
         assertTrue(response.isError());
         assertTrue(response.getError().getTitle().contains("\"error\": \"invalid_client\""));
@@ -73,26 +70,25 @@ public class IntegrationTests {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
+                                .withFixedDelay(5000)
                 )
         );
 
         //var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
-        var task = tlClient.auth().getOauthToken(List.of("paydirect"), response -> {
-            if(response.isError()){
-                //handle error logic
-            }else{
-                //success case
-            }
-        });
+        var future = tlClient.auth().getOauthToken(List.of("paydirect")).thenAccept((response)->{
+            assertFalse(response.isError());
+            assertFalse(response.getData().getAccessToken().isEmpty());
+            assertFalse(response.getData().getTokenType().isEmpty());
+            assertFalse(response.getData().getScope().isEmpty());
+            assertTrue(response.getData().getExpiresIn() > 0);
+        }).get();
+/*
 
-        task.cancel();
+        var response = future.cancel(true);
+        Assertions.assertFalse(future.isCancelled());
+*/
 
-        assertFalse(response.isError());
-        assertFalse(response.getData().getAccessToken().isEmpty());
-        assertFalse(response.getData().getTokenType().isEmpty());
-        assertFalse(response.getData().getScope().isEmpty());
-        assertTrue(response.getData().getExpiresIn() > 0);
     }
 
     @Test
