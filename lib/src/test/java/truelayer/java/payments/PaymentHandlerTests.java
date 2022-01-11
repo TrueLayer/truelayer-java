@@ -12,7 +12,7 @@ import truelayer.java.payments.entities.Payment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static retrofit2.Response.success;
-import static truelayer.java.TestUtils.getClientCredentialsOptions;
+import static truelayer.java.TestUtils.getClientCredentials;
 import static truelayer.java.TestUtils.stubApiResponse;
 
 class PaymentHandlerTests {
@@ -51,7 +51,7 @@ class PaymentHandlerTests {
         var authenticationHandler = AuthenticationHandler.builder()
                 .authenticationApi((clientId, clientSecret, grantType, scopes) ->
                         stubApiResponse(success(TestUtils.buildAccessToken())))
-                .clientCredentialsOptions(getClientCredentialsOptions())
+                .clientCredentials(getClientCredentials())
                 .build();
         return PaymentHandler.builder()
                 .authenticationHandler(authenticationHandler)

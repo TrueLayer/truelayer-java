@@ -8,7 +8,7 @@ import static java.util.Optional.ofNullable;
  * the way Lombok builds stuff.
  */
 public class TrueLayerClientBuilder {
-    private ClientCredentialsOptions clientCredentialsOptions;
+    private ClientCredentials clientCredentials;
 
     private SigningOptions signingOptions;
 
@@ -18,8 +18,8 @@ public class TrueLayerClientBuilder {
 
     }
 
-    public TrueLayerClientBuilder clientCredentialsOptions(ClientCredentialsOptions credentialsOptions) {
-        this.clientCredentialsOptions = credentialsOptions;
+    public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
+        this.clientCredentials = credentials;
         return this;
     }
 
@@ -35,7 +35,7 @@ public class TrueLayerClientBuilder {
 
     public TrueLayerClient build() {
         var client = new TrueLayerClient(
-                this.clientCredentialsOptions,
+                this.clientCredentials,
                 ofNullable(this.signingOptions),
                 this.useSandbox
         );

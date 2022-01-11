@@ -16,14 +16,14 @@ public class TrueLayerClientTests {
     @SneakyThrows
     public void itShouldBuildAnAuthenticationHandler() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .build();
 
         var authenticationHandler = (AuthenticationHandler) trueLayerClient.auth();
 
         assertNotNull(authenticationHandler);
         assertNotNull(authenticationHandler.getAuthenticationApi());
-        assertNotNull(authenticationHandler.getClientCredentialsOptions());
+        assertNotNull(authenticationHandler.getClientCredentials());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class TrueLayerClientTests {
     @SneakyThrows
     public void itShouldYieldTheSameAuthenticationHandler() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .build();
 
         var authenticationHandler1 = trueLayerClient.auth();
@@ -44,7 +44,7 @@ public class TrueLayerClientTests {
     @DisplayName("It should yield a payment handler")
     public void itShouldBuildAPaymentClient() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
@@ -61,7 +61,7 @@ public class TrueLayerClientTests {
     @SneakyThrows
     public void itShouldYieldTheSamePaymentHandler() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
@@ -113,7 +113,7 @@ public class TrueLayerClientTests {
     @SneakyThrows
     public void itShouldBuildAnExceptionIfSigningOptionMissing() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .build();
 
         var thrown = assertThrows(TrueLayerException.class, () -> trueLayerClient.payments());
