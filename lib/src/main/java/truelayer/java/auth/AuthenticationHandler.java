@@ -2,7 +2,7 @@ package truelayer.java.auth;
 
 import lombok.Builder;
 import lombok.Getter;
-import truelayer.java.ClientCredentialsOptions;
+import truelayer.java.ClientCredentials;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
@@ -15,14 +15,14 @@ import java.util.List;
 public class AuthenticationHandler implements IAuthenticationHandler {
 
     private final IAuthenticationApi authenticationApi;
-    private final ClientCredentialsOptions clientCredentialsOptions;
+    private final ClientCredentials clientCredentials;
 
     @Override
     public ApiResponse<AccessToken> getOauthToken(List<String> scopes) {
         try {
-            return (ApiResponse<AccessToken>) authenticationApi.getOauthToken(clientCredentialsOptions.getClientId(),
-                    clientCredentialsOptions.getClientSecret(),
-                    ClientCredentialsOptions.GRANT_TYPE,
+            return (ApiResponse<AccessToken>) authenticationApi.getOauthToken(clientCredentials.getClientId(),
+                    clientCredentials.getClientSecret(),
+                    ClientCredentials.GRANT_TYPE,
                     scopes).execute().body();
         } catch (IOException e) {
             throw new TrueLayerException("unable to get oauth token", e);

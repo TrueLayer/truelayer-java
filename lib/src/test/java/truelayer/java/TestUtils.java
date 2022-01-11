@@ -22,8 +22,8 @@ public class TestUtils {
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
 
-    public static ClientCredentialsOptions getClientCredentialsOptions() {
-        return ClientCredentialsOptions.builder()
+    public static ClientCredentials getClientCredentials() {
+        return ClientCredentials.builder()
                 .clientId("a-client-id")
                 .clientSecret("a-secret").build();
     }

@@ -10,7 +10,7 @@ import java.io.IOException;
 import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static retrofit2.Response.success;
-import static truelayer.java.TestUtils.getClientCredentialsOptions;
+import static truelayer.java.TestUtils.getClientCredentials;
 import static truelayer.java.TestUtils.stubApiResponse;
 
 public class AuthenticationHandlerTests {
@@ -24,7 +24,7 @@ public class AuthenticationHandlerTests {
         var authentication = AuthenticationHandler.builder()
                 .authenticationApi((clientId, clientSecret, grantType, scopes) ->
                         stubApiResponse(success(token)))
-                .clientCredentialsOptions(getClientCredentialsOptions())
+                .clientCredentials(getClientCredentials())
                 .build();
 
         var oauthToken = authentication.getOauthToken(of(A_SCOPE));
