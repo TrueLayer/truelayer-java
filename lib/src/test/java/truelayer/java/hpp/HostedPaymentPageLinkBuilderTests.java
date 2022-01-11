@@ -13,7 +13,7 @@ class HostedPaymentPageLinkBuilderTests {
 
     public static final String AN_ENDPOINT = "https://an-endpoint.com";
     public static final String A_RETURN_URI = "https://a-redirect-uri.com";
-    public static final String A_RESOURCE_TOKEN = "a-resource-token";
+    public static final String A_PAYMENT_TOKEN = "a-payment-token";
     public static final String A_PAYMENT_ID = "a-payment-id";
 
     @Test
@@ -21,14 +21,14 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldYieldAnHppLink() {
         var sut = buildHppBuilder();
 
-        var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create(A_RETURN_URI));
+        var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
                 new StringBuilder(AN_ENDPOINT)
                         .append("/payments#payment_id=")
                         .append(A_PAYMENT_ID)
                         .append("&payment_token=")
-                        .append(A_RESOURCE_TOKEN)
+                        .append(A_PAYMENT_TOKEN)
                         .append("&return_uri=")
                         .append(A_RETURN_URI)
                         .toString(),
@@ -41,7 +41,7 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyRedirectUrl() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create("")));
+        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create("")));
 
         assertEquals("return_uri must be set", thrown.getMessage());
     }
@@ -51,7 +51,7 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyPaymentId() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink("", A_RESOURCE_TOKEN, URI.create(A_RETURN_URI)));
+        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink("", A_PAYMENT_TOKEN, URI.create(A_RETURN_URI)));
 
         assertEquals("payment_id must be set", thrown.getMessage());
     }

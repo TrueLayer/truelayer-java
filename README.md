@@ -139,7 +139,7 @@ if(paymentResponse.isError()){
 ### Build a link to our hosted payment page
 ```
 var hppLink = client.hpp().getHostedPaymentPageLink("your-payment-id",
-        "your-resource-token",
+        "your-payment-token",
         URI.create("http://yourdomain.com"));
 ```
 
