@@ -13,7 +13,7 @@ public class TrueLayerClientBuilderTests {
     @SneakyThrows
     public void itShouldBuildALiveTrueLayerClient() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .build();
 
         assertFalse(trueLayerClient.useSandbox());
@@ -24,7 +24,7 @@ public class TrueLayerClientBuilderTests {
     @SneakyThrows
     public void itShouldBuildASandboxTrueLayerClient() {
         var trueLayerClient = TrueLayerClient.builder()
-                .clientCredentialsOptions(TestUtils.getClientCredentialsOptions())
+                .clientCredentials(TestUtils.getClientCredentials())
                 .useSandbox()
                 .build();
 
