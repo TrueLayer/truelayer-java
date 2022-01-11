@@ -14,6 +14,7 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -76,18 +77,14 @@ public class IntegrationTests {
 
         //var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
-        var future = tlClient.auth().getOauthToken(List.of("paydirect")).thenAccept((response)->{
+        var future = tlClient.auth().getOauthToken(List.of("paydirect")).whenComplete((response, throwable)->{
             assertFalse(response.isError());
             assertFalse(response.getData().getAccessToken().isEmpty());
             assertFalse(response.getData().getTokenType().isEmpty());
             assertFalse(response.getData().getScope().isEmpty());
             assertTrue(response.getData().getExpiresIn() > 0);
-        }).get();
-/*
 
-        var response = future.cancel(true);
-        Assertions.assertFalse(future.isCancelled());
-*/
+        }).get(3000, TimeUnit.MILLISECONDS);
 
     }
 

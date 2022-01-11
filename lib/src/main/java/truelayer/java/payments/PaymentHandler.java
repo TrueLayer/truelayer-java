@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import truelayer.java.SigningOptions;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
@@ -36,6 +39,27 @@ public class PaymentHandler implements IPaymentHandler {
 
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes)).get();
         try {
+            var c = paymentsApi.createPayment(idempotencyKey,
+                    signature,
+                    buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
+                    createPaymentRequest);
+
+            c.enqueue(new Callback<ApiResponse<Payment>>() {
+
+                @Override
+                public void onResponse(Call<ApiResponse<Payment>> call, Response<ApiResponse<Payment>> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<Payment>> call, Throwable t) {
+
+                }
+            });
+
+            c.cancel();
+
+
             return (ApiResponse<Payment>) paymentsApi.createPayment(idempotencyKey,
                             signature,
                             buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
