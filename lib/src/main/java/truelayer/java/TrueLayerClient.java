@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 import static truelayer.java.ConfigurationKeys.*;
 
 public class TrueLayerClient implements ITrueLayerClient {
-    private final ClientCredentialsOptions clientCredentialsOptions;
+    private final ClientCredentials clientCredentials;
     private final Optional<SigningOptions> signingOptions;
     private final boolean useSandbox;
     private VersionInfo versionInfo;
@@ -31,9 +31,9 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IPaymentHandler paymentHandler;
     private IHostedPaymentPageLinkBuilder hppBuilder;
 
-    public TrueLayerClient(ClientCredentialsOptions clientCredentialsOptions,
+    public TrueLayerClient(ClientCredentials clientCredentials,
                            Optional<SigningOptions> signingOptions, boolean useSandbox) {
-        this.clientCredentialsOptions = clientCredentialsOptions;
+        this.clientCredentials = clientCredentials;
         this.signingOptions = signingOptions;
         this.useSandbox = useSandbox;
 
@@ -62,16 +62,16 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public IAuthenticationHandler auth() {
         if (ObjectUtils.isEmpty(this.authenticationHandler)) {
-            notNull(clientCredentialsOptions, "client credentials options must be set.");
-            notEmpty(clientCredentialsOptions.getClientId(), "client id must be not empty");
-            notEmpty(clientCredentialsOptions.getClientSecret(), "client secret must be not empty.");
+            notNull(clientCredentials, "client credentials options must be set.");
+            notEmpty(clientCredentials.getClientId(), "client id must be not empty");
+            notEmpty(clientCredentials.getClientSecret(), "client secret must be not empty.");
 
             var authenticationApi = HttpClientFactory.getInstance()
                     .create(getVersionInfo(), getAuthEndpointUrl()).create(IAuthenticationApi.class);
 
             this.authenticationHandler = AuthenticationHandler.builder()
                     .authenticationApi(authenticationApi)
-                    .clientCredentialsOptions(clientCredentialsOptions)
+                    .clientCredentials(clientCredentials)
                     .build();
         }
         return this.authenticationHandler;
