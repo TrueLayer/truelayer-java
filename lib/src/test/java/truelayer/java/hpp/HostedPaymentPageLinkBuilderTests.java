@@ -27,7 +27,7 @@ class HostedPaymentPageLinkBuilderTests {
                 new StringBuilder(AN_ENDPOINT)
                         .append("/payments#payment_id=")
                         .append(A_PAYMENT_ID)
-                        .append("&resource_token=")
+                        .append("&payment_token=")
                         .append(A_RESOURCE_TOKEN)
                         .append("&return_uri=")
                         .append(A_RETURN_URI)
@@ -57,13 +57,13 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     @Test
-    @DisplayName("it should thrown an exception if resource_token is empty")
+    @DisplayName("it should thrown an exception if payment_token is empty")
     public void itShouldThrowExceptionForEmptyResourceToken() {
         var sut = buildHppBuilder();
 
         var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
 
-        assertEquals("resource_token must be set", thrown.getMessage());
+        assertEquals("payment_token must be set", thrown.getMessage());
     }
 
     private HostedPaymentPageLinkBuilder buildHppBuilder() {
