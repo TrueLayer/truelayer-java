@@ -1,10 +1,12 @@
 package truelayer.java;
 
+import com.github.tomakehurst.wiremock.http.Fault;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.Execution;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -13,8 +15,11 @@ import truelayer.java.http.IApiCallback;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 
+import java.net.SocketException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -64,6 +69,37 @@ public class IntegrationTests {
         assertTrue(response.getError().getTitle().contains("\"error\": \"invalid_client\""));
     }
 
+    @Test
+    @DisplayName("It should timeout while getting an access token")
+    public void shouldTimeoutWhileGettingAnAccessToken() {
+        stubFor(
+                post("/connect/token").willReturn(
+                        ok().withBodyFile("auth/200.access_token.json")
+                                .withFixedDelay(3000)
+                )
+
+        );
+
+        assertThrows(TimeoutException.class, () -> tlClient.auth().getOauthToken(List.of("paydirect"))
+                .get(1000, TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("It should fail due to a connection reset")
+    public void shouldFailDueToConnectionReset() {
+        stubFor(
+                post("/connect/token").willReturn(
+                        aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)
+                )
+
+        );
+
+        var thrown = assertThrows(ExecutionException.class, () -> tlClient.auth().getOauthToken(List.of("paydirect")).get());
+        assertEquals(SocketException.class, thrown.getCause().getClass());
+        assertEquals("Connection reset", thrown.getCause().getMessage());
+    }
+
     @SneakyThrows
     @Test
     @DisplayName("It should create and return an access token")
@@ -71,8 +107,8 @@ public class IntegrationTests {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
-                                .withFixedDelay(5000)
                 )
+
         );
 
         //var response = tlClient.auth().getOauthToken(List.of("paydirect"));
@@ -84,7 +120,9 @@ public class IntegrationTests {
             assertFalse(response.getData().getScope().isEmpty());
             assertTrue(response.getData().getExpiresIn() > 0);
 
-        }).get(3000, TimeUnit.MILLISECONDS);
+        });
+
+        while(!future.isDone()){}
 
     }
 
