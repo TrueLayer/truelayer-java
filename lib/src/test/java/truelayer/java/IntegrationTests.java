@@ -26,7 +26,6 @@ public class IntegrationTests {
     @BeforeEach
     public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         tlClient = TrueLayerClient.builder()
-
                 .clientCredentials(TestUtils.getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
