@@ -30,7 +30,7 @@ class ApiCallTest {
         var response = (ApiResponse<Payment>) sut.execute().body();
 
         assertFalse(response.isError());
-        assertEquals(response.getData().getResourceToken(), payment.getResourceToken());
+        assertEquals(response.getData().getPaymentToken(), payment.getPaymentToken());
     }
 
     @SneakyThrows

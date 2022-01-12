@@ -11,7 +11,6 @@ import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.BankTransfer;
 import truelayer.java.payments.entities.MerchantAccount;
 import truelayer.java.payments.entities.Payment;
-import truelayer.java.payments.entities.User;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,15 +61,10 @@ public class TestUtils {
     }
 
     public static Payment buildPayment() {
-        return new Payment(UUID.randomUUID().toString(),
-                100,
-                "GBP",
-                MerchantAccount.builder().build(),
-                User.builder().build(),
-                BankTransfer.builder().build(),
-                "2021-11-17T23:20:37.171915Z",
-                "authorization_required",
-                UUID.randomUUID().toString()
+        return new Payment(
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(),
+                new Payment.User(UUID.randomUUID().toString())
         );
     }
 

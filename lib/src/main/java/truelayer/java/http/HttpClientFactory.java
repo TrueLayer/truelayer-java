@@ -2,11 +2,8 @@ package truelayer.java.http;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import truelayer.java.TrueLayerException;
 import truelayer.java.VersionInfo;
 import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
@@ -15,10 +12,11 @@ public class HttpClientFactory implements IHttpClientFactory {
 
     private static HttpClientFactory INSTANCE = null;
 
-    private HttpClientFactory(){}
+    private HttpClientFactory() {
+    }
 
     public static synchronized IHttpClientFactory getInstance() {
-        if ( INSTANCE == null ) {
+        if (INSTANCE == null) {
             INSTANCE = new HttpClientFactory();
         }
         return INSTANCE;
