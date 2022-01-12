@@ -123,11 +123,7 @@ public class IntegrationTests {
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getStatus().isEmpty());
-        assertFalse(response.getData().getResourceToken().isEmpty());
-        assertTrue(response.getData().getBeneficiary().isMerchantAccount());
-        assertEquals("a-merchant", response.getData().getBeneficiary().asMerchantAccount().getName());
-        assertTrue(response.getData().getPaymentMethod().isBankTransfer());
+        assertFalse(response.getData().getPaymentToken().isEmpty());
     }
 
     @Test
@@ -152,10 +148,7 @@ public class IntegrationTests {
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getStatus().isEmpty());
-        assertFalse(response.getData().getResourceToken().isEmpty());
-        assertTrue(response.getData().getBeneficiary().isExternalAccount());
-        assertEquals("112233", response.getData().getBeneficiary().asExternalAccount().getSchemeIdentifier().getSortCode());
+        assertFalse(response.getData().getPaymentToken().isEmpty());
     }
 
     @Test
@@ -201,8 +194,7 @@ public class IntegrationTests {
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getStatus().isEmpty());
-        assertFalse(response.getData().getResourceToken().isEmpty());
+        assertFalse(response.getData().getPaymentToken().isEmpty());
     }
 
     @Test

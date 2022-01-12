@@ -14,23 +14,23 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
     private String endpoint;
 
     @Override
-    public URI getHostedPaymentPageLink(String paymentId, String resourceToken, URI returnUri) {
+    public URI getHostedPaymentPageLink(String paymentId, String payment_token, URI returnUri) {
         if(isEmpty(paymentId)){
             throw new TrueLayerException("payment_id must be set");
         }
 
-        if(isEmpty(resourceToken)){
-            throw new TrueLayerException("resource_token must be set");
+        if(isEmpty(payment_token)){
+            throw new TrueLayerException("payment_token must be set");
         }
 
         if(isEmpty(returnUri) || isEmpty(returnUri.toString())){
             throw new TrueLayerException("return_uri must be set");
         }
 
-        var link = String.format("%s/payments#payment_id=%s&resource_token=%s&return_uri=%s",
+        var link = String.format("%s/payments#payment_id=%s&payment_token=%s&return_uri=%s",
                 endpoint,
                 paymentId,
-                resourceToken,
+                payment_token,
                 returnUri);
         return URI.create(link);
     }

@@ -1,21 +1,7 @@
 {
   "id":"40d65bb9-642d-48e7-a743-***",
-  "amount_in_minor":101,
-  "currency":"GBP",
-  "beneficiary":{
-    "type":"merchant_account",
-    "name": "a-merchant",
-    "id":"a981e39a-5319-424a-99e9-***"
-  },
   "user":{
-    "id":"332d7a9a-aaaa-4ae4-9d2f-***",
-    "name":"Andrea Di Lisio",
-    "email":"andrea@truelayer.com"
+    "id":"332d7a9a-aaaa-4ae4-9d2f-***"
   },
-  "payment_method":{
-    "type":"bank_transfer"
-  },
-  "resource_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***",
-  "status":"authorization_required",
-  "created_at":"2021-11-17T23:20:37.171915Z"
+  "payment_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***"
 }
