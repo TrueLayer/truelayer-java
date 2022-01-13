@@ -6,6 +6,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.ObjectUtils;
+import truelayer.java.Constants.VersionInfo;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationApi;
 import truelayer.java.auth.IAuthenticationHandler;
@@ -24,7 +25,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
-import static truelayer.java.ConfigurationKeys.*;
+import static truelayer.java.Constants.ConfigurationKeys.*;
 
 public class TrueLayerClient implements ITrueLayerClient {
     private final ClientCredentials clientCredentials;
@@ -145,8 +146,8 @@ public class TrueLayerClient implements ITrueLayerClient {
 
     private Interceptor getUserAgentInterceptor(){
         return new UserAgentInterceptor(
-                this.versionInfo.getString(VersionInfoKeys.NAME),
-                this.versionInfo.getString(VersionInfoKeys.VERSION));
+                this.versionInfo.getString(VersionInfo.NAME),
+                this.versionInfo.getString(VersionInfo.VERSION));
     }
 
     private Interceptor getLoggingInterceptor(){

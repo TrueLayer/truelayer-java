@@ -5,13 +5,14 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.Buffer;
-import okio.BufferedSink;
 import org.jetbrains.annotations.NotNull;
 import truelayer.java.SigningOptions;
 import truelayer.java.signing.Signer;
 
 import java.io.IOException;
-import java.util.UUID;
+
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
 @RequiredArgsConstructor
 public class SignatureInterceptor implements Interceptor {
@@ -23,7 +24,7 @@ public class SignatureInterceptor implements Interceptor {
     public Response intercept(@NotNull Chain chain) throws IOException {
         var request = chain.request();
 
-        if (needsSignature(request)){
+        if (needsSignature(request)) {
             var clonedRequest = request.newBuilder().build();
 
             var buffer = new Buffer();
@@ -33,28 +34,28 @@ public class SignatureInterceptor implements Interceptor {
             var signature = computeSignature(
                     clonedRequest.method().toLowerCase(),
                     clonedRequest.url().encodedPath(),
-                    clonedRequest.header("Idempotency-Key"), //todo define headers constant class
+                    clonedRequest.header(IDEMPOTENCY_KEY),
                     jsonRequestBody
             );
 
             var newRequest = request.newBuilder()
-                    .header("Tl-Signature", signature)
+                    .header(TL_SIGNATURE, signature)
                     .build();
             return chain.proceed(newRequest);
-        }else{
+        } else {
             return chain.proceed(request);
         }
     }
 
-    private boolean needsSignature(Request request){
+    private boolean needsSignature(Request request) {
         return request.method().equalsIgnoreCase("post");
     }
 
-    private String computeSignature(String method, String path, String idempotencyKey, String jsonBody){
+    private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
         byte[] privateKey = signingOptions.getPrivateKey();
 
         return new Signer.Builder(signingOptions.getKeyId(), privateKey)
-                .addHeader("Idempotency-Key", idempotencyKey)
+                .addHeader(IDEMPOTENCY_KEY, idempotencyKey)
                 .addHttpMethod(method)
                 .addPath(path)
                 .addBody(jsonBody)

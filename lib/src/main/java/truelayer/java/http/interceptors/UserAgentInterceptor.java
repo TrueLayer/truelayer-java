@@ -7,6 +7,8 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
+
 @RequiredArgsConstructor
 public class UserAgentInterceptor implements Interceptor {
     private final String name;
@@ -16,7 +18,7 @@ public class UserAgentInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         var newRequest = request.newBuilder()
-                .header("User-Agent", String.format("%s/%s",
+                .header(USER_AGENT, String.format("%s/%s",
                         name,
                         version))
                 .build();

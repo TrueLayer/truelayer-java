@@ -3,11 +3,9 @@ package truelayer.java.http;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
-import truelayer.java.VersionInfoKeys;
 
 import java.io.IOException;
 import java.util.List;

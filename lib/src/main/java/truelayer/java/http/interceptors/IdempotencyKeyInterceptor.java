@@ -8,13 +8,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.UUID;
 
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+
 public class IdempotencyKeyInterceptor implements Interceptor {
     @NotNull
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
         var request = chain.request();
         var newRequest = request.newBuilder()
-                .header("Idempotency-Key", UUID.randomUUID().toString())
+                .header(IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .build();
 
         return chain.proceed(newRequest);

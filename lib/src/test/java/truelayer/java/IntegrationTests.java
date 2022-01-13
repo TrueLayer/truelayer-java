@@ -4,7 +4,10 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
@@ -13,13 +16,15 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.*;
-import static truelayer.java.ConfigurationKeys.*;
+import static truelayer.java.Constants.ConfigurationKeys.*;
+import static truelayer.java.Constants.HeaderNames.*;
 
 
 @WireMockTest
 @Tag("integration")
 public class IntegrationTests {
     public static final String LIBRARY_INFO = "truelayer-java/DEVELOPMENT";
+    private final static String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
     private TrueLayerClient tlClient;
 
     @SneakyThrows
@@ -41,8 +46,8 @@ public class IntegrationTests {
     }
 
     @Test
-    @DisplayName("It should call every endpoint with a User-Agent header containing library info.")
-    public void shouldCallAnEndpointWithUserAgent(){
+    @DisplayName("It should enrich calls with idempotency keys, headers and signature")
+    public void shouldCallAnEndpointWithUserAgent() {
         stubFor(
                 post("/connect/token").willReturn(
                         ok().withBodyFile("auth/200.access_token.json")
@@ -60,9 +65,15 @@ public class IntegrationTests {
         tlClient.payments().createPayment(paymentRequest);
 
         verify(postRequestedFor(urlEqualTo("/connect/token"))
-                .withHeader("User-Agent", equalTo(LIBRARY_INFO)));
+                .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
+                .withHeader(USER_AGENT, equalTo(LIBRARY_INFO))
+                .withoutHeader(TL_SIGNATURE)
+        );
         verify(postRequestedFor(urlEqualTo("/payments"))
-                .withHeader("User-Agent", equalTo(LIBRARY_INFO)));
+                .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
+                .withHeader(USER_AGENT, equalTo(LIBRARY_INFO))
+                .withHeader(TL_SIGNATURE, matching(".*"))
+        );
     }
 
     @Test

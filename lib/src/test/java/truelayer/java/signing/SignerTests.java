@@ -8,13 +8,14 @@ import truelayer.java.TestUtils;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 public class SignerTests {
     private static final String A_PAYLOAD = "{\"foo\":\"bar\"}";
     private static final String A_KEY_ID = "a_key_id";
     private static final String A_METHOD = "POST";
     private static final String A_PATH = "/test";
-    private static final Map<String, String> headers = Map.of("Idempotency-Key", "idemp_key");
+    private static final Map<String, String> headers = Map.of(IDEMPOTENCY_KEY, "idemp_key");
 
     @Test
     @DisplayName("It should create a valid signature")
