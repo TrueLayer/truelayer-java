@@ -109,7 +109,6 @@ public class TrueLayerClient implements ITrueLayerClient {
 
             this.paymentHandler = paymentHandlerBuilder.paymentsApi(httpClient.create(IPaymentsApi.class))
                     .paymentsScopes(getPaymentsScopes())
-                    .signingOptions(signingOptions)
                     .build();
         }
         return this.paymentHandler;

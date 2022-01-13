@@ -55,7 +55,6 @@ class PaymentHandlerTests {
                 .build();
         return PaymentHandler.builder()
                 .authenticationHandler(authenticationHandler)
-                .signingOptions(TestUtils.getSigningOptions())
                 .paymentsScopes(new String[]{"a-scope"})
                 .paymentsApi(new IPaymentsApi() {
                     @Override

@@ -52,7 +52,6 @@ public class TrueLayerClientTests {
 
         assertNotNull(paymentsHandler);
         assertNotNull(paymentsHandler.getPaymentsApi());
-        assertNotNull(paymentsHandler.getSigningOptions());
         assertTrue(paymentsHandler.getPaymentsScopes().length > 0);
     }
 
