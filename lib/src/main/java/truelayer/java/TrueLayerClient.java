@@ -12,6 +12,8 @@ import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.http.HttpClientBuilder;
+import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import truelayer.java.http.interceptors.SignatureInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
@@ -65,9 +67,14 @@ public class TrueLayerClient implements ITrueLayerClient {
             notEmpty(clientCredentials.getClientId(), "client id must be not empty");
             notEmpty(clientCredentials.getClientSecret(), "client secret must be not empty.");
 
+            var interceptors = List.of(
+                    new IdempotencyKeyInterceptor(),
+                    getUserAgentInterceptor(),
+                    getLoggingInterceptor());
+
             var httpClient = new HttpClientBuilder()
                     .baseUrl(getAuthEndpointUrl())
-                    .applicationInterceptors(getCommonApplicationInterceptors())
+                    .applicationInterceptors(interceptors)
                     .build();
 
             this.authenticationHandler = AuthenticationHandler.builder()
@@ -89,9 +96,15 @@ public class TrueLayerClient implements ITrueLayerClient {
             notEmpty(signingOptions.getKeyId(), "key id must be not empty");
             notNull(signingOptions.getPrivateKey(), "private key must be set.");
 
+            var interceptors = List.of(
+                    new IdempotencyKeyInterceptor(),
+                    getUserAgentInterceptor(),
+                    new SignatureInterceptor(signingOptions),
+                    getLoggingInterceptor());
+
             var httpClient = new HttpClientBuilder()
                     .baseUrl(getPaymentsEndpointUrl())
-                    .applicationInterceptors(getCommonApplicationInterceptors())
+                    .applicationInterceptors(interceptors)
                     .build();
 
             this.paymentHandler = paymentHandlerBuilder.paymentsApi(httpClient.create(IPaymentsApi.class))
@@ -131,17 +144,17 @@ public class TrueLayerClient implements ITrueLayerClient {
         return this.configuration.getString(endpointKey);
     }
 
-    private List<Interceptor> getCommonApplicationInterceptors() {
-
-        var userAgentInterceptor = new UserAgentInterceptor(
+    private Interceptor getUserAgentInterceptor(){
+        return new UserAgentInterceptor(
                 this.versionInfo.getString(VersionInfoKeys.NAME),
                 this.versionInfo.getString(VersionInfoKeys.VERSION));
+    }
 
+    private Interceptor getLoggingInterceptor(){
         //todo replace with non deprecated or custom implementation
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        var loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        return List.of(userAgentInterceptor, loggingInterceptor);
+        return loggingInterceptor;
     }
 
     private String[] getPaymentsScopes() {
