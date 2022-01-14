@@ -42,9 +42,9 @@ public class SignatureInterceptor implements Interceptor {
                     .header(TL_SIGNATURE, signature)
                     .build();
             return chain.proceed(newRequest);
-        } else {
-            return chain.proceed(request);
         }
+
+        return chain.proceed(request);
     }
 
     private boolean needsSignature(Request request) {
