@@ -16,9 +16,6 @@ public class BankTransfer extends BasePaymentMethod {
     @JsonProperty("type")
     private final String type = "bank_transfer";
 
-    @JsonProperty("statement_reference")
-    private String statementReference;
-
     @JsonProperty("provider_filter")
     private ProviderFilter providerFilter;
 
