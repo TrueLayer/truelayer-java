@@ -8,16 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import truelayer.java.TestUtils.RequestStub;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.Constants.ConfigurationKeys.*;
-import static truelayer.java.Constants.HeaderNames.*;
 
 
 @WireMockTest
@@ -46,45 +47,14 @@ public class IntegrationTests {
     }
 
     @Test
-    @DisplayName("It should enrich calls with idempotency keys, headers and signature")
-    public void shouldCallAnEndpointWithUserAgent() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                post("/payments").willReturn(
-                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
-                )
-        );
-        var paymentRequest = CreatePaymentRequest.builder()
-                .beneficiary(MerchantAccount.builder().build())
-                .build();
-
-        tlClient.payments().createPayment(paymentRequest);
-
-        verify(postRequestedFor(urlEqualTo("/connect/token"))
-                .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
-                .withHeader(USER_AGENT, equalTo(LIBRARY_INFO))
-                .withoutHeader(TL_SIGNATURE)
-        );
-        verify(postRequestedFor(urlEqualTo("/payments"))
-                .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
-                .withHeader(USER_AGENT, equalTo(LIBRARY_INFO))
-                .withHeader(TL_SIGNATURE, matching(".*"))
-        );
-    }
-
-    @Test
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
     public void shouldReturnErrorIfUnauthorized() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        badRequest()
-                                .withBodyFile("auth/400.invalid_client.json")
-                )
-        );
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(400)
+                .bodyFile("auth/400.invalid_client.json")
+                .build();
 
         var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
@@ -96,11 +66,12 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should create and return an access token")
     public void shouldReturnAnAccessToken() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
 
         var response = tlClient.auth().getOauthToken(List.of("paydirect"));
 
@@ -114,17 +85,20 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should create and return a payment with merchant account as beneficiary")
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                post("/payments").willReturn(
-                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
-                )
-        );
-
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(201)
+                .bodyFile("payments/2xx.payment.merchant_account.json")
+                .build();
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
@@ -139,17 +113,20 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should create and return a payment with external account as beneficiary")
     public void shouldCreateAndReturnAPaymentExternalAccount() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                post("/payments").willReturn(
-                        ok().withBodyFile("payments/2xx.payment.external_account.json")
-                )
-        );
-
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(201)
+                .bodyFile("payments/2xx.payment.external_account.json")
+                .build();
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
@@ -164,16 +141,20 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should return an error if the signature is not valid")
     public void shouldReturnErrorIfSignatureIsInvalid() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                post("/payments").willReturn(
-                        unauthorized().withBodyFile("payments/401.invalid_signature.json")
-                )
-        );
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(401)
+                .bodyFile("payments/401.invalid_signature.json")
+                .build();
         var paymentRequest = CreatePaymentRequest.builder().build();
 
         var paymentResponse = tlClient.payments().createPayment(paymentRequest);
@@ -189,16 +170,19 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should get a payment")
     public void shouldReturnAPayment() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                get(urlPathMatching("/payments/.*")).willReturn(
-                        ok().withBodyFile("payments/2xx.payment.merchant_account.json")
-                )
-        );
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("get")
+                .path(urlPathMatching("/payments/.*"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile("payments/2xx.payment.merchant_account.json")
+                .build();
 
         var response = tlClient.payments().getPayment("a-payment-id");
 
@@ -210,16 +194,21 @@ public class IntegrationTests {
     @Test
     @DisplayName("It should return an error if a payment is not found")
     public void shouldThrowIfPaymentNotFound() {
-        stubFor(
-                post("/connect/token").willReturn(
-                        ok().withBodyFile("auth/200.access_token.json")
-                )
-        );
-        stubFor(
-                post("/payments").willReturn(
-                        unauthorized().withBodyFile("payments/404.payment_not_found.json")
-                )
-        );
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(404)
+                .bodyFile("payments/404.payment_not_found.json")
+                .build();
+
         var paymentRequest = CreatePaymentRequest.builder().build();
 
         var response = tlClient.payments().createPayment(paymentRequest);

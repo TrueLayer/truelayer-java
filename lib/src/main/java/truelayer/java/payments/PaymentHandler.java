@@ -1,21 +1,15 @@
 package truelayer.java.payments;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
-import truelayer.java.SigningOptions;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
-import truelayer.java.signing.Signer;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
-import java.util.UUID;
 
 @Builder
 @Getter

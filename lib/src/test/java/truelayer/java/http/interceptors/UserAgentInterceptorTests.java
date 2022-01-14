@@ -2,6 +2,7 @@ package truelayer.java.http.interceptors;
 
 import lombok.SneakyThrows;
 import okhttp3.Interceptor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,11 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
     @Override
     protected Interceptor getInterceptor() {
         return new UserAgentInterceptor(LIBRARY_NAME, LIBRARY_VERSION);
+    }
+
+    @BeforeEach
+    public void prepareTest(){
+        buildRequest();
     }
 
     @Test

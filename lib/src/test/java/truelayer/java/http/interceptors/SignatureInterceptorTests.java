@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TestUtils;
@@ -24,11 +23,6 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
     @Override
     protected Interceptor getInterceptor() {
         return new SignatureInterceptor(TestUtils.getSigningOptions());
-    }
-
-    @BeforeEach
-    protected void buildRequest() {
-        // suppressing super method and building different requests on each test
     }
 
     @Test
@@ -55,8 +49,8 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
 
         intercept();
 
-        verifyThat(interceptedRequest -> {
-            assertFalse(interceptedRequest.header(TL_SIGNATURE).isEmpty());
+        verifyThat(request -> {
+            assertFalse(request.header(TL_SIGNATURE).isEmpty());
         });
     }
 

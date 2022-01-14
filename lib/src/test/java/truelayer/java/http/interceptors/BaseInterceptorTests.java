@@ -16,7 +16,6 @@ public abstract class BaseInterceptorTests {
 
     protected abstract Interceptor getInterceptor();
 
-    @BeforeEach
     protected void buildRequest() {
         var request = new Request.Builder().url(HttpUrl.get("http://localhost")).build();
         chain = mock(Interceptor.Chain.class);

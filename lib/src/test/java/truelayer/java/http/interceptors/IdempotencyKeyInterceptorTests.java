@@ -2,6 +2,7 @@ package truelayer.java.http.interceptors;
 
 import lombok.SneakyThrows;
 import okhttp3.Interceptor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,11 @@ class IdempotencyKeyInterceptorTests extends BaseInterceptorTests {
     @Override
     protected Interceptor getInterceptor() {
         return new IdempotencyKeyInterceptor();
+    }
+
+    @BeforeEach
+    public void prepareTest(){
+        buildRequest();
     }
 
     @Test
