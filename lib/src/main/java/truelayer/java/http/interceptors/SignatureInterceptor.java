@@ -27,17 +27,12 @@ public class SignatureInterceptor implements Interceptor {
         if (needsSignature(request)) {
             var clonedRequest = request.newBuilder().build();
 
-            var buffer = new Buffer();
-            clonedRequest.body().writeTo(buffer);
-            var jsonRequestBody = buffer.readUtf8();
-
             var signature = computeSignature(
                     clonedRequest.method().toLowerCase(),
                     clonedRequest.url().encodedPath(),
                     clonedRequest.header(IDEMPOTENCY_KEY),
-                    jsonRequestBody
+                    getBodyAsString(clonedRequest)
             );
-
             var newRequest = request.newBuilder()
                     .header(TL_SIGNATURE, signature)
                     .build();
@@ -45,6 +40,13 @@ public class SignatureInterceptor implements Interceptor {
         }
 
         return chain.proceed(request);
+    }
+
+    private String getBodyAsString(Request request) throws IOException {
+        try(var buffer = new Buffer()) {
+            request.body().writeTo(buffer);
+            return buffer.readUtf8();
+        }
     }
 
     private boolean needsSignature(Request request) {
