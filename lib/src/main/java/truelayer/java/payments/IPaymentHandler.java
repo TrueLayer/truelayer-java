@@ -1,14 +1,19 @@
 package truelayer.java.payments;
 
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.Payment;
-
-import java.net.URI;
+import truelayer.java.payments.entities.*;
 
 public interface IPaymentHandler {
 
     ApiResponse<Payment> createPayment(CreatePaymentRequest request);
 
     ApiResponse<Payment> getPayment(String paymentId);
+
+    ApiResponse<AuthorizationFlowResponse> startAuthorizationFlow(
+            String paymentId,
+            StartAuthorizationFlowRequest startAuthorizationFlowRequest);
+
+    ApiResponse<AuthorizationFlowResponse> submitProviderSelection(
+            String paymentId,
+            SubmitProviderSelectionRequest submitProviderSelectionRequest);
 }

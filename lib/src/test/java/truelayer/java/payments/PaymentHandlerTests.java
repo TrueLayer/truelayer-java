@@ -6,8 +6,7 @@ import truelayer.java.TestUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -65,6 +64,18 @@ class PaymentHandlerTests {
                     @Override
                     public ApiCall<ApiResponse<Payment>> getPayment(String authorization, String paymentId) {
                         return stubApiResponse(success(apiResponse));
+                    }
+
+                    @Override
+                    public ApiCall<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(String authorization, String paymentId, StartAuthorizationFlowRequest startAuthorizationFlowRequest) {
+                        //todo
+                        return null;
+                    }
+
+                    @Override
+                    public ApiCall<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(String authorization, String paymentId, SubmitProviderSelectionRequest submitProviderSelectionRequest) {
+                        //todo
+                        return null;
                     }
                 })
                 .build();
