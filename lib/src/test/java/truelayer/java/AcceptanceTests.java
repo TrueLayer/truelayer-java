@@ -1,5 +1,7 @@
 package truelayer.java;
 
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -50,11 +52,13 @@ public class AcceptanceTests {
 
     @Test
     @DisplayName("It should get a payment by id")
+    @SneakyThrows
     public void shouldGetAPaymentById() {
         var paymentRequest = buildPaymentRequest();
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
         assertNotError(createPaymentResponse);
 
+        Thread.sleep(1000); // currently, required to avoid a lot of 500s
         var getPaymentByIdResponse = tlClient.payments().getPayment(createPaymentResponse.getData().getId());
 
         assertNotError(getPaymentByIdResponse);
@@ -62,7 +66,7 @@ public class AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequest() {
         return CreatePaymentRequest.builder()
-                .amountInMinor(101)
+                .amountInMinor(RandomUtils.nextInt(100, 1000))
                 .currency("GBP")
                 .paymentMethod(BankTransfer.builder()
                         .build())
