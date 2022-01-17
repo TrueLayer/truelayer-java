@@ -8,7 +8,7 @@ on:
       - '**'
 
 jobs:
-  build:
+  acceptance-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,4 +23,4 @@ jobs:
         env:
           TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
           TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
-        run: ./gradlew integration-tests
+        run: ./gradlew acceptance-tests
