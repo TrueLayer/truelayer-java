@@ -1,13 +1,15 @@
 package truelayer.java;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tag("acceptance")
 public class AcceptanceTests {
@@ -18,11 +20,11 @@ public class AcceptanceTests {
         tlClient = TrueLayerClient.builder()
                 .useSandbox()
                 .clientCredentials(
-                    ClientCredentials
-                        .builder()
-                            .clientId(System.getenv("TL_CLIENT_ID"))
-                            .clientSecret(System.getenv("TL_CLIENT_SECRET"))
-                        .build()
+                        ClientCredentials
+                                .builder()
+                                .clientId(System.getenv("TL_CLIENT_ID"))
+                                .clientSecret(System.getenv("TL_CLIENT_SECRET"))
+                                .build()
                 )
                 .signingOptions(SigningOptions.builder()
                         .keyId(System.getenv("TL_SIGNING_KEY_ID"))
@@ -32,34 +34,6 @@ public class AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create and return an access token")
-    public void shouldReturnAnAccessToken() {
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
-
-        assertFalse(response.isError());
-        assertFalse(response.getData().getAccessToken().isEmpty());
-        assertFalse(response.getData().getTokenType().isEmpty());
-        assertFalse(response.getData().getScope().isEmpty());
-        assertTrue(response.getData().getExpiresIn() > 0);
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("It should create a payment")
-    public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        var paymentRequest = CreatePaymentRequest.builder()
-                .beneficiary(MerchantAccount.builder().build())
-                .build();
-
-        var response = tlClient.payments().createPayment(paymentRequest);
-
-        assertFalse(response.isError());
-        assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getPaymentToken().isEmpty());
-    }
-
-    @Test
-    @Disabled
     @DisplayName("It should create a payment and fetch by id soon after")
     public void shouldCreateAndReturnAPaymentExternalAccount() {
         var paymentRequest = CreatePaymentRequest.builder()
