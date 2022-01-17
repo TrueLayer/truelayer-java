@@ -1,5 +1,7 @@
 package truelayer.java;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import lombok.Builder;
@@ -16,18 +18,22 @@ import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.GetPaymentByIdResponse;
 import truelayer.java.payments.entities.MerchantAccount;
 
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static truelayer.java.Constants.HeaderNames.*;
+import static truelayer.java.payments.entities.GetPaymentByIdResponse.Status.AUTHORIZING;
 
 public class TestUtils {
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
+    private static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
@@ -84,7 +90,7 @@ public class TestUtils {
                 new GetPaymentByIdResponse.User(null, null, null, null),
                 BankTransfer.builder().build(),
                 new Date().toString(),
-                UUID.randomUUID().toString()
+                AUTHORIZING
         );
     }
 
@@ -93,6 +99,29 @@ public class TestUtils {
                 .builder()
                 .title("an-error")
                 .build();
+    }
+
+    /**
+     * Utility to assert that an API response is not an error.
+     * It prints a meaningful message otherwise
+     * @param apiResponse the api response to check
+     */
+    public static void assertNotError(ApiResponse apiResponse){
+        assertFalse(apiResponse.isError(),
+                String.format("request failed with error: %s", apiResponse.getError()));
+    }
+
+    public static ObjectMapper getObjectMapper(){
+        var om = new ObjectMapper();
+        om.registerModule(new Jdk8Module());
+        return om;
+    }
+
+    @SneakyThrows
+    public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type){
+        return getObjectMapper().readValue(
+                Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION).append(jsonFile).toString())),
+                type);
     }
 
     @Builder

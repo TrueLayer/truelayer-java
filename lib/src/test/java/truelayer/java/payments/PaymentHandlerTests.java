@@ -2,82 +2,81 @@ package truelayer.java.payments;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.TestUtils;
-import truelayer.java.http.adapters.ApiCall;
+import org.mockito.Mockito;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.GetPaymentByIdResponse;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static retrofit2.Response.success;
-import static truelayer.java.TestUtils.stubApiResponse;
+import static truelayer.java.TestUtils.*;
 
 class PaymentHandlerTests {
 
     @Test
     @DisplayName("It should yield a payment object when creating a payment")
     public void itShouldYieldAPaymentWhenCreatingAPayment() {
-        var createPaymentResponse = TestUtils.buildCreatePaymentResponse();
+        var createPaymentResponse = buildCreatePaymentResponse();
         var paymentHandler = stubCreatePaymentResponse(createPaymentResponse);
 
-        var response = paymentHandler.createPayment(CreatePaymentRequest.builder()
-                .amountInMinor(100)
-                .build());
+        var response = paymentHandler.createPayment(
+                CreatePaymentRequest.builder()
+                        .amountInMinor(100)
+                        .build());
 
-        assertFalse(response.isError());
+        assertNotError(response);
         assertEquals(createPaymentResponse, response.getData());
     }
 
     @Test
     @DisplayName("It should yield a payment object when getting a payment by id")
     public void itShouldYieldAPaymentWhenGettingAPayment() {
-        var payment = TestUtils.buildGetPaymentByIdResponse();
+        var payment = buildGetPaymentByIdResponse();
         var paymentHandler = stubGetPaymentByIdResponse(payment);
 
         var response = paymentHandler.getPayment("a-payment-id");
 
-        assertFalse(response.isError());
+        assertNotError(response);
         assertEquals(payment, response.getData());
     }
 
     private PaymentHandler stubCreatePaymentResponse(CreatePaymentResponse paymentResponse) {
-        var apiResponse = ApiResponse.<CreatePaymentResponse>builder()
-                .data(paymentResponse)
+
+        var paymentsApi = Mockito.mock(IPaymentsApi.class);
+        var apiResponse = stubApiResponse(
+                success(
+                        ApiResponse.<CreatePaymentResponse>builder()
+                                .data(paymentResponse)
+                                .build()
+                )
+        );
+        when(paymentsApi.createPayment(any(CreatePaymentRequest.class)))
+                .thenReturn(
+                        apiResponse
+                );
+        return PaymentHandler.builder()
+                .paymentsApi(paymentsApi)
                 .build();
-
-        return createStub(new IPaymentsApi() {
-            @Override
-            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest body) {
-                return stubApiResponse(success(apiResponse));
-            }
-
-            @Override
-            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String paymentId) {
-                return null;
-            }
-        });
     }
 
     private PaymentHandler stubGetPaymentByIdResponse(GetPaymentByIdResponse paymentResponse) {
-        var apiResponse = ApiResponse.<GetPaymentByIdResponse>builder()
-                .data(paymentResponse)
-                .build();
-
-        return createStub(new IPaymentsApi() {
-            @Override
-            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest body) {
-                return null;
-            }
-
-            @Override
-            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String paymentId) {
-                return stubApiResponse(success(apiResponse));
-            }
-        });
-    }
-
-    private PaymentHandler createStub(IPaymentsApi paymentsApi){
+        var paymentsApi = Mockito.mock(IPaymentsApi.class);
+        var apiResponse = stubApiResponse(
+                success(
+                        ApiResponse.<GetPaymentByIdResponse>builder()
+                                .data(paymentResponse)
+                                .build()
+                )
+        );
+        when(paymentsApi.getPayment(anyString()))
+                .thenReturn(
+                        apiResponse
+                );
         return PaymentHandler.builder()
                 .paymentsApi(paymentsApi)
                 .build();

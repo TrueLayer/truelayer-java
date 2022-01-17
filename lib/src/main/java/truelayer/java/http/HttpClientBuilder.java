@@ -1,5 +1,7 @@
 package truelayer.java.http;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -49,10 +51,15 @@ public class HttpClientBuilder {
             networkInterceptors.forEach(clientBuilder::addInterceptor);
         }
 
+        var objectMapper = new ObjectMapper();
+
+        // required for optionals deserialization
+        objectMapper.registerModule(new Jdk8Module());
+
         return new Retrofit.Builder()
                 .client(clientBuilder.build())
                 .baseUrl(baseUrl)
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create(objectMapper))
                 .addCallAdapterFactory(new ApiResponseCallAdapterFactory())
                 .build();
     }

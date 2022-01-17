@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Optional;
 
 @Builder
 @Getter
@@ -17,7 +18,7 @@ public class BankTransfer extends BasePaymentMethod {
     private final String type = "bank_transfer";
 
     @JsonProperty("provider_filter")
-    private ProviderFilter providerFilter;
+    private Optional<ProviderFilter> providerFilter;
 
     @Builder
     @ToString

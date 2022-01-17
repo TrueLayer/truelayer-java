@@ -16,6 +16,7 @@ import truelayer.java.payments.entities.CreatePaymentResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static truelayer.java.TestUtils.*;
 
 class ApiCallTest {
 
@@ -30,22 +31,22 @@ class ApiCallTest {
 
         var response = (ApiResponse<CreatePaymentResponse>) sut.execute().body();
 
-        assertFalse(response.isError());
-        assertEquals(response.getData().getPaymentToken(), payment.getPaymentToken());
+        assertNotError(response);
+        assertEquals(payment.getPaymentToken(), response.getData().getPaymentToken());
     }
 
     @SneakyThrows
     @Test
     @DisplayName("It should return an error response in API returns an error")
     public void itShouldReturnAnErrorResponse(){
-        var error = TestUtils.buildError();
+        var error = buildError();
         var mockCall = mock(Call.class);
-        when(mockCall.execute()).thenReturn(Response.error(400, ResponseBody.create(new ObjectMapper().writeValueAsBytes(error), MediaType.get("application/json"))));
+        when(mockCall.execute()).thenReturn(Response.error(400, ResponseBody.create(getObjectMapper().writeValueAsBytes(error), MediaType.get("application/json"))));
         var sut = new ApiCall(mockCall);
 
         var response = (ApiResponse<CreatePaymentResponse>) sut.execute().body();
 
         assertTrue(response.isError());
-        assertEquals(response.getError().getTitle(), error.getTitle());
+        assertEquals(error.getTitle(), response.getError().getTitle());
     }
 }

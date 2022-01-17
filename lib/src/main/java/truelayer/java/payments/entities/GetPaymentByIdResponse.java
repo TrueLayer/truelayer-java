@@ -2,7 +2,10 @@ package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Value;
+
+import java.util.Optional;
 
 @Value
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,7 +32,7 @@ public class GetPaymentByIdResponse {
     private String createdAt;
 
     @JsonProperty("status")
-    private String status;
+    private Status status;
 
     @Value
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -41,9 +44,29 @@ public class GetPaymentByIdResponse {
         private String name;
 
         @JsonProperty("email")
-        private String email;
+        private Optional<String> email;
 
         @JsonProperty("phone")
-        private String phone;
+        private Optional<String> phone;
+    }
+
+    public enum Status {
+        AUTHORIZATION_REQUIRED("authorization_required"),
+        AUTHORIZING("authorizing"),
+        AUTHORIZED("authorized"),
+        EXECUTED("executed"),
+        FAILED("failed"),
+        SETTLED("settled");
+
+        private final String status;
+
+        Status(String status) {
+            this.status = status;
+        }
+
+        @JsonValue
+        public String getStatus() {
+            return status;
+        }
     }
 }

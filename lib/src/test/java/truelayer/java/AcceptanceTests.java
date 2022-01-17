@@ -10,7 +10,7 @@ import truelayer.java.payments.entities.MerchantAccount;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static truelayer.java.TestUtils.assertNotError;
 
 @Tag("acceptance")
 public class AcceptanceTests {
@@ -45,9 +45,7 @@ public class AcceptanceTests {
 
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
 
-        assertFalse(createPaymentResponse.isError());
-        assertFalse(createPaymentResponse.getData().getPaymentToken().isEmpty());
-        assertFalse(createPaymentResponse.getData().getId().isEmpty());
+        assertNotError(createPaymentResponse);
     }
 
     @Test
@@ -55,15 +53,14 @@ public class AcceptanceTests {
     public void shouldGetAPaymentById() {
         var paymentRequest = buildPaymentRequest();
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
-        assertFalse(createPaymentResponse.isError());
+        assertNotError(createPaymentResponse);
 
-        var response = tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+        var getPaymentByIdResponse = tlClient.payments().getPayment(createPaymentResponse.getData().getId());
 
-        assertFalse(response.isError());
-        assertFalse(response.getData().getId().isEmpty());
+        assertNotError(getPaymentByIdResponse);
     }
 
-    private CreatePaymentRequest buildPaymentRequest(){
+    private CreatePaymentRequest buildPaymentRequest() {
         return CreatePaymentRequest.builder()
                 .amountInMinor(101)
                 .currency("GBP")
