@@ -26,7 +26,6 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
     }
 
     @Test
-    @SneakyThrows
     @DisplayName("It should not add a Tl-Signature header on a GET request")
     public void shouldNotAddATlSignatureHeaderOnGet() {
         prepare(new Request.Builder().url("http://localhost").get().build());
