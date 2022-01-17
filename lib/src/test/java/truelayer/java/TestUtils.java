@@ -13,9 +13,10 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
+import truelayer.java.payments.entities.paymentdetail.AuthorizationRequired;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.GetPaymentByIdResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 
 import java.nio.file.Files;
@@ -27,7 +28,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static truelayer.java.Constants.HeaderNames.*;
-import static truelayer.java.payments.entities.GetPaymentByIdResponse.Status.AUTHORIZING;
 
 public class TestUtils {
 
@@ -80,17 +80,20 @@ public class TestUtils {
         );
     }
 
-    public static GetPaymentByIdResponse buildGetPaymentByIdResponse() {
-        return new GetPaymentByIdResponse(
-                UUID.randomUUID().toString(),
-                101,
-                "GBP",
-                MerchantAccount.builder().name("whatever").build(),
-                new GetPaymentByIdResponse.User(null, null, null, null),
-                BankTransfer.builder().build(),
-                new Date().toString(),
-                AUTHORIZING
-        );
+    public static BasePaymentDetail buildGetPaymentByIdResponse() {
+        return AuthorizationRequired.builder()
+                .id(UUID.randomUUID().toString())
+                .amountInMinor(101)
+                .currency("GBP")
+                .beneficiary(
+                        MerchantAccount.builder().name("whatever").build())
+                .user(BasePaymentDetail.User.builder()
+                        .id(UUID.randomUUID().toString())
+                        .name("John doe")
+                        .build())
+                .paymentMethod(BankTransfer.builder().build())
+                .createdAt(new Date().toString())
+                .build();
     }
 
     public static ProblemDetails buildError() {

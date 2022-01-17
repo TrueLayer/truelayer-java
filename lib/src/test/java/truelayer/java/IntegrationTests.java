@@ -13,8 +13,8 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.GetPaymentByIdResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 import java.util.List;
 
@@ -164,7 +164,7 @@ public class IntegrationTests {
         var response = tlClient.payments().getPayment("a-payment-id");
 
         assertNotError(response);
-        var expected = deserializeJsonFileTo(jsonResponseFile, GetPaymentByIdResponse.class);
+        var expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
         assertEquals(expected, response.getData());
     }
 

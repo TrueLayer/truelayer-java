@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.GetPaymentByIdResponse;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,11 +64,11 @@ class PaymentHandlerTests {
                 .build();
     }
 
-    private PaymentHandler stubGetPaymentByIdResponse(GetPaymentByIdResponse paymentResponse) {
+    private PaymentHandler stubGetPaymentByIdResponse(BasePaymentDetail paymentResponse) {
         var paymentsApi = Mockito.mock(IPaymentsApi.class);
         var apiResponse = stubApiResponse(
                 success(
-                        ApiResponse.<GetPaymentByIdResponse>builder()
+                        ApiResponse.<BasePaymentDetail>builder()
                                 .data(paymentResponse)
                                 .build()
                 )

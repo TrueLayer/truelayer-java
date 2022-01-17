@@ -6,7 +6,7 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.GetPaymentByIdResponse;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 import java.io.IOException;
 
@@ -27,9 +27,9 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     @Override
-    public ApiResponse<GetPaymentByIdResponse> getPayment(String paymentId) {
+    public ApiResponse<BasePaymentDetail> getPayment(String paymentId) {
         try {
-            return (ApiResponse<GetPaymentByIdResponse>) paymentsApi.getPayment(
+            return (ApiResponse<BasePaymentDetail>) paymentsApi.getPayment(
                     paymentId
             ).execute().body();
         } catch (IOException e) {
