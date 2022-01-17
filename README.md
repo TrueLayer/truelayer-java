@@ -158,6 +158,20 @@ To run integration tests:
 ./gradlew integration-tests
 ```
 
+### Acceptance tests
+
+To execute tests against TrueLayer sandbox environment, you should set the below environment variables:
+- `TL_CLIENT_ID`
+- `TL_CLIENT_SECRET`
+- `TL_SIGNING_KEY_ID`
+- `TL_SIGNING_PRIVATE_KEY`
+
+and finally run:
+```
+./gradlew acceptance-tests
+```
+
+
 ## Library Documentation
 
 ## Contributing
