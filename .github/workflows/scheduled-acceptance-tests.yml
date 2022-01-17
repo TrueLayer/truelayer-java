@@ -6,7 +6,7 @@ on:
     #- cron: "0 10-20/2 * * *" # every 2 hours between 10 and 20 (UTC)
 
 jobs:
-  acceptance-tests:
+  scheduled-acceptance-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
