@@ -27,7 +27,6 @@ class IdempotencyKeyInterceptorTests extends BaseInterceptorTests {
     }
 
     @Test
-    @SneakyThrows
     @DisplayName("It should add an Idempotency-Key header with a UUID to the original request")
     public void shouldAddAnIdempotencyKeyHeader() {
         intercept();

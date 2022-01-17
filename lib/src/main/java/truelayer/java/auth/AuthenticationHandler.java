@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.List;
 
 @Builder
-@Getter
 public class AuthenticationHandler implements IAuthenticationHandler {
 
     private final IAuthenticationApi authenticationApi;

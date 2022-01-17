@@ -1,5 +1,6 @@
 package truelayer.java.http.adapters;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import retrofit2.Response;
 import truelayer.java.http.entities.ProblemDetails;
@@ -20,20 +21,24 @@ public class ErrorMapper {
     }
 
     public static ProblemDetails fromResponse(Response response){
+        String errorBody = "error";
         try {
-            return getInstance().readValue(response.errorBody().string(), ProblemDetails.class);
+            errorBody = response.errorBody().string();
+            return getInstance().readValue(errorBody, ProblemDetails.class);
         } catch (IOException e) {
             //todo how to properly log this ?
             e.printStackTrace();
-            return fromThrowable(e);
+            return ProblemDetails.builder()
+                    .type("error")
+                    .detail(errorBody)
+                    .build();
         }
     }
 
     public static ProblemDetails fromThrowable(Throwable throwable){
-        //todo how to deal with non problem details errors ?
-        // auth api does not us this convention RN
         return ProblemDetails.builder()
-                .title(throwable.getMessage())
+                .type("error")
+                .detail(throwable.getMessage())
                 .build();
     }
 }

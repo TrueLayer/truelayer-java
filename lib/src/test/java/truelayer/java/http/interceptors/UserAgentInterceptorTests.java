@@ -24,7 +24,6 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
     }
 
     @Test
-    @SneakyThrows
     @DisplayName("It should add a User-Agent header containing the library name and version")
     public void shouldAddUserAgentHeader() {
         intercept();
