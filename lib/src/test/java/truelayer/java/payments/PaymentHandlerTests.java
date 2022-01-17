@@ -55,11 +55,10 @@ class PaymentHandlerTests {
                 .build();
         return PaymentHandler.builder()
                 .authenticationHandler(authenticationHandler)
-                .signingOptions(TestUtils.getSigningOptions())
                 .paymentsScopes(new String[]{"a-scope"})
                 .paymentsApi(new IPaymentsApi() {
                     @Override
-                    public ApiCall<ApiResponse<Payment>> createPayment(String idempotencyKey, String signature, String authorization, CreatePaymentRequest body) {
+                    public ApiCall<ApiResponse<Payment>> createPayment(String authorization, CreatePaymentRequest body) {
                         return stubApiResponse(success(apiResponse));
                     }
 
