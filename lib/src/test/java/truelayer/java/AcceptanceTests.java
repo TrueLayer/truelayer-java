@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import truelayer.java.payments.entities.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
@@ -17,6 +18,10 @@ public class AcceptanceTests {
 
     @BeforeAll
     public static void setup() {
+        System.out.println(System.getenv("TL_CLIENT_ID"));
+        System.out.println(System.getenv("TL_CLIENT_SECRET"));
+        System.out.println(System.getenv("TL_SIGNING_KEY_ID"));
+        System.out.println(System.getenv("TL_SIGNING_PRIVATE_KEY"));
         tlClient = TrueLayerClient.builder()
                 .useSandbox()
                 .clientCredentials(
@@ -34,11 +39,21 @@ public class AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create a payment and fetch by id soon after")
-    public void shouldCreateAndReturnAPaymentExternalAccount() {
-        var paymentRequest = CreatePaymentRequest.builder()
-                .beneficiary(MerchantAccount.builder().build())
-                .build();
+    @DisplayName("It should create a payment")
+    public void shouldCreateAPayment() {
+        var paymentRequest = buildPaymentRequest();
+
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+
+        assertFalse(createPaymentResponse.isError());
+        assertFalse(createPaymentResponse.getData().getPaymentToken().isEmpty());
+        assertFalse(createPaymentResponse.getData().getId().isEmpty());
+    }
+
+    @Test
+    @DisplayName("It should get a payment by id")
+    public void shouldGetAPaymentById() {
+        var paymentRequest = buildPaymentRequest();
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
         assertFalse(createPaymentResponse.isError());
 
@@ -46,6 +61,22 @@ public class AcceptanceTests {
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getPaymentToken().isEmpty());
+    }
+
+    private CreatePaymentRequest buildPaymentRequest(){
+        return CreatePaymentRequest.builder()
+                .amountInMinor(101)
+                .currency("GBP")
+                .paymentMethod(BankTransfer.builder()
+                        .build())
+                .beneficiary(MerchantAccount.builder()
+                        .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
+                        .build())
+                .user(CreatePaymentRequest.User.builder()
+                        .name("Andrea Di Lisio")
+                        .type(CreatePaymentRequest.User.Type.NEW)
+                        .email("andrea@truelayer.com")
+                        .build())
+                .build();
     }
 }

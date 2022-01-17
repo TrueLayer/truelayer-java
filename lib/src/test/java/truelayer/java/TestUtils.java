@@ -11,10 +11,14 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.BankTransfer;
+import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.GetPaymentByIdResponse;
+import truelayer.java.payments.entities.MerchantAccount;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -63,11 +67,24 @@ public class TestUtils {
                 .build();
     }
 
-    public static Payment buildPayment() {
-        return new Payment(
+    public static CreatePaymentResponse buildCreatePaymentResponse() {
+        return new CreatePaymentResponse(
                 UUID.randomUUID().toString(),
+                new CreatePaymentResponse.User(UUID.randomUUID().toString()),
+                UUID.randomUUID().toString()
+        );
+    }
+
+    public static GetPaymentByIdResponse buildGetPaymentByIdResponse() {
+        return new GetPaymentByIdResponse(
                 UUID.randomUUID().toString(),
-                new Payment.User(UUID.randomUUID().toString())
+                101,
+                "GBP",
+                MerchantAccount.builder().name("whatever").build(),
+                new GetPaymentByIdResponse.User(null, null, null, null),
+                BankTransfer.builder().build(),
+                new Date().toString(),
+                UUID.randomUUID().toString()
         );
     }
 

@@ -97,7 +97,7 @@ public class IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/2xx.payment.merchant_account.json")
+                .bodyFile("payments/2xx.create_payment.merchant_account.json")
                 .build();
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
@@ -125,7 +125,7 @@ public class IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/2xx.payment.external_account.json")
+                .bodyFile("payments/2xx.create_payment.external_account.json")
                 .build();
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
@@ -181,14 +181,13 @@ public class IntegrationTests {
                 .path(urlPathMatching("/payments/.*"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile("payments/2xx.payment.merchant_account.json")
+                .bodyFile("payments/200.get_payment_by_id.json")
                 .build();
 
         var response = tlClient.payments().getPayment("a-payment-id");
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getPaymentToken().isEmpty());
     }
 
     @Test

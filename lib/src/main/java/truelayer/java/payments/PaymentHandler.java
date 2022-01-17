@@ -6,7 +6,8 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.GetPaymentByIdResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,10 +21,10 @@ public class PaymentHandler implements IPaymentHandler {
     private String[] paymentsScopes;
 
     @Override
-    public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
+    public ApiResponse<CreatePaymentResponse> createPayment(CreatePaymentRequest createPaymentRequest) {
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
         try {
-            return (ApiResponse<Payment>) paymentsApi.createPayment(
+            return (ApiResponse<CreatePaymentResponse>) paymentsApi.createPayment(
                             buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
                             createPaymentRequest)
                     .execute().body();
@@ -33,10 +34,10 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     @Override
-    public ApiResponse<Payment> getPayment(String paymentId) {
+    public ApiResponse<GetPaymentByIdResponse> getPayment(String paymentId) {
         var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
         try {
-            return (ApiResponse<Payment>) paymentsApi.getPayment(
+            return (ApiResponse<GetPaymentByIdResponse>) paymentsApi.getPayment(
                     buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
                     paymentId
             ).execute().body();
