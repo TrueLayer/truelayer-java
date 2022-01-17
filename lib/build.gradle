@@ -56,6 +56,7 @@ tasks.register('unit-tests', Test) {
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         excludeTags "integration"
+        excludeTags "acceptance"
     }
 }
 
@@ -63,6 +64,13 @@ tasks.register('integration-tests', Test) {
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "integration"
+    }
+}
+
+tasks.register('acceptance-tests', Test) {
+    outputs.upToDateWhen { false }
+    useJUnitPlatform{
+        includeTags "acceptance"
     }
 }
 

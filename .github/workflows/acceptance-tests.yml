@@ -5,7 +5,7 @@ on:
     branches:
       - '**'
     tags-ignore:
-      - '+*'
+      - '**'
 
 jobs:
   build:
@@ -19,9 +19,8 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Build
-        run: ./gradlew build -x test
-      - name: Unit tests
-        run: ./gradlew unit-tests
-      - name: Integration tests
+      - name: Acceptance tests
+        env:
+          TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+          TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
         run: ./gradlew integration-tests
