@@ -1,17 +1,12 @@
 package truelayer.java;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import lombok.SneakyThrows;
-import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.jupiter.api.*;
-import truelayer.java.TestUtils.RequestStub;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.MerchantAccount;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("acceptance")
@@ -29,18 +24,11 @@ public class AcceptanceTests {
                             .clientSecret(System.getenv("TL_CLIENT_SECRET"))
                         .build()
                 )
-                .signingOptions(TestUtils.getSigningOptions())
+                .signingOptions(SigningOptions.builder()
+                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
+                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
+                        .build())
                 .build();
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("It should return an error in case on an authorized error from the auth API.")
-    public void shouldReturnErrorIfUnauthorized() {
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
-
-        assertTrue(response.isError());
-        assertTrue(response.getError().getTitle().contains("\"error\": \"invalid_client\""));
     }
 
     @Test
@@ -57,9 +45,8 @@ public class AcceptanceTests {
 
     @Test
     @Disabled
-    @DisplayName("It should create and return a payment with merchant account as beneficiary")
+    @DisplayName("It should create a payment")
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
-
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
@@ -73,59 +60,18 @@ public class AcceptanceTests {
 
     @Test
     @Disabled
-    @DisplayName("It should create and return a payment with external account as beneficiary")
+    @DisplayName("It should create a payment and fetch by id soon after")
     public void shouldCreateAndReturnAPaymentExternalAccount() {
         var paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        assertFalse(createPaymentResponse.isError());
 
-        var response = tlClient.payments().createPayment(paymentRequest);
-
-        assertFalse(response.isError());
-        assertFalse(response.getData().getId().isEmpty());
-        assertFalse(response.getData().getPaymentToken().isEmpty());
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("It should return an error if the signature is not valid")
-    public void shouldReturnErrorIfSignatureIsInvalid() {
-        var paymentRequest = CreatePaymentRequest.builder().build();
-
-        var paymentResponse = tlClient.payments().createPayment(paymentRequest);
-
-        assertTrue(paymentResponse.isError());
-        assertEquals(401, paymentResponse.getError().getStatus());
-        assertEquals("Invalid request signature.", paymentResponse.getError().getDetail());
-        assertEquals("https://docs.truelayer.com/docs/error-types#unauthenticated", paymentResponse.getError().getType());
-        assertEquals("Unauthenticated", paymentResponse.getError().getTitle());
-        assertFalse(paymentResponse.getError().getTraceId().isEmpty());
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("It should get a payment")
-    public void shouldReturnAPayment() {
-        var response = tlClient.payments().getPayment("a-payment-id");
+        var response = tlClient.payments().getPayment(createPaymentResponse.getData().getId());
 
         assertFalse(response.isError());
         assertFalse(response.getData().getId().isEmpty());
         assertFalse(response.getData().getPaymentToken().isEmpty());
-    }
-
-    @Test
-    @Disabled
-    @DisplayName("It should return an error if a payment is not found")
-    public void shouldThrowIfPaymentNotFound() {
-        var paymentRequest = CreatePaymentRequest.builder().build();
-
-        var response = tlClient.payments().createPayment(paymentRequest);
-
-        assertTrue(response.isError());
-        assertEquals(404, response.getError().getStatus());
-        assertEquals("Payment could not be found.", response.getError().getDetail());
-        assertEquals("https://docs.truelayer.com/docs/error-types#not-found", response.getError().getType());
-        assertEquals("Not Found", response.getError().getTitle());
-        assertFalse(response.getError().getTraceId().isEmpty());
     }
 }
