@@ -14,7 +14,7 @@ import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.GetPaymentByIdResponse;
-import truelayer.java.payments.entities.MerchantAccount;
+import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 
 import java.util.List;
 

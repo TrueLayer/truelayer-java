@@ -6,9 +6,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import truelayer.java.payments.entities.BankTransfer;
+import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.MerchantAccount;
+import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 
 import java.nio.charset.StandardCharsets;
 

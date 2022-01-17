@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
+import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
 @Builder
 @ToString

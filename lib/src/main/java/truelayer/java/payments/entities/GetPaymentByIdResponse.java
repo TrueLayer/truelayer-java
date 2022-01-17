@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Value;
+import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
+import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
 import java.util.Optional;
 

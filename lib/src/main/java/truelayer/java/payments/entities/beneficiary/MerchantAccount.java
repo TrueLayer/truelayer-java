@@ -1,4 +1,4 @@
-package truelayer.java.payments.entities;
+package truelayer.java.payments.entities.beneficiary;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

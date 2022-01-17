@@ -13,12 +13,11 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.payments.entities.BankTransfer;
+import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.GetPaymentByIdResponse;
-import truelayer.java.payments.entities.MerchantAccount;
+import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
