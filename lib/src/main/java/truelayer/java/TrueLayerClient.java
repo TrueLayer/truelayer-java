@@ -20,9 +20,11 @@ import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.payments.PaymentHandler;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.unmodifiableList;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 import static truelayer.java.Constants.ConfigurationKeys.*;
@@ -157,7 +159,7 @@ public class TrueLayerClient implements ITrueLayerClient {
         return loggingInterceptor;
     }
 
-    private String[] getPaymentsScopes() {
-        return this.configuration.getStringArray(PAYMENTS_SCOPES);
+    private List<String> getPaymentsScopes() {
+        return unmodifiableList(this.configuration.getList(String.class, PAYMENTS_SCOPES));
     }
 }

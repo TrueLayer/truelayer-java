@@ -10,6 +10,7 @@ import truelayer.java.payments.entities.Payment;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Builder
 @Getter
@@ -17,11 +18,11 @@ public class PaymentHandler implements IPaymentHandler {
 
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsApi;
-    private String[] paymentsScopes;
+    private List<String> paymentsScopes;
 
     @Override
     public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
-        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        var oauthToken = authenticationHandler.getOauthToken(paymentsScopes);
         try {
             return (ApiResponse<Payment>) paymentsApi.createPayment(
                             buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
@@ -34,7 +35,7 @@ public class PaymentHandler implements IPaymentHandler {
 
     @Override
     public ApiResponse<Payment> getPayment(String paymentId) {
-        var oauthToken = authenticationHandler.getOauthToken(Arrays.asList(paymentsScopes));
+        var oauthToken = authenticationHandler.getOauthToken(paymentsScopes);
         try {
             return (ApiResponse<Payment>) paymentsApi.getPayment(
                     buildAuthorizationHeader(oauthToken.getData().getAccessToken()),
