@@ -9,6 +9,9 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.Payment;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static retrofit2.Response.success;
@@ -48,22 +51,15 @@ class PaymentHandlerTests {
                 .data(payment)
                 .build();
 
-        var authenticationHandler = AuthenticationHandler.builder()
-                .authenticationApi((clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(success(TestUtils.buildAccessToken())))
-                .clientCredentials(getClientCredentials())
-                .build();
         return PaymentHandler.builder()
-                .authenticationHandler(authenticationHandler)
-                .paymentsScopes(new String[]{"a-scope"})
                 .paymentsApi(new IPaymentsApi() {
                     @Override
-                    public ApiCall<ApiResponse<Payment>> createPayment(String authorization, CreatePaymentRequest body) {
+                    public ApiCall<ApiResponse<Payment>> createPayment(CreatePaymentRequest body) {
                         return stubApiResponse(success(apiResponse));
                     }
 
                     @Override
-                    public ApiCall<ApiResponse<Payment>> getPayment(String authorization, String paymentId) {
+                    public ApiCall<ApiResponse<Payment>> getPayment(String paymentId) {
                         return stubApiResponse(success(apiResponse));
                     }
                 })
