@@ -13,6 +13,7 @@ import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.http.HttpClientBuilder;
+import truelayer.java.http.interceptors.AuthenticationInterceptor;
 import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.SignatureInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
@@ -91,9 +92,6 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public IPaymentHandler payments() {
         if (ObjectUtils.isEmpty(this.paymentHandler)) {
-            var paymentHandlerBuilder = PaymentHandler.builder()
-                    .authenticationHandler(auth());
-
             var signingOptions = this.signingOptions.orElseThrow(() ->
                     new TrueLayerException("signing options must be set."));
             notEmpty(signingOptions.getKeyId(), "key id must be not empty");
@@ -103,6 +101,7 @@ public class TrueLayerClient implements ITrueLayerClient {
                     new IdempotencyKeyInterceptor(),
                     getUserAgentInterceptor(),
                     new SignatureInterceptor(signingOptions),
+                    new AuthenticationInterceptor(auth(), getPaymentsScopes()),
                     getLoggingInterceptor());
 
             var httpClient = new HttpClientBuilder()
@@ -110,8 +109,8 @@ public class TrueLayerClient implements ITrueLayerClient {
                     .applicationInterceptors(interceptors)
                     .build();
 
-            this.paymentHandler = paymentHandlerBuilder.paymentsApi(httpClient.create(IPaymentsApi.class))
-                    .paymentsScopes(getPaymentsScopes())
+            this.paymentHandler = PaymentHandler.builder()
+                    .paymentsApi(httpClient.create(IPaymentsApi.class))
                     .build();
         }
         return this.paymentHandler;

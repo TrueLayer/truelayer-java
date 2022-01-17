@@ -51,22 +51,15 @@ class PaymentHandlerTests {
                 .data(payment)
                 .build();
 
-        var authenticationHandler = AuthenticationHandler.builder()
-                .authenticationApi((clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(success(TestUtils.buildAccessToken())))
-                .clientCredentials(getClientCredentials())
-                .build();
         return PaymentHandler.builder()
-                .authenticationHandler(authenticationHandler)
-                .paymentsScopes(List.of("a-scope"))
                 .paymentsApi(new IPaymentsApi() {
                     @Override
-                    public ApiCall<ApiResponse<Payment>> createPayment(String authorization, CreatePaymentRequest body) {
+                    public ApiCall<ApiResponse<Payment>> createPayment(CreatePaymentRequest body) {
                         return stubApiResponse(success(apiResponse));
                     }
 
                     @Override
-                    public ApiCall<ApiResponse<Payment>> getPayment(String authorization, String paymentId) {
+                    public ApiCall<ApiResponse<Payment>> getPayment(String paymentId) {
                         return stubApiResponse(success(apiResponse));
                     }
                 })
