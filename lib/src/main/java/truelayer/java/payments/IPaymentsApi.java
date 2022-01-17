@@ -10,8 +10,6 @@ public interface IPaymentsApi {
 
     @POST("/payments")
     ApiCall<ApiResponse<Payment>> createPayment(
-            @Header("Idempotency-Key") String idempotencyKey,
-            @Header("Tl-Signature") String signature,
             @Header("Authorization") String authorization,
             @Body CreatePaymentRequest body);
 
