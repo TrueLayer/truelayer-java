@@ -1,7 +1,9 @@
-name: Acceptance tests
+name: Scheduled Acceptance tests
 
 on:
-  workflow_call
+  schedule:
+    - cron: "*/5 * * * *" #every 5 minutes
+    #- cron: "0 10-20/2 * * *" # every 2 hours between 10 and 20 (UTC)
 
 jobs:
   acceptance-tests:
@@ -15,7 +17,7 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Acceptance tests
+      - name: Acceptance tests in sandbox environment
         env:
           TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
           TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}

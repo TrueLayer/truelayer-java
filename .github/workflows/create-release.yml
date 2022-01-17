@@ -27,7 +27,7 @@ jobs:
         env:
           TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
           TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
-        uses: ./.github/workflows/acceptance-tests.yml
+        run: ./gradlew acceptance-tests
       - name: Create release
         uses: softprops/action-gh-release@v1
       - name: Publish package
