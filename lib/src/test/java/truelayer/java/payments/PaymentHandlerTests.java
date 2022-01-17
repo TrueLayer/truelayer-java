@@ -3,17 +3,14 @@ package truelayer.java.payments;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TestUtils;
-import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.GetPaymentByIdResponse;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static retrofit2.Response.success;
-import static truelayer.java.TestUtils.getClientCredentials;
 import static truelayer.java.TestUtils.stubApiResponse;
 
 class PaymentHandlerTests {
@@ -51,12 +48,12 @@ class PaymentHandlerTests {
 
         return createStub(new IPaymentsApi() {
             @Override
-            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(String authorization, CreatePaymentRequest body) {
+            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest body) {
                 return stubApiResponse(success(apiResponse));
             }
 
             @Override
-            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String authorization, String paymentId) {
+            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String paymentId) {
                 return null;
             }
         });
@@ -69,26 +66,19 @@ class PaymentHandlerTests {
 
         return createStub(new IPaymentsApi() {
             @Override
-            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(String authorization, CreatePaymentRequest body) {
+            public ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest body) {
                 return null;
             }
 
             @Override
-            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String authorization, String paymentId) {
+            public ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(String paymentId) {
                 return stubApiResponse(success(apiResponse));
             }
         });
     }
 
     private PaymentHandler createStub(IPaymentsApi paymentsApi){
-        var authenticationHandler = AuthenticationHandler.builder()
-                .authenticationApi((clientId, clientSecret, grantType, scopes) ->
-                        stubApiResponse(success(TestUtils.buildAccessToken())))
-                .clientCredentials(getClientCredentials())
-                .build();
         return PaymentHandler.builder()
-                .authenticationHandler(authenticationHandler)
-                .paymentsScopes(new String[]{"a-scope"})
                 .paymentsApi(paymentsApi)
                 .build();
     }

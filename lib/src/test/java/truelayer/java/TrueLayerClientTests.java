@@ -22,8 +22,6 @@ public class TrueLayerClientTests {
         var authenticationHandler = (AuthenticationHandler) trueLayerClient.auth();
 
         assertNotNull(authenticationHandler);
-        assertNotNull(authenticationHandler.getAuthenticationApi());
-        assertNotNull(authenticationHandler.getClientCredentials());
     }
 
     @Test
@@ -52,7 +50,6 @@ public class TrueLayerClientTests {
 
         assertNotNull(paymentsHandler);
         assertNotNull(paymentsHandler.getPaymentsApi());
-        assertTrue(paymentsHandler.getPaymentsScopes().length > 0);
     }
 
     @Test

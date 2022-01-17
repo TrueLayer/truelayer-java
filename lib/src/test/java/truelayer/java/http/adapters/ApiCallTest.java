@@ -14,6 +14,7 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ApiCallTest {
@@ -23,7 +24,7 @@ class ApiCallTest {
     @DisplayName("It should return a successful response with a data object")
     public void itShouldReturnASuccessfulResponseWithData(){
         var payment = TestUtils.buildCreatePaymentResponse();
-        var mockCall = Mockito.mock(Call.class);
+        var mockCall = mock(Call.class);
         when(mockCall.execute()).thenReturn(Response.success(payment));
         var sut = new ApiCall(mockCall);
 
@@ -38,7 +39,7 @@ class ApiCallTest {
     @DisplayName("It should return an error response in API returns an error")
     public void itShouldReturnAnErrorResponse(){
         var error = TestUtils.buildError();
-        var mockCall = Mockito.mock(Call.class);
+        var mockCall = mock(Call.class);
         when(mockCall.execute()).thenReturn(Response.error(400, ResponseBody.create(new ObjectMapper().writeValueAsBytes(error), MediaType.get("application/json"))));
         var sut = new ApiCall(mockCall);
 

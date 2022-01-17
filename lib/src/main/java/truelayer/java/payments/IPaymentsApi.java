@@ -10,12 +10,8 @@ import truelayer.java.payments.entities.GetPaymentByIdResponse;
 public interface IPaymentsApi {
 
     @POST("/payments")
-    ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(
-            @Header("Authorization") String authorization,
-            @Body CreatePaymentRequest body);
+    ApiCall<ApiResponse<CreatePaymentResponse>> createPayment(@Body CreatePaymentRequest body);
 
     @GET("/payments/{id}")
-    ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(
-            @Header("Authorization") String authorization,
-            @Path("id") String paymentId);
+    ApiCall<ApiResponse<GetPaymentByIdResponse>> getPayment(@Path("id") String paymentId);
 }
