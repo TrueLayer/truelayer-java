@@ -10,16 +10,18 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
-import static truelayer.java.payments.entities.paymentdetail.Status.*;
-
 @JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "status",
         defaultImpl = AuthorizationRequiredPaymentDetail.class
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthorizationRequiredPaymentDetail.class, name = "authorization_required")
+        @JsonSubTypes.Type(value = AuthorizationRequiredPaymentDetail.class, name = "authorization_required"),
+        @JsonSubTypes.Type(value = AuthorizingPaymentDetail.class, name = "authorizing"),
+        @JsonSubTypes.Type(value = AuthorizedPaymentDetail.class, name = "authorized"),
+        @JsonSubTypes.Type(value = FailedPaymentDetail.class, name = "failed"),
+        @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
+        @JsonSubTypes.Type(value = SucceededPaymentDetail.class, name = "succeeded")
 })
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,38 +42,43 @@ public abstract class BasePaymentDetail {
 
     private String createdAt;
 
-    private Status status;
+    public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
+        if (!(this instanceof AuthorizationRequiredPaymentDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (AuthorizationRequiredPaymentDetail) this;
+    }
 
-    public AuthorizedPaymentDetail asAuthorized() {
-        if (status != AUTHORIZED) {
+    public AuthorizedPaymentDetail asAuthorizedPaymentDetail() {
+        if (!(this instanceof AuthorizedPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizedPaymentDetail) this;
     }
 
-    public AuthorizingPaymentDetail asAuthorizing() {
-        if (status != AUTHORIZING) {
+    public AuthorizingPaymentDetail asAuthorizingPaymentDetail() {
+        if (!(this instanceof AuthorizingPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizingPaymentDetail) this;
     }
 
-    public FailedPaymentDetail asFailed() {
-        if (status != FAILED) {
+    public FailedPaymentDetail asFailedPaymentDetail() {
+        if (!(this instanceof FailedPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (FailedPaymentDetail) this;
     }
 
-    public SucceededPaymentDetail asSucceeded() {
-        if (status != SUCCEEDED) {
+    public SucceededPaymentDetail asSucceededPaymentDetail() {
+        if (!(this instanceof SucceededPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SucceededPaymentDetail) this;
     }
 
-    public SettledPaymentDetail asSettled() {
-        if (status != SETTLED) {
+    public SettledPaymentDetail asSettledPaymentDetail() {
+        if (!(this instanceof SettledPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SettledPaymentDetail) this;

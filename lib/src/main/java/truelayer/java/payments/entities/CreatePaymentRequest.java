@@ -12,20 +12,19 @@ import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
 @Builder
+@Getter
 @ToString
 @EqualsAndHashCode
 @JsonInclude(Include.NON_NULL)
 public class CreatePaymentRequest {
-    @JsonProperty // these annotations are required for proper serialization,
-    // regardless of the generic strategy used
     private int amountInMinor;
-    @JsonProperty
+
     private String currency;
-    @JsonProperty
+
     private BasePaymentMethod paymentMethod;
-    @JsonProperty
+
     private BaseBeneficiary beneficiary;
-    @JsonProperty
+
     private User user;
 
     @Builder
@@ -34,15 +33,14 @@ public class CreatePaymentRequest {
     @EqualsAndHashCode
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class User {
-        @JsonProperty
         private String id;
-        @JsonProperty
+
         private User.Type type;
-        @JsonProperty
+
         private String name;
-        @JsonProperty
+
         private String email;
-        @JsonProperty
+
         private String phone;
 
         public enum Type {

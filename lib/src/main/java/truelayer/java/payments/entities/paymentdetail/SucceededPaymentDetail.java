@@ -9,8 +9,8 @@ import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 import java.util.Optional;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.SETTLED;
+import static truelayer.java.payments.entities.paymentdetail.Status.SUCCEEDED;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Getter
 public class SucceededPaymentDetail extends BasePaymentDetail {
@@ -19,6 +19,8 @@ public class SucceededPaymentDetail extends BasePaymentDetail {
     String succeededAt;
 
     Optional<AuthorizationFlow> authorizationFlow;
+
+    private final Status status = SUCCEEDED;
 
     public SucceededPaymentDetail(
             String id,
@@ -32,7 +34,7 @@ public class SucceededPaymentDetail extends BasePaymentDetail {
             String succeededAt,
             AuthorizationFlow authorizationFlow
     ) {
-        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt, SETTLED);
+        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt);
         this.sourceOfFunds = sourceOfFunds;
         this.succeededAt = succeededAt;
         this.authorizationFlow = Optional.ofNullable(authorizationFlow);

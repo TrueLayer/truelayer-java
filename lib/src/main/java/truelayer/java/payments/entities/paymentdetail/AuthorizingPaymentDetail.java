@@ -10,11 +10,12 @@ import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZING;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Getter
 public class AuthorizingPaymentDetail extends BasePaymentDetail {
     AuthorizationFlow authorizationFlow;
+
+    private final Status status = AUTHORIZING;
 
     public AuthorizingPaymentDetail(
             String id,
@@ -26,7 +27,7 @@ public class AuthorizingPaymentDetail extends BasePaymentDetail {
             String createdAt,
             AuthorizationFlow authorizationFlow
     ) {
-        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt, AUTHORIZING);
+        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt);
         this.authorizationFlow = authorizationFlow;
     }
 

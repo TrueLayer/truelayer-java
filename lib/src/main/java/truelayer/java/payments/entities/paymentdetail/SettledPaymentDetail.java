@@ -3,6 +3,7 @@ package truelayer.java.payments.entities.paymentdetail;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
@@ -10,7 +11,6 @@ import java.util.Optional;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.SETTLED;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Getter
 public class SettledPaymentDetail extends BasePaymentDetail {
@@ -22,6 +22,8 @@ public class SettledPaymentDetail extends BasePaymentDetail {
     String settledAt;
 
     Optional<AuthorizationFlow> authorizationFlow;
+
+    private final Status status = SETTLED;
 
     public SettledPaymentDetail(
             String id,
@@ -36,7 +38,7 @@ public class SettledPaymentDetail extends BasePaymentDetail {
             String settledAt,
             AuthorizationFlow authorizationFlow
     ) {
-        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt, SETTLED);
+        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt);
         this.sourceOfFunds = sourceOfFunds;
         this.settledAt = settledAt;
         this.succeededAt = succeededAt;

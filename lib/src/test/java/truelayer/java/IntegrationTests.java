@@ -8,12 +8,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import truelayer.java.TestUtils.RequestStub;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.AuthorizingPaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 import java.util.List;
@@ -143,10 +146,11 @@ public class IntegrationTests {
         assertEquals(expected, paymentResponse.getError());
     }
 
-    @Test
-    @DisplayName("It should get a payment")
-    public void shouldReturnAPayment() {
-        var jsonResponseFile = "payments/200.get_payment_by_id.json";
+    @ParameterizedTest(name = "it should get a payment with status {0}")
+    @ValueSource(strings = {"authorization_required","settled", "failed"})
+    public void shouldReturnASettledPayment(String status) {
+        var jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
+                .append(status).append(".json").toString();
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))

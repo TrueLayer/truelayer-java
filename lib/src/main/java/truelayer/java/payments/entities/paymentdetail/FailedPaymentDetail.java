@@ -9,7 +9,6 @@ import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
 import java.util.Optional;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Getter
 public class FailedPaymentDetail extends BasePaymentDetail {
@@ -21,6 +20,8 @@ public class FailedPaymentDetail extends BasePaymentDetail {
     String failureReason;
 
     Optional<AuthorizationFlow> authorizationFlow;
+
+    private final Status status = Status.FAILED;
 
     public FailedPaymentDetail(
             String id,
@@ -35,7 +36,7 @@ public class FailedPaymentDetail extends BasePaymentDetail {
             String failureReason,
             AuthorizationFlow authorizationFlow
     ) {
-        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt, Status.FAILED);
+        super(id, amountInMinor, currency, beneficiary, user, paymentMethod, createdAt);
         this.failedAt = failedAt;
         this.failureStage = failureStage;
         this.failureReason = failureReason;

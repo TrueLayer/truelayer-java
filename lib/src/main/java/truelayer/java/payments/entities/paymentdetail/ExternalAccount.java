@@ -1,6 +1,7 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -11,14 +12,17 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExternalAccount extends BaseSourceOfFunds {
-    private String type = "external_account";
+    String type = "external_account";
 
-    private List<SchemeIdentifier> schemeIdentifiers;
+    List<SchemeIdentifier> schemeIdentifiers;
 
-    private String externalAccountId;
+    String externalAccountId;
 
-    private String accountHolderName;
+    String accountHolderName;
 
+    @Value
+    @EqualsAndHashCode
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SchemeIdentifier {
         private Type type;
 

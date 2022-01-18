@@ -82,19 +82,20 @@ public class TestUtils {
     }
 
     public static BasePaymentDetail buildGetPaymentByIdResponse() {
-        return new AuthorizationRequiredPaymentDetail(
+        var payment = new AuthorizationRequiredPaymentDetail();
+        payment.setId(UUID.randomUUID().toString());
+        payment.setAmountInMinor(101);
+        payment.setCurrency("GBP");
+        payment.setBeneficiary(MerchantAccount.builder().name("whatever").build());
+        payment.setUser(new User(
                 UUID.randomUUID().toString(),
-                101,
-                "GBP",
-                MerchantAccount.builder().name("whatever").build(),
-                new User(
-                        UUID.randomUUID().toString(),
-                        "John Doe",
-                        Optional.of("jdon@email.com"),
-                        Optional.of("333221133")
-                ),
-                BankTransfer.builder().build(),
-                new Date().toString());
+                "John Doe",
+                Optional.of("jdon@email.com"),
+                Optional.of("333221133")
+        ));
+        payment.setPaymentMethod(BankTransfer.builder().build());
+        payment.setCreatedAt(new Date().toString());
+        return payment;
     }
 
     public static ProblemDetails buildError() {
@@ -107,15 +108,16 @@ public class TestUtils {
     /**
      * Utility to assert that an API response is not an error.
      * It prints a meaningful message otherwise
+     *
      * @param apiResponse the api response to check
      */
-    public static void assertNotError(ApiResponse apiResponse){
+    public static void assertNotError(ApiResponse apiResponse) {
         assertFalse(apiResponse.isError(),
                 String.format("request failed with error: %s", apiResponse.getError()));
     }
 
     @SneakyThrows
-    public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type){
+    public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type) {
         return getObjectMapper().readValue(
                 Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION).append(jsonFile).toString())),
                 type);
