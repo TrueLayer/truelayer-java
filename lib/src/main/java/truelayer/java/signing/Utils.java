@@ -14,13 +14,9 @@ public class Utils {
 
     public static String buildPayload(String httpMethod, String path, String body, Map<String, String> headers) {
         var builder = new StringBuilder(httpMethod.toUpperCase() + " " + path);
-        if(headers != null)
-            builder.append("\n")
-                    .append(parseHeaders(headers));
+        if (headers != null) builder.append("\n").append(parseHeaders(headers));
 
-        if(body != null)
-            builder.append("\n")
-                    .append(body);
+        if (body != null) builder.append("\n").append(body);
 
         return Base64.getUrlEncoder().encodeToString(builder.toString().getBytes());
     }

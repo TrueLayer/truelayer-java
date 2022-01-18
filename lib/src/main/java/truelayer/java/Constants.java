@@ -22,7 +22,7 @@ public final class Constants {
     /**
      * Version info keys
      */
-    public static final class VersionInfo{
+    public static final class VersionInfo {
         public static final String NAME = "name";
         public static final String VERSION = "version";
     }

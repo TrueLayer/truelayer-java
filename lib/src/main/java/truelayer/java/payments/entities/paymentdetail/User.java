@@ -1,10 +1,9 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Value;
-
-import java.util.Optional;
 
 @Value
 @Getter

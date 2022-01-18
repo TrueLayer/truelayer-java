@@ -1,15 +1,13 @@
 package truelayer.java.http.interceptors;
 
+import static org.mockito.Mockito.*;
+
+import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
-import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
-
-import java.util.function.Consumer;
-
-import static org.mockito.Mockito.*;
 
 public abstract class BaseInterceptorTests {
     protected Interceptor.Chain chain;

@@ -5,13 +5,12 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
-import truelayer.java.TrueLayerException;
-
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import truelayer.java.TrueLayerException;
 
 public class Signer {
 
@@ -28,8 +27,7 @@ public class Signer {
     }
 
     private void addHeader(String key, String value) {
-        if (headers == null)
-            headers = new HashMap<>();
+        if (headers == null) headers = new HashMap<>();
         headers.put(key, value);
     }
 
@@ -44,7 +42,6 @@ public class Signer {
     private void addPath(String path) {
         this.path = path;
     }
-
 
     public static class Builder {
         private final Signer signer;
@@ -83,7 +80,6 @@ public class Signer {
         }
     }
 
-
     private String sign() throws JOSEException, ParseException {
         var privateKeyString = new String(privateKey);
 
@@ -92,7 +88,7 @@ public class Signer {
         // Create the EC signer
         JWSSigner signer = new ECDSASigner((ECKey) ecJWK);
 
-        //we need to keep headers in this specific order
+        // we need to keep headers in this specific order
         var signatureHeaders = new LinkedHashMap<String, String>();
         signatureHeaders.put("alg", "ES512");
         signatureHeaders.put("kid", keyId);
@@ -113,5 +109,4 @@ public class Signer {
         // Serialize the JWS to compact form
         return jwsObject.serialize(true);
     }
-
 }

@@ -1,7 +1,17 @@
 package truelayer.java;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static truelayer.java.Constants.ConfigurationKeys.*;
+import static truelayer.java.TestUtils.assertNotError;
+import static truelayer.java.TestUtils.deserializeJsonFileTo;
+
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,20 +26,7 @@ import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentdetail.AuthorizingPaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
-
-import java.util.List;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.Constants.ConfigurationKeys.*;
-import static truelayer.java.TestUtils.assertNotError;
-import static truelayer.java.TestUtils.deserializeJsonFileTo;
-
 
 @WireMockTest
 @Tag("integration")
@@ -147,10 +144,12 @@ public class IntegrationTests {
     }
 
     @ParameterizedTest(name = "it should get a payment with status {0}")
-    @ValueSource(strings = {"authorization_required","settled", "failed"})
+    @ValueSource(strings = {"authorization_required", "settled", "failed"})
     public void shouldReturnASettledPayment(String status) {
         var jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
-                .append(status).append(".json").toString();
+                .append(status)
+                .append(".json")
+                .toString();
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
