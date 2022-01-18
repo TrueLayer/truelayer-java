@@ -46,7 +46,6 @@ repositories {
 
 test {
     useJUnitPlatform()
-    testLogging.showStandardStreams = true
 }
 
 testlogger {
