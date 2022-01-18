@@ -1,9 +1,16 @@
 package truelayer.java;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static truelayer.java.TestUtils.assertNotError;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
@@ -39,7 +46,27 @@ public class AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should get a payment by id")
+    @DisplayName("It should create a payment and open it in TL HPP")
+    @SneakyThrows
+    public void shouldCreateAPaymentAndOpenItInHPP() {
+        var paymentRequest = buildPaymentRequest();
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        assertNotError(createPaymentResponse);
+
+        var hppPageRequest = HttpRequest.newBuilder(tlClient.hpp()
+                        .getHostedPaymentPageLink(
+                                createPaymentResponse.getData().getId(),
+                                createPaymentResponse.getData().getPaymentToken(),
+                                URI.create("http://localhost")))
+                .GET()
+                .build();
+        var hppResponse = getHttpClient().send(hppPageRequest, HttpResponse.BodyHandlers.ofString());
+
+        assertTrue(hppResponse.statusCode() >= 200 && hppResponse.statusCode() < 300);
+    }
+
+    @Test
+    @DisplayName("It should create a payment and get it by id")
     @SneakyThrows
     public void shouldGetAPaymentById() {
         var paymentRequest = buildPaymentRequest();
@@ -54,7 +81,7 @@ public class AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequest() {
         return CreatePaymentRequest.builder()
-                .amountInMinor(101)
+                .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency("GBP")
                 .paymentMethod(BankTransfer.builder().build())
                 .beneficiary(MerchantAccount.builder()
@@ -65,6 +92,13 @@ public class AcceptanceTests {
                         .type(CreatePaymentRequest.User.Type.NEW)
                         .email("andrea@truelayer.com")
                         .build())
+                .build();
+    }
+
+    private HttpClient getHttpClient() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .followRedirects(HttpClient.Redirect.ALWAYS)
                 .build();
     }
 }
