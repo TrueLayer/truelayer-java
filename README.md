@@ -187,6 +187,8 @@ To appy the changes suggested - if any
 Bear in mind that the above checks are enforced at CI time, thus 
 the builds will fail if not compliant.
 
+When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
+
 ## Library Documentation
 TBD
 
