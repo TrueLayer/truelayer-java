@@ -22,6 +22,7 @@ import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -81,19 +82,19 @@ public class TestUtils {
     }
 
     public static BasePaymentDetail buildGetPaymentByIdResponse() {
-        return AuthorizationRequired.builder()
-                .id(UUID.randomUUID().toString())
-                .amountInMinor(101)
-                .currency("GBP")
-                .beneficiary(
-                        MerchantAccount.builder().name("whatever").build())
-                .user(BasePaymentDetail.User.builder()
-                        .id(UUID.randomUUID().toString())
-                        .name("John doe")
-                        .build())
-                .paymentMethod(BankTransfer.builder().build())
-                .createdAt(new Date().toString())
-                .build();
+        return new AuthorizationRequired(
+                UUID.randomUUID().toString(),
+                101,
+                "GBP",
+                MerchantAccount.builder().name("whatever").build(),
+                new BasePaymentDetail.User(
+                        UUID.randomUUID().toString(),
+                        "John Doe",
+                        Optional.of("jdon@email.com"),
+                        Optional.of("333221133")
+                ),
+                BankTransfer.builder().build(),
+                new Date().toString());
     }
 
     public static ProblemDetails buildError() {

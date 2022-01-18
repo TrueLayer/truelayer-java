@@ -7,12 +7,15 @@ import lombok.Value;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
-import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.AUTHORIZATION_REQUIRED;
+import java.util.Optional;
+
+import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.AUTHORIZED;
+import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.AUTHORIZING;
 
 @Getter
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class AuthorizationRequired extends BasePaymentDetail {
+public class Authorized extends BasePaymentDetail {
     @JsonProperty("id")
     private String id;
 
@@ -34,6 +37,9 @@ public class AuthorizationRequired extends BasePaymentDetail {
     @JsonProperty("created_at")
     private String createdAt;
 
+    @JsonProperty("authorization_flow")
+    private Optional<AuthorizationFlow> authorizationFlow;
+
     @JsonProperty("status")
-    private final Status status = AUTHORIZATION_REQUIRED;
+    private final Status status = AUTHORIZED;
 }

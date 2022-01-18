@@ -1,22 +1,22 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
-import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.AUTHORIZATION_REQUIRED;
-import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.AUTHORIZING;
+import java.util.Optional;
+
+import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.FAILED;
+import static truelayer.java.payments.entities.paymentdetail.BasePaymentDetail.Status.SUCCEEDED;
 
 @Getter
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class Authorizing extends BasePaymentDetail {
+public class Failed extends BasePaymentDetail {
     @JsonProperty("id")
     private String id;
 
@@ -38,29 +38,35 @@ public class Authorizing extends BasePaymentDetail {
     @JsonProperty("created_at")
     private String createdAt;
 
+    @JsonProperty("failed_at")
+    private String failedAt;
+
+    @JsonProperty("failure_stage")
+    private FailureStage failureStage;
+
+    @JsonProperty("failure_reason")
+    private String failureReason;
+
     @JsonProperty("authorization_flow")
-    private AuthorizationFlow authorizationFlow;
+    private Optional<AuthorizationFlow> authorizationFlow;
 
     @JsonProperty("status")
-    private final Status status = AUTHORIZING;
+    private final Status status = FAILED;
 
-    @Getter
-    @Value
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class AuthorizationFlow {
+    public enum FailureStage {
+        AUTHORIZATION_REQUIRED("authorization_required"),
+        AUTHORIZING("authorizing"),
+        AUTHORIZED("authorized");
 
-        @JsonProperty("actions")
-        private Actions actions;
+        private final String failureStage;
 
-        @JsonProperty("configuration")
-        private BasePaymentDetail.AuthorizationFlow.Configuration configuration;
+        FailureStage(String failureStage) {
+            this.failureStage = failureStage;
+        }
 
-        @Value
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class Actions {
-
-            @JsonProperty("next")
-            private BaseAuthorizationFlowAction next;
+        @JsonValue
+        public String getFailureStage() {
+            return failureStage;
         }
     }
 }

@@ -16,15 +16,8 @@ import java.util.Optional;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BasePaymentMethod {
-    @JsonIgnore
-    public boolean isBankTransfer(){
-        return this instanceof BankTransfer;
-    }
 
-    public Optional<BankTransfer> bankTransfer(){
-        if(isBankTransfer()){
-            return Optional.of((BankTransfer) this);
-        }
-        return Optional.empty();
+    public BankTransfer asBankTransfer(){
+        return (BankTransfer) this;
     }
 }
