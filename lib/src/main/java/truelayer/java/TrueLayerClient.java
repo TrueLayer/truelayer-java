@@ -21,7 +21,6 @@ import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.payments.PaymentHandler;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

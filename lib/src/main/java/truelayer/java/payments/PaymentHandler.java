@@ -5,7 +5,8 @@ import lombok.Getter;
 import truelayer.java.TrueLayerException;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 import java.io.IOException;
 
@@ -15,18 +16,22 @@ public class PaymentHandler implements IPaymentHandler {
     private final IPaymentsApi paymentsApi;
 
     @Override
-    public ApiResponse<Payment> createPayment(CreatePaymentRequest createPaymentRequest) {
+    public ApiResponse<CreatePaymentResponse> createPayment(CreatePaymentRequest createPaymentRequest) {
         try {
-            return (ApiResponse<Payment>) paymentsApi.createPayment(createPaymentRequest).execute().body();
+            return (ApiResponse<CreatePaymentResponse>) paymentsApi.createPayment(
+                            createPaymentRequest)
+                    .execute().body();
         } catch (IOException e) {
             throw new TrueLayerException("unable to create payment", e);
         }
     }
 
     @Override
-    public ApiResponse<Payment> getPayment(String paymentId) {
+    public ApiResponse<BasePaymentDetail> getPayment(String paymentId) {
         try {
-            return (ApiResponse<Payment>) paymentsApi.getPayment(paymentId).execute().body();
+            return (ApiResponse<BasePaymentDetail>) paymentsApi.getPayment(
+                    paymentId
+            ).execute().body();
         } catch (IOException e) {
             throw new TrueLayerException("unable to get payment", e);
         }

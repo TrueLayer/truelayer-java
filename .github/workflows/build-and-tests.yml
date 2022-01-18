@@ -1,14 +1,14 @@
-name: Build
+name: Build and tests
 
 on:
   push:
     branches:
       - '**'
     tags-ignore:
-      - '+*'
+      - '**'
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

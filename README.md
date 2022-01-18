@@ -101,7 +101,7 @@ var client = TrueLayerClient.builder()
         .build();
 ```
 
-### Make a payment
+### Make a createPaymentResponse
 ```
 var paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
@@ -127,17 +127,17 @@ if(paymentResponse.isError()){
     var problemDetails = paymentResponse.getError();   
     ...
 }else{
-    // logic for successful payment execution
-    var payment = paymentResponse.getData();
+    // logic for successful createPaymentResponse execution
+    var createPaymentResponse = paymentResponse.getData();
     ...
 }    
     
 ```
 
-### Build a link to our hosted payment page
+### Build a link to our hosted createPaymentResponse page
 ```
-var hppLink = client.hpp().getHostedPaymentPageLink("your-payment-id",
-        "your-payment-token",
+var hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-id",
+        "your-createPaymentResponse-token",
         URI.create("http://yourdomain.com"));
 ```
 
@@ -157,6 +157,20 @@ To run integration tests:
 ```
 ./gradlew integration-tests
 ```
+
+### Acceptance tests
+
+To execute tests against TrueLayer sandbox environment, you should set the below environment variables:
+- `TL_CLIENT_ID`
+- `TL_CLIENT_SECRET`
+- `TL_SIGNING_KEY_ID`
+- `TL_SIGNING_PRIVATE_KEY`
+
+and finally run:
+```
+./gradlew acceptance-tests
+```
+
 
 ## Library Documentation
 

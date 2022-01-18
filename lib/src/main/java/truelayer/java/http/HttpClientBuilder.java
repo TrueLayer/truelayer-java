@@ -1,16 +1,21 @@
 package truelayer.java.http;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import truelayer.java.TrueLayerException;
+import truelayer.java.Utils;
 import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
 
 import java.util.List;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static truelayer.java.Utils.getObjectMapper;
 
 public class HttpClientBuilder {
 
@@ -52,7 +57,7 @@ public class HttpClientBuilder {
         return new Retrofit.Builder()
                 .client(clientBuilder.build())
                 .baseUrl(baseUrl)
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create(getObjectMapper()))
                 .addCallAdapterFactory(new ApiResponseCallAdapterFactory())
                 .build();
     }
