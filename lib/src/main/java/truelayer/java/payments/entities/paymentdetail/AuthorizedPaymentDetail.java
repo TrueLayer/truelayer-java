@@ -1,11 +1,10 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZED;
 
 import java.util.Optional;
-
-import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZED;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter

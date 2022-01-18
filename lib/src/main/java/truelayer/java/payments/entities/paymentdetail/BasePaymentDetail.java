@@ -3,6 +3,7 @@ package truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,20 +11,14 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
-import java.util.Date;
-
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "status",
-        defaultImpl = AuthorizationRequiredPaymentDetail.class
-)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthorizationRequiredPaymentDetail.class, name = "authorization_required"),
-        @JsonSubTypes.Type(value = AuthorizingPaymentDetail.class, name = "authorizing"),
-        @JsonSubTypes.Type(value = AuthorizedPaymentDetail.class, name = "authorized"),
-        @JsonSubTypes.Type(value = FailedPaymentDetail.class, name = "failed"),
-        @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
-        @JsonSubTypes.Type(value = SucceededPaymentDetail.class, name = "succeeded")
+    @JsonSubTypes.Type(value = AuthorizationRequiredPaymentDetail.class, name = "authorization_required"),
+    @JsonSubTypes.Type(value = AuthorizingPaymentDetail.class, name = "authorizing"),
+    @JsonSubTypes.Type(value = AuthorizedPaymentDetail.class, name = "authorized"),
+    @JsonSubTypes.Type(value = FailedPaymentDetail.class, name = "failed"),
+    @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
+    @JsonSubTypes.Type(value = SucceededPaymentDetail.class, name = "succeeded")
 })
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -87,6 +82,8 @@ public abstract class BasePaymentDetail {
     }
 
     private String buildErrorMessage() {
-        return String.format("payment is of type %1$s. Consider using as%1$s() instead.", this.getClass().getSimpleName());
+        return String.format(
+                "payment is of type %1$s. Consider using as%1$s() instead.",
+                this.getClass().getSimpleName());
     }
 }

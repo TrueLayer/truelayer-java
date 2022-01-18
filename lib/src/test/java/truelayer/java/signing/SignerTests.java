@@ -1,14 +1,13 @@
 package truelayer.java.signing;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TestUtils;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 public class SignerTests {
     private static final String A_PAYLOAD = "{\"foo\":\"bar\"}";

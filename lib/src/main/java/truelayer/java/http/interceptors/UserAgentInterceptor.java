@@ -1,13 +1,12 @@
 package truelayer.java.http.interceptors;
 
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
+
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import java.io.IOException;
-
-import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 
 @RequiredArgsConstructor
 public class UserAgentInterceptor implements Interceptor {
@@ -18,9 +17,7 @@ public class UserAgentInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         var newRequest = request.newBuilder()
-                .header(USER_AGENT, String.format("%s/%s",
-                        name,
-                        version))
+                .header(USER_AGENT, String.format("%s/%s", name, version))
                 .build();
         return chain.proceed(newRequest);
     }

@@ -1,14 +1,12 @@
 package truelayer.java.http.interceptors;
 
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 import java.io.IOException;
 import java.util.UUID;
-
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import okhttp3.Interceptor;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 
 public class IdempotencyKeyInterceptor implements Interceptor {
     @NotNull

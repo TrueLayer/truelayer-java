@@ -1,7 +1,18 @@
 package truelayer.java;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
+import static truelayer.java.Constants.HeaderNames.*;
+import static truelayer.java.Utils.getObjectMapper;
+
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
@@ -18,18 +29,6 @@ import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.User;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.when;
-import static truelayer.java.Constants.HeaderNames.*;
-import static truelayer.java.Utils.getObjectMapper;
-
 public class TestUtils {
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
@@ -38,7 +37,8 @@ public class TestUtils {
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
                 .clientId("a-client-id")
-                .clientSecret("a-secret").build();
+                .clientSecret("a-secret")
+                .build();
     }
 
     @SneakyThrows
@@ -58,27 +58,30 @@ public class TestUtils {
 
     @SneakyThrows
     public static byte[] getPrivateKey() {
-        return Files.readAllBytes(Path.of(new StringBuilder(KEYS_LOCATION).append("ec512-private-key.pem").toString()));
+        return Files.readAllBytes(Path.of(
+                new StringBuilder(KEYS_LOCATION).append("ec512-private-key.pem").toString()));
     }
 
     @SneakyThrows
     public static byte[] getPublicKey() {
-        return Files.readAllBytes(Path.of(new StringBuilder(KEYS_LOCATION).append("ec512-public-key.pem").toString()));
+        return Files.readAllBytes(Path.of(
+                new StringBuilder(KEYS_LOCATION).append("ec512-public-key.pem").toString()));
     }
 
     public static ApiResponse<AccessToken> buildAccessToken() {
-        var accessToken = new AccessToken(UUID.randomUUID().toString(), RandomUtils.nextInt(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
-        return ApiResponse.<AccessToken>builder()
-                .data(accessToken)
-                .build();
+        var accessToken = new AccessToken(
+                UUID.randomUUID().toString(),
+                RandomUtils.nextInt(),
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+        return ApiResponse.<AccessToken>builder().data(accessToken).build();
     }
 
     public static CreatePaymentResponse buildCreatePaymentResponse() {
         return new CreatePaymentResponse(
                 UUID.randomUUID().toString(),
                 new CreatePaymentResponse.User(UUID.randomUUID().toString()),
-                UUID.randomUUID().toString()
-        );
+                UUID.randomUUID().toString());
     }
 
     public static BasePaymentDetail buildGetPaymentByIdResponse() {
@@ -88,21 +91,14 @@ public class TestUtils {
         payment.setCurrency("GBP");
         payment.setBeneficiary(MerchantAccount.builder().name("whatever").build());
         payment.setUser(new User(
-                UUID.randomUUID().toString(),
-                "John Doe",
-                Optional.of("jdon@email.com"),
-                Optional.of("333221133")
-        ));
+                UUID.randomUUID().toString(), "John Doe", Optional.of("jdon@email.com"), Optional.of("333221133")));
         payment.setPaymentMethod(BankTransfer.builder().build());
         payment.setCreatedAt(new Date());
         return payment;
     }
 
     public static ProblemDetails buildError() {
-        return ProblemDetails
-                .builder()
-                .title("an-error")
-                .build();
+        return ProblemDetails.builder().title("an-error").build();
     }
 
     /**
@@ -112,21 +108,23 @@ public class TestUtils {
      * @param apiResponse the api response to check
      */
     public static void assertNotError(ApiResponse apiResponse) {
-        assertFalse(apiResponse.isError(),
-                String.format("request failed with error: %s", apiResponse.getError()));
+        assertFalse(apiResponse.isError(), String.format("request failed with error: %s", apiResponse.getError()));
     }
 
     @SneakyThrows
     public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type) {
-        return getObjectMapper().readValue(
-                Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION).append(jsonFile).toString())),
-                type);
+        return getObjectMapper()
+                .readValue(
+                        Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION)
+                                .append(jsonFile)
+                                .toString())),
+                        type);
     }
 
     @Builder
     public static class RequestStub {
         private static final String LIBRARY_INFO = "truelayer-java/DEVELOPMENT";
-        private final static String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
+        private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
         private final boolean withSignature;
         private final boolean withAuthorization;
         private String method;
@@ -158,9 +156,7 @@ public class TestUtils {
                 if (withAuthorization) {
                     request.withHeader(AUTHORIZATION, matching(".*"));
                 }
-                return stubFor(
-                        request.willReturn(aResponse().withStatus(status).withBodyFile(bodyFile))
-                );
+                return stubFor(request.willReturn(aResponse().withStatus(status).withBodyFile(bodyFile)));
             }
         }
     }

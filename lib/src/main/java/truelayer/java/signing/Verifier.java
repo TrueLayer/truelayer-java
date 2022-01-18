@@ -1,17 +1,15 @@
 package truelayer.java.signing;
 
+import static java.util.stream.Collectors.toList;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
-
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 public class Verifier {
 
@@ -30,8 +28,7 @@ public class Verifier {
     }
 
     private void addHeader(String key, String value) {
-        if(headers == null)
-            headers = new HashMap<>();
+        if (headers == null) headers = new HashMap<>();
         headers.put(key, value);
     }
 
@@ -46,7 +43,6 @@ public class Verifier {
     private void addPath(String path) {
         this.path = path;
     }
-
 
     public static class Builder {
         private final Verifier verifier;
@@ -97,19 +93,15 @@ public class Verifier {
         var jwsHeaders = JWSHeader.parse(JOSEObject.split(signature)[0]);
 
         var keyIdParam = jwsHeaders.getKeyID();
-        if(keyIdParam == null || !keyIdParam.equalsIgnoreCase(keyId))
-            return false;
+        if (keyIdParam == null || !keyIdParam.equalsIgnoreCase(keyId)) return false;
 
-        if(!jwsHeaders.getAlgorithm().equals(JWSAlgorithm.ES512))
-            return false;
+        if (!jwsHeaders.getAlgorithm().equals(JWSAlgorithm.ES512)) return false;
 
         var tlVersionParam = jwsHeaders.getCustomParam("tl_version");
-        if(tlVersionParam == null || !tlVersionParam.toString().equalsIgnoreCase("2"))
-            return false;
+        if (tlVersionParam == null || !tlVersionParam.toString().equalsIgnoreCase("2")) return false;
 
         var tlHeadersParam = jwsHeaders.getCustomParam("tl_headers");
-        if(tlHeadersParam == null)
-            return false;
+        if (tlHeadersParam == null) return false;
 
         var tlHeadersList = Arrays.stream(tlHeadersParam.toString().split(",")).collect(toList());
         return tlHeadersList.containsAll(requiredHeaderNames);

@@ -1,5 +1,9 @@
 package truelayer.java.http.interceptors;
 
+import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
+
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -7,11 +11,6 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.IAuthenticationHandler;
-
-import java.io.IOException;
-import java.util.List;
-
-import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements Interceptor {
@@ -25,13 +24,15 @@ public class AuthenticationInterceptor implements Interceptor {
     public Response intercept(@NotNull Chain chain) throws IOException {
         var accessToken = authenticationHandler.getOauthToken(scopes);
 
-        if (accessToken.isError()){
+        if (accessToken.isError()) {
             throw new TrueLayerException(String.format("Unable to authenticate request: %s", accessToken.getError()));
         }
 
         Request request = chain.request();
         var newRequest = request.newBuilder()
-                .header(AUTHORIZATION, buildAuthorizationHeader(accessToken.getData().getAccessToken()))
+                .header(
+                        AUTHORIZATION,
+                        buildAuthorizationHeader(accessToken.getData().getAccessToken()))
                 .build();
         return chain.proceed(newRequest);
     }

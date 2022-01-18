@@ -1,11 +1,11 @@
 package truelayer.java.payments.entities.paymentdetail;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BasePaymentDetailTests {
 
@@ -15,7 +15,9 @@ class BasePaymentDetailTests {
         BasePaymentDetail p = new SettledPaymentDetail();
 
         var thrown = Assertions.assertThrows(TrueLayerException.class, () -> p.asAuthorizingPaymentDetail());
-        assertEquals("payment is of type SettledPaymentDetail. Consider using asSettledPaymentDetail() instead.", thrown.getMessage());
+        assertEquals(
+                "payment is of type SettledPaymentDetail. Consider using asSettledPaymentDetail() instead.",
+                thrown.getMessage());
     }
 
     @Test

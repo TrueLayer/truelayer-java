@@ -10,6 +10,4 @@ public abstract class BaseSourceOfFunds {
     public ExternalAccount asExternalAccount() {
         return (ExternalAccount) this;
     }
-
-
 }

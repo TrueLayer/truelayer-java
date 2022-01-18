@@ -170,9 +170,25 @@ and finally run:
 ```
 ./gradlew acceptance-tests
 ```
+## Code linting
+To enforce coding style guidelines the project uses [palantir-java-format styles via Spotless gradle plugin](https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format).
 
+
+To locally check that your sources comply with our formatting
+```
+./gradlew spotlessJavaCheck
+```
+
+To appy the changes suggested - if any
+```
+./gradlew spotlessApply
+```
+
+Bear in mind that the above checks are enforced at CI time, thus 
+the builds will fail if not compliant.
 
 ## Library Documentation
+TBD
 
 ## Contributing
 

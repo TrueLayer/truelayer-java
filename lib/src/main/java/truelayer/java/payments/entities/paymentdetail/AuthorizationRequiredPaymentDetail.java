@@ -1,9 +1,9 @@
 package truelayer.java.payments.entities.paymentdetail;
 
+import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZATION_REQUIRED;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZATION_REQUIRED;
 
 @NoArgsConstructor
 @Getter

@@ -1,5 +1,12 @@
 package truelayer.java;
 
+import static java.util.Collections.unmodifiableList;
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
+import static truelayer.java.Constants.ConfigurationKeys.*;
+
+import java.util.List;
+import java.util.Optional;
 import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -21,14 +28,6 @@ import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.payments.PaymentHandler;
 
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Collections.unmodifiableList;
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
-import static truelayer.java.Constants.ConfigurationKeys.*;
-
 public class TrueLayerClient implements ITrueLayerClient {
     private final ClientCredentials clientCredentials;
     private final Optional<SigningOptions> signingOptions;
@@ -40,8 +39,8 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IPaymentHandler paymentHandler;
     private IHostedPaymentPageLinkBuilder hppBuilder;
 
-    public TrueLayerClient(ClientCredentials clientCredentials,
-                           Optional<SigningOptions> signingOptions, boolean useSandbox) {
+    public TrueLayerClient(
+            ClientCredentials clientCredentials, Optional<SigningOptions> signingOptions, boolean useSandbox) {
         this.clientCredentials = clientCredentials;
         this.signingOptions = signingOptions;
         this.useSandbox = useSandbox;
@@ -70,10 +69,8 @@ public class TrueLayerClient implements ITrueLayerClient {
             notEmpty(clientCredentials.getClientId(), "client id must be not empty");
             notEmpty(clientCredentials.getClientSecret(), "client secret must be not empty.");
 
-            var interceptors = List.of(
-                    new IdempotencyKeyInterceptor(),
-                    getUserAgentInterceptor(),
-                    getLoggingInterceptor());
+            var interceptors =
+                    List.of(new IdempotencyKeyInterceptor(), getUserAgentInterceptor(), getLoggingInterceptor());
 
             var httpClient = new HttpClientBuilder()
                     .baseUrl(getAuthEndpointUrl())
@@ -91,8 +88,8 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public IPaymentHandler payments() {
         if (ObjectUtils.isEmpty(this.paymentHandler)) {
-            var signingOptions = this.signingOptions.orElseThrow(() ->
-                    new TrueLayerException("signing options must be set."));
+            var signingOptions =
+                    this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set."));
             notEmpty(signingOptions.getKeyId(), "key id must be not empty");
             notNull(signingOptions.getPrivateKey(), "private key must be set.");
 
@@ -144,14 +141,13 @@ public class TrueLayerClient implements ITrueLayerClient {
         return this.configuration.getString(endpointKey);
     }
 
-    private Interceptor getUserAgentInterceptor(){
+    private Interceptor getUserAgentInterceptor() {
         return new UserAgentInterceptor(
-                this.versionInfo.getString(VersionInfo.NAME),
-                this.versionInfo.getString(VersionInfo.VERSION));
+                this.versionInfo.getString(VersionInfo.NAME), this.versionInfo.getString(VersionInfo.VERSION));
     }
 
-    private Interceptor getLoggingInterceptor(){
-        //todo replace with non deprecated or custom implementation
+    private Interceptor getLoggingInterceptor() {
+        // todo replace with non deprecated or custom implementation
         var loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         return loggingInterceptor;

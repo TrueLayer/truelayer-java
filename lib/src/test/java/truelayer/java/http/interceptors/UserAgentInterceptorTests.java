@@ -1,13 +1,12 @@
 package truelayer.java.http.interceptors;
 
-import lombok.SneakyThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
+
 import okhttp3.Interceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 
 class UserAgentInterceptorTests extends BaseInterceptorTests {
     public static final String LIBRARY_NAME = "truelayer-java";
@@ -19,7 +18,7 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
     }
 
     @BeforeEach
-    public void prepareTest(){
+    public void prepareTest() {
         buildRequest();
     }
 

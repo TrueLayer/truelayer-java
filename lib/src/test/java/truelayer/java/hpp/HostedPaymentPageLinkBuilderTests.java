@@ -1,13 +1,12 @@
 package truelayer.java.hpp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
-
-import java.net.URI;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HostedPaymentPageLinkBuilderTests {
 
@@ -32,8 +31,7 @@ class HostedPaymentPageLinkBuilderTests {
                         .append("&return_uri=")
                         .append(A_RETURN_URI)
                         .toString(),
-                link.toString()
-        );
+                link.toString());
     }
 
     @Test
@@ -41,7 +39,9 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyRedirectUrl() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create("")));
+        var thrown = assertThrows(
+                TrueLayerException.class,
+                () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create("")));
 
         assertEquals("return_uri must be set", thrown.getMessage());
     }
@@ -51,7 +51,9 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyPaymentId() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink("", A_PAYMENT_TOKEN, URI.create(A_RETURN_URI)));
+        var thrown = assertThrows(
+                TrueLayerException.class,
+                () -> sut.getHostedPaymentPageLink("", A_PAYMENT_TOKEN, URI.create(A_RETURN_URI)));
 
         assertEquals("payment_id must be set", thrown.getMessage());
     }
@@ -61,14 +63,14 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldThrowExceptionForEmptyResourceToken() {
         var sut = buildHppBuilder();
 
-        var thrown = assertThrows(TrueLayerException.class, () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
+        var thrown = assertThrows(
+                TrueLayerException.class,
+                () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
 
         assertEquals("payment_token must be set", thrown.getMessage());
     }
 
     private HostedPaymentPageLinkBuilder buildHppBuilder() {
-        return HostedPaymentPageLinkBuilder.builder()
-                .endpoint(AN_ENDPOINT)
-                .build();
+        return HostedPaymentPageLinkBuilder.builder().endpoint(AN_ENDPOINT).build();
     }
 }

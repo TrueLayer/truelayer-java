@@ -14,9 +14,7 @@ public class TrueLayerClientBuilder {
 
     private boolean useSandbox;
 
-    public TrueLayerClientBuilder() {
-
-    }
+    public TrueLayerClientBuilder() {}
 
     public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
         this.clientCredentials = credentials;
@@ -34,11 +32,7 @@ public class TrueLayerClientBuilder {
     }
 
     public TrueLayerClient build() {
-        var client = new TrueLayerClient(
-                this.clientCredentials,
-                ofNullable(this.signingOptions),
-                this.useSandbox
-        );
+        var client = new TrueLayerClient(this.clientCredentials, ofNullable(this.signingOptions), this.useSandbox);
         return client;
     }
 }
