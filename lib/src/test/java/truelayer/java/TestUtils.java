@@ -1,6 +1,7 @@
 package truelayer.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -29,6 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static truelayer.java.Constants.HeaderNames.*;
+import static truelayer.java.Utils.getObjectMapper;
 
 public class TestUtils {
 
@@ -112,12 +114,6 @@ public class TestUtils {
     public static void assertNotError(ApiResponse apiResponse){
         assertFalse(apiResponse.isError(),
                 String.format("request failed with error: %s", apiResponse.getError()));
-    }
-
-    public static ObjectMapper getObjectMapper(){
-        var om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        return om;
     }
 
     @SneakyThrows

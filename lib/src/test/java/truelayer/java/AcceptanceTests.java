@@ -58,7 +58,6 @@ public class AcceptanceTests {
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
         assertNotError(createPaymentResponse);
 
-        Thread.sleep(1000); // currently, required to avoid a lot of 500s
         var getPaymentByIdResponse = tlClient.payments().getPayment(createPaymentResponse.getData().getId());
 
         assertNotError(getPaymentByIdResponse);

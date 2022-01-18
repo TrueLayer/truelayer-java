@@ -115,16 +115,12 @@ public abstract class BasePaymentDetail {
     @Getter
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class User {
-        @JsonProperty("id")
         private String id;
 
-        @JsonProperty("name")
         private String name;
 
-        @JsonProperty("email")
         private Optional<String> email;
 
-        @JsonProperty("phone")
         private Optional<String> phone;
     }
 
@@ -133,17 +129,14 @@ public abstract class BasePaymentDetail {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class AuthorizationFlow {
 
-        @JsonProperty("configuration")
         private Configuration configuration;
 
         @Getter
         @Value
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class Configuration {
-            @JsonProperty("provider_selection")
             private ProviderSelection providerSelection;
 
-            @JsonProperty("redirect")
             private Redirect redirect;
 
             @Value
@@ -236,31 +229,23 @@ public abstract class BasePaymentDetail {
         @EqualsAndHashCode(callSuper = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class ProviderSelection extends BaseAuthorizationFlowAction {
-            @JsonProperty("type")
             private String type = "provider_selection";
 
-            @JsonProperty("providers")
             private List<ProviderSelection.Provider> providers;
 
             @Value
             @JsonInclude(JsonInclude.Include.NON_NULL)
             public static class Provider {
-                @JsonProperty("provider_id")
                 private String providerId;
 
-                @JsonProperty("display_name")
                 private String displayName;
 
-                @JsonProperty("icon_uri")
                 private String iconUri;
 
-                @JsonProperty("logo_uri")
                 private String logoUri;
 
-                @JsonProperty("bg_color")
                 private String bgColor;
 
-                @JsonProperty("country_code")
                 private String countryCode;
             }
         }
@@ -269,10 +254,8 @@ public abstract class BasePaymentDetail {
         @EqualsAndHashCode(callSuper = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class Redirect extends BaseAuthorizationFlowAction{
-            @JsonProperty("type")
             private final String type = "redirect";
 
-            @JsonProperty("uri")
             private final String uri;
 
             // todo: metadata
@@ -282,7 +265,6 @@ public abstract class BasePaymentDetail {
         @EqualsAndHashCode(callSuper = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class WaitForOutcome extends BaseAuthorizationFlowAction {
-            @JsonProperty("type")
             private final String type = "wait";
         }
     }
@@ -299,26 +281,19 @@ public abstract class BasePaymentDetail {
         @EqualsAndHashCode(callSuper = true)
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class ExternalAccount extends SourceOfFunds{
-            @JsonProperty("type")
             private String type = "external_account";
 
-            @JsonProperty("scheme_identifiers")
             private List<SchemeIdentifier> schemeIdentifiers;
 
-            @JsonProperty("external_account_id")
             private String externalAccountId;
 
-            @JsonProperty("account_holder_name")
             private String accountHolderName;
 
             public static class SchemeIdentifier {
-                @JsonProperty("type")
                 private Type type;
 
-                @JsonProperty("sort_code")
                 private String sortCode;
 
-                @JsonProperty("account_number")
                 private String accountNumber;
 
                 public enum Type {

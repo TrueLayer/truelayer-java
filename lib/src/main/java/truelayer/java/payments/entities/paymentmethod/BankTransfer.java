@@ -1,7 +1,6 @@
 package truelayer.java.payments.entities.paymentmethod;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,10 +13,8 @@ import java.util.Optional;
 @Builder
 @Getter
 public class BankTransfer extends BasePaymentMethod {
-    @JsonProperty("type")
     private final String type = "bank_transfer";
 
-    @JsonProperty("provider_filter")
     private Optional<ProviderFilter> providerFilter;
 
     @Builder
@@ -25,19 +22,14 @@ public class BankTransfer extends BasePaymentMethod {
     @EqualsAndHashCode
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ProviderFilter {
-        @JsonProperty("countries")
         private List<String> countries;
 
-        @JsonProperty("customer_segments")
         private List<CustomerSegment> customerSegments;
 
-        @JsonProperty("release_channel")
         private ReleaseChannel releaseChannel;
 
-        @JsonProperty("provider_ids")
         private List<String> providerIds;
 
-        @JsonProperty("excludes")
         private Excludes excludes;
 
         public enum CustomerSegment {
@@ -79,7 +71,6 @@ public class BankTransfer extends BasePaymentMethod {
         @EqualsAndHashCode
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public static class Excludes {
-            @JsonProperty("provider_ids")
             private List<String> providerIds;
         }
     }

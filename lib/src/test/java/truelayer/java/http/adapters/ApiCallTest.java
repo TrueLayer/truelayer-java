@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static truelayer.java.TestUtils.*;
+import static truelayer.java.Utils.getObjectMapper;
 
 class ApiCallTest {
 
