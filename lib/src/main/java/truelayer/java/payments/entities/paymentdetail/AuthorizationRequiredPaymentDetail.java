@@ -4,7 +4,6 @@ import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZATIO
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 @NoArgsConstructor
 @Getter
