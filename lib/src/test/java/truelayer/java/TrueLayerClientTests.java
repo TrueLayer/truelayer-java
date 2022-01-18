@@ -1,13 +1,13 @@
 package truelayer.java;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TrueLayerClientTests {
 
@@ -70,8 +70,7 @@ public class TrueLayerClientTests {
     @Test
     @DisplayName("It should yield an HPP link builder")
     public void itShouldBuildAnHppLinkBuilder() {
-        var trueLayerClient = TrueLayerClient.builder()
-                .build();
+        var trueLayerClient = TrueLayerClient.builder().build();
 
         var hppLinkBuilder = (HostedPaymentPageLinkBuilder) trueLayerClient.hpp();
 
@@ -83,8 +82,7 @@ public class TrueLayerClientTests {
     @DisplayName("It should yield the same instance of the HPP link builder if hpp() is called multiple times")
     @SneakyThrows
     public void itShouldYieldTheSameHppLinkBuilder() {
-        var trueLayerClient = TrueLayerClient.builder()
-                .build();
+        var trueLayerClient = TrueLayerClient.builder().build();
 
         var hpp1 = trueLayerClient.hpp();
         var hpp2 = trueLayerClient.hpp();
@@ -96,8 +94,7 @@ public class TrueLayerClientTests {
     @DisplayName("It should throw an exception if credentials options are missing")
     @SneakyThrows
     public void itShouldBuildASandboxTrueLaterClient() {
-        var trueLayerClient = TrueLayerClient.builder()
-                .build();
+        var trueLayerClient = TrueLayerClient.builder().build();
 
         var thrown = assertThrows(NullPointerException.class, () -> trueLayerClient.auth());
 

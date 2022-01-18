@@ -2,13 +2,12 @@ package truelayer.java.payments.entities.paymentmethod;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.List;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.List;
-import java.util.Optional;
 
 @Builder
 @Getter

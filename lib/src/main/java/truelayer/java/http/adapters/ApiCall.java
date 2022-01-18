@@ -1,5 +1,6 @@
 package truelayer.java.http.adapters;
 
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Request;
 import okio.Timeout;
@@ -7,8 +8,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import truelayer.java.http.entities.ApiResponse;
-
-import java.io.IOException;
 
 /**
  * Meant to handle the conversion from a default Retrofit response
@@ -71,24 +70,16 @@ public class ApiCall<T> implements Call<ApiResponse<T>> {
     }
 
     private Response handleFailure(Throwable throwable) {
-        var apiResponse = ApiResponse.builder()
-                .error( ErrorMapper.fromThrowable(throwable));
+        var apiResponse = ApiResponse.builder().error(ErrorMapper.fromThrowable(throwable));
         return Response.success(apiResponse);
     }
 
     private Response handleResponse(Response response) {
         if (response.isSuccessful()) {
-            return Response.success(
-                    ApiResponse.builder()
-                            .data(response.body())
-                            .build()
-            );
+            return Response.success(ApiResponse.builder().data(response.body()).build());
         }
 
         return Response.success(
-                ApiResponse.builder()
-                        .error(ErrorMapper.fromResponse(response))
-                        .build()
-        );
+                ApiResponse.builder().error(ErrorMapper.fromResponse(response)).build());
     }
 }

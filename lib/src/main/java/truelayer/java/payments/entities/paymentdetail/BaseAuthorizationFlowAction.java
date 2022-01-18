@@ -12,12 +12,11 @@ import truelayer.java.TrueLayerException;
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "type",
-        defaultImpl = ProviderSelection.class
-)
+        defaultImpl = ProviderSelection.class)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ProviderSelection.class, name = "provider_selection"),
-        @JsonSubTypes.Type(value = WaitForOutcome.class, name = "wait"),
-        @JsonSubTypes.Type(value = Redirect.class, name = "redirect")
+    @JsonSubTypes.Type(value = ProviderSelection.class, name = "provider_selection"),
+    @JsonSubTypes.Type(value = WaitForOutcome.class, name = "wait"),
+    @JsonSubTypes.Type(value = Redirect.class, name = "redirect")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
@@ -61,7 +60,8 @@ public abstract class BaseAuthorizationFlowAction {
     }
 
     private String buildErrorMessage() {
-        return String.format("authorization flow is of type %1$s. Consider using as%1$s() instead.", this.getClass().getSimpleName());
+        return String.format(
+                "authorization flow is of type %1$s. Consider using as%1$s() instead.",
+                this.getClass().getSimpleName());
     }
-
 }

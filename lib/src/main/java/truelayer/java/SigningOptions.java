@@ -8,6 +8,6 @@ import lombok.Getter;
 public class SigningOptions {
     private String keyId;
 
-    //todo: use a proper type
+    // todo: use a proper type
     private byte[] privateKey;
 }

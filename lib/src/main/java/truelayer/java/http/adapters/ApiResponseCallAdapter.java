@@ -1,10 +1,9 @@
 package truelayer.java.http.adapters;
 
+import java.lang.reflect.Type;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
 import truelayer.java.http.entities.ApiResponse;
-
-import java.lang.reflect.Type;
 
 /**
  * This class is required to properly override Retrofit defaults when deserializing

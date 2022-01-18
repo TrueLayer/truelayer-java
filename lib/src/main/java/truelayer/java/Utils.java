@@ -9,8 +9,8 @@ public class Utils {
 
     private static ObjectMapper OBJECT_MAPPER_INSTANCE = null;
 
-    public static ObjectMapper getObjectMapper(){
-        if(OBJECT_MAPPER_INSTANCE == null){
+    public static ObjectMapper getObjectMapper() {
+        if (OBJECT_MAPPER_INSTANCE == null) {
             var objectMapper = new ObjectMapper();
 
             // required for optionals deserialization

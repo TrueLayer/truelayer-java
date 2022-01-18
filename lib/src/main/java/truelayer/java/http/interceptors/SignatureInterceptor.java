@@ -1,5 +1,9 @@
 package truelayer.java.http.interceptors;
 
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
+
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -8,11 +12,6 @@ import okio.Buffer;
 import org.jetbrains.annotations.NotNull;
 import truelayer.java.SigningOptions;
 import truelayer.java.signing.Signer;
-
-import java.io.IOException;
-
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
-import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
 @RequiredArgsConstructor
 public class SignatureInterceptor implements Interceptor {
@@ -31,11 +30,9 @@ public class SignatureInterceptor implements Interceptor {
                     clonedRequest.method().toLowerCase(),
                     clonedRequest.url().encodedPath(),
                     clonedRequest.header(IDEMPOTENCY_KEY),
-                    getBodyAsString(clonedRequest)
-            );
-            var newRequest = request.newBuilder()
-                    .header(TL_SIGNATURE, signature)
-                    .build();
+                    getBodyAsString(clonedRequest));
+            var newRequest =
+                    request.newBuilder().header(TL_SIGNATURE, signature).build();
             return chain.proceed(newRequest);
         }
 
@@ -43,7 +40,7 @@ public class SignatureInterceptor implements Interceptor {
     }
 
     private String getBodyAsString(Request request) throws IOException {
-        try(var buffer = new Buffer()) {
+        try (var buffer = new Buffer()) {
             request.body().writeTo(buffer);
             return buffer.readUtf8();
         }
