@@ -94,7 +94,7 @@ public class TestUtils {
                 Optional.of("333221133")
         ));
         payment.setPaymentMethod(BankTransfer.builder().build());
-        payment.setCreatedAt(new Date().toString());
+        payment.setCreatedAt(new Date());
         return payment;
     }
 

@@ -11,7 +11,7 @@ import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZING;
 @Getter
 public class AuthorizingPaymentDetail extends BasePaymentDetail {
     private final Status status = AUTHORIZING;
-    AuthorizationFlow authorizationFlow;
+    private AuthorizationFlow authorizationFlow;
 
     @Getter
     @Value

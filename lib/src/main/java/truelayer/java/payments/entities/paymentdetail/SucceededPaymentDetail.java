@@ -3,6 +3,7 @@ package truelayer.java.payments.entities.paymentdetail;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.SUCCEEDED;
@@ -11,7 +12,10 @@ import static truelayer.java.payments.entities.paymentdetail.Status.SUCCEEDED;
 @Getter
 public class SucceededPaymentDetail extends BasePaymentDetail {
     private final Status status = SUCCEEDED;
-    BaseSourceOfFunds sourceOfFunds;
-    String succeededAt;
-    Optional<AuthorizationFlow> authorizationFlow;
+
+    private BaseSourceOfFunds sourceOfFunds;
+
+    private Date succeededAt;
+
+    private Optional<AuthorizationFlow> authorizationFlow;
 }

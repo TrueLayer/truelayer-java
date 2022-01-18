@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -11,10 +12,14 @@ import java.util.Optional;
 public class FailedPaymentDetail extends BasePaymentDetail {
 
     private final Status status = Status.FAILED;
-    String failedAt;
-    FailureStage failureStage;
-    String failureReason;
-    Optional<AuthorizationFlow> authorizationFlow;
+
+    private Date failedAt;
+
+    private FailureStage failureStage;
+
+    private String failureReason;
+
+    private Optional<AuthorizationFlow> authorizationFlow;
 
     public enum FailureStage {
         AUTHORIZATION_REQUIRED("authorization_required"),

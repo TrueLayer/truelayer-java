@@ -13,5 +13,5 @@ public class AuthorizedPaymentDetail extends BasePaymentDetail {
 
     private final Status status = AUTHORIZED;
 
-    Optional<AuthorizationFlow> authorizationFlow;
+    private Optional<AuthorizationFlow> authorizationFlow;
 }

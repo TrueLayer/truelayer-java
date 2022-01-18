@@ -10,6 +10,8 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
+import java.util.Date;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "status",
@@ -40,7 +42,7 @@ public abstract class BasePaymentDetail {
 
     private BasePaymentMethod paymentMethod;
 
-    private String createdAt;
+    private Date createdAt;
 
     public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
         if (!(this instanceof AuthorizationRequiredPaymentDetail)) {
