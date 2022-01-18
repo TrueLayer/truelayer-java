@@ -11,19 +11,29 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.payments.entities.Payment;
+import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.AuthorizationRequiredPaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.User;
+import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static truelayer.java.Constants.HeaderNames.*;
+import static truelayer.java.Utils.getObjectMapper;
 
 public class TestUtils {
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
+    private static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
@@ -63,12 +73,29 @@ public class TestUtils {
                 .build();
     }
 
-    public static Payment buildPayment() {
-        return new Payment(
+    public static CreatePaymentResponse buildCreatePaymentResponse() {
+        return new CreatePaymentResponse(
                 UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(),
-                new Payment.User(UUID.randomUUID().toString())
+                new CreatePaymentResponse.User(UUID.randomUUID().toString()),
+                UUID.randomUUID().toString()
         );
+    }
+
+    public static BasePaymentDetail buildGetPaymentByIdResponse() {
+        var payment = new AuthorizationRequiredPaymentDetail();
+        payment.setId(UUID.randomUUID().toString());
+        payment.setAmountInMinor(101);
+        payment.setCurrency("GBP");
+        payment.setBeneficiary(MerchantAccount.builder().name("whatever").build());
+        payment.setUser(new User(
+                UUID.randomUUID().toString(),
+                "John Doe",
+                Optional.of("jdon@email.com"),
+                Optional.of("333221133")
+        ));
+        payment.setPaymentMethod(BankTransfer.builder().build());
+        payment.setCreatedAt(new Date());
+        return payment;
     }
 
     public static ProblemDetails buildError() {
@@ -76,6 +103,24 @@ public class TestUtils {
                 .builder()
                 .title("an-error")
                 .build();
+    }
+
+    /**
+     * Utility to assert that an API response is not an error.
+     * It prints a meaningful message otherwise
+     *
+     * @param apiResponse the api response to check
+     */
+    public static void assertNotError(ApiResponse apiResponse) {
+        assertFalse(apiResponse.isError(),
+                String.format("request failed with error: %s", apiResponse.getError()));
+    }
+
+    @SneakyThrows
+    public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type) {
+        return getObjectMapper().readValue(
+                Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION).append(jsonFile).toString())),
+                type);
     }
 
     @Builder
