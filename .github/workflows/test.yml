@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
     steps:
       - name: test
-        run: echo ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+        run: echo $TL_CLIENT_ID
