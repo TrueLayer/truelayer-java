@@ -1,319 +1,83 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import truelayer.java.TrueLayerException;
-import truelayer.java.payments.entities.beneficiary.ExternalAccount;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
+import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import static truelayer.java.payments.entities.paymentdetail.Status.*;
 
 @JsonTypeInfo(
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "status",
-        defaultImpl = AuthorizationRequired.class
+        defaultImpl = AuthorizationRequiredPaymentDetail.class
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthorizationRequired.class, name = "authorization_required")
+        @JsonSubTypes.Type(value = AuthorizationRequiredPaymentDetail.class, name = "authorization_required")
 })
-@Getter
-@ToString
-@EqualsAndHashCode
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class BasePaymentDetail {
+    private String id;
 
-    @JsonIgnore
-    public boolean isAuthorized(){
-        return this instanceof Authorized;
-    }
+    private int amountInMinor;
 
-    @JsonIgnore
-    public boolean isAuthorizing(){
-        return this instanceof Authorizing;
-    }
+    private String currency;
 
-    @JsonIgnore
-    public boolean isFailed(){
-        return this instanceof Failed;
-    }
+    private BaseBeneficiary beneficiary;
 
-    @JsonIgnore
-    public boolean isSucceeded(){
-        return this instanceof Succeeded;
-    }
+    private User user;
 
-    @JsonIgnore
-    public boolean isSettled(){
-        return this instanceof Settled;
-    }
+    private BasePaymentMethod paymentMethod;
 
-    public Authorized asAuthorized(){
-        if(!isAuthorized()){
+    private String createdAt;
+
+    private Status status;
+
+    public AuthorizedPaymentDetail asAuthorized() {
+        if (status != AUTHORIZED) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (Authorized) this;
+        return (AuthorizedPaymentDetail) this;
     }
 
-    public Authorizing asAuthorizing(){
-        if(!isAuthorizing()){
+    public AuthorizingPaymentDetail asAuthorizing() {
+        if (status != AUTHORIZING) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (Authorizing) this;
+        return (AuthorizingPaymentDetail) this;
     }
 
-    public Failed asFailed(){
-        if(!isFailed()){
+    public FailedPaymentDetail asFailed() {
+        if (status != FAILED) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (Failed) this;
+        return (FailedPaymentDetail) this;
     }
 
-    public Succeeded asSucceeded(){
-        if(!isSucceeded()){
+    public SucceededPaymentDetail asSucceeded() {
+        if (status != SUCCEEDED) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (Succeeded) this;
+        return (SucceededPaymentDetail) this;
     }
 
-    public Settled asSettled(){
-        if(!isSettled()){
+    public SettledPaymentDetail asSettled() {
+        if (status != SETTLED) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (Settled) this;
+        return (SettledPaymentDetail) this;
     }
 
-    private String buildErrorMessage(){
+    private String buildErrorMessage() {
         return String.format("payment is of type %1$s. Consider using as%1$s() instead.", this.getClass().getSimpleName());
-    }
-
-    public enum Status {
-        AUTHORIZATION_REQUIRED("authorization_required"),
-        AUTHORIZING("authorizing"),
-        AUTHORIZED("authorized"),
-        SUCCEEDED("succeeded"),
-        FAILED("failed"),
-        SETTLED("settled");
-
-        private final String status;
-
-        Status(String status) {
-            this.status = status;
-        }
-
-        @JsonValue
-        public String getStatus() {
-            return status;
-        }
-    }
-
-    @Value
-    @Getter
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class User {
-        private String id;
-
-        private String name;
-
-        private Optional<String> email;
-
-        private Optional<String> phone;
-    }
-
-    @Getter
-    @Value
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class AuthorizationFlow {
-
-        private Configuration configuration;
-
-        @Getter
-        @Value
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class Configuration {
-            private ProviderSelection providerSelection;
-
-            private Redirect redirect;
-
-            @Value
-            @JsonInclude(JsonInclude.Include.NON_NULL)
-            public static class ProviderSelection {
-                private Status status;
-            }
-
-            @Value
-            @JsonInclude(JsonInclude.Include.NON_NULL)
-            public static class Redirect {
-                private Status status;
-            }
-
-            public enum Status {
-                SUPPORTED("supported"),
-                NOT_SUPPORTED("not_supported");
-
-                private final String status;
-
-                Status(String status) {
-                    this.status = status;
-                }
-
-                @JsonValue
-                public String getStatus() {
-                    return status;
-                }
-            }
-        }
-    }
-
-    @JsonTypeInfo(
-            include = JsonTypeInfo.As.EXISTING_PROPERTY,
-            use = JsonTypeInfo.Id.NAME,
-            property = "type",
-            defaultImpl = BaseAuthorizationFlowAction.ProviderSelection.class
-    )
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = BaseAuthorizationFlowAction.ProviderSelection.class, name = "provider_selection"),
-            @JsonSubTypes.Type(value = BaseAuthorizationFlowAction.WaitForOutcome.class, name = "wait"),
-            @JsonSubTypes.Type(value = BaseAuthorizationFlowAction.Redirect.class, name = "redirect")
-    })
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @ToString
-    @EqualsAndHashCode
-    public static abstract class BaseAuthorizationFlowAction {
-
-        @JsonIgnore
-        public boolean isProviderSelection(){
-            return this instanceof ProviderSelection;
-        }
-
-        @JsonIgnore
-        public boolean isWaitForOutcome(){
-            return this instanceof WaitForOutcome;
-        }
-
-        @JsonIgnore
-        public boolean isRedirect(){
-            return this instanceof Redirect;
-        }
-
-        public ProviderSelection asProviderSelection(){
-            if(!isProviderSelection()){
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (ProviderSelection) this;
-        }
-
-        public WaitForOutcome asWaitForOutcome(){
-            if(!isWaitForOutcome()){
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (WaitForOutcome) this;
-        }
-
-        public Redirect asRedirect(){
-            if(!isRedirect()){
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (Redirect) this;
-        }
-
-        private String buildErrorMessage(){
-            return String.format("authorization flow is of type %1$s. Consider using as%1$s() instead.", this.getClass().getSimpleName());
-        }
-
-        @Value
-        @EqualsAndHashCode(callSuper = true)
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class ProviderSelection extends BaseAuthorizationFlowAction {
-            private String type = "provider_selection";
-
-            private List<ProviderSelection.Provider> providers;
-
-            @Value
-            @JsonInclude(JsonInclude.Include.NON_NULL)
-            public static class Provider {
-                private String providerId;
-
-                private String displayName;
-
-                private String iconUri;
-
-                private String logoUri;
-
-                private String bgColor;
-
-                private String countryCode;
-            }
-        }
-
-        @Value
-        @EqualsAndHashCode(callSuper = true)
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class Redirect extends BaseAuthorizationFlowAction{
-            private final String type = "redirect";
-
-            private final String uri;
-
-            // todo: metadata
-        }
-
-        @Value
-        @EqualsAndHashCode(callSuper = true)
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class WaitForOutcome extends BaseAuthorizationFlowAction {
-            private final String type = "wait";
-        }
-    }
-
-    @JsonDeserialize(as = SourceOfFunds.ExternalAccount.class)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static abstract class SourceOfFunds {
-
-        public ExternalAccount asExternalAccount(){
-            return (ExternalAccount) this;
-        }
-
-        @Value
-        @EqualsAndHashCode(callSuper = true)
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        public static class ExternalAccount extends SourceOfFunds{
-            private String type = "external_account";
-
-            private List<SchemeIdentifier> schemeIdentifiers;
-
-            private String externalAccountId;
-
-            private String accountHolderName;
-
-            public static class SchemeIdentifier {
-                private Type type;
-
-                private String sortCode;
-
-                private String accountNumber;
-
-                public enum Type {
-                    NRB("nrb"),
-                    BBAN("bban"),
-                    IBAN("iban"),
-                    SORT_CODE_ACCOUNT_NUMBER("sort_code_account_number");
-
-                    private final String type;
-
-                    Type(String type) {
-                        this.type = type;
-                    }
-
-                    @JsonValue
-                    public String getType() {
-                        return type;
-                    }
-                }
-            }
-        }
     }
 }

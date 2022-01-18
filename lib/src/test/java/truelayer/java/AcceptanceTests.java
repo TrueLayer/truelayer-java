@@ -2,10 +2,7 @@ package truelayer.java;
 
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
@@ -20,10 +17,6 @@ public class AcceptanceTests {
 
     @BeforeAll
     public static void setup() {
-        System.out.println(System.getenv("TL_CLIENT_ID"));
-        System.out.println(System.getenv("TL_CLIENT_SECRET"));
-        System.out.println(System.getenv("TL_SIGNING_KEY_ID"));
-        System.out.println(System.getenv("TL_SIGNING_PRIVATE_KEY"));
         tlClient = TrueLayerClient.builder()
                 .useSandbox()
                 .clientCredentials(
@@ -65,7 +58,7 @@ public class AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequest() {
         return CreatePaymentRequest.builder()
-                .amountInMinor(RandomUtils.nextInt(100, 1000))
+                .amountInMinor(101)
                 .currency("GBP")
                 .paymentMethod(BankTransfer.builder()
                         .build())

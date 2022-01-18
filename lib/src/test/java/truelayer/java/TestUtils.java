@@ -1,8 +1,5 @@
 package truelayer.java;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import lombok.Builder;
@@ -14,11 +11,12 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.payments.entities.paymentdetail.AuthorizationRequired;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.AuthorizationRequiredPaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.User;
+import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,12 +82,12 @@ public class TestUtils {
     }
 
     public static BasePaymentDetail buildGetPaymentByIdResponse() {
-        return new AuthorizationRequired(
+        return new AuthorizationRequiredPaymentDetail(
                 UUID.randomUUID().toString(),
                 101,
                 "GBP",
                 MerchantAccount.builder().name("whatever").build(),
-                new BasePaymentDetail.User(
+                new User(
                         UUID.randomUUID().toString(),
                         "John Doe",
                         Optional.of("jdon@email.com"),
