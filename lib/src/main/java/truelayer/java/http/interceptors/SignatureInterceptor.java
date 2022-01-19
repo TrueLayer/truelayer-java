@@ -1,7 +1,7 @@
 package truelayer.java.http.interceptors;
 
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
-import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
+import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.common.Constants.HeaderNames.TL_SIGNATURE;
 
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +51,9 @@ public class SignatureInterceptor implements Interceptor {
     }
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
-        byte[] privateKey = signingOptions.getPrivateKey();
+        byte[] privateKey = signingOptions.privateKey();
 
-        return new Signer.Builder(signingOptions.getKeyId(), privateKey)
+        return new Signer.Builder(signingOptions.keyId(), privateKey)
                 .addHeader(IDEMPOTENCY_KEY, idempotencyKey)
                 .addHttpMethod(method)
                 .addPath(path)

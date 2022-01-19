@@ -2,7 +2,7 @@ package truelayer.java.http;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-import static truelayer.java.Utils.getObjectMapper;
+import static truelayer.java.common.Utils.getObjectMapper;
 
 import java.util.List;
 import okhttp3.Interceptor;

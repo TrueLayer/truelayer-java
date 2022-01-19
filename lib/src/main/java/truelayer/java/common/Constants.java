@@ -1,4 +1,4 @@
-package truelayer.java;
+package truelayer.java.common;
 
 /**
  * Constants class

@@ -1,7 +1,7 @@
 package truelayer.java.signing;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 import java.util.Map;
 import lombok.SneakyThrows;

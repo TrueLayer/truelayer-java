@@ -22,7 +22,7 @@ public class AcceptanceTests {
 
     @BeforeAll
     public static void setup() {
-        tlClient = TrueLayerClient.builder()
+        tlClient = TrueLayerClient.New()
                 .useSandbox()
                 .clientCredentials(ClientCredentials.builder()
                         .clientId(System.getenv("TL_CLIENT_ID"))

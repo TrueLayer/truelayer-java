@@ -1,6 +1,6 @@
 package truelayer.java.http.adapters;
 
-import static truelayer.java.Utils.getObjectMapper;
+import static truelayer.java.common.Utils.getObjectMapper;
 
 import java.io.IOException;
 import retrofit2.Response;

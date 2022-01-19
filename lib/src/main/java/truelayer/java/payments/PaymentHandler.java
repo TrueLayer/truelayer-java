@@ -1,18 +1,20 @@
 package truelayer.java.payments;
 
 import java.io.IOException;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 import truelayer.java.TrueLayerException;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
-@Builder
-@Getter
+@Value
 public class PaymentHandler implements IPaymentHandler {
-    private final IPaymentsApi paymentsApi;
+    IPaymentsApi paymentsApi;
+
+    public static PaymentHandlerBuilder New() {
+        return new PaymentHandlerBuilder();
+    }
 
     @Override
     public ApiResponse<CreatePaymentResponse> createPayment(CreatePaymentRequest createPaymentRequest) {

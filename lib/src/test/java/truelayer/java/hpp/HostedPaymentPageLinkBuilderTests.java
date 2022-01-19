@@ -2,6 +2,7 @@ package truelayer.java.hpp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static truelayer.java.TestUtils.A_HPP_ENDPOINT;
 
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +11,6 @@ import truelayer.java.TrueLayerException;
 
 class HostedPaymentPageLinkBuilderTests {
 
-    public static final String AN_ENDPOINT = "https://an-endpoint.com";
     public static final String A_RETURN_URI = "https://a-redirect-uri.com";
     public static final String A_PAYMENT_TOKEN = "a-payment-token";
     public static final String A_PAYMENT_ID = "a-payment-id";
@@ -23,7 +23,7 @@ class HostedPaymentPageLinkBuilderTests {
         var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
-                new StringBuilder(AN_ENDPOINT)
+                new StringBuilder(A_HPP_ENDPOINT)
                         .append("/payments#payment_id=")
                         .append(A_PAYMENT_ID)
                         .append("&payment_token=")
@@ -71,6 +71,6 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     private HostedPaymentPageLinkBuilder buildHppBuilder() {
-        return HostedPaymentPageLinkBuilder.builder().endpoint(AN_ENDPOINT).build();
+        return HostedPaymentPageLinkBuilder.New().endpoint(A_HPP_ENDPOINT).build();
     }
 }

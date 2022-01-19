@@ -1,7 +1,7 @@
 package truelayer.java.http.interceptors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 import java.util.regex.Pattern;
 import okhttp3.Interceptor;
