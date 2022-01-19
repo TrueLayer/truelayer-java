@@ -87,7 +87,7 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 
 ### Initialize TrueLayerClient
 ```
-var client = TrueLayerClient.builder()
+TrueLayerClient client = TrueLayerClient.New()
         .useSandbox() // optional: to use TL sandbox environment
         .clientCredentials(
                 ClientCredentials.builder()
@@ -103,7 +103,7 @@ var client = TrueLayerClient.builder()
 
 ### Make a createPaymentResponse
 ```
-var paymentRequest = CreatePaymentRequest.builder()
+CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
         .currency("GBP")
         .paymentMethod(BankTransfer.builder()
@@ -118,25 +118,14 @@ var paymentRequest = CreatePaymentRequest.builder()
                 .build())
         .build();        
 
-var paymentResponse = client
+CompletableFuture<ApiResponse<CreatePaymentResponse>> paymentResponse = client
     .payments()
     .createPayment(paymentRequest);
-    
-if(paymentResponse.isError()){
-    // inspect the problem details and implement the error handling logic
-    var problemDetails = paymentResponse.getError();   
-    ...
-}else{
-    // logic for successful createPaymentResponse execution
-    var createPaymentResponse = paymentResponse.getData();
-    ...
-}    
-    
 ```
 
 ### Build a link to our hosted createPaymentResponse page
 ```
-var hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-id",
+URI hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-id",
         "your-createPaymentResponse-token",
         URI.create("http://yourdomain.com"));
 ```
