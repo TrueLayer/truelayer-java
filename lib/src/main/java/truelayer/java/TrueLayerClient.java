@@ -1,7 +1,5 @@
 package truelayer.java;
 
-import static truelayer.java.common.Constants.ConfigurationKeys.*;
-
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
