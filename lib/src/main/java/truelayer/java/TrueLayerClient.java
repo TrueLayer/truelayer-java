@@ -1,12 +1,14 @@
 package truelayer.java;
 
 import java.util.Optional;
+
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.IPaymentHandler;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TrueLayerClient implements ITrueLayerClient {
     private final IAuthenticationHandler authenticationHandler;
     private final Optional<IPaymentHandler> paymentHandler;
