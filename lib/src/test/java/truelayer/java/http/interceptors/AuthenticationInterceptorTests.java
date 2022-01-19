@@ -8,11 +8,9 @@ import static truelayer.java.TestUtils.buildAccessToken;
 import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import okhttp3.Interceptor;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
@@ -39,7 +37,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         var authenticationHandler = mock(AuthenticationHandler.class);
         var scopes = List.of("payments");
         var expectedAccessToken = buildAccessToken();
-        when(authenticationHandler.getOauthToken(scopes)).thenReturn(expectedAccessToken);
+        when(authenticationHandler.getOauthToken(scopes))
+                .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
         this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
 
         intercept();
@@ -55,12 +54,12 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         var authenticationHandler = mock(AuthenticationHandler.class);
         var scopes = List.of("payments");
         when(authenticationHandler.getOauthToken(scopes))
-                .thenReturn(ApiResponse.<AccessToken>builder()
+                .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
                                 .type("error")
                                 .detail("error: invalid_client")
                                 .build())
-                        .build());
+                        .build()));
         this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
 
         var thrown = Assertions.assertThrows(TrueLayerException.class, () -> intercept());
