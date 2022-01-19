@@ -16,6 +16,7 @@ public class AuthenticationHandler implements IAuthenticationHandler {
 
     @Override
     public ApiResponse<AccessToken> getOauthToken(List<String> scopes) {
+        //todo this will return a completable future
         try {
             return (ApiResponse<AccessToken>) authenticationApi
                     .getOauthToken(
