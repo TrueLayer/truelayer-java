@@ -1,7 +1,6 @@
 package truelayer.java;
 
 import java.util.Optional;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
