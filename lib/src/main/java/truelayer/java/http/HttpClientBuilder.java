@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import truelayer.java.TrueLayerException;
-import truelayer.java.http.adapters.ApiResponseCallAdapterFactory;
+import truelayer.java.http.adapters.TrueLayerApiAdapterFactory;
 
 public class HttpClientBuilder {
 
@@ -53,7 +53,7 @@ public class HttpClientBuilder {
                 .client(clientBuilder.build())
                 .baseUrl(baseUrl)
                 .addConverterFactory(JacksonConverterFactory.create(getObjectMapper()))
-                .addCallAdapterFactory(new ApiResponseCallAdapterFactory())
+                .addCallAdapterFactory(new TrueLayerApiAdapterFactory())
                 .build();
     }
 }
