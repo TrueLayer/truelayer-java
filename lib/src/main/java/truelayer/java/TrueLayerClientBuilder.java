@@ -1,12 +1,11 @@
 package truelayer.java;
 
+import java.util.Optional;
 import truelayer.java.auth.AuthenticationHandlerBuilder;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.configuration.ConfigurationAssembler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
-
-import java.util.Optional;
 
 /**
  * Builder class for TrueLayerClient instances. This is deliberately not managed
@@ -21,8 +20,7 @@ public class TrueLayerClientBuilder {
     // By default, production is used
     private boolean useSandbox;
 
-    TrueLayerClientBuilder() {
-    }
+    TrueLayerClientBuilder() {}
 
     public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
         this.clientCredentials = Optional.of(credentials);
