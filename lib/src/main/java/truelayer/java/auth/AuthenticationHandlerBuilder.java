@@ -8,7 +8,7 @@ import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
 import truelayer.java.ClientCredentials;
 import truelayer.java.configuration.Configuration;
-import truelayer.java.http.HttpClientBuilder;
+import truelayer.java.http.AsyncHttpClientBuilder;
 import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
 
@@ -50,7 +50,7 @@ public class AuthenticationHandlerBuilder {
         var applicationInterceptors =
                 List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
 
-        var authHttpClient = new HttpClientBuilder()
+        var authHttpClient = new AsyncHttpClientBuilder()
                 .baseUrl(configuration.authentication().endpointUrl())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)

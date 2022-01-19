@@ -64,6 +64,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
+    @SneakyThrows
     public void shouldReturnErrorIfUnauthorized() {
         RequestStub.builder()
                 .method("post")
@@ -72,16 +73,16 @@ public class IntegrationTests {
                 .bodyFile("auth/400.invalid_client.json")
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments"));
+        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
 
         assertTrue(response.isError());
         assertEquals("error", response.getError().getType());
         assertTrue(response.getError().getDetail().contains("invalid_client"));
     }
 
-    @SneakyThrows
     @Test
     @DisplayName("It should create and return an access token")
+    @SneakyThrows
     public void shouldReturnAnAccessToken() {
         var jsonResponseFile = "auth/200.access_token.json";
         RequestStub.builder()
@@ -91,7 +92,7 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments"));
+        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
