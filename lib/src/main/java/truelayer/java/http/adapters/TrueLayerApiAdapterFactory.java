@@ -7,7 +7,12 @@ import java.util.concurrent.CompletableFuture;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 
-// todo document rationale
+/**
+ * This class is extends <a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/java8/src/main/java/retrofit2/adapter/java8/Java8CallAdapterFactory.java">Retrofit's Java8CallAdapterFactory</a>
+ * to support TrueLayer ApiResponse wrapper object.
+ *
+ * @see truelayer.java.http.entities.ApiResponse
+ */
 public final class TrueLayerApiAdapterFactory extends CallAdapter.Factory {
     @Override
     public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {

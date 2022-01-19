@@ -21,11 +21,4 @@ public class ErrorMapper {
             return ProblemDetails.builder().type("error").detail(errorBody).build();
         }
     }
-
-    public static ProblemDetails fromThrowable(Throwable throwable) {
-        return ProblemDetails.builder()
-                .type("error")
-                .detail(throwable.getMessage())
-                .build();
-    }
 }
