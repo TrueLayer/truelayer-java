@@ -30,7 +30,7 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
         return future;
     }
 
-    private class ResponseCallback implements Callback<R> {
+    protected class ResponseCallback implements Callback<R> {
         private final CompletableFuture<ApiResponse<R>> future;
 
         public ResponseCallback(CompletableFuture<ApiResponse<R>> future) {

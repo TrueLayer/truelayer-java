@@ -2,7 +2,7 @@ name: Scheduled Acceptance tests
 
 on:
   schedule:
-    - cron: "0 10-20/2 * * *" # every 2 hours between 10 and 20 (UTC)
+    - cron: "0 10-20/2 * * *" # every 2 hours between 10 and 20
 
 jobs:
   scheduled-acceptance-tests:

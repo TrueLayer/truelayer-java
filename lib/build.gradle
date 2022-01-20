@@ -53,8 +53,10 @@ repositories {
 }
 
 test {
-    useJUnitPlatform()
-    //testLogging.showStandardStreams = true
+    useJUnitPlatform{
+        excludeTags "acceptance" // exclude acceptance tests from the default test task
+    }
+    //testLogging.showStandardStreams = true //show log output during tests. be careful to not leak stuff at CI time
 }
 
 testlogger {
