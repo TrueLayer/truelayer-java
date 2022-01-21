@@ -26,7 +26,7 @@ jobs:
       - name: Integration tests
         run: ./gradlew integration-tests
       - name: Acceptance tests in sandbox environment
-        if: ${{ endsWith(github.ref, '-pre.*\d') }}
+        if: ${{ !endsWith(github.ref, '-pre.*\d') }}
         env:
           TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
           TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
