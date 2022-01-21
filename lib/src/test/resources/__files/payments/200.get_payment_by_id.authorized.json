@@ -22,7 +22,8 @@
         "status": "supported"
       },
       "redirect": {
-        "status": "not_supported"
+        "status": "supported",
+        "return_uri": "http://localhost"
       }
     }
   }

@@ -12,7 +12,7 @@ import lombok.Value;
 public class Redirect extends BaseAuthorizationFlowAction {
     private final String type = "redirect";
 
-    private final String returnUri;
+    private final String uri;
 
     @Value
     @EqualsAndHashCode(callSuper = true)
