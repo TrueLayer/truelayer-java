@@ -5,10 +5,13 @@ import static truelayer.java.common.Constants.ConfigurationKeys.*;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import truelayer.java.TrueLayerException;
 import truelayer.java.common.Constants;
 
 public class ConfigurationAssembler {
+    private static final String CONFIG_FILE_PREXIF = "truelayer-java";
+
     private final boolean useSandbox;
 
     public ConfigurationAssembler(boolean useSandbox) {
@@ -18,24 +21,14 @@ public class ConfigurationAssembler {
     public Configuration assemble() {
         var configBuilder = Configuration.builder();
 
-        PropertiesConfiguration versionProps = null;
-        try {
-            versionProps = new Configurations().properties("version.properties");
-        } catch (Exception e) {
-            new TrueLayerException("Unable to load version properties", e);
-        }
+        PropertiesConfiguration versionProps = getPropertiesFile("version");
 
         configBuilder.versionInfo(Configuration.VersionInfo.builder()
                 .libraryName(versionProps.getString(Constants.VersionInfo.NAME))
                 .libraryVersion(versionProps.getString(Constants.VersionInfo.VERSION))
                 .build());
 
-        PropertiesConfiguration applicationProps = null;
-        try {
-            applicationProps = new Configurations().properties("application.properties");
-        } catch (Exception e) {
-            new TrueLayerException("Unable to load application properties", e);
-        }
+        PropertiesConfiguration applicationProps = getPropertiesFile("configuration");
 
         configBuilder.authentication(new Configuration.Endpoint(
                 useSandbox
@@ -56,5 +49,18 @@ public class ConfigurationAssembler {
                 .build());
 
         return configBuilder.build();
+    }
+
+    private PropertiesConfiguration getPropertiesFile(String configFileName) {
+        try {
+            return new Configurations()
+                    .properties(new StringBuilder(CONFIG_FILE_PREXIF)
+                            .append(".")
+                            .append(configFileName)
+                            .append(".properties")
+                            .toString());
+        } catch (ConfigurationException e) {
+            throw new TrueLayerException(String.format("Unable to load %s", configFileName), e);
+        }
     }
 }
