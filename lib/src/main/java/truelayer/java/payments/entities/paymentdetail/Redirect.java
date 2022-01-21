@@ -10,7 +10,12 @@ import lombok.Value;
 public class Redirect extends BaseAuthorizationFlowAction {
     private final String type = "redirect";
 
-    private final String uri;
+    private final String returnUri;
 
-    // todo: metadata
+    @Value
+    @EqualsAndHashCode(callSuper = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ProviderMetadata extends Provider {
+        private final String type = "provider";
+    }
 }

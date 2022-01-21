@@ -12,20 +12,4 @@ public class ProviderSelection extends BaseAuthorizationFlowAction {
     private String type = "provider_selection";
 
     private List<Provider> providers;
-
-    @Value
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Provider {
-        private String providerId;
-
-        private String displayName;
-
-        private String iconUri;
-
-        private String logoUri;
-
-        private String bgColor;
-
-        private String countryCode;
-    }
 }
