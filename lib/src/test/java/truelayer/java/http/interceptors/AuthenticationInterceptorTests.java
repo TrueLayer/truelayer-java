@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 import static truelayer.java.TestUtils.buildAccessToken;
+import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
 
 import java.util.List;
 import okhttp3.Interceptor;

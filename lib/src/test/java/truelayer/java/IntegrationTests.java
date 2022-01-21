@@ -2,27 +2,26 @@ package truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.Constants.ConfigurationKeys.*;
-import static truelayer.java.TestUtils.assertNotError;
-import static truelayer.java.TestUtils.deserializeJsonFileTo;
+import static truelayer.java.TestUtils.*;
+import static truelayer.java.common.Constants.ConfigurationKeys.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.List;
+import java.util.Optional;
 import lombok.SneakyThrows;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.TestUtils.RequestStub;
+import truelayer.java.TestUtils.*;
+import truelayer.java.auth.AuthenticationHandlerBuilder;
 import truelayer.java.auth.entities.AccessToken;
+import truelayer.java.configuration.Configuration;
+import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.http.entities.ProblemDetails;
+import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
@@ -31,24 +30,36 @@ import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 @WireMockTest
 @Tag("integration")
 public class IntegrationTests {
-    private TrueLayerClient tlClient;
+    private static TrueLayerClient tlClient;
 
-    @SneakyThrows
-    @BeforeEach
-    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        tlClient = TrueLayerClient.builder()
-                .clientCredentials(TestUtils.getClientCredentials())
-                .signingOptions(TestUtils.getSigningOptions())
+    @BeforeAll
+    public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        var configuration = Configuration.builder()
+                .versionInfo(Configuration.VersionInfo.builder()
+                        .libraryName(LIBRARY_NAME)
+                        .libraryVersion(LIBRARY_VERSION)
+                        .build())
+                .authentication(new Configuration.Endpoint(wireMockRuntimeInfo.getHttpBaseUrl()))
+                .payments(Configuration.Payments.builder()
+                        .endpointUrl(wireMockRuntimeInfo.getHttpBaseUrl())
+                        .build())
+                .hostedPaymentPage(new Configuration.Endpoint(wireMockRuntimeInfo.getHttpBaseUrl()))
                 .build();
 
-        // don't try this at home
-        var properties = new PropertiesConfiguration();
-        properties.addProperty(AUTH_ENDPOINT_URL_LIVE, wireMockRuntimeInfo.getHttpBaseUrl());
-        properties.addProperty(AUTH_ENDPOINT_URL_SANDBOX, wireMockRuntimeInfo.getHttpBaseUrl());
-        properties.addProperty(PAYMENTS_ENDPOINT_URL_LIVE, wireMockRuntimeInfo.getHttpBaseUrl());
-        properties.addProperty(PAYMENTS_ENDPOINT_URL_SANDBOX, wireMockRuntimeInfo.getHttpBaseUrl());
-        properties.addProperty(PAYMENTS_SCOPES, "paydirect");
-        writeField(tlClient, "configuration", properties, true);
+        var authenticationHandler = AuthenticationHandlerBuilder.New()
+                .configuration(configuration)
+                .clientCredentials(getClientCredentials())
+                .build();
+        var paymentsHandler = PaymentHandler.New()
+                .configuration(configuration)
+                .signingOptions(getSigningOptions())
+                .authenticationHandler(authenticationHandler)
+                .build();
+        var hppBuilder = HostedPaymentPageLinkBuilder.New()
+                .endpoint(configuration.hostedPaymentPage().endpointUrl())
+                .build();
+
+        tlClient = new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
     }
 
     @Test
@@ -61,7 +72,7 @@ public class IntegrationTests {
                 .bodyFile("auth/400.invalid_client.json")
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
+        var response = tlClient.auth().getOauthToken(List.of("payments"));
 
         assertTrue(response.isError());
         assertEquals("error", response.getError().getType());
@@ -80,7 +91,7 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("paydirect"));
+        var response = tlClient.auth().getOauthToken(List.of("payments"));
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);

@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import truelayer.java.TrueLayerException;
 
-@Builder
+@Builder(builderMethodName = "New")
 @Getter
 public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuilder {
     private String endpoint;
