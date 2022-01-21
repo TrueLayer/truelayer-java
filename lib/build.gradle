@@ -53,8 +53,9 @@ repositories {
 }
 
 test {
-    useJUnitPlatform()
-    //testLogging.showStandardStreams = true
+    useJUnitPlatform{
+        excludeTags "acceptance"
+    }
 }
 
 testlogger {
@@ -81,6 +82,7 @@ tasks.register('acceptance-tests', Test) {
     useJUnitPlatform{
         includeTags "acceptance"
     }
+    testLogging.showStandardStreams = true
 }
 
 dependencies {

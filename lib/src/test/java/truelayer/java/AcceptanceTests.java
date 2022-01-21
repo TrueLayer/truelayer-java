@@ -9,12 +9,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import truelayer.java.payments.entities.CountryCode;
 import truelayer.java.payments.entities.CreatePaymentRequest;
+import truelayer.java.payments.entities.CustomerSegment;
+import truelayer.java.payments.entities.ReleaseChannel;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
+import truelayer.java.payments.entities.paymentmethod.provider.UserSelectionProvider;
 
 @Tag("acceptance")
 public class AcceptanceTests {
@@ -81,9 +87,18 @@ public class AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequest() {
         return CreatePaymentRequest.builder()
-                .amountInMinor(RandomUtils.nextInt(50, 500))
+                .amountInMinor(100)
                 .currency("GBP")
-                .paymentMethod(BankTransfer.builder().build())
+                .paymentMethod(BankTransfer.builder()
+                        .provider(UserSelectionProvider.builder()
+                                .filter(ProviderFilter.builder()
+                                        .countries(List.of(CountryCode.GB))
+                                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                                        .customerSegments(List.of(CustomerSegment.RETAIL))
+                                        .providerIds(List.of("mock-payments-gb-redirect"))
+                                        .build())
+                                .build())
+                        .build())
                 .beneficiary(MerchantAccount.builder()
                         .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
                         .build())
