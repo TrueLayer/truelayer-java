@@ -2,25 +2,25 @@ package truelayer.java.auth;
 
 import java.io.IOException;
 import java.util.List;
-import lombok.Builder;
+import lombok.Value;
 import truelayer.java.ClientCredentials;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 
-@Builder
+@Value
 public class AuthenticationHandler implements IAuthenticationHandler {
+    ClientCredentials clientCredentials;
 
-    private final IAuthenticationApi authenticationApi;
-    private final ClientCredentials clientCredentials;
+    IAuthenticationApi authenticationApi;
 
     @Override
     public ApiResponse<AccessToken> getOauthToken(List<String> scopes) {
         try {
             return (ApiResponse<AccessToken>) authenticationApi
                     .getOauthToken(
-                            clientCredentials.getClientId(),
-                            clientCredentials.getClientSecret(),
+                            clientCredentials.clientId(),
+                            clientCredentials.clientSecret(),
                             ClientCredentials.GRANT_TYPE,
                             scopes)
                     .execute()

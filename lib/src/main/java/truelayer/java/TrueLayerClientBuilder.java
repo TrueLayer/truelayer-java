@@ -1,6 +1,11 @@
 package truelayer.java;
 
-import static java.util.Optional.ofNullable;
+import java.util.Optional;
+import truelayer.java.auth.AuthenticationHandlerBuilder;
+import truelayer.java.configuration.Configuration;
+import truelayer.java.configuration.ConfigurationAssembler;
+import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
+import truelayer.java.payments.PaymentHandler;
 
 /**
  * Builder class for TrueLayerClient instances. This is deliberately not managed
@@ -8,21 +13,22 @@ import static java.util.Optional.ofNullable;
  * the way Lombok builds stuff.
  */
 public class TrueLayerClientBuilder {
-    private ClientCredentials clientCredentials;
+    private Optional<ClientCredentials> clientCredentials = Optional.empty();
 
-    private SigningOptions signingOptions;
+    private Optional<SigningOptions> signingOptions = Optional.empty();
 
+    // By default, production is used
     private boolean useSandbox;
 
-    public TrueLayerClientBuilder() {}
+    TrueLayerClientBuilder() {}
 
     public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
-        this.clientCredentials = credentials;
+        this.clientCredentials = Optional.of(credentials);
         return this;
     }
 
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
-        this.signingOptions = signingOptions;
+        this.signingOptions = Optional.of(signingOptions);
         return this;
     }
 
@@ -32,7 +38,32 @@ public class TrueLayerClientBuilder {
     }
 
     public TrueLayerClient build() {
-        var client = new TrueLayerClient(this.clientCredentials, ofNullable(this.signingOptions), this.useSandbox);
-        return client;
+        Configuration configuration = new ConfigurationAssembler(this.useSandbox).assemble();
+
+        var clientCredentials =
+                this.clientCredentials.orElseThrow(() -> new TrueLayerException("client credentials must be set"));
+
+        var authenticationHandler = AuthenticationHandlerBuilder.New()
+                .configuration(configuration)
+                .clientCredentials(clientCredentials)
+                .build();
+
+        PaymentHandler paymentsHandler = null;
+        if (this.signingOptions.isPresent()) {
+            var signingOptions =
+                    this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set"));
+
+            paymentsHandler = PaymentHandler.New()
+                    .configuration(configuration)
+                    .signingOptions(signingOptions)
+                    .authenticationHandler(authenticationHandler)
+                    .build();
+        }
+
+        var hppBuilder = HostedPaymentPageLinkBuilder.New()
+                .endpoint(configuration.hostedPaymentPage().endpointUrl())
+                .build();
+
+        return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
     }
 }

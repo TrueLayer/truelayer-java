@@ -3,14 +3,15 @@ package truelayer.java;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
-import static truelayer.java.Constants.HeaderNames.*;
-import static truelayer.java.Utils.getObjectMapper;
+import static truelayer.java.common.Constants.HeaderNames.*;
+import static truelayer.java.common.Utils.getObjectMapper;
 
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
@@ -19,6 +20,9 @@ import org.apache.commons.lang3.RandomUtils;
 import org.mockito.Mockito;
 import retrofit2.Response;
 import truelayer.java.auth.entities.AccessToken;
+import truelayer.java.configuration.Configuration;
+import truelayer.java.configuration.Configuration.Endpoint;
+import truelayer.java.configuration.Configuration.Payments;
 import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
@@ -34,10 +38,34 @@ public class TestUtils {
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
     private static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
+    public static final String LIBRARY_NAME = "truelayer-java";
+    public static final String LIBRARY_VERSION = "DEVELOPMENT";
+
+    public static final String A_HPP_ENDPOINT = "https://hpp.truelayer.com";
+    public static final String AN_AUTH_ENDPOINT = "https://auth.truelayer.com";
+    public static final String A_PAYMENTS_ENDPOINT = "https://pay.truelayer.com";
+
+    public static final List A_PAYMENT_SCOPE = List.of("https://pay.truelayer.com");
+
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
                 .clientId("a-client-id")
                 .clientSecret("a-secret")
+                .build();
+    }
+
+    public static Configuration getConfiguration() {
+        return Configuration.builder()
+                .versionInfo(Configuration.VersionInfo.builder()
+                        .libraryName(LIBRARY_NAME)
+                        .libraryVersion(LIBRARY_VERSION)
+                        .build())
+                .hostedPaymentPage(new Endpoint(A_HPP_ENDPOINT))
+                .authentication(new Endpoint(AN_AUTH_ENDPOINT))
+                .payments(Payments.builder()
+                        .scopes(A_PAYMENT_SCOPE)
+                        .endpointUrl(A_PAYMENTS_ENDPOINT)
+                        .build())
                 .build();
     }
 

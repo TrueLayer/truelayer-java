@@ -1,14 +1,20 @@
 package truelayer.java;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @Builder
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
+@Accessors(fluent = true)
 public class ClientCredentials {
-    private String clientId;
+    String clientId;
 
-    private String clientSecret;
+    String clientSecret;
 
     public static String GRANT_TYPE = "client_credentials";
 }
