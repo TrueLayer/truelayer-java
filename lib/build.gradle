@@ -82,7 +82,7 @@ tasks.register('acceptance-tests', Test) {
     useJUnitPlatform{
         includeTags "acceptance"
     }
-    testLogging.showStandardStreams = true
+    //testLogging.showStandardStreams = true
 }
 
 dependencies {
