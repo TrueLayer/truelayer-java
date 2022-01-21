@@ -26,7 +26,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     public IPaymentHandler payments() {
         return paymentHandler.orElseThrow(
                 () -> new TrueLayerException(
-                        "payment handler not initialized. Make sure you specified the requried signing options while initializing the library"));
+                        "payment handler not initialized. Make sure you specified the required signing options while initializing the library"));
     }
 
     @Override
