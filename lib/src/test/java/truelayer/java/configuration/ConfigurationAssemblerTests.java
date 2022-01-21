@@ -19,7 +19,7 @@ class ConfigurationAssemblerTests {
         assertEquals("https://test-pay-api.truelayer.com", config.payments().endpointUrl());
         assertEquals(List.of("payments"), config.payments().scopes());
         assertEquals(
-                "https://checkout.truelayer.com", config.hostedPaymentPage().endpointUrl());
+                "https://payment.truelayer.com", config.hostedPaymentPage().endpointUrl());
     }
 
     @Test
@@ -35,7 +35,7 @@ class ConfigurationAssemblerTests {
                 "https://test-pay-api.truelayer-sandbox.com", config.payments().endpointUrl());
         assertEquals(List.of("payments"), config.payments().scopes());
         assertEquals(
-                "https://checkout.truelayer-sandbox.com",
+                "https://payment.truelayer-sandbox.com",
                 config.hostedPaymentPage().endpointUrl());
     }
 }
