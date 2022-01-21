@@ -19,6 +19,10 @@ To use on of those release with Gradle, make sure you have the following reposit
 repositories {
     // ... all your existing repos here
 
+    // signing library repository
+    maven { url 'https://jitpack.io' }
+
+    // truelayer-java library repository
     maven {
         name = "GitHubPackages"
         url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
@@ -26,7 +30,7 @@ repositories {
             username = project.findProperty("gpr.user")
             password = project.findProperty("gpr.key")
         }
-    }
+    }    
 }
 ```
 
