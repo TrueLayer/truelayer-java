@@ -15,7 +15,7 @@ The library currently targets Java 11.
 Unstable releases are published as Github package within this repository. 
 
 To use on of those release with Gradle, make sure you have the following repository listed in your build.gradle file: 
-```
+```gradle
 repositories {
     // ... all your existing repos here
 
@@ -32,7 +32,7 @@ repositories {
 
 Then include a gradle.properties file in your main module which includes your Github username and a personal access token:
  
-```
+```properties
 # gradle.properties
 gpr.user=${your TL username}
 gpr.key=${your TL PAT}
@@ -45,7 +45,7 @@ Please note that the above personal access token should have at least the follow
 
 Finally make sure you declare the desired library version as dependency of your project: 
 
-```
+```gradle
 dependencies {
     // ... your existing dependencies
 
@@ -86,7 +86,7 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 
 
 ### Initialize TrueLayerClient
-```
+```java
 var client = TrueLayerClient.New()
         .useSandbox() // optional: to use TL sandbox environment
         .clientCredentials(
@@ -102,7 +102,7 @@ var client = TrueLayerClient.New()
 ```
 
 ### Make a createPaymentResponse
-```
+```java
 var paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
         .currency("GBP")
@@ -135,7 +135,7 @@ if(paymentResponse.isError()){
 ```
 
 ### Build a link to our hosted createPaymentResponse page
-```
+```java
 var hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-id",
         "your-createPaymentResponse-token",
         URI.create("http://yourdomain.com"));
@@ -147,14 +147,14 @@ var hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-
 ### Unit tests
 
 To run unit tests: 
-```
+```sh
 ./gradlew unit-tests
 ```
 
 ### Integration tests
 
 To run integration tests:
-```
+```sh
 ./gradlew integration-tests
 ```
 
@@ -167,7 +167,7 @@ To execute tests against TrueLayer sandbox environment, you should set the below
 - `TL_SIGNING_PRIVATE_KEY`
 
 and finally run:
-```
+```sh
 ./gradlew acceptance-tests
 ```
 ## Code linting
@@ -175,12 +175,12 @@ To enforce coding style guidelines the project uses [palantir-java-format styles
 
 
 To locally check that your sources comply with our formatting
-```
+```sh
 ./gradlew spotlessJavaCheck
 ```
 
 To appy the changes suggested - if any
-```
+```sh
 ./gradlew spotlessApply
 ```
 
