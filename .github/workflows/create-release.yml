@@ -25,7 +25,9 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
+      # temporarily disabled on pre tags. todo review
       - name: Acceptance tests in sandbox environment
+        if: ${{ !contains(github.ref, '-pre') }}
         env:
           TL_CLIENT_ID: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
           TL_CLIENT_SECRET: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
