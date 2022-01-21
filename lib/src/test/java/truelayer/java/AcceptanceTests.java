@@ -73,6 +73,7 @@ public class AcceptanceTests {
 
     @Test
     @DisplayName("It should create and get by id a payment with preselected provider")
+    @Disabled
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
@@ -150,8 +151,6 @@ public class AcceptanceTests {
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(List.of(CustomerSegment.RETAIL))
                         .providerIds(List.of("mock-payments-gb-redirect"))
-                        // todo review
-                        .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
         return buildPaymentRequestWithProvider(userSelectionProvider);
