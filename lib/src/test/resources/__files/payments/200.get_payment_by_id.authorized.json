@@ -1,0 +1,29 @@
+{
+  "id":"c7f3f6c5-ae17-4d43-829c-***",
+  "amount_in_minor":101,
+  "currency":"GBP",
+  "beneficiary":{
+    "type":"merchant_account",
+    "id":"e83c4c20-b2ad-4b73-8a32-***"
+  },
+  "user":{
+    "id":"ac459f9f-37df-4cd7-ada5-***",
+    "name":"Andrea Di Lisio",
+    "email":"andrea@truelayer.com"
+  },
+  "payment_method":{
+    "type":"bank_transfer"
+  },
+  "created_at":"2022-01-17T17:13:18.214924Z",
+  "status":"authorized",
+  "authorization_flow": {
+    "configuration": {
+      "provider_selection": {
+        "status": "supported"
+      },
+      "redirect": {
+        "status": "not_supported"
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AuthorizedPaymentDetail extends BasePaymentDetail {
 
-    private final Status status = AUTHORIZED;
+    protected final Status status = AUTHORIZED;
 
     private Optional<AuthorizationFlow> authorizationFlow;
 }

@@ -6,7 +6,7 @@ public enum Status {
     AUTHORIZATION_REQUIRED("authorization_required"),
     AUTHORIZING("authorizing"),
     AUTHORIZED("authorized"),
-    SUCCEEDED("succeeded"),
+    EXECUTED("executed"),
     FAILED("failed"),
     SETTLED("settled");
 
@@ -17,7 +17,7 @@ public enum Status {
     }
 
     @JsonValue
-    public String getStatus() {
+    public String value() {
         return status;
     }
 }

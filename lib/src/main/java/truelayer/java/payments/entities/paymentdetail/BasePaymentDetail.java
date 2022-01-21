@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import truelayer.java.TrueLayerException;
+import truelayer.java.payments.entities.User;
 import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
 import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 
@@ -18,7 +19,7 @@ import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
     @JsonSubTypes.Type(value = AuthorizedPaymentDetail.class, name = "authorized"),
     @JsonSubTypes.Type(value = FailedPaymentDetail.class, name = "failed"),
     @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
-    @JsonSubTypes.Type(value = SucceededPaymentDetail.class, name = "succeeded")
+    @JsonSubTypes.Type(value = ExecutedPaymentDetail.class, name = "executed")
 })
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,6 +39,8 @@ public abstract class BasePaymentDetail {
     private BasePaymentMethod paymentMethod;
 
     private Date createdAt;
+
+    protected Status status;
 
     public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
         if (!(this instanceof AuthorizationRequiredPaymentDetail)) {
@@ -67,11 +70,11 @@ public abstract class BasePaymentDetail {
         return (FailedPaymentDetail) this;
     }
 
-    public SucceededPaymentDetail asSucceededPaymentDetail() {
-        if (!(this instanceof SucceededPaymentDetail)) {
+    public ExecutedPaymentDetail asSucceededPaymentDetail() {
+        if (!(this instanceof ExecutedPaymentDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (SucceededPaymentDetail) this;
+        return (ExecutedPaymentDetail) this;
     }
 
     public SettledPaymentDetail asSettledPaymentDetail() {
