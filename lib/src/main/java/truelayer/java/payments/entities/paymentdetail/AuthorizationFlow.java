@@ -9,5 +9,14 @@ import lombok.Value;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorizationFlow {
 
+    Actions actions;
+
     Configuration configuration;
+
+    @Value
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Actions {
+
+        private BaseAuthorizationFlowAction next;
+    }
 }
