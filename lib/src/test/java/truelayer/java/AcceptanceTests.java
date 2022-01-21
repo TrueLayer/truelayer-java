@@ -58,13 +58,15 @@ public class AcceptanceTests {
                 .build();
         var paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
-        var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId()).get();
+        var getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
 
         assertNotError(getPaymentByIdResponse);
     }
@@ -87,13 +89,15 @@ public class AcceptanceTests {
                 .build();
         var paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
-        var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId()).get();
+        var getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
 
         assertNotError(getPaymentByIdResponse);
     }
@@ -105,7 +109,8 @@ public class AcceptanceTests {
         // create payment
         var paymentRequest = buildPaymentRequest();
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
