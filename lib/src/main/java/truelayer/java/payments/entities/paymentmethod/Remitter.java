@@ -10,16 +10,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class Remitter {
+    private BasePaymentSchemeIdentifier schemeIdentifier;
+
     private String name;
-
-    private PaymentSchemeIdentifier paymentSchemeIdentifier;
-
-    @Builder
-    @Getter
-    @EqualsAndHashCode
-    @ToString
-    public static class PaymentSchemeIdentifier {
-
-        // todo
-    }
 }

@@ -13,12 +13,13 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
-import truelayer.java.payments.entities.CountryCode;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.CustomerSegment;
-import truelayer.java.payments.entities.ReleaseChannel;
+import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import truelayer.java.payments.entities.paymentmethod.Remitter;
+import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberSchemeIdentifier;
+import truelayer.java.payments.entities.paymentmethod.provider.BaseProvider;
+import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProvider;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectionProvider;
 
@@ -42,13 +43,57 @@ public class AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create a payment")
-    public void shouldCreateAPayment() {
-        var paymentRequest = buildPaymentRequest();
+    @DisplayName("It should create and get by id a payment with user_selection provider")
+    public void shouldCreateAPaymentWithUserSelectionProvider() {
+        // create payment
+        var userSelectionProvider = UserSelectionProvider.builder()
+                .filter(ProviderFilter.builder()
+                        .countries(List.of(CountryCode.GB))
+                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                        .customerSegments(List.of(CustomerSegment.RETAIL))
+                        .providerIds(List.of("mock-payments-gb-redirect"))
+                        .excludes(ProviderFilter.Excludes.builder().build())
+                        .build())
+                .build();
+        var paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
 
         var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
 
         assertNotError(createPaymentResponse);
+
+        // get it by id
+        var getPaymentByIdResponse =
+                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+
+        assertNotError(getPaymentByIdResponse);
+    }
+
+    @Test
+    @DisplayName("It should create and get by id a payment with preselected provider")
+    public void shouldCreateAPaymentWithPreselectedProvider() {
+        // create payment
+        var preselectedProvider = PreselectedProvider.builder()
+                .providerId("mock-payments-gb-redirect")
+                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                .remitter(Remitter.builder()
+                        .name("Andrea Di Lisio")
+                        .schemeIdentifier(SortCodeAccountNumberSchemeIdentifier.builder()
+                                .accountNumber("12345678")
+                                .sortCode("123456")
+                                .build())
+                        .build())
+                .build();
+        var paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
+
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+
+        assertNotError(createPaymentResponse);
+
+        // get it by id
+        var getPaymentByIdResponse =
+                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+
+        assertNotError(getPaymentByIdResponse);
     }
 
     @Test
@@ -66,39 +111,16 @@ public class AcceptanceTests {
                                 URI.create("http://localhost")))
                 .GET()
                 .build();
-        var hppResponse = getHttpClient().send(hppPageRequest, HttpResponse.BodyHandlers.ofString());
 
+        var hppResponse = getHttpClient().send(hppPageRequest, HttpResponse.BodyHandlers.ofString());
         assertTrue(hppResponse.statusCode() >= 200 && hppResponse.statusCode() < 300);
     }
 
-    @Test
-    @DisplayName("It should create a payment and get it by id")
-    @SneakyThrows
-    public void shouldGetAPaymentById() {
-        var paymentRequest = buildPaymentRequest();
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
-        assertNotError(createPaymentResponse);
-
-        var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
-
-        assertNotError(getPaymentByIdResponse);
-    }
-
-    private CreatePaymentRequest buildPaymentRequest() {
+    private CreatePaymentRequest buildPaymentRequestWithProvider(BaseProvider baseProvider) {
         return CreatePaymentRequest.builder()
-                .amountInMinor(100)
+                .amountInMinor(RandomUtils.nextInt(100, 500))
                 .currency("GBP")
-                .paymentMethod(BankTransfer.builder()
-                        .provider(UserSelectionProvider.builder()
-                                .filter(ProviderFilter.builder()
-                                        .countries(List.of(CountryCode.GB))
-                                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
-                                        .customerSegments(List.of(CustomerSegment.RETAIL))
-                                        .providerIds(List.of("mock-payments-gb-redirect"))
-                                        .build())
-                                .build())
-                        .build())
+                .paymentMethod(BankTransfer.builder().provider(baseProvider).build())
                 .beneficiary(MerchantAccount.builder()
                         .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
                         .build())
@@ -108,6 +130,19 @@ public class AcceptanceTests {
                         .email("andrea@truelayer.com")
                         .build())
                 .build();
+    }
+
+    private CreatePaymentRequest buildPaymentRequest() {
+        var userSelectionProvider = UserSelectionProvider.builder()
+                .filter(ProviderFilter.builder()
+                        .countries(List.of(CountryCode.GB))
+                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                        .customerSegments(List.of(CustomerSegment.RETAIL))
+                        .providerIds(List.of("mock-payments-gb-redirect"))
+                        .excludes(ProviderFilter.Excludes.builder().build())
+                        .build())
+                .build();
+        return buildPaymentRequestWithProvider(userSelectionProvider);
     }
 
     private HttpClient getHttpClient() {

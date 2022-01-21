@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum SchemeId {
     POLISH_DOMESTIC_STANDARD("polish_domestic_standard"),
     POLISH_DOMESTIC_EXPRESS("polish_domestic_express"),
-    FASTER_PAYMENT_SERVICE("faster_payment_service"),
+    FASTER_PAYMENTS_SERVICE("faster_payments_service"),
     SWIFT_TRANSFER("swift_transfer"),
     SEPA_CREDIT_TRANSFER("sepa_credit_transfer"),
     SEPA_CREDIT_TRANSFER_INSTANT("sepa_credit_transfer_instant"),
