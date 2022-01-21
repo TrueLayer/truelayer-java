@@ -68,7 +68,6 @@ public class AcceptanceTests {
         assertNotError(getPaymentByIdResponse);
     }
 
-    @Disabled
     @Test
     @DisplayName("It should create and get by id a payment with preselected provider")
     public void shouldCreateAPaymentWithPreselectedProvider() {
@@ -97,7 +96,6 @@ public class AcceptanceTests {
         assertNotError(getPaymentByIdResponse);
     }
 
-    @Disabled
     @Test
     @DisplayName("It should create a payment and open it in TL HPP")
     @SneakyThrows
