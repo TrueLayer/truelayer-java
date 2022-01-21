@@ -52,7 +52,7 @@ public class AcceptanceTests {
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(List.of(CustomerSegment.RETAIL))
                         .providerIds(List.of("mock-payments-gb-redirect"))
-                        //.excludes(ProviderFilter.Excludes.builder().build())
+                        // .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
         var paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
@@ -139,7 +139,7 @@ public class AcceptanceTests {
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(List.of(CustomerSegment.RETAIL))
                         .providerIds(List.of("mock-payments-gb-redirect"))
-                        //todo review
+                        // todo review
                         .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
