@@ -34,7 +34,7 @@ shadowJar {
 
 task createProperties(dependsOn: processResources) {
     doLast {
-        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+        new File("$buildDir/resources/main/truelayer-java.version.properties").withWriter { w ->
             Properties p = new Properties()
             p['name'] = archivesBaseName
             p['version'] = project.version != "unspecified" ? project.version : "DEVELOPMENT"
