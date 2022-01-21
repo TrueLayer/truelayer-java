@@ -2,7 +2,6 @@ package truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.when;
 import static truelayer.java.common.Constants.HeaderNames.*;
 import static truelayer.java.common.Utils.getObjectMapper;
 
@@ -17,13 +16,10 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
-import org.mockito.Mockito;
-import retrofit2.Response;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.configuration.Configuration.Endpoint;
 import truelayer.java.configuration.Configuration.Payments;
-import truelayer.java.http.adapters.ApiCall;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentResponse;
@@ -75,13 +71,6 @@ public class TestUtils {
                 .keyId("a-key-id")
                 .privateKey(getPrivateKey())
                 .build();
-    }
-
-    @SneakyThrows
-    public static <T> ApiCall<T> stubApiResponse(Response<T> response) {
-        var mockApiResponse = Mockito.mock(ApiCall.class);
-        when(mockApiResponse.execute()).thenReturn(response);
-        return mockApiResponse;
     }
 
     @SneakyThrows

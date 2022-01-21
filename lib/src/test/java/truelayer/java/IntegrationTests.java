@@ -64,6 +64,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
+    @SneakyThrows
     public void shouldReturnErrorIfUnauthorized() {
         RequestStub.builder()
                 .method("post")
@@ -72,16 +73,16 @@ public class IntegrationTests {
                 .bodyFile("auth/400.invalid_client.json")
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments"));
+        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
 
         assertTrue(response.isError());
         assertEquals("error", response.getError().getType());
         assertTrue(response.getError().getDetail().contains("invalid_client"));
     }
 
-    @SneakyThrows
     @Test
     @DisplayName("It should create and return an access token")
+    @SneakyThrows
     public void shouldReturnAnAccessToken() {
         var jsonResponseFile = "auth/200.access_token.json";
         RequestStub.builder()
@@ -91,7 +92,7 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments"));
+        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
@@ -100,6 +101,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should create and return a payment")
+    @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
         var jsonResponseFile = "payments/201.create_payment.merchant_account.json";
         RequestStub.builder()
@@ -120,7 +122,7 @@ public class IntegrationTests {
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
 
-        var response = tlClient.payments().createPayment(paymentRequest);
+        var response = tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
@@ -129,6 +131,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should return an error if the signature is not valid")
+    @SneakyThrows
     public void shouldReturnErrorIfSignatureIsInvalid() {
         var jsonResponseFile = "payments/401.invalid_signature.json";
         RequestStub.builder()
@@ -147,7 +150,7 @@ public class IntegrationTests {
                 .build();
         var paymentRequest = CreatePaymentRequest.builder().build();
 
-        var paymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var paymentResponse = tlClient.payments().createPayment(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
         var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
@@ -156,6 +159,7 @@ public class IntegrationTests {
 
     @ParameterizedTest(name = "it should get a payment with status {0}")
     @ValueSource(strings = {"authorization_required", "settled", "failed"})
+    @SneakyThrows
     public void shouldReturnASettledPayment(String status) {
         var jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
                 .append(status)
@@ -175,7 +179,7 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.payments().getPayment("a-payment-id");
+        var response = tlClient.payments().getPayment("a-payment-id").get();
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
@@ -184,6 +188,7 @@ public class IntegrationTests {
 
     @Test
     @DisplayName("It should return an error if a payment is not found")
+    @SneakyThrows
     public void shouldThrowIfPaymentNotFound() {
         var jsonResponseFile = "payments/404.payment_not_found.json";
         RequestStub.builder()
@@ -202,7 +207,7 @@ public class IntegrationTests {
                 .build();
         var paymentRequest = CreatePaymentRequest.builder().build();
 
-        var paymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var paymentResponse = tlClient.payments().createPayment(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
         var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);

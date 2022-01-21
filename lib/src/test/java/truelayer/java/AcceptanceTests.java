@@ -37,10 +37,12 @@ public class AcceptanceTests {
 
     @Test
     @DisplayName("It should create a payment")
+    @SneakyThrows
     public void shouldCreateAPayment() {
         var paymentRequest = buildPaymentRequest();
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
     }
@@ -50,7 +52,8 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentAndOpenItInHPP() {
         var paymentRequest = buildPaymentRequest();
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
         assertNotError(createPaymentResponse);
 
         var hppPageRequest = HttpRequest.newBuilder(tlClient.hpp()
@@ -70,11 +73,13 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldGetAPaymentById() {
         var paymentRequest = buildPaymentRequest();
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
         assertNotError(createPaymentResponse);
 
-        var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+        var getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
 
         assertNotError(getPaymentByIdResponse);
     }
