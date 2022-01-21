@@ -54,7 +54,7 @@ repositories {
 
 test {
     useJUnitPlatform{
-        excludeTags "acceptance"
+        excludeTags "acceptance" // exclude acceptance tests from the default test task
     }
 }
 

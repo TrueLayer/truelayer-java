@@ -44,6 +44,7 @@ public class AcceptanceTests {
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selection provider")
+    @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
         // create payment
         var userSelectionProvider = UserSelectionProvider.builder()
@@ -52,24 +53,25 @@ public class AcceptanceTests {
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(List.of(CustomerSegment.RETAIL))
                         .providerIds(List.of("mock-payments-gb-redirect"))
-                        // .excludes(ProviderFilter.Excludes.builder().build())
+                        .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
         var paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
         var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+                tlClient.payments().getPayment(createPaymentResponse.getData().getId()).get();
 
         assertNotError(getPaymentByIdResponse);
     }
 
     @Test
     @DisplayName("It should create and get by id a payment with preselected provider")
+    @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
         var preselectedProvider = PreselectedProvider.builder()
@@ -85,13 +87,13 @@ public class AcceptanceTests {
                 .build();
         var paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
 
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
         var getPaymentByIdResponse =
-                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
+                tlClient.payments().getPayment(createPaymentResponse.getData().getId()).get();
 
         assertNotError(getPaymentByIdResponse);
     }
@@ -100,10 +102,14 @@ public class AcceptanceTests {
     @DisplayName("It should create a payment and open it in TL HPP")
     @SneakyThrows
     public void shouldCreateAPaymentAndOpenItInHPP() {
+        // create payment
         var paymentRequest = buildPaymentRequest();
-        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest);
+
+        var createPaymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+
         assertNotError(createPaymentResponse);
 
+        // open it in HPP
         var hppPageRequest = HttpRequest.newBuilder(tlClient.hpp()
                         .getHostedPaymentPageLink(
                                 createPaymentResponse.getData().getId(),
@@ -118,7 +124,7 @@ public class AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequestWithProvider(BaseProvider baseProvider) {
         return CreatePaymentRequest.builder()
-                .amountInMinor(RandomUtils.nextInt(100, 500))
+                .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency("GBP")
                 .paymentMethod(BankTransfer.builder().provider(baseProvider).build())
                 .beneficiary(MerchantAccount.builder()
