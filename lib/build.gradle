@@ -50,6 +50,8 @@ classes {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
 }
 
 test {
@@ -96,12 +98,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
 
-    //Jws library support
-    //todo remove when using the official library
-    implementation("com.nimbusds:nimbus-jose-jwt:9.15.2")
-    //todo check if below are still required when moving to the signing library
-    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
+    // TL signing library
+    implementation 'com.github.truelayer:truelayer-signing:java-v0.1.1'
 
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'

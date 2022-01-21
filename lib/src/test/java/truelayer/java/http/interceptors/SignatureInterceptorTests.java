@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
 import static truelayer.java.common.Constants.HeaderNames.TL_SIGNATURE;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -42,6 +44,7 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
     public void shouldAddATlSignatureHeaderOnPost() {
         prepare(new Request.Builder()
                 .url("http://localhost")
+                .header(IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .post(RequestBody.create(A_PAYLOAD.getBytes(StandardCharsets.UTF_8)))
                 .build());
 
