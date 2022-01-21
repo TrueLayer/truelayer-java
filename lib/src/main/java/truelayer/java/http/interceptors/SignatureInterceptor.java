@@ -11,7 +11,7 @@ import okhttp3.Response;
 import okio.Buffer;
 import org.jetbrains.annotations.NotNull;
 import truelayer.java.SigningOptions;
-import truelayer.java.signing.Signer;
+import truelayer.signing.Signer;
 
 @RequiredArgsConstructor
 public class SignatureInterceptor implements Interceptor {
@@ -52,12 +52,11 @@ public class SignatureInterceptor implements Interceptor {
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
         byte[] privateKey = signingOptions.privateKey();
-
-        return new Signer.Builder(signingOptions.keyId(), privateKey)
-                .addHeader(IDEMPOTENCY_KEY, idempotencyKey)
-                .addHttpMethod(method)
-                .addPath(path)
-                .addBody(jsonBody)
-                .getSignature();
+        return Signer.from(signingOptions.keyId(), privateKey)
+                .header(IDEMPOTENCY_KEY, idempotencyKey)
+                .method(method)
+                .path(path)
+                .body(jsonBody)
+                .sign();
     }
 }
