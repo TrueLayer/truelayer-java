@@ -6,9 +6,6 @@ import static truelayer.java.TestUtils.getClientCredentials;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.auth.AuthenticationHandler;
-import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
-import truelayer.java.payments.PaymentHandler;
 
 public class TrueLayerClientTests {
 
@@ -19,7 +16,7 @@ public class TrueLayerClientTests {
         var trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
-        var authenticationHandler = (AuthenticationHandler) trueLayerClient.auth();
+        var authenticationHandler = trueLayerClient.auth();
 
         assertNotNull(authenticationHandler);
     }
@@ -45,10 +42,9 @@ public class TrueLayerClientTests {
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
-        var paymentsHandler = (PaymentHandler) trueLayerClient.payments();
+        var paymentsHandler = trueLayerClient.payments();
 
         assertNotNull(paymentsHandler);
-        assertNotNull(paymentsHandler.getPaymentsApi());
     }
 
     @Test
@@ -72,10 +68,9 @@ public class TrueLayerClientTests {
         var trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
-        var hppLinkBuilder = (HostedPaymentPageLinkBuilder) trueLayerClient.hpp();
+        var hppLinkBuilder = trueLayerClient.hpp();
 
         assertNotNull(hppLinkBuilder);
-        assertNotNull(hppLinkBuilder.getEndpoint());
     }
 
     @Test
@@ -109,7 +104,7 @@ public class TrueLayerClientTests {
         var thrown = assertThrows(TrueLayerException.class, () -> trueLayerClient.payments());
 
         assertEquals(
-                "payment handler not initialized. Make sure you specified the requried signing options while initializing the library",
+                "payment handler not initialized. Make sure you specified the required signing options while initializing the library",
                 thrown.getMessage());
     }
 }
