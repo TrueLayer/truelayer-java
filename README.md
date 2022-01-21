@@ -105,26 +105,39 @@ TrueLayerClient client = TrueLayerClient.New()
         .build();
 ```
 
-### Make a createPaymentResponse
+### Create a payment
 ```java
+// build the payment request object
 CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
         .currency("GBP")
         .paymentMethod(BankTransfer.builder()
+        .paymentMethod(BankTransfer.builder()
+            .provider(UserSelectionProvider.builder()
+                .filter(ProviderFilter.builder()
+                .countries(List.of(CountryCode.GB))
+                .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                .customerSegments(List.of(CustomerSegment.RETAIL))
+                .providerIds(List.of("mock-payments-gb-redirect")).build())
                 .build())
+            .build())
         .beneficiary(MerchantAccount.builder()
-                .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
-                .build())
+            .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
+            .build())
         .user(CreatePaymentRequest.User.builder()
-                .name("Andrea Di Lisio")
-                .type(CreatePaymentRequest.User.Type.NEW)
-                .email("andrea@truelayer.com")
-                .build())
+            .name("Andrea Di Lisio")
+            .type(CreatePaymentRequest.User.Type.NEW)
+            .email("andrea@truelayer.com")
+            .build())
         .build();        
 
+// fire the request        
 CompletableFuture<ApiResponse<CreatePaymentResponse>> paymentResponse = client
     .payments()
     .createPayment(paymentRequest);
+
+// wait for the response
+ApiResponse<CreatePaymentResponse> payment = paymentResponse.get())
 ```
 
 ### Build a link to our hosted createPaymentResponse page
