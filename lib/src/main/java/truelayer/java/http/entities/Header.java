@@ -13,6 +13,6 @@ public class Header {
 
     @Override
     public String toString() {
-        return this.name + ":" + value;
+        return this.name + "=" + value;
     }
 }
