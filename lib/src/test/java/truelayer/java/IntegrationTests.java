@@ -26,6 +26,7 @@ import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.Status;
 
 @WireMockTest
 @Tag("integration")
@@ -157,12 +158,13 @@ public class IntegrationTests {
         assertEquals(expected, paymentResponse.getError());
     }
 
-    @ParameterizedTest(name = "it should get a payment with status {0}")
-    @ValueSource(strings = {"authorization_required", "settled", "failed"})
+    @DisplayName("it should get the payment details")
+    @ParameterizedTest(name = "of a payment with status {0}")
+    @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
     @SneakyThrows
-    public void shouldReturnASettledPayment(String status) {
+    public void shouldReturnAPaymentDetail(Status expectedStatus) {
         var jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
-                .append(status)
+                .append(expectedStatus.value())
                 .append(".json")
                 .toString();
         RequestStub.builder()
@@ -183,6 +185,7 @@ public class IntegrationTests {
 
         assertNotError(response);
         var expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
+        assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
 

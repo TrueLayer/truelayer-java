@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -23,10 +22,10 @@ import truelayer.java.configuration.Configuration.Payments;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.User;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationRequiredPaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
-import truelayer.java.payments.entities.paymentdetail.User;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 
 public class TestUtils {
@@ -97,7 +96,7 @@ public class TestUtils {
     public static CreatePaymentResponse buildCreatePaymentResponse() {
         return new CreatePaymentResponse(
                 UUID.randomUUID().toString(),
-                new CreatePaymentResponse.User(UUID.randomUUID().toString()),
+                User.builder().id(UUID.randomUUID().toString()).name("John Doe").build(),
                 UUID.randomUUID().toString());
     }
 
@@ -107,8 +106,12 @@ public class TestUtils {
         payment.setAmountInMinor(101);
         payment.setCurrency("GBP");
         payment.setBeneficiary(MerchantAccount.builder().name("whatever").build());
-        payment.setUser(new User(
-                UUID.randomUUID().toString(), "John Doe", Optional.of("jdon@email.com"), Optional.of("333221133")));
+        payment.setUser(User.builder()
+                .id(UUID.randomUUID().toString())
+                .name("John Doe")
+                .email("jdon@email.com")
+                .phone("333221133")
+                .build());
         payment.setPaymentMethod(BankTransfer.builder().build());
         payment.setCreatedAt(new Date());
         return payment;

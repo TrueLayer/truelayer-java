@@ -2,13 +2,13 @@ package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WaitForOutcome extends BaseAuthorizationFlowAction {
-    private final String type = "wait";
+public class SupportedRedirect extends BaseRedirect {
+    String type = "supported";
+
+    String returnUri;
 }
