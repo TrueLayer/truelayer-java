@@ -216,4 +216,32 @@ public class IntegrationTests {
         var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
     }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should return a request invalid error")
+    public void shouldThrowARequestInvalidError(){
+        var jsonResponseFile = "payments/400.request_invalid.json";
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.builder()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(400)
+                .bodyFile(jsonResponseFile)
+                .build();
+        var paymentRequest = CreatePaymentRequest.builder().build();
+
+        var paymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+
+        assertTrue(paymentResponse.isError());
+        var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
+        assertEquals(expected, paymentResponse.getError());
+    }
 }
