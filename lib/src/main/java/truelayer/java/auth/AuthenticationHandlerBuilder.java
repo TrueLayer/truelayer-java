@@ -5,12 +5,12 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.List;
 import okhttp3.Interceptor;
-import okhttp3.logging.HttpLoggingInterceptor;
 import truelayer.java.ClientCredentials;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.http.HttpClientBuilder;
 import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 
 /**
  * Custom  builder class
@@ -42,10 +42,7 @@ public class AuthenticationHandlerBuilder {
         notEmpty(clientCredentials.clientId(), "client id must be not empty");
         notEmpty(clientCredentials.clientSecret(), "client secret must be not empty");
 
-        // todo replace with non deprecated or custom implementation
-        var loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        var networkInterceptors = List.<Interceptor>of(loggingInterceptor);
+        var networkInterceptors = List.<Interceptor>of(HttpLoggingInterceptor.New());
 
         var applicationInterceptors =
                 List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));

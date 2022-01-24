@@ -9,7 +9,6 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -21,17 +20,11 @@ import truelayer.java.configuration.Configuration.Endpoint;
 import truelayer.java.configuration.Configuration.Payments;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.User;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentdetail.AuthorizationRequiredPaymentDetail;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 
 public class TestUtils {
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
-    private static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
+    public static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
     public static final String LIBRARY_NAME = "truelayer-java";
     public static final String LIBRARY_VERSION = "DEVELOPMENT";
@@ -78,12 +71,6 @@ public class TestUtils {
                 new StringBuilder(KEYS_LOCATION).append("ec512-private-key.pem").toString()));
     }
 
-    @SneakyThrows
-    public static byte[] getPublicKey() {
-        return Files.readAllBytes(Path.of(
-                new StringBuilder(KEYS_LOCATION).append("ec512-public-key.pem").toString()));
-    }
-
     public static ApiResponse<AccessToken> buildAccessToken() {
         var accessToken = new AccessToken(
                 UUID.randomUUID().toString(),
@@ -91,30 +78,6 @@ public class TestUtils {
                 UUID.randomUUID().toString(),
                 UUID.randomUUID().toString());
         return ApiResponse.<AccessToken>builder().data(accessToken).build();
-    }
-
-    public static CreatePaymentResponse buildCreatePaymentResponse() {
-        return new CreatePaymentResponse(
-                UUID.randomUUID().toString(),
-                User.builder().id(UUID.randomUUID().toString()).name("John Doe").build(),
-                UUID.randomUUID().toString());
-    }
-
-    public static BasePaymentDetail buildGetPaymentByIdResponse() {
-        var payment = new AuthorizationRequiredPaymentDetail();
-        payment.setId(UUID.randomUUID().toString());
-        payment.setAmountInMinor(101);
-        payment.setCurrency("GBP");
-        payment.setBeneficiary(MerchantAccount.builder().name("whatever").build());
-        payment.setUser(User.builder()
-                .id(UUID.randomUUID().toString())
-                .name("John Doe")
-                .email("jdon@email.com")
-                .phone("333221133")
-                .build());
-        payment.setPaymentMethod(BankTransfer.builder().build());
-        payment.setCreatedAt(new Date());
-        return payment;
     }
 
     public static ProblemDetails buildError() {
