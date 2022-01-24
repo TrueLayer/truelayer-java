@@ -10,4 +10,9 @@ import lombok.experimental.Accessors;
 public class Header {
     String name;
     String value;
+
+    @Override
+    public String toString() {
+        return this.name + ":" + value;
+    }
 }
