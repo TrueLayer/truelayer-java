@@ -136,9 +136,8 @@ public class AcceptanceTests {
                 .beneficiary(MerchantAccount.builder()
                         .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
                         .build())
-                .user(CreatePaymentRequest.User.builder()
+                .user(User.builder()
                         .name("Andrea Di Lisio")
-                        .type(CreatePaymentRequest.User.Type.NEW)
                         .email("andrea@truelayer.com")
                         .build())
                 .build();
