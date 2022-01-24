@@ -220,7 +220,7 @@ public class IntegrationTests {
     @SneakyThrows
     @Test
     @DisplayName("It should return a request invalid error")
-    public void shouldThrowARequestInvalidError(){
+    public void shouldThrowARequestInvalidError() {
         var jsonResponseFile = "payments/400.request_invalid.json";
         RequestStub.builder()
                 .method("post")
