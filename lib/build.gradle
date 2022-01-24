@@ -88,12 +88,11 @@ tasks.register('acceptance-tests', Test) {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt
-    implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '9.15.2'
-
+    // Utilities
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.7'
 
+    // HTTP client
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
@@ -101,19 +100,20 @@ dependencies {
     // TL signing library
     implementation 'com.github.truelayer:truelayer-signing:java-v0.1.1'
 
+    // Serialization
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.13.0'
 
-    // Use JUnit test framework.
+    // JUnit test framework.
     testImplementation(platform('org.junit:junit-bom:5.8.1'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 
+    // Mocking libraries
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.0.0'
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.0.0'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.0.0'
-
     testImplementation group: "com.github.tomakehurst", name:"wiremock-jre8", version: "2.31.0"
 }
 
