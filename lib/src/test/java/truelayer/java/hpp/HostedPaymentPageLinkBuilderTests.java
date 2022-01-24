@@ -18,9 +18,9 @@ class HostedPaymentPageLinkBuilderTests {
     @Test
     @DisplayName("it should yield an HPP link with the given details")
     public void itShouldYieldAnHppLink() {
-        var sut = buildHppBuilder();
+        IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
-        var link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
+        URI link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
                 new StringBuilder(A_HPP_ENDPOINT)
@@ -37,9 +37,9 @@ class HostedPaymentPageLinkBuilderTests {
     @Test
     @DisplayName("it should thrown an exception if redirect_uri is empty")
     public void itShouldThrowExceptionForEmptyRedirectUrl() {
-        var sut = buildHppBuilder();
+        IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
-        var thrown = assertThrows(
+        Throwable thrown = assertThrows(
                 TrueLayerException.class,
                 () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create("")));
 
@@ -49,9 +49,9 @@ class HostedPaymentPageLinkBuilderTests {
     @Test
     @DisplayName("it should thrown an exception if payment_id is empty")
     public void itShouldThrowExceptionForEmptyPaymentId() {
-        var sut = buildHppBuilder();
+        IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
-        var thrown = assertThrows(
+        Throwable thrown = assertThrows(
                 TrueLayerException.class,
                 () -> sut.getHostedPaymentPageLink("", A_PAYMENT_TOKEN, URI.create(A_RETURN_URI)));
 
@@ -61,9 +61,9 @@ class HostedPaymentPageLinkBuilderTests {
     @Test
     @DisplayName("it should thrown an exception if payment_token is empty")
     public void itShouldThrowExceptionForEmptyResourceToken() {
-        var sut = buildHppBuilder();
+        IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
-        var thrown = assertThrows(
+        Throwable thrown = assertThrows(
                 TrueLayerException.class,
                 () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
 

@@ -1,20 +1,20 @@
 package truelayer.java;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.TestUtils.assertNotError;
+import static truelayer.java.TestUtils.*;
+import static truelayer.java.common.Constants.HeaderNames.USER_AGENT;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.List;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberSchemeIdentifier;
@@ -47,24 +47,24 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
         // create payment
-        var userSelectionProvider = UserSelectionProvider.builder()
+        UserSelectionProvider userSelectionProvider = UserSelectionProvider.builder()
                 .filter(ProviderFilter.builder()
-                        .countries(List.of(CountryCode.GB))
+                        .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
-                        .customerSegments(List.of(CustomerSegment.RETAIL))
-                        .providerIds(List.of("mock-payments-gb-redirect"))
+                        .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
+                        .providerIds(Collections.singletonList("mock-payments-gb-redirect"))
                         .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
-        var paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
 
-        var createPaymentResponse =
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
-        var getPaymentByIdResponse = tlClient.payments()
+        ApiResponse<BasePaymentDetail> getPaymentByIdResponse = tlClient.payments()
                 .getPayment(createPaymentResponse.getData().getId())
                 .get();
 
@@ -77,7 +77,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
-        var preselectedProvider = PreselectedProvider.builder()
+        PreselectedProvider preselectedProvider = PreselectedProvider.builder()
                 .providerId("mock-payments-gb-redirect")
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
@@ -88,15 +88,15 @@ public class AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        var paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
 
-        var createPaymentResponse =
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
-        var getPaymentByIdResponse = tlClient.payments()
+        ApiResponse<BasePaymentDetail> getPaymentByIdResponse = tlClient.payments()
                 .getPayment(createPaymentResponse.getData().getId())
                 .get();
 
@@ -108,24 +108,27 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentAndOpenItInHPP() {
         // create payment
-        var paymentRequest = buildPaymentRequest();
+        CreatePaymentRequest paymentRequest = buildPaymentRequest();
 
-        var createPaymentResponse =
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // open it in HPP
-        var hppPageRequest = HttpRequest.newBuilder(tlClient.hpp()
-                        .getHostedPaymentPageLink(
-                                createPaymentResponse.getData().getId(),
-                                createPaymentResponse.getData().getPaymentToken(),
-                                URI.create("http://localhost")))
-                .GET()
-                .build();
+        URI link = tlClient.hpp()
+                .getHostedPaymentPageLink(
+                        createPaymentResponse.getData().getId(),
+                        createPaymentResponse.getData().getPaymentToken(),
+                        URI.create("http://localhost"));
+        HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
+        connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);
+        connection.setConnectTimeout(10000);
+        connection.setRequestMethod("GET");
 
-        var hppResponse = getHttpClient().send(hppPageRequest, HttpResponse.BodyHandlers.ofString());
-        assertTrue(hppResponse.statusCode() >= 200 && hppResponse.statusCode() < 300);
+        int responseCode = connection.getResponseCode();
+
+        assertTrue(responseCode >= 200 && responseCode < 300);
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProvider(BaseProvider baseProvider) {
@@ -144,21 +147,14 @@ public class AcceptanceTests {
     }
 
     private CreatePaymentRequest buildPaymentRequest() {
-        var userSelectionProvider = UserSelectionProvider.builder()
+        UserSelectionProvider userSelectionProvider = UserSelectionProvider.builder()
                 .filter(ProviderFilter.builder()
-                        .countries(List.of(CountryCode.GB))
+                        .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
-                        .customerSegments(List.of(CustomerSegment.RETAIL))
-                        .providerIds(List.of("mock-payments-gb-redirect"))
+                        .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
+                        .providerIds(Collections.singletonList("mock-payments-gb-redirect"))
                         .build())
                 .build();
         return buildPaymentRequestWithProvider(userSelectionProvider);
-    }
-
-    private HttpClient getHttpClient() {
-        return HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .build();
     }
 }

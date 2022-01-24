@@ -3,9 +3,12 @@ package truelayer.java.payments;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.configuration.Configuration;
@@ -45,18 +48,18 @@ public class PaymentHandlerBuilder {
         notNull(signingOptions.privateKey(), "private key must be not empty.");
 
         // todo replace with non deprecated or custom implementation
-        var loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        var networkInterceptors = List.<Interceptor>of(loggingInterceptor);
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+        List<Interceptor> networkInterceptors = Collections.singletonList(loggingInterceptor);
 
-        var applicationInterceptors = List.of(
+        List<Interceptor> applicationInterceptors = Arrays.asList(
                 new IdempotencyKeyInterceptor(),
                 new UserAgentInterceptor(configuration.versionInfo()),
                 new SignatureInterceptor(signingOptions),
                 new AuthenticationInterceptor(
                         authenticationHandler, configuration.payments().scopes()));
 
-        var paymentHttpClient = new HttpClientBuilder()
+        Retrofit paymentHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.payments().endpointUrl())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)

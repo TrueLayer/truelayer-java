@@ -25,10 +25,10 @@ public class AuthenticationInterceptor implements Interceptor {
     @NotNull
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
-        var accessToken = tryGetToken(authenticationHandler.getOauthToken(scopes));
+        AccessToken accessToken = tryGetToken(authenticationHandler.getOauthToken(scopes));
 
         Request request = chain.request();
-        var newRequest = request.newBuilder()
+        Request newRequest = request.newBuilder()
                 .header(AUTHORIZATION, buildAuthorizationHeader(accessToken.getAccessToken()))
                 .build();
         return chain.proceed(newRequest);
