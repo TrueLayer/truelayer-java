@@ -3,6 +3,7 @@ package truelayer.java.http.interceptors.logging;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
 import static truelayer.java.common.Constants.HeaderNames.COOKIE;
+import static truelayer.java.http.interceptors.logging.SensitiveHeaderGuard.SENSITIVE_HEADER_MASK;
 
 import java.util.Map;
 import okhttp3.Headers;
@@ -22,9 +23,8 @@ class SensitiveHeaderGuardTests {
         var sanitizedHeaders = sut.getSanitizedHeaders(headers);
 
         sanitizedHeaders.forEach(h -> {
-            var headerName = h.substring(0, h.indexOf("="));
-            if (sut.isSensitiveHeader(headerName)) {
-                assertTrue(h.endsWith("=" + SensitiveHeaderGuard.SENSITIVE_HEADER_MASK));
+            if (sut.isSensitiveHeader(h.name())) {
+                assertEquals(SENSITIVE_HEADER_MASK, h.value());
             }
         });
     }

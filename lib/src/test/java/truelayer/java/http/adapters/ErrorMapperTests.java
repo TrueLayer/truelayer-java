@@ -57,9 +57,9 @@ class ErrorMapperTests {
         return retrofit2.Response.error(
                 400,
                 ResponseBody.create(
+                        MediaType.get("application/json"),
                         Files.readString(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION)
                                 .append(errorFile)
-                                .toString())),
-                        MediaType.get("application/json")));
+                                .toString()))));
     }
 }

@@ -31,10 +31,10 @@ class HttpLoggingInterceptorTests {
         var chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
         var jsonBody = ResponseBody.create(
+                MediaType.get("application/json"),
                 Files.readString(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION)
                         .append("/auth/200.access_token.json")
-                        .toString())),
-                MediaType.get("application/json"));
+                        .toString())));
         var response = new okhttp3.Response.Builder()
                 .protocol(Protocol.HTTP_2)
                 .request(request)

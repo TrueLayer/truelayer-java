@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +46,7 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
         prepare(new Request.Builder()
                 .url("http://localhost")
                 .header(IDEMPOTENCY_KEY, UUID.randomUUID().toString())
-                .post(RequestBody.create(A_PAYLOAD.getBytes(StandardCharsets.UTF_8)))
+                .post(RequestBody.create(MediaType.get("application/json"), A_PAYLOAD.getBytes(StandardCharsets.UTF_8)))
                 .build());
 
         intercept();
