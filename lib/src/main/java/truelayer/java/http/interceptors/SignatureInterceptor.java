@@ -21,17 +21,17 @@ public class SignatureInterceptor implements Interceptor {
     @NotNull
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
-        var request = chain.request();
+        Request request = chain.request();
 
         if (needsSignature(request)) {
-            var clonedRequest = request.newBuilder().build();
+            Request clonedRequest = request.newBuilder().build();
 
-            var signature = computeSignature(
+            String signature = computeSignature(
                     clonedRequest.method().toLowerCase(),
                     clonedRequest.url().encodedPath(),
                     clonedRequest.header(IDEMPOTENCY_KEY),
                     getBodyAsString(clonedRequest));
-            var newRequest =
+            Request newRequest =
                     request.newBuilder().header(TL_SIGNATURE, signature).build();
             return chain.proceed(newRequest);
         }
@@ -40,7 +40,7 @@ public class SignatureInterceptor implements Interceptor {
     }
 
     private String getBodyAsString(Request request) throws IOException {
-        try (var buffer = new Buffer()) {
+        try (Buffer buffer = new Buffer()) {
             request.body().writeTo(buffer);
             return buffer.readUtf8();
         }

@@ -12,7 +12,7 @@ class AuthenticationHandlerBuilderTests {
     @Test
     @DisplayName("It should yield an authentication handler")
     public void itShouldYieldAnAuthenticationHandler() {
-        var handler = AuthenticationHandlerBuilder.New()
+        AuthenticationHandler handler = AuthenticationHandlerBuilder.New()
                 .configuration(getConfiguration())
                 .clientCredentials(getClientCredentials())
                 .build();
@@ -24,7 +24,7 @@ class AuthenticationHandlerBuilderTests {
     @Test
     @DisplayName("It should throw and exception if credentials are missing")
     public void itShouldThrowExceptionIfCredentialsMissing() {
-        var thrown = assertThrows(NullPointerException.class, () -> AuthenticationHandlerBuilder.New()
+        Throwable thrown = assertThrows(NullPointerException.class, () -> AuthenticationHandlerBuilder.New()
                 .configuration(getConfiguration())
                 .build());
 

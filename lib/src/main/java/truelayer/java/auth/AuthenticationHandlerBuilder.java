@@ -3,9 +3,12 @@ package truelayer.java.auth;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
 import truelayer.java.ClientCredentials;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.http.HttpClientBuilder;
@@ -43,14 +46,14 @@ public class AuthenticationHandlerBuilder {
         notEmpty(clientCredentials.clientSecret(), "client secret must be not empty");
 
         // todo replace with non deprecated or custom implementation
-        var loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        var networkInterceptors = List.<Interceptor>of(loggingInterceptor);
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+        List<Interceptor> networkInterceptors = Collections.singletonList(loggingInterceptor);
 
-        var applicationInterceptors =
-                List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
+        List<Interceptor> applicationInterceptors =
+                Arrays.asList(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
 
-        var authHttpClient = new HttpClientBuilder()
+        Retrofit authHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.authentication().endpointUrl())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)
