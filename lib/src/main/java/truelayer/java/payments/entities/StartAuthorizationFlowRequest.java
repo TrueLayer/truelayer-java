@@ -12,6 +12,7 @@ import lombok.*;
 @JsonInclude(Include.NON_NULL)
 public class StartAuthorizationFlowRequest {
 
+    // todo: improve the building of this object. should be something simply like `.withProviderSelection()`
     private ProviderSelection providerSelection;
 
     private Redirect redirect;
