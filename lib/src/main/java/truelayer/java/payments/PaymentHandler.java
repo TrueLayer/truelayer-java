@@ -5,6 +5,8 @@ import lombok.Value;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
+import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 @Value
@@ -24,5 +26,11 @@ public class PaymentHandler implements IPaymentHandler {
     @Override
     public CompletableFuture<ApiResponse<BasePaymentDetail>> getPayment(String paymentId) {
         return paymentsApi.getPayment(paymentId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<StartAuthorizationFlowResponse>> startAuthorizationFlow(
+            String paymentId, StartAuthorizationFlowRequest startAuthorizationFlowRequest) {
+        return paymentsApi.startAuthorizationFlow(paymentId, startAuthorizationFlowRequest);
     }
 }

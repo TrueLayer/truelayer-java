@@ -5,6 +5,8 @@ import retrofit2.http.*;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
+import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 
 public interface IPaymentsApi {
@@ -14,4 +16,8 @@ public interface IPaymentsApi {
 
     @GET("/payments/{id}")
     CompletableFuture<ApiResponse<BasePaymentDetail>> getPayment(@Path("id") String paymentId);
+
+    @POST("/payments/{id}/authorization-flow")
+    CompletableFuture<ApiResponse<StartAuthorizationFlowResponse>> startAuthorizationFlow(
+            @Path("id") String id, @Body StartAuthorizationFlowRequest body);
 }

@@ -6,9 +6,9 @@ import lombok.Value;
 @Value
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreatePaymentResponse {
-    private String id;
+    String id;
 
-    private User user;
+    User user;
 
-    private String paymentToken;
+    String paymentToken;
 }
