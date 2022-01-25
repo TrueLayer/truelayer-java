@@ -16,7 +16,7 @@ public class UserAgentInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        var newRequest = request.newBuilder()
+        Request newRequest = request.newBuilder()
                 .header(USER_AGENT, String.format("%s/%s", versionInfo.libraryName(), versionInfo.libraryVersion()))
                 .build();
         return chain.proceed(newRequest);

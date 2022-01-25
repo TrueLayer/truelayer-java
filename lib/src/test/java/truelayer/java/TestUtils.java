@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static truelayer.java.common.Constants.HeaderNames.*;
 import static truelayer.java.common.Utils.getObjectMapper;
 
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +22,6 @@ import truelayer.java.configuration.Configuration;
 import truelayer.java.configuration.Configuration.Endpoint;
 import truelayer.java.configuration.Configuration.Payments;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.User;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
@@ -40,7 +41,7 @@ public class TestUtils {
     public static final String AN_AUTH_ENDPOINT = "https://auth.truelayer.com";
     public static final String A_PAYMENTS_ENDPOINT = "https://pay.truelayer.com";
 
-    public static final List A_PAYMENT_SCOPE = List.of("https://pay.truelayer.com");
+    public static final List A_PAYMENT_SCOPE = Collections.singletonList("https://pay.truelayer.com");
 
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
@@ -74,18 +75,12 @@ public class TestUtils {
 
     @SneakyThrows
     public static byte[] getPrivateKey() {
-        return Files.readAllBytes(Path.of(
+        return Files.readAllBytes(Paths.get(
                 new StringBuilder(KEYS_LOCATION).append("ec512-private-key.pem").toString()));
     }
 
-    @SneakyThrows
-    public static byte[] getPublicKey() {
-        return Files.readAllBytes(Path.of(
-                new StringBuilder(KEYS_LOCATION).append("ec512-public-key.pem").toString()));
-    }
-
     public static ApiResponse<AccessToken> buildAccessToken() {
-        var accessToken = new AccessToken(
+        AccessToken accessToken = new AccessToken(
                 UUID.randomUUID().toString(),
                 RandomUtils.nextInt(),
                 UUID.randomUUID().toString(),
@@ -101,7 +96,7 @@ public class TestUtils {
     }
 
     public static BasePaymentDetail buildGetPaymentByIdResponse() {
-        var payment = new AuthorizationRequiredPaymentDetail();
+        AuthorizationRequiredPaymentDetail payment = new AuthorizationRequiredPaymentDetail();
         payment.setId(UUID.randomUUID().toString());
         payment.setAmountInMinor(101);
         payment.setCurrency("GBP");
@@ -115,10 +110,6 @@ public class TestUtils {
         payment.setPaymentMethod(BankTransfer.builder().build());
         payment.setCreatedAt(new Date());
         return payment;
-    }
-
-    public static ProblemDetails buildError() {
-        return ProblemDetails.builder().title("an-error").build();
     }
 
     /**
@@ -135,7 +126,7 @@ public class TestUtils {
     public static <T> T deserializeJsonFileTo(String jsonFile, Class<T> type) {
         return getObjectMapper()
                 .readValue(
-                        Files.readAllBytes(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION)
+                        Files.readAllBytes(Paths.get(new StringBuilder(JSON_RESPONSES_LOCATION)
                                 .append(jsonFile)
                                 .toString())),
                         type);
@@ -165,7 +156,7 @@ public class TestUtils {
             }
 
             public StubMapping build() {
-                var request = request(method.toUpperCase(), path)
+                MappingBuilder request = request(method.toUpperCase(), path)
                         .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
                         .withHeader(USER_AGENT, matching(LIBRARY_INFO));
 

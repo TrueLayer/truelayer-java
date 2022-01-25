@@ -9,7 +9,7 @@ import static truelayer.java.common.Constants.ConfigurationKeys.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -17,10 +17,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import truelayer.java.TestUtils.*;
 import truelayer.java.auth.AuthenticationHandlerBuilder;
+import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
+import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
+import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
@@ -35,7 +39,7 @@ public class IntegrationTests {
 
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        var configuration = Configuration.builder()
+        Configuration configuration = Configuration.builder()
                 .versionInfo(Configuration.VersionInfo.builder()
                         .libraryName(LIBRARY_NAME)
                         .libraryVersion(LIBRARY_VERSION)
@@ -47,16 +51,16 @@ public class IntegrationTests {
                 .hostedPaymentPage(new Configuration.Endpoint(wireMockRuntimeInfo.getHttpBaseUrl()))
                 .build();
 
-        var authenticationHandler = AuthenticationHandlerBuilder.New()
+        IAuthenticationHandler authenticationHandler = AuthenticationHandlerBuilder.New()
                 .configuration(configuration)
                 .clientCredentials(getClientCredentials())
                 .build();
-        var paymentsHandler = PaymentHandler.New()
+        IPaymentHandler paymentsHandler = PaymentHandler.New()
                 .configuration(configuration)
                 .signingOptions(getSigningOptions())
                 .authenticationHandler(authenticationHandler)
                 .build();
-        var hppBuilder = HostedPaymentPageLinkBuilder.New()
+        IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
                 .endpoint(configuration.hostedPaymentPage().endpointUrl())
                 .build();
 
@@ -74,7 +78,9 @@ public class IntegrationTests {
                 .bodyFile("auth/400.invalid_client.json")
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
+        ApiResponse<AccessToken> response = tlClient.auth()
+                .getOauthToken(Collections.singletonList("payments"))
+                .get();
 
         assertTrue(response.isError());
         assertEquals("error", response.getError().getType());
@@ -85,7 +91,7 @@ public class IntegrationTests {
     @DisplayName("It should create and return an access token")
     @SneakyThrows
     public void shouldReturnAnAccessToken() {
-        var jsonResponseFile = "auth/200.access_token.json";
+        String jsonResponseFile = "auth/200.access_token.json";
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -93,10 +99,12 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.auth().getOauthToken(List.of("payments")).get();
+        ApiResponse<AccessToken> response = tlClient.auth()
+                .getOauthToken(Collections.singletonList("payments"))
+                .get();
 
         assertNotError(response);
-        var expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
+        AccessToken expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
         assertEquals(expected, response.getData());
     }
 
@@ -104,7 +112,7 @@ public class IntegrationTests {
     @DisplayName("It should create and return a payment")
     @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        var jsonResponseFile = "payments/201.create_payment.merchant_account.json";
+        String jsonResponseFile = "payments/201.create_payment.merchant_account.json";
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -119,14 +127,15 @@ public class IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        var paymentRequest = CreatePaymentRequest.builder()
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
                 .beneficiary(MerchantAccount.builder().build())
                 .build();
 
-        var response = tlClient.payments().createPayment(paymentRequest).get();
+        ApiResponse<CreatePaymentResponse> response =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(response);
-        var expected = deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
+        CreatePaymentResponse expected = deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -134,7 +143,7 @@ public class IntegrationTests {
     @DisplayName("It should return an error if the signature is not valid")
     @SneakyThrows
     public void shouldReturnErrorIfSignatureIsInvalid() {
-        var jsonResponseFile = "payments/401.invalid_signature.json";
+        String jsonResponseFile = "payments/401.invalid_signature.json";
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -149,12 +158,13 @@ public class IntegrationTests {
                 .status(401)
                 .bodyFile(jsonResponseFile)
                 .build();
-        var paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        var paymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+        ApiResponse<CreatePaymentResponse> paymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
-        var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
+        ProblemDetails expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
     }
 
@@ -163,7 +173,7 @@ public class IntegrationTests {
     @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
     @SneakyThrows
     public void shouldReturnAPaymentDetail(Status expectedStatus) {
-        var jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
+        String jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
                 .append(expectedStatus.value())
                 .append(".json")
                 .toString();
@@ -181,10 +191,11 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        var response = tlClient.payments().getPayment("a-payment-id").get();
+        ApiResponse<BasePaymentDetail> response =
+                tlClient.payments().getPayment("a-payment-id").get();
 
         assertNotError(response);
-        var expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
+        BasePaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
@@ -193,7 +204,7 @@ public class IntegrationTests {
     @DisplayName("It should return an error if a payment is not found")
     @SneakyThrows
     public void shouldThrowIfPaymentNotFound() {
-        var jsonResponseFile = "payments/404.payment_not_found.json";
+        String jsonResponseFile = "payments/404.payment_not_found.json";
         RequestStub.builder()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -208,12 +219,13 @@ public class IntegrationTests {
                 .status(404)
                 .bodyFile(jsonResponseFile)
                 .build();
-        var paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        var paymentResponse = tlClient.payments().createPayment(paymentRequest).get();
+        ApiResponse<CreatePaymentResponse> paymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
-        var expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
+        ProblemDetails expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
     }
 }

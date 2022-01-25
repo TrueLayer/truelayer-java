@@ -39,7 +39,7 @@ public class HttpClientBuilder {
             throw new TrueLayerException("base url must be specified");
         }
 
-        var clientBuilder = new OkHttpClient.Builder();
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         if (isNotEmpty(applicationInterceptors)) {
             applicationInterceptors.forEach(clientBuilder::addInterceptor);
