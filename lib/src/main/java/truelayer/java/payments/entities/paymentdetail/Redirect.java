@@ -16,9 +16,8 @@ public class Redirect extends BaseAuthorizationFlowAction {
     Metadata metadata;
 
     @Value
-    @EqualsAndHashCode(callSuper = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Metadata extends Provider {
+    public static class Metadata {
         String type = "provider";
 
         String providerId;

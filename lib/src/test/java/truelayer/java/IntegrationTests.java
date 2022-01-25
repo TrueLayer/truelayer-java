@@ -26,6 +26,8 @@ import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
+import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
@@ -34,6 +36,8 @@ import truelayer.java.payments.entities.paymentdetail.Status;
 @Tag("integration")
 public class IntegrationTests {
     private static TrueLayerClient tlClient;
+
+    public static final String A_PAYMENT_ID = "a-payment-id";
 
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
@@ -183,14 +187,14 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("get")
-                .path(urlPathMatching("/payments/.*"))
+                .path(urlPathMatching("/payments/"+A_PAYMENT_ID))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<BasePaymentDetail> response =
-                tlClient.payments().getPayment("a-payment-id").get();
+                tlClient.payments().getPayment(A_PAYMENT_ID).get();
 
         assertNotError(response);
         BasePaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
@@ -254,5 +258,36 @@ public class IntegrationTests {
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should start an authorization flow for a payment id")
+    public void shouldStartAnAuthorizationFlow() {
+        String jsonResponseFile = "payments/200.start_authorization_flow.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathMatching("/payments/"+A_PAYMENT_ID+"/authorization-flow"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        ApiResponse<StartAuthorizationFlowResponse> response = tlClient.payments()
+                .startAuthorizationFlow(A_PAYMENT_ID, request)
+                .get();
+
+        assertNotError(response);
+        StartAuthorizationFlowResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, StartAuthorizationFlowResponse.class);
+        assertEquals(expected, response.getData());
     }
 }
