@@ -45,7 +45,7 @@ public class PaymentHandlerBuilder {
 
         List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
-        List<Interceptor> applicationInterceptors = List.of(
+        List<Interceptor> applicationInterceptors = Arrays.asList(
                 new IdempotencyKeyInterceptor(),
                 new UserAgentInterceptor(configuration.versionInfo()),
                 new SignatureInterceptor(signingOptions),

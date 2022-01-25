@@ -47,7 +47,7 @@ public class AuthenticationHandlerBuilder {
         List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
         List<Interceptor> applicationInterceptors =
-                List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
+                Arrays.asList(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
 
         Retrofit authHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.authentication().endpointUrl())
