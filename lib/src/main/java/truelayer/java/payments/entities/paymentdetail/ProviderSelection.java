@@ -11,7 +11,7 @@ import lombok.Value;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProviderSelection extends BaseAuthorizationFlowAction {
-    private String type = "provider_selection";
+    String type = "provider_selection";
 
-    private List<Provider> providers;
+    List<Provider> providers;
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import truelayer.java.TrueLayerException;
 
@@ -20,8 +21,11 @@ import truelayer.java.TrueLayerException;
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
+@Getter
 @EqualsAndHashCode
 public abstract class BaseAuthorizationFlowAction {
+
+    protected String type;
 
     @JsonIgnore
     public boolean isProviderSelection() {

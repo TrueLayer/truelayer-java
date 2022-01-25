@@ -261,10 +261,11 @@ public class IntegrationTests {
     }
 
     @SneakyThrows
-    @Test
-    @DisplayName("It should start an authorization flow for a payment id")
-    public void shouldStartAnAuthorizationFlow() {
-        String jsonResponseFile = "payments/200.start_authorization_flow.json";
+    @ParameterizedTest(name = "with type {0}")
+    @ValueSource(strings = {"provider_selection", "redirect", "wait"})
+    @DisplayName("It should start an authorization flow")
+    public void shouldStartAnAuthorizationFlow(String flowType) {
+        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -288,6 +289,9 @@ public class IntegrationTests {
         assertNotError(response);
         StartAuthorizationFlowResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, StartAuthorizationFlowResponse.class);
+        assertEquals(
+                flowType,
+                response.getData().getAuthorizationFlow().getActions().getNext().getType());
         assertEquals(expected, response.getData());
     }
 }
