@@ -1,10 +1,10 @@
 package truelayer.java.payments.entities;
 
+import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZING;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Value;
 import truelayer.java.payments.entities.paymentdetail.Status;
-
-import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZING;
 
 @Value
 @JsonInclude(JsonInclude.Include.NON_NULL)

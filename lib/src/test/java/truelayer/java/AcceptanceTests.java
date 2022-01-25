@@ -152,8 +152,9 @@ public class AcceptanceTests {
                 .startAuthorizationFlow(
                         createPaymentResponse.getData().getId(),
                         StartAuthorizationFlowRequest.builder()
-                                .redirect(
-                                        Redirect.builder().returnUri(LOCALHOST_RETURN_URI).build())
+                                .redirect(Redirect.builder()
+                                        .returnUri(LOCALHOST_RETURN_URI)
+                                        .build())
                                 .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
                                         .build())
                                 .build())

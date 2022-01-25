@@ -1,9 +1,9 @@
 package truelayer.java.payments.entities;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.*;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.*;
 
 @Builder
 @Getter
@@ -21,9 +21,7 @@ public class StartAuthorizationFlowRequest {
     @ToString
     @EqualsAndHashCode
     @JsonInclude(Include.NON_NULL)
-    public static class ProviderSelection {
-
-    }
+    public static class ProviderSelection {}
 
     @Builder
     @Getter

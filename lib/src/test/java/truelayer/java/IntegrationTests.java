@@ -187,7 +187,7 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("get")
-                .path(urlPathMatching("/payments/"+A_PAYMENT_ID))
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
@@ -273,7 +273,7 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("post")
-                .path(urlPathMatching("/payments/"+A_PAYMENT_ID+"/authorization-flow"))
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
