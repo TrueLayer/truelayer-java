@@ -7,12 +7,14 @@ import static org.mockito.Mockito.when;
 import static truelayer.java.TestUtils.buildAccessToken;
 import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Interceptor;
 import org.junit.jupiter.api.*;
 import truelayer.java.TrueLayerException;
 import truelayer.java.auth.AuthenticationHandler;
+import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
@@ -34,9 +36,9 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     @Test
     @DisplayName("It should add an authorization header to the original request")
     public void shouldAddAuthorizationHeader() {
-        var authenticationHandler = mock(AuthenticationHandler.class);
-        var scopes = List.of("payments");
-        var expectedAccessToken = buildAccessToken();
+        IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
+        List<String> scopes = Collections.singletonList("payments");
+        ApiResponse<AccessToken> expectedAccessToken = buildAccessToken();
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
         this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
@@ -51,8 +53,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     @Test
     @DisplayName("It should throw an exception if authentication fails")
     public void shouldThrowException() {
-        var authenticationHandler = mock(AuthenticationHandler.class);
-        var scopes = List.of("payments");
+        IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
+        List<String> scopes = Collections.singletonList("payments");
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
@@ -62,7 +64,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                         .build()));
         this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
 
-        var thrown = Assertions.assertThrows(TrueLayerException.class, () -> intercept());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> intercept());
 
         assertTrue(thrown.getMessage().startsWith("Unable to authenticate request"));
     }

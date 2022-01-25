@@ -26,7 +26,7 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
             throw new TrueLayerException("return_uri must be set");
         }
 
-        var link = String.format(
+        String link = String.format(
                 "%s/payments#payment_id=%s&payment_token=%s&return_uri=%s",
                 endpoint, paymentId, payment_token, returnUri);
         return URI.create(link);

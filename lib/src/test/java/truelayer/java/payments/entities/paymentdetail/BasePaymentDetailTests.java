@@ -14,7 +14,7 @@ class BasePaymentDetailTests {
     public void shouldGetAFailedPaymentDetail() {
         BasePaymentDetail p = new SettledPaymentDetail();
 
-        var thrown = Assertions.assertThrows(TrueLayerException.class, () -> p.asAuthorizingPaymentDetail());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> p.asAuthorizingPaymentDetail());
         assertEquals(
                 "payment is of type SettledPaymentDetail. Consider using asSettledPaymentDetail() instead.",
                 thrown.getMessage());
@@ -25,7 +25,7 @@ class BasePaymentDetailTests {
     public void shouldThrowAnException() {
         BasePaymentDetail payment = new FailedPaymentDetail();
 
-        var failedPayment = payment.asFailedPaymentDetail();
+        FailedPaymentDetail failedPayment = payment.asFailedPaymentDetail();
         assertEquals(Status.FAILED, failedPayment.getStatus());
     }
 }

@@ -4,12 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import retrofit2.Retrofit;
 import truelayer.java.TrueLayerException;
 
 class HttpClientBuilderTests {
@@ -19,7 +20,7 @@ class HttpClientBuilderTests {
     @Test
     @DisplayName("It should build an HTTP client with the given base URL")
     public void testCreation() {
-        var client = new HttpClientBuilder().baseUrl(A_BASE_URL).build();
+        Retrofit client = new HttpClientBuilder().baseUrl(A_BASE_URL).build();
 
         assertEquals(A_BASE_URL, client.baseUrl().toString());
     }
@@ -33,7 +34,7 @@ class HttpClientBuilderTests {
     @Test
     @DisplayName("It should build an HTTP client with the given base URL and interceptors")
     public void testCreationWithInterceptors() {
-        var dummyInterceptor = new Interceptor() {
+        Interceptor dummyInterceptor = new Interceptor() {
             @NotNull
             @Override
             public Response intercept(@NotNull Chain chain) throws IOException {
@@ -41,10 +42,10 @@ class HttpClientBuilderTests {
             }
         };
 
-        var client = new HttpClientBuilder()
+        Retrofit client = new HttpClientBuilder()
                 .baseUrl(A_BASE_URL)
-                .applicationInterceptors(List.of(dummyInterceptor))
-                .networkInterceptors(List.of(dummyInterceptor))
+                .applicationInterceptors(Collections.singletonList(dummyInterceptor))
+                .networkInterceptors(Collections.singletonList(dummyInterceptor))
                 .build();
 
         assertEquals(A_BASE_URL, client.baseUrl().toString());

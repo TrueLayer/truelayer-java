@@ -8,6 +8,7 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import truelayer.java.TrueLayerException;
 import truelayer.java.common.Constants;
+import truelayer.java.configuration.Configuration.ConfigurationBuilder;
 
 public class ConfigurationAssembler {
     private static final String CONFIG_FILE_PREXIF = "truelayer-java";
@@ -19,7 +20,7 @@ public class ConfigurationAssembler {
     }
 
     public Configuration assemble() {
-        var configBuilder = Configuration.builder();
+        ConfigurationBuilder configBuilder = Configuration.builder();
 
         PropertiesConfiguration versionProps = getPropertiesFile("version");
 

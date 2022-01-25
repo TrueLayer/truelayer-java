@@ -3,8 +3,10 @@ package truelayer.java.payments;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.Arrays;
 import java.util.List;
 import okhttp3.Interceptor;
+import retrofit2.Retrofit;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.configuration.Configuration;
@@ -41,16 +43,16 @@ public class PaymentHandlerBuilder {
         notEmpty(signingOptions.keyId(), "key id must be not empty");
         notNull(signingOptions.privateKey(), "private key must be not empty.");
 
-        var networkInterceptors = List.<Interceptor>of(HttpLoggingInterceptor.New());
+        List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
-        var applicationInterceptors = List.of(
+        List<Interceptor> applicationInterceptors = List.of(
                 new IdempotencyKeyInterceptor(),
                 new UserAgentInterceptor(configuration.versionInfo()),
                 new SignatureInterceptor(signingOptions),
                 new AuthenticationInterceptor(
                         authenticationHandler, configuration.payments().scopes()));
 
-        var paymentHttpClient = new HttpClientBuilder()
+        Retrofit paymentHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.payments().endpointUrl())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)

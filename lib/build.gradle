@@ -16,6 +16,16 @@ plugins {
 
 archivesBaseName = "truelayer-java"
 
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+compileTestJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
 spotless {
     java {
         palantirJavaFormat()

@@ -8,11 +8,12 @@ import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
 import static truelayer.java.common.Constants.HeaderNames.COOKIE;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.tinylog.TaggedLogger;
 
@@ -23,19 +24,19 @@ class HttpLoggingInterceptorTests {
     @DisplayName("it should log request and response")
     public void shouldLogRequestAndResponse() {
         int responseCode = 200;
-        var url = HttpUrl.get("http://localhost");
-        var request = new Request.Builder()
+        HttpUrl url = HttpUrl.get("http://localhost");
+        Request request = new Request.Builder()
                 .url(url)
                 .header(AUTHORIZATION, "a-sensitive-token")
                 .build();
-        var chain = mock(Interceptor.Chain.class);
+        Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
-        var jsonBody = ResponseBody.create(
+        ResponseBody jsonBody = ResponseBody.create(
                 MediaType.get("application/json"),
-                Files.readString(Path.of(new StringBuilder(JSON_RESPONSES_LOCATION)
+                Files.readAllBytes(Paths.get(new StringBuilder(JSON_RESPONSES_LOCATION)
                         .append("/auth/200.access_token.json")
                         .toString())));
-        var response = new okhttp3.Response.Builder()
+        Response response = new okhttp3.Response.Builder()
                 .protocol(Protocol.HTTP_2)
                 .request(request)
                 .message("")
@@ -44,13 +45,13 @@ class HttpLoggingInterceptorTests {
                 .header(COOKIE, "a-cookie")
                 .build();
         when(chain.proceed(request)).thenReturn(response);
-        var logger = Mockito.mock(TaggedLogger.class);
-        var sensitiveHeaderGuard = Mockito.mock(SensitiveHeaderGuard.class);
-        var sut = new HttpLoggingInterceptor(logger, sensitiveHeaderGuard);
+        TaggedLogger logger = Mockito.mock(TaggedLogger.class);
+        SensitiveHeaderGuard sensitiveHeaderGuard = Mockito.mock(SensitiveHeaderGuard.class);
+        HttpLoggingInterceptor sut = new HttpLoggingInterceptor(logger, sensitiveHeaderGuard);
 
         sut.intercept(chain);
 
-        var interactions = inOrder(logger, chain);
+        InOrder interactions = inOrder(logger, chain);
         interactions.verify(chain).request();
         interactions.verify(logger).debug(startsWith("-->"), eq("GET"), eq(url), anyList());
         interactions.verify(chain).proceed(request);

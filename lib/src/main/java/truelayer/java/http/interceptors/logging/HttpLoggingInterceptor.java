@@ -4,6 +4,7 @@ import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 import java.io.IOException;
 import okhttp3.Interceptor;
+import okhttp3.Request;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.TaggedLogger;
@@ -26,8 +27,8 @@ public class HttpLoggingInterceptor implements Interceptor {
     @NotNull
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
-        var request = chain.request();
-        var idempotencyKey = request.header(IDEMPOTENCY_KEY);
+        Request request = chain.request();
+        String idempotencyKey = request.header(IDEMPOTENCY_KEY);
 
         ThreadContext.put(IDEMPOTENCY_KEY, idempotencyKey);
 
@@ -37,7 +38,7 @@ public class HttpLoggingInterceptor implements Interceptor {
                 request.url(),
                 sensitiveHeaderGuard.getSanitizedHeaders(request.headers()));
 
-        var response = chain.proceed(request);
+        Response response = chain.proceed(request);
         logger.debug(
                 "<-- {} {} headers={} error={}",
                 response.code(),

@@ -17,9 +17,9 @@ public class SensitiveHeaderGuard {
 
     public List<Header> getSanitizedHeaders(Headers headers) {
         if (isEmpty(headers)) {
-            return List.of();
+            return Collections.emptyList();
         }
-        var sanitizedHeaders = new ArrayList<Header>();
+        List<Header> sanitizedHeaders = new ArrayList<Header>();
         headers.toMultimap().forEach((headerName, headerValues) -> {
             sanitizedHeaders.add(new Header(
                     headerName,

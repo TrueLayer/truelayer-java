@@ -11,7 +11,7 @@ public class Utils {
 
     public static ObjectMapper getObjectMapper() {
         if (OBJECT_MAPPER_INSTANCE == null) {
-            var objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
 
             // required for optionals deserialization
             objectMapper.registerModule(new Jdk8Module());

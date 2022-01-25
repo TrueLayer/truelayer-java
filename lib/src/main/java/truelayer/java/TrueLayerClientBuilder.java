@@ -2,9 +2,11 @@ package truelayer.java;
 
 import java.util.Optional;
 import truelayer.java.auth.AuthenticationHandlerBuilder;
+import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.configuration.ConfigurationAssembler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
+import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
 
 /**
@@ -40,17 +42,17 @@ public class TrueLayerClientBuilder {
     public TrueLayerClient build() {
         Configuration configuration = new ConfigurationAssembler(this.useSandbox).assemble();
 
-        var clientCredentials =
+        ClientCredentials clientCredentials =
                 this.clientCredentials.orElseThrow(() -> new TrueLayerException("client credentials must be set"));
 
-        var authenticationHandler = AuthenticationHandlerBuilder.New()
+        IAuthenticationHandler authenticationHandler = AuthenticationHandlerBuilder.New()
                 .configuration(configuration)
                 .clientCredentials(clientCredentials)
                 .build();
 
         PaymentHandler paymentsHandler = null;
         if (this.signingOptions.isPresent()) {
-            var signingOptions =
+            SigningOptions signingOptions =
                     this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set"));
 
             paymentsHandler = PaymentHandler.New()
@@ -60,7 +62,7 @@ public class TrueLayerClientBuilder {
                     .build();
         }
 
-        var hppBuilder = HostedPaymentPageLinkBuilder.New()
+        IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
                 .endpoint(configuration.hostedPaymentPage().endpointUrl())
                 .build();
 

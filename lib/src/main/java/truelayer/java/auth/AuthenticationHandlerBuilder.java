@@ -3,8 +3,10 @@ package truelayer.java.auth;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.Arrays;
 import java.util.List;
 import okhttp3.Interceptor;
+import retrofit2.Retrofit;
 import truelayer.java.ClientCredentials;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.http.HttpClientBuilder;
@@ -42,12 +44,12 @@ public class AuthenticationHandlerBuilder {
         notEmpty(clientCredentials.clientId(), "client id must be not empty");
         notEmpty(clientCredentials.clientSecret(), "client secret must be not empty");
 
-        var networkInterceptors = List.<Interceptor>of(HttpLoggingInterceptor.New());
+        List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
-        var applicationInterceptors =
+        List<Interceptor> applicationInterceptors =
                 List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
 
-        var authHttpClient = new HttpClientBuilder()
+        Retrofit authHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.authentication().endpointUrl())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)

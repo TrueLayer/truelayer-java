@@ -6,17 +6,18 @@ import static truelayer.java.TestUtils.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.AuthenticationHandlerBuilder;
+import truelayer.java.auth.IAuthenticationHandler;
 
 class PaymentHandlerBuilderTests {
 
     @Test
     @DisplayName("It should yield a payment handler")
     public void itShouldYieldAnAuthenticationHandler() {
-        var authHandler = AuthenticationHandlerBuilder.New()
+        IAuthenticationHandler authHandler = AuthenticationHandlerBuilder.New()
                 .configuration(getConfiguration())
                 .clientCredentials(getClientCredentials())
                 .build();
-        var paymentHandler = PaymentHandler.New()
+        PaymentHandler paymentHandler = PaymentHandler.New()
                 .configuration(getConfiguration())
                 .signingOptions(getSigningOptions())
                 .authenticationHandler(authHandler)
@@ -28,7 +29,7 @@ class PaymentHandlerBuilderTests {
     @Test
     @DisplayName("It should throw and exception if signing options are missing")
     public void itShouldThrowExceptionIfCredentialsMissing() {
-        var thrown = assertThrows(
+        Throwable thrown = assertThrows(
                 NullPointerException.class,
                 () -> PaymentHandler.New().configuration(getConfiguration()).build());
 
