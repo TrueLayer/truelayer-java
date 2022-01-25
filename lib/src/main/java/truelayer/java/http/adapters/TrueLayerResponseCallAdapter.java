@@ -53,7 +53,7 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
         }
     }
 
-    private final class CallCancelCompletableFuture<T> extends CompletableFuture<T> {
+    private static final class CallCancelCompletableFuture<T> extends CompletableFuture<T> {
         private final Call<?> call;
 
         CallCancelCompletableFuture(Call<?> call) {
@@ -69,12 +69,12 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
         }
     }
 
-    private ApiResponse handleResponse(Response response) {
+    private ApiResponse<R> handleResponse(Response<R> response) {
         if (response.isSuccessful()) {
-            return ApiResponse.builder().data(response.body()).build();
+            return ApiResponse.<R>builder().data(response.body()).build();
         }
 
-        return ApiResponse.builder()
+        return ApiResponse.<R>builder()
                 .error(errorMapper.toProblemDetails(response))
                 .build();
     }

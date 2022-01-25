@@ -5,7 +5,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.common.Constants.ConfigurationKeys.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -15,7 +14,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.TestUtils.*;
 import truelayer.java.auth.AuthenticationHandlerBuilder;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
@@ -71,7 +69,7 @@ public class IntegrationTests {
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
     @SneakyThrows
     public void shouldReturnErrorIfUnauthorized() {
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(400)
@@ -92,7 +90,7 @@ public class IntegrationTests {
     @SneakyThrows
     public void shouldReturnAnAccessToken() {
         String jsonResponseFile = "auth/200.access_token.json";
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
@@ -113,13 +111,13 @@ public class IntegrationTests {
     @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
         String jsonResponseFile = "payments/201.create_payment.merchant_account.json";
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -144,13 +142,13 @@ public class IntegrationTests {
     @SneakyThrows
     public void shouldReturnErrorIfSignatureIsInvalid() {
         String jsonResponseFile = "payments/401.invalid_signature.json";
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -177,13 +175,13 @@ public class IntegrationTests {
                 .append(expectedStatus.value())
                 .append(".json")
                 .toString();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("get")
                 .path(urlPathMatching("/payments/.*"))
                 .withAuthorization()
@@ -205,13 +203,13 @@ public class IntegrationTests {
     @SneakyThrows
     public void shouldThrowIfPaymentNotFound() {
         String jsonResponseFile = "payments/404.payment_not_found.json";
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -234,13 +232,13 @@ public class IntegrationTests {
     @DisplayName("It should return a request invalid error")
     public void shouldThrowARequestInvalidError() {
         String jsonResponseFile = "payments/400.request_invalid.json";
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        RequestStub.builder()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
