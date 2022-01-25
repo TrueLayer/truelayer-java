@@ -2,7 +2,9 @@ package truelayer.java.http.adapters;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 import retrofit2.*;
+import truelayer.java.http.LoggerFactory;
 import truelayer.java.http.entities.ApiResponse;
 
 /**
@@ -11,11 +13,14 @@ import truelayer.java.http.entities.ApiResponse;
  *
  * @see truelayer.java.http.entities.ApiResponse
  */
+@RequiredArgsConstructor
 public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, CompletableFuture<ApiResponse<R>>> {
     private final Type responseType;
+    private final ErrorMapper errorMapper;
 
     TrueLayerResponseCallAdapter(Type responseType) {
         this.responseType = responseType;
+        this.errorMapper = new ErrorMapper(LoggerFactory.NewSystemLogger());
     }
 
     @Override
@@ -48,7 +53,7 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
         }
     }
 
-    private final class CallCancelCompletableFuture<T> extends CompletableFuture<T> {
+    private static final class CallCancelCompletableFuture<T> extends CompletableFuture<T> {
         private final Call<?> call;
 
         CallCancelCompletableFuture(Call<?> call) {
@@ -64,11 +69,13 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
         }
     }
 
-    private ApiResponse handleResponse(Response response) {
+    private ApiResponse<R> handleResponse(Response<R> response) {
         if (response.isSuccessful()) {
-            return ApiResponse.builder().data(response.body()).build();
+            return ApiResponse.<R>builder().data(response.body()).build();
         }
 
-        return ApiResponse.builder().error(ErrorMapper.fromResponse(response)).build();
+        return ApiResponse.<R>builder()
+                .error(errorMapper.toProblemDetails(response))
+                .build();
     }
 }
