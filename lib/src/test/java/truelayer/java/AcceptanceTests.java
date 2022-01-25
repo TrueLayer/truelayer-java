@@ -155,8 +155,7 @@ public class AcceptanceTests {
                                 .redirect(Redirect.builder()
                                         .returnUri(LOCALHOST_RETURN_URI)
                                         .build())
-                                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
-                                        .build())
+                                .withProviderSelection()
                                 .build())
                 .get();
 

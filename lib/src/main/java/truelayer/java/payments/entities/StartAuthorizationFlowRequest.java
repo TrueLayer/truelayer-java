@@ -12,17 +12,11 @@ import lombok.*;
 @JsonInclude(Include.NON_NULL)
 public class StartAuthorizationFlowRequest {
 
-    // todo: improve the building of this object. should be something simply like `.withProviderSelection()`
     private ProviderSelection providerSelection;
 
     private Redirect redirect;
 
-    @Builder
-    @Getter
-    @ToString
-    @EqualsAndHashCode
-    @JsonInclude(Include.NON_NULL)
-    public static class ProviderSelection {}
+    protected static class ProviderSelection {}
 
     @Builder
     @Getter
@@ -31,5 +25,13 @@ public class StartAuthorizationFlowRequest {
     @JsonInclude(Include.NON_NULL)
     public static class Redirect {
         String returnUri;
+    }
+
+    @SuppressWarnings("unused")
+    public static class StartAuthorizationFlowRequestBuilder {
+        public StartAuthorizationFlowRequestBuilder withProviderSelection() {
+            this.providerSelection = new ProviderSelection();
+            return this;
+        }
     }
 }
