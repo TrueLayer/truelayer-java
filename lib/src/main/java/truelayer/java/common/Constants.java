@@ -35,5 +35,6 @@ public final class Constants {
         public static final String TL_SIGNATURE = "Tl-Signature";
         public static final String USER_AGENT = "User-Agent";
         public static final String AUTHORIZATION = "Authorization";
+        public static final String COOKIE = "Cookie";
     }
 }

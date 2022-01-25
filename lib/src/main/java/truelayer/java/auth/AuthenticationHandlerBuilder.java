@@ -4,16 +4,15 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import truelayer.java.ClientCredentials;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.http.HttpClientBuilder;
 import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 
 /**
  * Custom  builder class
@@ -45,13 +44,10 @@ public class AuthenticationHandlerBuilder {
         notEmpty(clientCredentials.clientId(), "client id must be not empty");
         notEmpty(clientCredentials.clientSecret(), "client secret must be not empty");
 
-        // todo replace with non deprecated or custom implementation
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
-        List<Interceptor> networkInterceptors = Collections.singletonList(loggingInterceptor);
+        List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
         List<Interceptor> applicationInterceptors =
-                Arrays.asList(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
+                List.of(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(configuration.versionInfo()));
 
         Retrofit authHttpClient = new HttpClientBuilder()
                 .baseUrl(configuration.authentication().endpointUrl())

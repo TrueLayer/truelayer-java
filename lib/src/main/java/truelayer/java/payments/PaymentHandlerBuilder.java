@@ -4,19 +4,15 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.http.HttpClientBuilder;
-import truelayer.java.http.interceptors.AuthenticationInterceptor;
-import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
-import truelayer.java.http.interceptors.SignatureInterceptor;
-import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.*;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 
 public class PaymentHandlerBuilder {
     private Configuration configuration;
@@ -47,12 +43,9 @@ public class PaymentHandlerBuilder {
         notEmpty(signingOptions.keyId(), "key id must be not empty");
         notNull(signingOptions.privateKey(), "private key must be not empty.");
 
-        // todo replace with non deprecated or custom implementation
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
-        List<Interceptor> networkInterceptors = Collections.singletonList(loggingInterceptor);
+        List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
 
-        List<Interceptor> applicationInterceptors = Arrays.asList(
+        List<Interceptor> applicationInterceptors = List.of(
                 new IdempotencyKeyInterceptor(),
                 new UserAgentInterceptor(configuration.versionInfo()),
                 new SignatureInterceptor(signingOptions),

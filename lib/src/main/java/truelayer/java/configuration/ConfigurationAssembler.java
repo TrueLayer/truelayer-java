@@ -29,7 +29,7 @@ public class ConfigurationAssembler {
                 .libraryVersion(versionProps.getString(Constants.VersionInfo.VERSION))
                 .build());
 
-        PropertiesConfiguration applicationProps = getPropertiesFile("configuration");
+        PropertiesConfiguration applicationProps = getPropertiesFile("lib");
 
         configBuilder.authentication(new Configuration.Endpoint(
                 useSandbox

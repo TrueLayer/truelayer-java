@@ -1,0 +1,12 @@
+{
+  "type":"https://docs.truelayer.com/docs/error-types#invalid-parameters",
+  "title":"Invalid Parameters",
+  "status":400,
+  "detail":"The request body was invalid.",
+  "trace_id":"2dcda79d9a30654d878a9daf69eeea15",
+  "errors":{
+    "payment_method.provider.type":[
+      "Unknown value. Valid values are 'user_selection'."
+    ]
+  }
+}
