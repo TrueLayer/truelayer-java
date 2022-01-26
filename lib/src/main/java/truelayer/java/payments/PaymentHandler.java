@@ -3,9 +3,8 @@ package truelayer.java.payments;
 import java.util.concurrent.CompletableFuture;
 import lombok.Value;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.*;
+import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 
 @Value
 public class PaymentHandler implements IPaymentHandler {
@@ -22,7 +21,19 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     @Override
-    public CompletableFuture<ApiResponse<BasePaymentDetail>> getPayment(String paymentId) {
+    public CompletableFuture<ApiResponse<PaymentDetail>> getPayment(String paymentId) {
         return paymentsApi.getPayment(paymentId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<StartAuthorizationFlowResponse>> startAuthorizationFlow(
+            String paymentId, StartAuthorizationFlowRequest startAuthorizationFlowRequest) {
+        return paymentsApi.startAuthorizationFlow(paymentId, startAuthorizationFlowRequest);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<SubmitProviderSelectionResponse>> submitProviderSelection(
+            String paymentId, SubmitProviderSelectionRequest submitProviderSelectionRequest) {
+        return paymentsApi.submitProviderSelection(paymentId, submitProviderSelectionRequest);
     }
 }

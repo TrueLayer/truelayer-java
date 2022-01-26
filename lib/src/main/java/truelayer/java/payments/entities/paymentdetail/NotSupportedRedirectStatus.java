@@ -7,6 +7,6 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NotSupportedRedirect extends BaseRedirect {
+public class NotSupportedRedirectStatus extends RedirectStatus {
     String type = "not_supported";
 }

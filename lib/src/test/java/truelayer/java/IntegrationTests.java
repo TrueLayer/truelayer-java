@@ -24,16 +24,17 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.CreatePaymentResponse;
+import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
 
 @WireMockTest
 @Tag("integration")
 public class IntegrationTests {
     private static TrueLayerClient tlClient;
+
+    public static final String A_PAYMENT_ID = "a-payment-id";
 
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
@@ -183,17 +184,17 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("get")
-                .path(urlPathMatching("/payments/.*"))
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<BasePaymentDetail> response =
-                tlClient.payments().getPayment("a-payment-id").get();
+        ApiResponse<PaymentDetail> response =
+                tlClient.payments().getPayment(A_PAYMENT_ID).get();
 
         assertNotError(response);
-        BasePaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
+        PaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, PaymentDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
@@ -254,5 +255,75 @@ public class IntegrationTests {
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
+    }
+
+    @SneakyThrows
+    @ParameterizedTest(name = "and get a response of type {0}")
+    @ValueSource(strings = {"provider_selection", "redirect", "wait"})
+    @DisplayName("It should start an authorization flow")
+    public void shouldStartAnAuthorizationFlow(String flowType) {
+        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        ApiResponse<StartAuthorizationFlowResponse> response = tlClient.payments()
+                .startAuthorizationFlow(A_PAYMENT_ID, request)
+                .get();
+
+        assertNotError(response);
+        StartAuthorizationFlowResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, StartAuthorizationFlowResponse.class);
+        assertEquals(
+                flowType,
+                response.getData().getAuthorizationFlow().getActions().getNext().getType());
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @ParameterizedTest(name = "and get a response of type {0}")
+    @ValueSource(strings = {"authorizing", "failed"})
+    @DisplayName("It should submit a provider selection")
+    public void shouldSubmitProviderSelection(String status) {
+        String jsonResponseFile = "payments/200.submit_provider_selection." + status + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        SubmitProviderSelectionRequest submitProviderSelectionRequest =
+                SubmitProviderSelectionRequest.builder().build();
+        ApiResponse<SubmitProviderSelectionResponse> response = tlClient.payments()
+                .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
+                .get();
+
+        assertNotError(response);
+        SubmitProviderSelectionResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
+        assertEquals(status, response.getData().getStatus());
+        assertEquals(expected, response.getData());
     }
 }

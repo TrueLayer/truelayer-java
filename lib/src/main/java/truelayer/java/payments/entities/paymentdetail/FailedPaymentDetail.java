@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class FailedPaymentDetail extends BasePaymentDetail {
+public class FailedPaymentDetail extends PaymentDetail {
 
     private final Status status = Status.FAILED;
 
@@ -18,7 +18,7 @@ public class FailedPaymentDetail extends BasePaymentDetail {
 
     private String failureReason;
 
-    private Optional<AuthorizationFlow> authorizationFlow;
+    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 
     public enum FailureStage {
         AUTHORIZATION_REQUIRED("authorization_required"),

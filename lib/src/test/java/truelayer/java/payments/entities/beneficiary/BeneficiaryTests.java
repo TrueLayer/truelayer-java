@@ -7,12 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
 
-class BaseBeneficiaryTests {
+class BeneficiaryTests {
 
     @Test
     @DisplayName("It should throw an exception if a user tries to access a merchant account as an external account")
     public void shouldThrowAnExceptionIfMerchantIsAccessedAsExternalAccount() {
-        BaseBeneficiary beneficiary = MerchantAccount.builder().build();
+        Beneficiary beneficiary = MerchantAccount.builder().build();
 
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> beneficiary.asExternalAccount());
         assertEquals(
@@ -23,7 +23,7 @@ class BaseBeneficiaryTests {
     @Test
     @DisplayName("It should throw an exception if a user tries to access an external account as a merchant account")
     public void shouldThrowAnExceptionIfExternalIsAccessedAsMerchantAccount() {
-        BaseBeneficiary beneficiary = ExternalAccount.builder().build();
+        Beneficiary beneficiary = ExternalAccount.builder().build();
 
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> beneficiary.asMerchantAccount());
         assertEquals(

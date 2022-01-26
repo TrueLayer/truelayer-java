@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = ExternalAccount.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class BaseSourceOfFunds {
+public abstract class SourceOfFunds {
 
     public ExternalAccount asExternalAccount() {
         return (ExternalAccount) this;
