@@ -1,7 +1,6 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -1,10 +1,9 @@
 package truelayer.java.payments.entities.paymentdetail.schemeidentifier;
 
+import static truelayer.java.payments.entities.paymentdetail.schemeidentifier.SchemeIdentifier.Type.NRB;
+
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-
-import static truelayer.java.payments.entities.paymentdetail.schemeidentifier.SchemeIdentifier.Type.BBAN;
-import static truelayer.java.payments.entities.paymentdetail.schemeidentifier.SchemeIdentifier.Type.NRB;
 
 @EqualsAndHashCode(callSuper = true)
 @Value
