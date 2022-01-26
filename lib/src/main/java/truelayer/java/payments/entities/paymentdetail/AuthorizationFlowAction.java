@@ -23,7 +23,7 @@ import truelayer.java.TrueLayerException;
 @ToString
 @Getter
 @EqualsAndHashCode
-public abstract class BaseAuthorizationFlowAction {
+public abstract class AuthorizationFlowAction {
 
     protected String type;
 

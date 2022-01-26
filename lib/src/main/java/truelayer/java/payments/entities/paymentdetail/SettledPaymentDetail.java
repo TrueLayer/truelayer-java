@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class SettledPaymentDetail extends BasePaymentDetail {
+public class SettledPaymentDetail extends PaymentDetail {
 
     private final Status status = SETTLED;
 
-    private BaseSourceOfFunds sourceOfFunds;
+    private SourceOfFunds sourceOfFunds;
 
     private Date succeededAt;
 

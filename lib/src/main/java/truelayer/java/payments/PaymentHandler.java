@@ -7,7 +7,7 @@ import truelayer.java.payments.entities.CreatePaymentRequest;
 import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 
 @Value
 public class PaymentHandler implements IPaymentHandler {
@@ -24,7 +24,7 @@ public class PaymentHandler implements IPaymentHandler {
     }
 
     @Override
-    public CompletableFuture<ApiResponse<BasePaymentDetail>> getPayment(String paymentId) {
+    public CompletableFuture<ApiResponse<PaymentDetail>> getPayment(String paymentId) {
         return paymentsApi.getPayment(paymentId);
     }
 

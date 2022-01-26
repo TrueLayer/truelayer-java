@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SupportedRedirect extends BaseRedirect {
+public class SupportedRedirectStatus extends RedirectStatus {
     String type = "supported";
 
     String returnUri;

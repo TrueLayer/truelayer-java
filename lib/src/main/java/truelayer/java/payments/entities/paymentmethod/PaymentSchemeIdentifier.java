@@ -9,4 +9,4 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BasePaymentSchemeIdentifier {}
+public abstract class PaymentSchemeIdentifier {}

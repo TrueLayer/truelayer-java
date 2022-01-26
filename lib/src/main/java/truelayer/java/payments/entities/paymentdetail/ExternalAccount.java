@@ -9,7 +9,7 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExternalAccount extends BaseSourceOfFunds {
+public class ExternalAccount extends SourceOfFunds {
     String type = "external_account";
 
     List<SchemeIdentifier> schemeIdentifiers;

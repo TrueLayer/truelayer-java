@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class AuthorizationRequiredPaymentDetail extends BasePaymentDetail {
+public class AuthorizationRequiredPaymentDetail extends PaymentDetail {
 
     private final Status status = AUTHORIZATION_REQUIRED;
 }

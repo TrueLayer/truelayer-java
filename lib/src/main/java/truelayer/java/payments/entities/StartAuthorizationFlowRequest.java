@@ -16,7 +16,10 @@ public class StartAuthorizationFlowRequest {
 
     private Redirect redirect;
 
-    protected static class ProviderSelection {}
+    @ToString
+    @EqualsAndHashCode
+    @JsonInclude(Include.NON_NULL)
+    public static class ProviderSelection {}
 
     @Builder
     @Getter

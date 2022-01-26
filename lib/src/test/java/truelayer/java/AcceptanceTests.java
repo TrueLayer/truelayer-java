@@ -15,11 +15,12 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.ProviderSelection;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberSchemeIdentifier;
-import truelayer.java.payments.entities.paymentmethod.provider.BaseProvider;
+import truelayer.java.payments.entities.paymentmethod.provider.Provider;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProvider;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectionProvider;
@@ -68,7 +69,7 @@ public class AcceptanceTests {
         assertNotError(createPaymentResponse);
 
         // get it by id
-        ApiResponse<BasePaymentDetail> getPaymentByIdResponse = tlClient.payments()
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
                 .getPayment(createPaymentResponse.getData().getId())
                 .get();
 
@@ -100,7 +101,7 @@ public class AcceptanceTests {
         assertNotError(createPaymentResponse);
 
         // get it by id
-        ApiResponse<BasePaymentDetail> getPaymentByIdResponse = tlClient.payments()
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
                 .getPayment(createPaymentResponse.getData().getId())
                 .get();
 
@@ -162,11 +163,11 @@ public class AcceptanceTests {
         assertNotError(startAuthorizationFlowResponseResponse);
     }
 
-    private CreatePaymentRequest buildPaymentRequestWithProvider(BaseProvider baseProvider) {
+    private CreatePaymentRequest buildPaymentRequestWithProvider(Provider provider) {
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency("GBP")
-                .paymentMethod(BankTransfer.builder().provider(baseProvider).build())
+                .paymentMethod(BankTransfer.builder().provider(provider).build())
                 .beneficiary(MerchantAccount.builder()
                         .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
                         .build())

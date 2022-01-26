@@ -10,7 +10,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProviderSelection extends BaseAuthorizationFlowAction {
+public class ProviderSelection extends AuthorizationFlowAction {
     String type = "provider_selection";
 
     List<Provider> providers;

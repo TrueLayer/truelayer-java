@@ -9,8 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.User;
-import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
-import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
+import truelayer.java.payments.entities.beneficiary.Beneficiary;
+import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
 @JsonSubTypes({
@@ -25,18 +25,18 @@ import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BasePaymentDetail {
+public abstract class PaymentDetail {
     private String id;
 
     private int amountInMinor;
 
     private String currency;
 
-    private BaseBeneficiary beneficiary;
+    private Beneficiary beneficiary;
 
     private User user;
 
-    private BasePaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod;
 
     private Date createdAt;
 

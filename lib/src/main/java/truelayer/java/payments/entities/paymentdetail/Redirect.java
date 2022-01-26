@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Redirect extends BaseAuthorizationFlowAction {
+public class Redirect extends AuthorizationFlowAction {
     String type = "redirect";
 
     String uri;

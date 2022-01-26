@@ -24,7 +24,7 @@ import truelayer.java.TrueLayerException;
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class BaseBeneficiary {
+public abstract class Beneficiary {
 
     @JsonIgnore
     public boolean isMerchantAccount() {

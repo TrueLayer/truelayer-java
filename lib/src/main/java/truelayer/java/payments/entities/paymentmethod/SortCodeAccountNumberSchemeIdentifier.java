@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SortCodeAccountNumberSchemeIdentifier extends BasePaymentSchemeIdentifier {
+public class SortCodeAccountNumberSchemeIdentifier extends PaymentSchemeIdentifier {
 
     private final String type = "sort_code_account_number";
 

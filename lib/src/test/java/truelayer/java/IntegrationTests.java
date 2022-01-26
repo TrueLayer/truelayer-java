@@ -29,7 +29,7 @@ import truelayer.java.payments.entities.CreatePaymentResponse;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
-import truelayer.java.payments.entities.paymentdetail.BasePaymentDetail;
+import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
 
 @WireMockTest
@@ -193,11 +193,11 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<BasePaymentDetail> response =
+        ApiResponse<PaymentDetail> response =
                 tlClient.payments().getPayment(A_PAYMENT_ID).get();
 
         assertNotError(response);
-        BasePaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, BasePaymentDetail.class);
+        PaymentDetail expected = deserializeJsonFileTo(jsonResponseFile, PaymentDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }

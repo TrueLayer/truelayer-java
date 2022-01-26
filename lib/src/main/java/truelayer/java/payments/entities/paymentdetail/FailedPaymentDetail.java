@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class FailedPaymentDetail extends BasePaymentDetail {
+public class FailedPaymentDetail extends PaymentDetail {
 
     private final Status status = Status.FAILED;
 
