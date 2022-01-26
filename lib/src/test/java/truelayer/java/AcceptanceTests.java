@@ -137,8 +137,8 @@ public class AcceptanceTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should start an authorization flow")
-    public void shouldStartAnAuthorizationFlowForAPayment() {
+    @DisplayName("It should complete an authorization flow for a payment")
+    public void shouldCompleteAnAuthorizationFlowForAPayment() {
         // create payment
         CreatePaymentRequest paymentRequest = buildPaymentRequest();
 
@@ -160,6 +160,17 @@ public class AcceptanceTests {
                 .get();
 
         assertNotError(startAuthorizationFlowResponseResponse);
+
+        // Submit the provider selection
+        ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponseResponse = tlClient.payments()
+                .submitProviderSelection(
+                        createPaymentResponse.getData().getId(),
+                        SubmitProviderSelectionRequest.builder()
+                                .providerId(MOCK_PROVIDER_ID)
+                                .build())
+                .get();
+
+        assertNotError(submitProviderSelectionResponseResponse);
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProvider(Provider provider) {
