@@ -15,5 +15,5 @@ public interface IPaymentHandler {
             String paymentId, StartAuthorizationFlowRequest request);
 
     CompletableFuture<ApiResponse<SubmitProviderSelectionResponse>> submitProviderSelection(
-            String paymentId, String providerId);
+            String paymentId, SubmitProviderSelectionRequest submitProviderSelectionRequest);
 }

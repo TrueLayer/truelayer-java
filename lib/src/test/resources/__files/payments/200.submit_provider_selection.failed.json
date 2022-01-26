@@ -1,0 +1,22 @@
+{
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"provider_selection",
+        "providers":[
+          {
+            "provider_id":"ob-bank-name",
+            "display_name":"Bank Name",
+            "icon_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg",
+            "logo_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg",
+            "bg_color":"#000000",
+            "country_code":"GB"
+          }
+        ]
+      }
+    }
+  },
+  "status":"failed",
+  "failure_stage":"authorization_required",
+  "failure_reason":"provider_rejected"
+}

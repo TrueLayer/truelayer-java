@@ -33,7 +33,7 @@ public class PaymentHandler implements IPaymentHandler {
 
     @Override
     public CompletableFuture<ApiResponse<SubmitProviderSelectionResponse>> submitProviderSelection(
-            String paymentId, String providerId) {
-        return paymentsApi.submitProviderSelection(paymentId, providerId);
+            String paymentId, SubmitProviderSelectionRequest submitProviderSelectionRequest) {
+        return paymentsApi.submitProviderSelection(paymentId, submitProviderSelectionRequest);
     }
 }

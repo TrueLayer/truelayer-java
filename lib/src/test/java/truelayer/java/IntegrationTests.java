@@ -24,10 +24,7 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
-import truelayer.java.payments.entities.CreatePaymentRequest;
-import truelayer.java.payments.entities.CreatePaymentResponse;
-import truelayer.java.payments.entities.StartAuthorizationFlowRequest;
-import truelayer.java.payments.entities.StartAuthorizationFlowResponse;
+import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
@@ -261,7 +258,7 @@ public class IntegrationTests {
     }
 
     @SneakyThrows
-    @ParameterizedTest(name = "with type {0}")
+    @ParameterizedTest(name = "and get a response of type {0}")
     @ValueSource(strings = {"provider_selection", "redirect", "wait"})
     @DisplayName("It should start an authorization flow")
     public void shouldStartAnAuthorizationFlow(String flowType) {
@@ -292,6 +289,42 @@ public class IntegrationTests {
         assertEquals(
                 flowType,
                 response.getData().getAuthorizationFlow().getActions().getNext().getType());
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @ParameterizedTest(name = "and get a response of type {0}")
+    @ValueSource(strings = {"authorizing", "failed"})
+    @DisplayName("It should submit a provider selection")
+    public void shouldSubmitProviderSelection(String status) {
+        String jsonResponseFile = "payments/200.submit_provider_selection." + status + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        SubmitProviderSelectionRequest submitProviderSelectionRequest = SubmitProviderSelectionRequest.builder().build();
+        ApiResponse<SubmitProviderSelectionResponse> response = tlClient.payments()
+                .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
+                .get();
+
+        assertNotError(response);
+        SubmitProviderSelectionResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
+        assertEquals(
+                status,
+                response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
 }

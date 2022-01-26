@@ -9,4 +9,8 @@ import lombok.Value;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaymentAuthorizationFlowAuthorizationFailed extends SubmitProviderSelectionResponse {
     String status = "failed";
+
+    String failureStage;
+
+    String failureReason;
 }

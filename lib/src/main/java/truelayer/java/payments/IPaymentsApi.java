@@ -20,5 +20,5 @@ public interface IPaymentsApi {
 
     @POST("/payments/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<SubmitProviderSelectionResponse>> submitProviderSelection(
-            @Path("id") String paymentId, String providerId);
+            @Path("id") String paymentId, @Body SubmitProviderSelectionRequest body);
 }
