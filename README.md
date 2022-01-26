@@ -1,6 +1,6 @@
 # TrueLayer Java
 
-[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/) [![Build and tests](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-tests.yml)
 
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
