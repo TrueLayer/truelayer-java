@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class AuthorizingPaymentDetail extends PaymentDetail {
     private final Status status = AUTHORIZING;
 
-    private AuthorizationFlow authorizationFlow;
+    private AuthorizationFlowWithConfiguration authorizationFlow;
 }

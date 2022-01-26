@@ -18,7 +18,7 @@ public class FailedPaymentDetail extends PaymentDetail {
 
     private String failureReason;
 
-    private Optional<AuthorizationFlow> authorizationFlow;
+    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 
     public enum FailureStage {
         AUTHORIZATION_REQUIRED("authorization_required"),

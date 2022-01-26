@@ -13,10 +13,4 @@ public class StartAuthorizationFlowResponse {
     AuthorizationFlow authorizationFlow;
 
     Status status = AUTHORIZING;
-
-    @Value
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class AuthorizationFlow {
-        Actions actions;
-    }
 }

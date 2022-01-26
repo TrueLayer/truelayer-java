@@ -16,5 +16,5 @@ public class ExecutedPaymentDetail extends PaymentDetail {
 
     private Date executedAt;
 
-    private Optional<AuthorizationFlow> authorizationFlow;
+    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 }

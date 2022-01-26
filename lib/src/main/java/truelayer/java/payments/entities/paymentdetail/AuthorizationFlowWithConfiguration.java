@@ -1,16 +1,14 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
-import truelayer.java.payments.entities.Actions;
+import truelayer.java.payments.entities.AuthorizationFlow;
 
-@Getter
 @Value
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthorizationFlow {
-
-    Actions actions;
+public class AuthorizationFlowWithConfiguration extends AuthorizationFlow {
 
     Configuration configuration;
 }
