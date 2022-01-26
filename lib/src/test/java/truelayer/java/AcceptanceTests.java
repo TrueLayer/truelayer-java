@@ -16,12 +16,11 @@ import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
-import truelayer.java.payments.entities.paymentdetail.ProviderSelection;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberSchemeIdentifier;
-import truelayer.java.payments.entities.paymentmethod.provider.Provider;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProvider;
+import truelayer.java.payments.entities.paymentmethod.provider.Provider;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectionProvider;
 
