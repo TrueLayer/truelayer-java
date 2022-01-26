@@ -8,7 +8,7 @@ import lombok.Value;
 public class Configuration {
     ProviderSelection providerSelection;
 
-    BaseRedirect redirect;
+    RedirectStatus redirect;
 
     @Value
     @JsonInclude(JsonInclude.Include.NON_NULL)

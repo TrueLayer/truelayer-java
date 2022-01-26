@@ -16,4 +16,4 @@ import lombok.ToString;
 })
 @ToString
 @EqualsAndHashCode
-public abstract class BaseProvider {}
+public abstract class Provider {}

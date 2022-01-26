@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class BasePaymentMethod {
+public abstract class PaymentMethod {
 
     public BankTransfer asBankTransfer() {
         return (BankTransfer) this;

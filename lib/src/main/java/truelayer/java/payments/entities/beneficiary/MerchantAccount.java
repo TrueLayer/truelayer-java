@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MerchantAccount extends BaseBeneficiary {
+public class MerchantAccount extends Beneficiary {
     private final String type = "merchant_account";
 
     private String id;

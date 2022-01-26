@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import truelayer.java.payments.entities.beneficiary.BaseBeneficiary;
-import truelayer.java.payments.entities.paymentmethod.BasePaymentMethod;
+import truelayer.java.payments.entities.beneficiary.Beneficiary;
+import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 
 @Builder
 @Getter
@@ -19,9 +19,9 @@ public class CreatePaymentRequest {
 
     private String currency;
 
-    private BasePaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod;
 
-    private BaseBeneficiary beneficiary;
+    private Beneficiary beneficiary;
 
     private User user;
 }

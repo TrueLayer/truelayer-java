@@ -11,7 +11,7 @@ import truelayer.java.payments.entities.paymentmethod.Remitter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"type", "provider_id", "scheme_id", "remitter"})
-public class PreselectedProvider extends BaseProvider {
+public class PreselectedProvider extends Provider {
     private final String type = "preselected";
 
     private final String providerId;

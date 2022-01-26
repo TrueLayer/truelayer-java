@@ -20,9 +20,8 @@
     "type": "external_account",
     "scheme_identifiers": [
       {
-        "type": "sort_code_account_number",
-        "sort_code": "123456",
-        "account_number": "12345678"
+        "type": "nrb",
+        "nrb": "123456"
       }
     ],
     "external_account_id": "1122hj-37df-4cd7-ada5-***",

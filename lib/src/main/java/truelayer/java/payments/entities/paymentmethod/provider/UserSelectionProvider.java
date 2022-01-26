@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserSelectionProvider extends BaseProvider {
+public class UserSelectionProvider extends Provider {
     private final String type = "user_selection";
 
     private final ProviderFilter filter;

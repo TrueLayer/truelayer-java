@@ -1,11 +1,14 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Actions {
+public class SupportedRedirectStatus extends RedirectStatus {
+    String type = "supported";
 
-    private BaseAuthorizationFlowAction next;
+    String returnUri;
 }

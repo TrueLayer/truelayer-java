@@ -1,0 +1,20 @@
+{
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"redirect",
+        "uri":"https://a-redirect-uri.com",
+        "metadata":{
+          "type":"provider",
+          "provider_id":"ob-bank-name",
+          "display_name":"Bank Name",
+          "icon_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg",
+          "logo_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg",
+          "bg_color":"#000000",
+          "country_code":"GB"
+        }
+      }
+    }
+  },
+  "status":"authorizing"
+}
