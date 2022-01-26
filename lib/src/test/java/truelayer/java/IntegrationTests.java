@@ -314,7 +314,8 @@ public class IntegrationTests {
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
 
-        SubmitProviderSelectionRequest submitProviderSelectionRequest = SubmitProviderSelectionRequest.builder().build();
+        SubmitProviderSelectionRequest submitProviderSelectionRequest =
+                SubmitProviderSelectionRequest.builder().build();
         ApiResponse<SubmitProviderSelectionResponse> response = tlClient.payments()
                 .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
                 .get();
@@ -322,9 +323,7 @@ public class IntegrationTests {
         assertNotError(response);
         SubmitProviderSelectionResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
-        assertEquals(
-                status,
-                response.getData().getStatus());
+        assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
 }
