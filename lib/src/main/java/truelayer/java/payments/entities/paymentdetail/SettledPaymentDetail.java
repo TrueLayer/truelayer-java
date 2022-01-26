@@ -19,5 +19,7 @@ public class SettledPaymentDetail extends PaymentDetail {
 
     private Date settledAt;
 
+    private Date executedAt;
+
     private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 }
