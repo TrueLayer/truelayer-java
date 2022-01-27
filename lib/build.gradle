@@ -36,6 +36,8 @@ spotless {
 }
 
 jacocoTestReport {
+    dependsOn 'unit-tests'
+    dependsOn 'integration-tests'
     reports {
         xml.required = true
     }
