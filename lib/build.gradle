@@ -12,6 +12,9 @@ plugins {
     id 'maven-publish'
     // code linting
     id "com.diffplug.spotless" version "6.2.0"
+    //  test coverage
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.12.0'
 }
 
 archivesBaseName = "truelayer-java"
@@ -29,6 +32,21 @@ compileTestJava {
 spotless {
     java {
         palantirJavaFormat()
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'truelayer/java/**/entities/**',
+                    'truelayer/java/common/Constants'
+            ])
+        }))
     }
 }
 
