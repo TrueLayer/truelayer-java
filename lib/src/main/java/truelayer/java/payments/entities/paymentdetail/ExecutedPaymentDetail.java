@@ -4,17 +4,20 @@ import static truelayer.java.payments.entities.paymentdetail.Status.EXECUTED;
 
 import java.util.Date;
 import java.util.Optional;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@Getter
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
+@Value
+@EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExecutedPaymentDetail extends PaymentDetail {
-    private final Status status = EXECUTED;
+    Status status = EXECUTED;
 
-    private SourceOfFunds sourceOfFunds;
+    SourceOfFunds sourceOfFunds;
 
-    private Date executedAt;
+    Date executedAt;
 
-    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
+    Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 }

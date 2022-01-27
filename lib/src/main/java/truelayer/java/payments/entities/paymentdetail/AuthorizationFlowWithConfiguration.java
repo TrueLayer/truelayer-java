@@ -6,7 +6,7 @@ import lombok.Value;
 import truelayer.java.payments.entities.AuthorizationFlow;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorizationFlowWithConfiguration extends AuthorizationFlow {
 

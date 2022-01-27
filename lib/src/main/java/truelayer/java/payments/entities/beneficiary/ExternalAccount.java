@@ -8,7 +8,6 @@ import lombok.ToString;
 
 @Builder
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExternalAccount extends Beneficiary {
     private final String type = "external_account";
 

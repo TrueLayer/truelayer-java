@@ -7,7 +7,7 @@ import lombok.Value;
 import truelayer.java.payments.entities.paymentdetail.schemeidentifier.SchemeIdentifier;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExternalAccount extends SourceOfFunds {
     String type = "external_account";

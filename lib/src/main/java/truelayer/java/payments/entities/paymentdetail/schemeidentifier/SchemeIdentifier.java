@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = SortCodeAccountNumber.class)
 @JsonSubTypes({
@@ -13,7 +15,8 @@ import lombok.Data;
     @JsonSubTypes.Type(value = Bban.class, name = "bban"),
     @JsonSubTypes.Type(value = Nrb.class, name = "nrb")
 })
-@Data
+@ToString
+@EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class SchemeIdentifier {
     protected Type type;

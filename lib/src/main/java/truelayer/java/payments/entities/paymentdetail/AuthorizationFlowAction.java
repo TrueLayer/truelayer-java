@@ -21,8 +21,8 @@ import truelayer.java.TrueLayerException;
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
-@Getter
 @EqualsAndHashCode
+@Getter
 public abstract class AuthorizationFlowAction {
 
     protected String type;

@@ -6,8 +6,7 @@ import lombok.ToString;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-@ToString
+@EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WaitForOutcome extends AuthorizationFlowAction {
     private final String type = "wait";

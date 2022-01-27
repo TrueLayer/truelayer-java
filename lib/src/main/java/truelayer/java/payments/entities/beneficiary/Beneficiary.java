@@ -20,7 +20,6 @@ import truelayer.java.TrueLayerException;
     @JsonSubTypes.Type(value = MerchantAccount.class, name = "merchant_account"),
     @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account")
 })
-@Getter
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)

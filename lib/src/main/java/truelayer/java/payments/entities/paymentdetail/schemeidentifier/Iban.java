@@ -5,7 +5,7 @@ import static truelayer.java.payments.entities.paymentdetail.schemeidentifier.Sc
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Value
 public class Iban extends SchemeIdentifier {
     Type type = IBAN;

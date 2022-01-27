@@ -4,22 +4,27 @@ import static truelayer.java.payments.entities.paymentdetail.Status.SETTLED;
 
 import java.util.Date;
 import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@NoArgsConstructor
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SettledPaymentDetail extends PaymentDetail {
 
-    private final Status status = SETTLED;
+    Status status = SETTLED;
 
-    private SourceOfFunds sourceOfFunds;
+    SourceOfFunds sourceOfFunds;
 
-    private Date succeededAt;
+    Date succeededAt;
 
-    private Date settledAt;
+    Date settledAt;
 
-    private Date executedAt;
+    Date executedAt;
 
-    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
+    Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
 }
