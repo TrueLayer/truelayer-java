@@ -5,8 +5,6 @@
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
 
-The library currently targets Java 8.
-
 ## Installation
 
 
