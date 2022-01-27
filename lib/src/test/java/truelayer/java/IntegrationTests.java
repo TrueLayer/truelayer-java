@@ -263,7 +263,7 @@ public class IntegrationTests {
     @ValueSource(strings = {"PROVIDER_SELECTION", "REDIRECT", "WAIT"})
     @DisplayName("It should start an authorization flow")
     public void shouldStartAnAuthorizationFlow(AuthorizationFlowAction.Type flowType) {
-        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType + ".json";
+        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType.getType() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
