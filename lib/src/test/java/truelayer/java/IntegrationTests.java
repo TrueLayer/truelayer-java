@@ -173,10 +173,7 @@ public class IntegrationTests {
     @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
     @SneakyThrows
     public void shouldReturnAPaymentDetail(Status expectedStatus) {
-        String jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
-                .append(expectedStatus.getStatus())
-                .append(".json")
-                .toString();
+        String jsonResponseFile = "payments/200.get_payment_by_id." + expectedStatus.getStatus() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))

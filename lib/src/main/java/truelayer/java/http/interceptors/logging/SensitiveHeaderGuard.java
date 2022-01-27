@@ -7,7 +7,6 @@ import static truelayer.java.common.Constants.HeaderNames.COOKIE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import okhttp3.Headers;
 import truelayer.java.http.entities.Header;
 
@@ -19,14 +18,11 @@ public class SensitiveHeaderGuard {
         if (isEmpty(headers)) {
             return Collections.emptyList();
         }
-        List<Header> sanitizedHeaders = new ArrayList<Header>();
-        headers.toMultimap().forEach((headerName, headerValues) -> {
-            sanitizedHeaders.add(new Header(
-                    headerName,
-                    isSensitiveHeader(headerName)
-                            ? SENSITIVE_HEADER_MASK
-                            : headerValues.stream().collect(Collectors.joining(","))));
-        });
+        List<Header> sanitizedHeaders = new ArrayList<>();
+        headers.toMultimap()
+                .forEach((headerName, headerValues) -> sanitizedHeaders.add(new Header(
+                        headerName,
+                        isSensitiveHeader(headerName) ? SENSITIVE_HEADER_MASK : String.join(",", headerValues))));
         return Collections.unmodifiableList(sanitizedHeaders);
     }
 

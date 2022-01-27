@@ -12,6 +12,6 @@ public class AuthorizationFlow {
     @Value
     public static class Actions {
 
-        private AuthorizationFlowAction next;
+        AuthorizationFlowAction next;
     }
 }

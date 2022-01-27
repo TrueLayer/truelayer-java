@@ -29,9 +29,7 @@ class IdempotencyKeyInterceptorTests extends BaseInterceptorTests {
     public void shouldAddAnIdempotencyKeyHeader() {
         intercept();
 
-        verifyThat(request -> {
-            assertTrue(
-                    UUID_REGEX_PATTERN.matcher(request.header(IDEMPOTENCY_KEY)).matches());
-        });
+        verifyThat(request -> assertTrue(
+                UUID_REGEX_PATTERN.matcher(request.header(IDEMPOTENCY_KEY)).matches()));
     }
 }

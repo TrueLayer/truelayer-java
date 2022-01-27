@@ -199,7 +199,7 @@ TBD
 
 Contributions are always welcome!
 
-See [contributing](contributing.md) for ways to get started.
+See //todo
 
 Please adhere to this project's [code of conduct](CODE_OF_CONDUCT.md).
 

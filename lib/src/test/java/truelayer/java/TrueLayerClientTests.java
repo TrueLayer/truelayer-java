@@ -104,7 +104,7 @@ public class TrueLayerClientTests {
         ITrueLayerClient trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
-        Throwable thrown = assertThrows(TrueLayerException.class, () -> trueLayerClient.payments());
+        Throwable thrown = assertThrows(TrueLayerException.class, trueLayerClient::payments);
 
         assertEquals(
                 "payment handler not initialized. Make sure you specified the required signing options while initializing the library",

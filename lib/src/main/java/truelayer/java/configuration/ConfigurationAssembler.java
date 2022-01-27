@@ -54,12 +54,7 @@ public class ConfigurationAssembler {
 
     private PropertiesConfiguration getPropertiesFile(String configFileName) {
         try {
-            return new Configurations()
-                    .properties(new StringBuilder(CONFIG_FILE_PREXIF)
-                            .append(".")
-                            .append(configFileName)
-                            .append(".properties")
-                            .toString());
+            return new Configurations().properties(CONFIG_FILE_PREXIF + "." + configFileName + ".properties");
         } catch (ConfigurationException e) {
             throw new TrueLayerException(String.format("Unable to load %s", configFileName), e);
         }

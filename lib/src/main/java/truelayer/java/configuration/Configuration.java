@@ -44,6 +44,6 @@ public class Configuration {
     @ToString
     @Accessors(fluent = true)
     public static class Endpoint {
-        private String endpointUrl;
+        String endpointUrl;
     }
 }

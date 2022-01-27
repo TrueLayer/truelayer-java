@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static truelayer.java.payments.entities.paymentdetail.FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -18,13 +18,13 @@ class PaymentDetailTests {
     @DisplayName("It should throw an exception if a user tries to cast a payment to an unexpected state")
     public void shouldGetAFailedPaymentDetail() {
         PaymentDetail p = new SettledPaymentDetail(
-                new ExternalAccount(Arrays.asList(new Iban("123456")), "ext-account-id", "account name"),
+                new ExternalAccount(Collections.singletonList(new Iban("123456")), "ext-account-id", "account name"),
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),
                 null);
 
-        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> p.asAuthorizingPaymentDetail());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, p::asAuthorizingPaymentDetail);
         assertEquals(
                 "payment is of type SettledPaymentDetail. Consider using asSettledPaymentDetail() instead.",
                 thrown.getMessage());

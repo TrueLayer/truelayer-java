@@ -34,9 +34,7 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
 
         intercept();
 
-        verifyThat(interceptedRequest -> {
-            assertNull(interceptedRequest.header(TL_SIGNATURE));
-        });
+        verifyThat(interceptedRequest -> assertNull(interceptedRequest.header(TL_SIGNATURE)));
     }
 
     @Test
@@ -51,9 +49,7 @@ class SignatureInterceptorTests extends BaseInterceptorTests {
 
         intercept();
 
-        verifyThat(request -> {
-            assertFalse(request.header(TL_SIGNATURE).isEmpty());
-        });
+        verifyThat(request -> assertFalse(request.header(TL_SIGNATURE).isEmpty()));
     }
 
     private void prepare(Request request) {

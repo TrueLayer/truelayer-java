@@ -26,8 +26,7 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
     public void shouldAddUserAgentHeader() {
         intercept();
 
-        verifyThat(request -> {
-            assertEquals(String.format("%s/%s", LIBRARY_NAME, LIBRARY_VERSION), request.header(USER_AGENT));
-        });
+        verifyThat(request ->
+                assertEquals(String.format("%s/%s", LIBRARY_NAME, LIBRARY_VERSION), request.header(USER_AGENT)));
     }
 }

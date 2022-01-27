@@ -14,7 +14,7 @@ class BeneficiaryTests {
     public void shouldThrowAnExceptionIfMerchantIsAccessedAsExternalAccount() {
         Beneficiary beneficiary = MerchantAccount.builder().build();
 
-        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> beneficiary.asExternalAccount());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, beneficiary::asExternalAccount);
         assertEquals(
                 "beneficiary is of type MerchantAccount. Consider using asMerchantAccount() instead.",
                 thrown.getMessage());
@@ -25,7 +25,7 @@ class BeneficiaryTests {
     public void shouldThrowAnExceptionIfExternalIsAccessedAsMerchantAccount() {
         Beneficiary beneficiary = ExternalAccount.builder().build();
 
-        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> beneficiary.asMerchantAccount());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, beneficiary::asMerchantAccount);
         assertEquals(
                 "beneficiary is of type ExternalAccount. Consider using asExternalAccount() instead.",
                 thrown.getMessage());

@@ -51,6 +51,6 @@ public class AuthenticationInterceptor implements Interceptor {
     }
 
     private String buildAuthorizationHeader(String token) {
-        return new StringBuilder("Bearer").append(" ").append(token).toString();
+        return "Bearer " + token;
     }
 }
