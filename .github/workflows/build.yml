@@ -42,4 +42,4 @@ jobs:
         run: ./gradlew jacocoTestReport coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CI_BRANCH: ${GITHUB_REF##*/}
+          CI_BRANCH: ${{ github.head_ref }}
