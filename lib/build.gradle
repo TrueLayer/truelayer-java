@@ -36,7 +36,6 @@ spotless {
 }
 
 jacocoTestReport {
-    dependsOn test
     reports {
         xml.required = true
     }
@@ -44,7 +43,7 @@ jacocoTestReport {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                     'truelayer/java/**/entities/**',
-                    'truelayer/java/common/Constants'
+                    'truelayer/java/common/Constants.*'
             ])
         }))
     }
