@@ -8,8 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-
-import com.sun.tools.javadoc.main.Start;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
@@ -151,15 +149,11 @@ public class AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder()
-                        .returnUri(LOCALHOST_RETURN_URI)
-                        .build())
+                .redirect(Redirect.builder().returnUri(LOCALHOST_RETURN_URI).build())
                 .withProviderSelection()
                 .build();
         ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponseResponse = tlClient.payments()
-                .startAuthorizationFlow(
-                        createPaymentResponse.getData().getId(),
-                        startAuthorizationFlowRequest)
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
         assertNotError(startAuthorizationFlowResponseResponse);
