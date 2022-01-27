@@ -5,10 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import static truelayer.java.payments.entities.beneficiary.Beneficiary.Type.EXTERNAL_ACCOUNT;
+
 @Builder
 @Getter
 public class ExternalAccount extends Beneficiary {
-    private final String type = "external_account";
+    private final Type type = EXTERNAL_ACCOUNT;
 
     private String name;
 
