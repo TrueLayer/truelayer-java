@@ -1,6 +1,5 @@
 package truelayer.java.payments.entities.beneficiary;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,7 +20,6 @@ public class ExternalAccount extends Beneficiary {
     @Getter
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SchemeIdentifier {
         private final String type = "sort_code_account_number";
 

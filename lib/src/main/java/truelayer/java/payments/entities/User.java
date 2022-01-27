@@ -1,7 +1,6 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Optional;
 import lombok.*;
 
@@ -9,7 +8,6 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     private String id;
 

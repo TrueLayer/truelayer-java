@@ -1,10 +1,8 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Date;
-
 import lombok.*;
 import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.User;
@@ -21,7 +19,6 @@ import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
     @JsonSubTypes.Type(value = ExecutedPaymentDetail.class, name = "executed")
 })
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class PaymentDetail {
     private String id;
 

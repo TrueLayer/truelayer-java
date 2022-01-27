@@ -1,6 +1,5 @@
 package truelayer.java.payments.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class SubmitProviderSelectionResponse {
 
     protected String status;

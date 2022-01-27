@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-@JsonInclude(Include.NON_NULL)
 public class StartAuthorizationFlowRequest {
 
     private ProviderSelection providerSelection;
@@ -18,14 +17,13 @@ public class StartAuthorizationFlowRequest {
 
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_NULL)
+    @JsonInclude(Include.NON_ABSENT) // override global behaviour: this has to be always present if initialized
     public static class ProviderSelection {}
 
     @Builder
     @Getter
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_NULL)
     public static class Redirect {
         String returnUri;
     }

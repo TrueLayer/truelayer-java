@@ -1,10 +1,8 @@
 package truelayer.java.payments.entities.paymentdetail.schemeidentifier;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -17,7 +15,6 @@ import lombok.ToString;
 })
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class SchemeIdentifier {
     protected Type type;
 

@@ -1,7 +1,6 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import truelayer.java.TrueLayerException;
     @JsonSubTypes.Type(value = WaitForOutcome.class, name = "wait"),
     @JsonSubTypes.Type(value = Redirect.class, name = "redirect")
 })
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
 @Getter
