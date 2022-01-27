@@ -19,7 +19,7 @@ import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberSchemeIdentifier;
-import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProvider;
+import truelayer.java.payments.entities.paymentmethod.provider.PreselectionProvider;
 import truelayer.java.payments.entities.paymentmethod.provider.Provider;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectionProvider;
@@ -81,7 +81,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
-        PreselectedProvider preselectedProvider = PreselectedProvider.builder()
+        PreselectionProvider preselectionProvider = PreselectionProvider.builder()
                 .providerId(MOCK_PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
@@ -92,7 +92,7 @@ public class AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProvider(preselectedProvider);
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProvider(preselectionProvider);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();

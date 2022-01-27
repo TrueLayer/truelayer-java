@@ -1,6 +1,6 @@
 package truelayer.java.payments.entities.paymentmethod.provider;
 
-import static truelayer.java.payments.entities.paymentmethod.provider.Provider.Type.PRESELECTED;
+import static truelayer.java.payments.entities.paymentmethod.provider.Provider.Type.PRESELECTION;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import truelayer.java.payments.entities.paymentmethod.Remitter;
 
 @Builder
 @Getter
-public class PreselectedProvider extends Provider {
-    private final Type type = PRESELECTED;
+public class PreselectionProvider extends Provider {
+    private final Type type = PRESELECTION;
 
     private String providerId;
 
