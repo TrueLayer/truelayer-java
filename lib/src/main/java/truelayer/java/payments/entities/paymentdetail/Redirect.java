@@ -1,12 +1,18 @@
 package truelayer.java.payments.entities.paymentdetail;
 
+import static truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.REDIRECT;
+import static truelayer.java.payments.entities.paymentdetail.Redirect.Metadata.Type.PROVIDER;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class Redirect extends AuthorizationFlowAction {
-    String type = "redirect";
+    Type type = REDIRECT;
 
     String uri;
 
@@ -14,7 +20,7 @@ public class Redirect extends AuthorizationFlowAction {
 
     @Value
     public static class Metadata {
-        String type = "provider";
+        Metadata.Type type = PROVIDER;
 
         String providerId;
 
@@ -27,5 +33,14 @@ public class Redirect extends AuthorizationFlowAction {
         String bgColor;
 
         String countryCode;
+
+        @RequiredArgsConstructor
+        @Getter
+        public enum Type {
+            PROVIDER("provider");
+
+            @JsonValue
+            private final String type;
+        }
     }
 }

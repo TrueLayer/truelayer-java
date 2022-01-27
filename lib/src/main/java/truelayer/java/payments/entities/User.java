@@ -17,12 +17,12 @@ public class User {
 
     private String phone;
 
-    @JsonGetter("email")
+    @JsonGetter
     private Optional<String> getEmail() {
         return Optional.ofNullable(email);
     }
 
-    @JsonGetter("phone")
+    @JsonGetter
     private Optional<String> getPhone() {
         return Optional.ofNullable(phone);
     }

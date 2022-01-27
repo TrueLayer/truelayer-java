@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import truelayer.java.TrueLayerException;
 
 @JsonTypeInfo(
@@ -57,19 +55,13 @@ public abstract class Beneficiary {
                 this.getClass().getSimpleName());
     }
 
-    public enum Type{
+    @Getter
+    @RequiredArgsConstructor
+    public enum Type {
         EXTERNAL_ACCOUNT("external_account"),
         MERCHANT_ACCOUNT("merchant_account");
 
-        private String type;
-
-        Type(String type) {
-            this.type = type;
-        }
-
         @JsonValue
-        public String getType() {
-            return type;
-        }
+        private final String type;
     }
 }

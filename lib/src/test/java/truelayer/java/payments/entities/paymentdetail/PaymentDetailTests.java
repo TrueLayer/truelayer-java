@@ -6,7 +6,6 @@ import static truelayer.java.payments.entities.paymentdetail.FailedPaymentDetail
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ class PaymentDetailTests {
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),
-                Optional.empty());
+                null);
 
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> p.asAuthorizingPaymentDetail());
         assertEquals(
@@ -35,7 +34,7 @@ class PaymentDetailTests {
     @DisplayName("It should cast to a FailedPaymentDetail")
     public void shouldThrowAnException() {
         PaymentDetail payment = new FailedPaymentDetail(
-                new Date(LocalDate.now().toEpochDay()), AUTHORIZATION_REQUIRED, "whatever reason", Optional.empty());
+                new Date(LocalDate.now().toEpochDay()), AUTHORIZATION_REQUIRED, "whatever reason", null);
 
         FailedPaymentDetail failedPayment = payment.asFailedPaymentDetail();
         assertEquals(Status.FAILED, failedPayment.getStatus());

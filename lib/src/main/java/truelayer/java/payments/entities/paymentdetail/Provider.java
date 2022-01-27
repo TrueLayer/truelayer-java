@@ -4,15 +4,15 @@ import lombok.Value;
 
 @Value
 public class Provider {
-    private String providerId;
+    String providerId;
 
-    private String displayName;
+    String displayName;
 
-    private String iconUri;
+    String iconUri;
 
-    private String logoUri;
+    String logoUri;
 
-    private String bgColor;
+    String bgColor;
 
-    private String countryCode;
+    String countryCode;
 }

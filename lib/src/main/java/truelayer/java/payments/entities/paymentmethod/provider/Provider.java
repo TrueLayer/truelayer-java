@@ -2,7 +2,10 @@ package truelayer.java.payments.entities.paymentmethod.provider;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @JsonTypeInfo(
@@ -16,4 +19,17 @@ import lombok.ToString;
 })
 @ToString
 @EqualsAndHashCode
-public abstract class Provider {}
+@Getter
+public abstract class Provider {
+    protected Type type;
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum Type {
+        USER_SELECTION("user_selection"),
+        PRESELECTED("preselected");
+
+        @JsonValue
+        private final String type;
+    }
+}

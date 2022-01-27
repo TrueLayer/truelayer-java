@@ -1,9 +1,9 @@
 package truelayer.java.payments.entities.beneficiary;
 
+import static truelayer.java.payments.entities.beneficiary.Beneficiary.Type.MERCHANT_ACCOUNT;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import static truelayer.java.payments.entities.beneficiary.Beneficiary.Type.MERCHANT_ACCOUNT;
 
 @Builder
 @Getter

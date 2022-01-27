@@ -2,8 +2,10 @@ package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @JsonTypeInfo(
@@ -20,7 +22,17 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class SubmitProviderSelectionResponse {
 
-    protected String status;
+    protected Status status;
 
     AuthorizationFlow authorizationFlow;
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum Status {
+        AUTHORIZING("authorizing"),
+        FAILED("failed");
+
+        @JsonValue
+        private final String status;
+    }
 }

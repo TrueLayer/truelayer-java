@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = SortCodeAccountNumber.class)
@@ -18,21 +20,15 @@ import lombok.ToString;
 public abstract class SchemeIdentifier {
     protected Type type;
 
+    @RequiredArgsConstructor
+    @Getter
     public enum Type {
         NRB("nrb"),
         BBAN("bban"),
         IBAN("iban"),
         SORT_CODE_ACCOUNT_NUMBER("sort_code_account_number");
 
-        private final String type;
-
-        Type(String type) {
-            this.type = type;
-        }
-
         @JsonValue
-        public String getType() {
-            return type;
-        }
+        private final String type;
     }
 }

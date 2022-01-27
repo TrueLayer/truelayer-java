@@ -3,8 +3,10 @@ package truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import truelayer.java.TrueLayerException;
 
@@ -23,7 +25,7 @@ import truelayer.java.TrueLayerException;
 @Getter
 public abstract class AuthorizationFlowAction {
 
-    protected String type;
+    protected Type type;
 
     @JsonIgnore
     public boolean isProviderSelection() {
@@ -65,5 +67,16 @@ public abstract class AuthorizationFlowAction {
         return String.format(
                 "authorization flow is of type %1$s. Consider using as%1$s() instead.",
                 this.getClass().getSimpleName());
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum Type {
+        PROVIDER_SELECTION("provider_selection"),
+        REDIRECT("redirect"),
+        WAIT("wait");
+
+        @JsonValue
+        private final String type;
     }
 }
