@@ -57,7 +57,6 @@ public class AcceptanceTests {
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
                         .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
-                        .excludes(ProviderFilter.Excludes.builder().build())
                         .build())
                 .build();
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProvider(userSelectionProvider);
