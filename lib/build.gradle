@@ -19,22 +19,16 @@ plugins {
 
 archivesBaseName = "truelayer-java"
 
-compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
-
-compileTestJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
-}
-
 spotless {
     java {
         palantirJavaFormat()
     }
 }
-
 
 shadowJar {
     archiveBaseName.set(archivesBaseName)
