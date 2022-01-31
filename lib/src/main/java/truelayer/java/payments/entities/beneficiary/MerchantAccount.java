@@ -10,7 +10,7 @@ import lombok.Getter;
 public class MerchantAccount extends Beneficiary {
     private final Type type = MERCHANT_ACCOUNT;
 
-    private String id;
+    private String merchantAccountId;
 
-    private String name;
+    private String accountHolderName;
 }

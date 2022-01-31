@@ -25,7 +25,6 @@ import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.*;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
@@ -127,9 +126,7 @@ public class IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
-                .beneficiary(MerchantAccount.builder().build())
-                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();

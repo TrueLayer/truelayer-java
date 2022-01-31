@@ -12,22 +12,22 @@ import lombok.ToString;
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "type",
-        defaultImpl = UserSelectionProvider.class)
+        defaultImpl = UserSelectedProviderSelection.class)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = UserSelectionProvider.class, name = "user_selection"),
-    @JsonSubTypes.Type(value = PreselectionProvider.class, name = "preselection")
+    @JsonSubTypes.Type(value = UserSelectedProviderSelection.class, name = "user_selected"),
+    @JsonSubTypes.Type(value = PreselectedProviderSelection.class, name = "preselected")
 })
 @ToString
 @EqualsAndHashCode
 @Getter
-public abstract class Provider {
+public abstract class ProviderSelection {
     protected Type type;
 
     @RequiredArgsConstructor
     @Getter
     public enum Type {
-        USER_SELECTION("user_selection"),
-        PRESELECTION("preselection");
+        USER_SELECTED("user_selected"),
+        PRESELECTED("preselected");
 
         @JsonValue
         private final String type;
