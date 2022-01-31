@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import truelayer.java.payments.entities.beneficiary.Beneficiary;
 
 // Unlike beneficiaries, this union currently comes with one
 // type only, that is BankTransfer to which Jackson will deserialize
@@ -17,6 +18,8 @@ import lombok.ToString;
 public abstract class PaymentMethod {
 
     protected Type type;
+
+    private Beneficiary beneficiary;
 
     public BankTransfer asBankTransfer() {
         return (BankTransfer) this;

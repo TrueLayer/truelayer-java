@@ -6,7 +6,6 @@ import java.util.Date;
 import lombok.*;
 import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.User;
-import truelayer.java.payments.entities.beneficiary.Beneficiary;
 import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
@@ -25,8 +24,6 @@ public abstract class PaymentDetail {
     private int amountInMinor;
 
     private String currency;
-
-    private Beneficiary beneficiary;
 
     private User user;
 
