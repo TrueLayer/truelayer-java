@@ -135,11 +135,12 @@ dependencies {
 }
 
 jacocoTestReport {
-    dependsOn test
+    dependsOn "unit-tests"
     reports {
         xml.required = true
         html.required = true
     }
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/unit-tests.exec"))
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
@@ -149,6 +150,10 @@ jacocoTestReport {
             ])
         }))
     }
+}
+
+coveralls {
+    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
 }
 
 publishing {
