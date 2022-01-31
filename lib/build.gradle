@@ -142,7 +142,8 @@ jacocoTestReport {
                     'truelayer/java/common/Constants.*',
                     'truelayer/java/common/Constants$*.*',
                     'truelayer/java/http/adapters/TrueLayerApiAdapterFactory.*',
-                    'truelayer/java/http/adapters/TrueLayerResponseCallAdapter.*'
+                    'truelayer/java/http/adapters/TrueLayerResponseCallAdapter.*',
+                    'truelayer/java/http/adapters/TrueLayerResponseCallAdapter$*.*'
             ])
         }))
     }
