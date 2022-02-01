@@ -30,8 +30,7 @@ class ConfigurationAssemblerTests {
 
         assertEquals(
                 "https://auth.truelayer-sandbox.com", config.authentication().endpointUrl());
-        assertEquals(
-                "https://api.truelayer-sandbox.com", config.payments().endpointUrl());
+        assertEquals("https://api.truelayer-sandbox.com", config.payments().endpointUrl());
         assertEquals(Collections.singletonList("payments"), config.payments().scopes());
         assertEquals(
                 "https://payment.truelayer-sandbox.com",
