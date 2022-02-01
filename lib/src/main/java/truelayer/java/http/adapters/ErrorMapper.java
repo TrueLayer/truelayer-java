@@ -14,7 +14,7 @@ public class ErrorMapper {
         this.logger = logger;
     }
 
-    public ProblemDetails toProblemDetails(Response response) {
+    public <T> ProblemDetails toProblemDetails(Response<T> response) {
         String errorBody = "error";
         try {
             errorBody = response.errorBody().string();

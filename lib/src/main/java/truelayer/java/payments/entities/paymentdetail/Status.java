@@ -1,7 +1,11 @@
 package truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+@Getter
 public enum Status {
     AUTHORIZATION_REQUIRED("authorization_required"),
     AUTHORIZING("authorizing"),
@@ -10,14 +14,6 @@ public enum Status {
     FAILED("failed"),
     SETTLED("settled");
 
-    private final String status;
-
-    Status(String status) {
-        this.status = status;
-    }
-
     @JsonValue
-    public String value() {
-        return status;
-    }
+    private final String status;
 }

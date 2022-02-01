@@ -33,9 +33,7 @@ class HttpLoggingInterceptorTests {
         when(chain.request()).thenReturn(request);
         ResponseBody jsonBody = ResponseBody.create(
                 MediaType.get("application/json"),
-                Files.readAllBytes(Paths.get(new StringBuilder(JSON_RESPONSES_LOCATION)
-                        .append("/auth/200.access_token.json")
-                        .toString())));
+                Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + "/auth/200.access_token.json")));
         Response response = new okhttp3.Response.Builder()
                 .protocol(Protocol.HTTP_2)
                 .request(request)

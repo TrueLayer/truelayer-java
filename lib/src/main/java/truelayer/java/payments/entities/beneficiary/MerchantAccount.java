@@ -1,16 +1,16 @@
 package truelayer.java.payments.entities.beneficiary;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static truelayer.java.payments.entities.beneficiary.Beneficiary.Type.MERCHANT_ACCOUNT;
+
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MerchantAccount extends Beneficiary {
-    private final String type = "merchant_account";
+    private final Type type = MERCHANT_ACCOUNT;
 
-    private String id;
+    private String merchantAccountId;
 
-    private String name;
+    private String accountHolderName;
 }

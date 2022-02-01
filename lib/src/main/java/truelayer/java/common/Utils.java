@@ -1,5 +1,6 @@
 package truelayer.java.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -17,6 +18,8 @@ public class Utils {
             objectMapper.registerModule(new Jdk8Module());
             // serialize all camel cases fields to snake
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+            // do not include null fields in JSON
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
             OBJECT_MAPPER_INSTANCE = objectMapper;
         }

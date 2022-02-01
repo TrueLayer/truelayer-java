@@ -1,20 +1,16 @@
 package truelayer.java.payments.entities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+@Getter
 public enum CustomerSegment {
     RETAIL("retail"),
     BUSINESS("business"),
     CORPORATE("corporate");
 
-    private final String customerSegment;
-
-    CustomerSegment(String customerSegment) {
-        this.customerSegment = customerSegment;
-    }
-
     @JsonValue
-    public String getCustomerSegment() {
-        return customerSegment;
-    }
+    private final String customerSegment;
 }

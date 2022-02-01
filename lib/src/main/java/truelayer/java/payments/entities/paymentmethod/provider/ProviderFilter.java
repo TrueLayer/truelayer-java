@@ -1,6 +1,5 @@
 package truelayer.java.payments.entities.paymentmethod.provider;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,6 @@ import truelayer.java.payments.entities.ReleaseChannel;
 @Getter
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProviderFilter {
     private List<CountryCode> countries;
 
@@ -30,7 +28,6 @@ public class ProviderFilter {
     @Getter
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Excludes {
 
         private List<String> providerIds;

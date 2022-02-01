@@ -2,13 +2,14 @@ package truelayer.java.payments.entities.paymentdetail;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZING;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
-@NoArgsConstructor
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = false)
 public class AuthorizingPaymentDetail extends PaymentDetail {
-    private final Status status = AUTHORIZING;
 
-    private AuthorizationFlowWithConfiguration authorizationFlow;
+    Status status = AUTHORIZING;
+
+    AuthorizationFlowWithConfiguration authorizationFlow;
 }

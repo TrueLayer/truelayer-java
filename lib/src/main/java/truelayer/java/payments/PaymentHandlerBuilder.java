@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
 import retrofit2.Retrofit;
@@ -43,7 +44,7 @@ public class PaymentHandlerBuilder {
         notEmpty(signingOptions.keyId(), "key id must be not empty");
         notNull(signingOptions.privateKey(), "private key must be not empty.");
 
-        List<Interceptor> networkInterceptors = Arrays.asList(HttpLoggingInterceptor.New());
+        List<Interceptor> networkInterceptors = Collections.singletonList(HttpLoggingInterceptor.New());
 
         List<Interceptor> applicationInterceptors = Arrays.asList(
                 new IdempotencyKeyInterceptor(),

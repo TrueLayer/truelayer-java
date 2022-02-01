@@ -2,7 +2,6 @@ package truelayer.java.http.adapters;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
-import lombok.RequiredArgsConstructor;
 import retrofit2.*;
 import truelayer.java.http.LoggerFactory;
 import truelayer.java.http.entities.ApiResponse;
@@ -13,7 +12,6 @@ import truelayer.java.http.entities.ApiResponse;
  *
  * @see truelayer.java.http.entities.ApiResponse
  */
-@RequiredArgsConstructor
 public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, CompletableFuture<ApiResponse<R>>> {
     private final Type responseType;
     private final ErrorMapper errorMapper;

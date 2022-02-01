@@ -1,15 +1,18 @@
 package truelayer.java.payments.entities.paymentmethod;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.BANK_TRANSFER;
+
 import lombok.Builder;
 import lombok.Getter;
-import truelayer.java.payments.entities.paymentmethod.provider.Provider;
+import truelayer.java.payments.entities.beneficiary.Beneficiary;
+import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 
 @Builder
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BankTransfer extends PaymentMethod {
-    private final String type = "bank_transfer";
+    private final Type type = BANK_TRANSFER;
 
-    private Provider provider;
+    private ProviderSelection providerSelection;
+
+    private Beneficiary beneficiary;
 }

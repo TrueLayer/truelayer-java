@@ -1,15 +1,11 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Date;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import truelayer.java.TrueLayerException;
 import truelayer.java.payments.entities.User;
-import truelayer.java.payments.entities.beneficiary.Beneficiary;
 import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
@@ -21,10 +17,7 @@ import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
     @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
     @JsonSubTypes.Type(value = ExecutedPaymentDetail.class, name = "executed")
 })
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 public abstract class PaymentDetail {
     private String id;
 
@@ -32,15 +25,13 @@ public abstract class PaymentDetail {
 
     private String currency;
 
-    private Beneficiary beneficiary;
-
     private User user;
 
     private PaymentMethod paymentMethod;
 
     private Date createdAt;
 
-    protected Status status;
+    private Status status;
 
     public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
         if (!(this instanceof AuthorizationRequiredPaymentDetail)) {

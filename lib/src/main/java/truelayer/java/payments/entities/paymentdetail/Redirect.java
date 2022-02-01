@@ -1,34 +1,16 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.REDIRECT;
+
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(callSuper = false)
 public class Redirect extends AuthorizationFlowAction {
-    String type = "redirect";
+    Type type = REDIRECT;
 
     String uri;
 
     Metadata metadata;
-
-    @Value
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Metadata {
-        String type = "provider";
-
-        String providerId;
-
-        String displayName;
-
-        String iconUri;
-
-        String logoUri;
-
-        String bgColor;
-
-        String countryCode;
-    }
 }

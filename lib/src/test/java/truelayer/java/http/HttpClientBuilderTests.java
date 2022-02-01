@@ -3,11 +3,8 @@ package truelayer.java.http;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.util.Collections;
 import okhttp3.Interceptor;
-import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import retrofit2.Retrofit;
@@ -34,13 +31,7 @@ class HttpClientBuilderTests {
     @Test
     @DisplayName("It should build an HTTP client with the given base URL and interceptors")
     public void testCreationWithInterceptors() {
-        Interceptor dummyInterceptor = new Interceptor() {
-            @NotNull
-            @Override
-            public Response intercept(@NotNull Chain chain) throws IOException {
-                return null;
-            }
-        };
+        Interceptor dummyInterceptor = chain -> null;
 
         Retrofit client = new HttpClientBuilder()
                 .baseUrl(A_BASE_URL)

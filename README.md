@@ -110,16 +110,16 @@ CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
         .currency("GBP")
         .paymentMethod(BankTransfer.builder()
-            .provider(UserSelectionProvider.builder()
+            .providerSelection(UserSelectionProvider.builder()
                 .filter(ProviderFilter.builder()
                 .countries(List.of(CountryCode.GB))
                 .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                 .customerSegments(List.of(CustomerSegment.RETAIL))
                 .providerIds(List.of("mock-payments-gb-redirect")).build())
                 .build())
-            .build())
-        .beneficiary(MerchantAccount.builder()
-            .id("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
+            .beneficiary(MerchantAccount.builder()
+                .merchantAccountId("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
+                .build())
             .build())
         .user(CreatePaymentRequest.User.builder()
             .name("Andrea Di Lisio")
@@ -199,7 +199,7 @@ TBD
 
 Contributions are always welcome!
 
-See [contributing](contributing.md) for ways to get started.
+See //todo
 
 Please adhere to this project's [code of conduct](CODE_OF_CONDUCT.md).
 
