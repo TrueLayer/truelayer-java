@@ -28,7 +28,7 @@ class ErrorMapperTests {
         TaggedLogger logger = mock(TaggedLogger.class);
         String errorJsonFile = "/payments/401.invalid_signature.json";
         ErrorMapper sut = new ErrorMapper(logger);
-        Response invalidClientResponse = buildErrorResponse(errorJsonFile);
+        Response<ProblemDetails> invalidClientResponse = buildErrorResponse(errorJsonFile);
 
         ProblemDetails problemDetails = sut.toProblemDetails(invalidClientResponse);
 
@@ -43,7 +43,7 @@ class ErrorMapperTests {
     public void shouldBuildAFallbackProblemDetailsError() {
         TaggedLogger logger = mock(TaggedLogger.class);
         ErrorMapper sut = new ErrorMapper(logger);
-        Response invalidClientResponse = buildErrorResponse("/auth/400.invalid_client.json");
+        Response<ProblemDetails> invalidClientResponse = buildErrorResponse("/auth/400.invalid_client.json");
 
         ProblemDetails problemDetails = sut.toProblemDetails(invalidClientResponse);
 
@@ -53,13 +53,11 @@ class ErrorMapperTests {
     }
 
     @SneakyThrows
-    private Response buildErrorResponse(String errorFile) {
+    private Response<ProblemDetails> buildErrorResponse(String errorFile) {
         return retrofit2.Response.error(
                 400,
                 ResponseBody.create(
                         MediaType.get("application/json"),
-                        Files.readAllBytes(Paths.get(new StringBuilder(JSON_RESPONSES_LOCATION)
-                                .append(errorFile)
-                                .toString()))));
+                        Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + errorFile))));
     }
 }

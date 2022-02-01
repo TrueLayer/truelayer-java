@@ -23,14 +23,12 @@ class HostedPaymentPageLinkBuilderTests {
         URI link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
-                new StringBuilder(A_HPP_ENDPOINT)
-                        .append("/payments#payment_id=")
-                        .append(A_PAYMENT_ID)
-                        .append("&payment_token=")
-                        .append(A_PAYMENT_TOKEN)
-                        .append("&return_uri=")
-                        .append(A_RETURN_URI)
-                        .toString(),
+                A_HPP_ENDPOINT + "/payments#payment_id="
+                        + A_PAYMENT_ID
+                        + "&payment_token="
+                        + A_PAYMENT_TOKEN
+                        + "&return_uri="
+                        + A_RETURN_URI,
                 link.toString());
     }
 

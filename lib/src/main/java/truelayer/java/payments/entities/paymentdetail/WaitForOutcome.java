@@ -1,14 +1,12 @@
 package truelayer.java.payments.entities.paymentdetail;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.WAIT;
+
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-@ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(callSuper = false)
 public class WaitForOutcome extends AuthorizationFlowAction {
-    private final String type = "wait";
+    Type type = WAIT;
 }

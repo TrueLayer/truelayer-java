@@ -45,9 +45,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
 
         intercept();
 
-        verifyThat(request -> {
-            assertEquals("Bearer " + expectedAccessToken.getData().getAccessToken(), request.header(AUTHORIZATION));
-        });
+        verifyThat(request -> assertEquals(
+                "Bearer " + expectedAccessToken.getData().getAccessToken(), request.header(AUTHORIZATION)));
     }
 
     @Test
@@ -64,7 +63,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                         .build()));
         this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
 
-        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, () -> intercept());
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, this::intercept);
 
         assertTrue(thrown.getMessage().startsWith("Unable to authenticate request"));
     }

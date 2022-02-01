@@ -2,15 +2,20 @@ package truelayer.java.payments.entities.paymentdetail;
 
 import static truelayer.java.payments.entities.paymentdetail.Status.AUTHORIZED;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import java.util.Optional;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = false)
 public class AuthorizedPaymentDetail extends PaymentDetail {
 
-    protected final Status status = AUTHORIZED;
+    Status status = AUTHORIZED;
 
-    private Optional<AuthorizationFlowWithConfiguration> authorizationFlow;
+    AuthorizationFlowWithConfiguration authorizationFlow;
+
+    @JsonGetter
+    public Optional<AuthorizationFlowWithConfiguration> getAuthorizationFlow() {
+        return Optional.ofNullable(authorizationFlow);
+    }
 }

@@ -25,7 +25,7 @@ import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.*;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
+import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
 
@@ -126,9 +126,7 @@ public class IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
-                .beneficiary(MerchantAccount.builder().build())
-                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -172,10 +170,7 @@ public class IntegrationTests {
     @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
     @SneakyThrows
     public void shouldReturnAPaymentDetail(Status expectedStatus) {
-        String jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
-                .append(expectedStatus.value())
-                .append(".json")
-                .toString();
+        String jsonResponseFile = "payments/200.get_payment_by_id." + expectedStatus.getStatus() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -259,10 +254,10 @@ public class IntegrationTests {
 
     @SneakyThrows
     @ParameterizedTest(name = "and get a response of type {0}")
-    @ValueSource(strings = {"provider_selection", "redirect", "wait"})
+    @ValueSource(strings = {"PROVIDER_SELECTION", "REDIRECT", "WAIT"})
     @DisplayName("It should start an authorization flow")
-    public void shouldStartAnAuthorizationFlow(String flowType) {
-        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType + ".json";
+    public void shouldStartAnAuthorizationFlow(AuthorizationFlowAction.Type flowType) {
+        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType.getType() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -294,10 +289,10 @@ public class IntegrationTests {
 
     @SneakyThrows
     @ParameterizedTest(name = "and get a response of type {0}")
-    @ValueSource(strings = {"authorizing", "failed"})
+    @ValueSource(strings = {"AUTHORIZING", "FAILED"})
     @DisplayName("It should submit a provider selection")
-    public void shouldSubmitProviderSelection(String status) {
-        String jsonResponseFile = "payments/200.submit_provider_selection." + status + ".json";
+    public void shouldSubmitProviderSelection(SubmitProviderSelectionResponse.Status status) {
+        String jsonResponseFile = "payments/200.submit_provider_selection." + status.getStatus() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -311,8 +306,6 @@ public class IntegrationTests {
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
-        StartAuthorizationFlowRequest request =
-                StartAuthorizationFlowRequest.builder().build();
 
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().build();

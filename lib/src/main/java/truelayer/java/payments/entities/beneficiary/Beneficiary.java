@@ -1,12 +1,10 @@
 package truelayer.java.payments.entities.beneficiary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.*;
 import truelayer.java.TrueLayerException;
 
 @JsonTypeInfo(
@@ -20,11 +18,12 @@ import truelayer.java.TrueLayerException;
     @JsonSubTypes.Type(value = MerchantAccount.class, name = "merchant_account"),
     @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account")
 })
-@Getter
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public abstract class Beneficiary {
+
+    protected Type type;
 
     @JsonIgnore
     public boolean isMerchantAccount() {
@@ -54,5 +53,15 @@ public abstract class Beneficiary {
         return String.format(
                 "beneficiary is of type %1$s. Consider using as%1$s() instead.",
                 this.getClass().getSimpleName());
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public enum Type {
+        EXTERNAL_ACCOUNT("external_account"),
+        MERCHANT_ACCOUNT("merchant_account");
+
+        @JsonValue
+        private final String type;
     }
 }

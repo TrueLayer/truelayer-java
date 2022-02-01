@@ -1,9 +1,12 @@
 package truelayer.java.payments.entities.paymentmethod;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import truelayer.java.payments.entities.beneficiary.Beneficiary;
 
 // Unlike beneficiaries, this union currently comes with one
 // type only, that is BankTransfer to which Jackson will deserialize
@@ -11,10 +14,23 @@ import lombok.ToString;
 @JsonDeserialize(as = BankTransfer.class)
 @ToString
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public abstract class PaymentMethod {
+
+    protected Type type;
+
+    private Beneficiary beneficiary;
 
     public BankTransfer asBankTransfer() {
         return (BankTransfer) this;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum Type {
+        BANK_TRANSFER("bank_transfer");
+
+        @JsonValue
+        private final String type;
     }
 }

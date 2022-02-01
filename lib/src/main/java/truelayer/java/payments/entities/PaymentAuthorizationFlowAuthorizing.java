@@ -1,12 +1,12 @@
 package truelayer.java.payments.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static truelayer.java.payments.entities.SubmitProviderSelectionResponse.Status.AUTHORIZING;
+
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(callSuper = false)
 public class PaymentAuthorizationFlowAuthorizing extends SubmitProviderSelectionResponse {
-    String status = "authorizing";
+    Status status = AUTHORIZING;
 }

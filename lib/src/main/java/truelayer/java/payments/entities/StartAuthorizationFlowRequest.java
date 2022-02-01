@@ -5,36 +5,50 @@ import static com.fasterxml.jackson.annotation.JsonInclude.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-@Builder
 @Getter
+@RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-@JsonInclude(Include.NON_NULL)
 public class StartAuthorizationFlowRequest {
 
-    private ProviderSelection providerSelection;
+    private final ProviderSelection providerSelection;
 
-    private Redirect redirect;
+    private final Redirect redirect;
 
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_NULL)
+    @JsonInclude(Include.NON_ABSENT) // override global behaviour: this has to be always present if initialized
     public static class ProviderSelection {}
 
     @Builder
     @Getter
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_NULL)
     public static class Redirect {
         String returnUri;
     }
 
-    @SuppressWarnings("unused")
+    public static StartAuthorizationFlowRequestBuilder builder() {
+        return new StartAuthorizationFlowRequestBuilder();
+    }
+
     public static class StartAuthorizationFlowRequestBuilder {
+        private boolean withProviderSelection;
+
+        private Redirect redirect;
+
         public StartAuthorizationFlowRequestBuilder withProviderSelection() {
-            this.providerSelection = new ProviderSelection();
+            this.withProviderSelection = true;
             return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder redirect(Redirect redirect) {
+            this.redirect = redirect;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequest build() {
+            return new StartAuthorizationFlowRequest(withProviderSelection ? new ProviderSelection() : null, redirect);
         }
     }
 }
