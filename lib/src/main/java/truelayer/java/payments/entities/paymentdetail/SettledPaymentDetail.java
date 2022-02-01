@@ -14,7 +14,7 @@ public class SettledPaymentDetail extends PaymentDetail {
 
     Status status = SETTLED;
 
-    SourceOfFunds sourceOfFunds;
+    PaymentSource paymentSource;
 
     Date succeededAt;
 

@@ -13,7 +13,7 @@ import lombok.Value;
 public class ExecutedPaymentDetail extends PaymentDetail {
     Status status = EXECUTED;
 
-    SourceOfFunds sourceOfFunds;
+    PaymentSource paymentSource;
 
     Date executedAt;
 

@@ -37,15 +37,14 @@
   },
   "created_at":"2022-01-17T17:13:18.214924Z",
   "status":"executed",
-  "source_of_funds":{
-    "type":"external_account",
-    "scheme_identifiers":[
+  "payment_source":{
+    "id":"1122hj-37df-4cd7-ada5-***",
+    "account_identifiers":[
       {
         "type":"nrb",
         "nrb":"123456"
       }
     ],
-    "external_account_id":"1122hj-37df-4cd7-ada5-***",
     "account_holder_name":"John Doe"
   },
   "executed_at":"2022-01-17T17:13:18.214924Z"

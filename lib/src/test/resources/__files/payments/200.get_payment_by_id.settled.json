@@ -37,15 +37,14 @@
   },
   "created_at":"2022-01-17T17:13:18.214924Z",
   "status":"settled",
-  "source_of_funds":{
-    "type":"external_account",
-    "scheme_identifiers":[
+  "payment_source":{
+    "id":"1122hj-37df-4cd7-ada5-***",
+    "account_identifiers":[
       {
         "type":"iban",
         "iban":"IT60X0542811101000000123456"
       }
     ],
-    "external_account_id":"1122hj-37df-4cd7-ada5-***",
     "account_holder_name":"John Doe"
   },
   "succeeded_at":"2022-01-17T17:13:18.214924Z",

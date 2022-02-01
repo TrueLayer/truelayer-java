@@ -6,11 +6,12 @@ import static truelayer.java.payments.entities.paymentdetail.FailedPaymentDetail
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
-import truelayer.java.payments.entities.paymentdetail.schemeidentifier.Iban;
+import truelayer.java.payments.entities.paymentmethod.IbanAccountIdentifier;
 
 class PaymentDetailTests {
 
@@ -18,7 +19,11 @@ class PaymentDetailTests {
     @DisplayName("It should throw an exception if a user tries to cast a payment to an unexpected state")
     public void shouldGetAFailedPaymentDetail() {
         PaymentDetail p = new SettledPaymentDetail(
-                new ExternalAccount(Collections.singletonList(new Iban("123456")), "ext-account-id", "account name"),
+                new PaymentSource(
+                        UUID.randomUUID().toString(),
+                        Collections.singletonList(
+                                IbanAccountIdentifier.builder().iban("123456").build()),
+                        "account name"),
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),
                 new Date(LocalDate.now().toEpochDay()),

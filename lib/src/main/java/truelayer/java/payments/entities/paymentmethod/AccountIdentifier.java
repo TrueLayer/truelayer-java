@@ -7,8 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import truelayer.java.payments.entities.beneficiary.ExternalAccount;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 
 @JsonTypeInfo(
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -16,10 +14,10 @@ import truelayer.java.payments.entities.beneficiary.MerchantAccount;
         property = "type",
         defaultImpl = SortCodeAccountNumberAccountIdentifier.class)
 @JsonSubTypes({
-    // this is instructing Jackson to deserialize into a MerchantAccount or ExternalAccount type
-    // based on the value coming in the beneficiary JSON object with key "type"
-    @JsonSubTypes.Type(value = MerchantAccount.class, name = "merchant_account"),
-    @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account")
+    @JsonSubTypes.Type(value = SortCodeAccountNumberAccountIdentifier.class, name = "sort_code_account_number"),
+    @JsonSubTypes.Type(value = IbanAccountIdentifier.class, name = "iban"),
+    @JsonSubTypes.Type(value = BbanAccountIdentifier.class, name = "bban"),
+    @JsonSubTypes.Type(value = NrbAccountIdentifier.class, name = "nrb")
 })
 @ToString
 @EqualsAndHashCode
@@ -32,7 +30,9 @@ public abstract class AccountIdentifier {
     @RequiredArgsConstructor
     public enum Type {
         SORT_CODE_ACCOUNT_NUMBER("sort_code_account_number"),
-        IBAN("iban");
+        IBAN("iban"),
+        BBAN("bban"),
+        NRB("nrb");
 
         @JsonValue
         private final String type;
