@@ -10,6 +10,5 @@ import lombok.experimental.Accessors;
 public class SigningOptions {
     private String keyId;
 
-    // todo: use a proper type
     private byte[] privateKey;
 }
