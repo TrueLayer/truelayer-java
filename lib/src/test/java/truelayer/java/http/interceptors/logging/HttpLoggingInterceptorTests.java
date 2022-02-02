@@ -51,8 +51,8 @@ class HttpLoggingInterceptorTests {
 
         InOrder interactions = inOrder(logger, chain);
         interactions.verify(chain).request();
-        interactions.verify(logger).debug(startsWith("-->"), eq("GET"), eq(url), anyList());
+        interactions.verify(logger).trace(startsWith("-->"), eq("GET"), eq(url), anyList());
         interactions.verify(chain).proceed(request);
-        interactions.verify(logger).debug(startsWith("<--"), eq(responseCode), eq(url), anyList(), isNull());
+        interactions.verify(logger).trace(startsWith("<--"), eq(responseCode), eq(url), anyList(), isNull());
     }
 }
