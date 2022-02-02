@@ -2,8 +2,7 @@ package truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -20,6 +19,7 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.configuration.Configuration;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.http.adapters.ErrorMapper;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.payments.IPaymentHandler;
@@ -82,8 +82,11 @@ public class IntegrationTests {
                 .get();
 
         assertTrue(response.isError());
-        assertEquals("error", response.getError().getType());
-        assertTrue(response.getError().getDetail().contains("invalid_client"));
+        ProblemDetails problemDetails = response.getError();
+        assertEquals("invalid_client", problemDetails.getTitle());
+        assertEquals(ErrorMapper.GENERIC_ERROR_TYPE, problemDetails.getType());
+        assertEquals(400, problemDetails.getStatus());
+        assertFalse(problemDetails.getTraceId().isEmpty());
     }
 
     @Test
