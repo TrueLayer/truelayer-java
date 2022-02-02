@@ -1,8 +1,6 @@
 package truelayer.java.http.adapters;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
 import static truelayer.java.TestUtils.deserializeJsonFileTo;
@@ -22,7 +20,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.tinylog.TaggedLogger;
 import retrofit2.Response;
 import truelayer.java.http.entities.ProblemDetails;
 
@@ -33,52 +30,43 @@ class ErrorMapperTests {
     @Test
     @DisplayName("it should build a problem details error object")
     public void shouldBuildAProblemDetailsError() {
-        TaggedLogger logger = mock(TaggedLogger.class);
         String errorJsonFile = "/payments/401.invalid_signature.json";
-        ErrorMapper sut = new ErrorMapper(logger);
+        ErrorMapper sut = new ErrorMapper();
         Response<?> invalidClientResponse = buildErrorResponse(errorJsonFile);
 
         ProblemDetails problemDetails = sut.toProblemDetails(invalidClientResponse);
 
         ProblemDetails expectedError = deserializeJsonFileTo(errorJsonFile, ProblemDetails.class);
         Assertions.assertEquals(expectedError, problemDetails);
-        verify(logger, never()).warn(anyString(), any(Throwable.class));
     }
 
     @Test
     @DisplayName("it should map a legacy error into a problem details")
     public void shouldBuildAProblemDetailsForALegacyError() {
-        TaggedLogger logger = mock(TaggedLogger.class);
-        ErrorMapper sut = new ErrorMapper(logger);
+        ErrorMapper sut = new ErrorMapper();
         Response<?> invalidClientResponse = buildErrorResponse("/auth/400.invalid_client.json");
 
         ProblemDetails actual = sut.toProblemDetails(invalidClientResponse);
 
         assertEquals(buildGenericError("invalid_client"), actual);
-        verify(logger, times(1)).warn(anyString(), any(Throwable.class));
-        verifyNoMoreInteractions(logger);
     }
 
     @Test
     @DisplayName("it should map an unexpected format error into a generic problem details")
     public void shouldBuildAProblemDetailsForAnUnexpectedError() {
-        TaggedLogger logger = mock(TaggedLogger.class);
-        ErrorMapper sut = new ErrorMapper(logger);
+        ErrorMapper sut = new ErrorMapper();
         Response<?> invalidClientResponse = buildErrorResponse("internal error".getBytes(StandardCharsets.UTF_8));
 
         ProblemDetails actual = sut.toProblemDetails(invalidClientResponse);
 
         assertEquals(buildGenericError(GENERIC_ERROR_TITLE), actual);
-        verify(logger, times(2)).warn(anyString(), any(Throwable.class));
-        verifyNoMoreInteractions(logger);
     }
 
     @SneakyThrows
     @Test
     @DisplayName("it should map an IO error into a generic problem details")
     public void shouldBuildAProblemDetailsForAnIOError() {
-        TaggedLogger logger = mock(TaggedLogger.class);
-        ErrorMapper sut = new ErrorMapper(logger);
+        ErrorMapper sut = new ErrorMapper();
         Response<?> ioErrorResponse = mock(Response.class);
         Headers headers = mock(Headers.class);
         when(headers.get(TL_CORRELATION_ID)).thenReturn(A_CORRELATION_ID);
@@ -90,8 +78,6 @@ class ErrorMapperTests {
         ProblemDetails actual = sut.toProblemDetails(ioErrorResponse);
 
         assertEquals(buildGenericError(GENERIC_ERROR_TITLE), actual);
-        verify(logger, times(1)).warn(anyString(), any(Throwable.class));
-        verifyNoMoreInteractions(logger);
     }
 
     @SneakyThrows
