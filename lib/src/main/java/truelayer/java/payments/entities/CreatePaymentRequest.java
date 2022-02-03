@@ -13,7 +13,7 @@ import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 public class CreatePaymentRequest {
     private int amountInMinor;
 
-    private String currency;
+    private CurrencyCode currency;
 
     private PaymentMethod paymentMethod;
 
