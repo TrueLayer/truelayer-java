@@ -25,7 +25,7 @@ class HostedPaymentPageLinkBuilderTests {
         assertEquals(
                 A_HPP_ENDPOINT + "/payments#payment_id="
                         + A_PAYMENT_ID
-                        + "&resource_token="
+                        + "&payment_token="
                         + A_RESOURCE_TOKEN
                         + "&return_uri="
                         + A_RETURN_URI,

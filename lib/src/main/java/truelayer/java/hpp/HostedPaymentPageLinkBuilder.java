@@ -26,8 +26,9 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
             throw new TrueLayerException("return_uri must be set");
         }
 
+        // todo: change to payment_token to resource_token when the HPP is ready
         String link = String.format(
-                "%s/payments#payment_id=%s&resource_token=%s&return_uri=%s",
+                "%s/payments#payment_id=%s&payment_token=%s&return_uri=%s",
                 endpoint, paymentId, resource_token, returnUri);
         return URI.create(link);
     }
