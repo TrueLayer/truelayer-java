@@ -171,7 +171,7 @@ public class AcceptanceTests {
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currency("GBP")
+                .currency(CurrencyCode.GBP)
                 .paymentMethod(BankTransfer.builder()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
