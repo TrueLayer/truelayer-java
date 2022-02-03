@@ -8,5 +8,5 @@ public class CreatePaymentResponse {
 
     User user;
 
-    String paymentToken;
+    String resourceToken;
 }

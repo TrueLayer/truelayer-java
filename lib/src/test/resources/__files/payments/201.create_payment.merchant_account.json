@@ -3,5 +3,5 @@
   "user":{
     "id":"332d7a9a-aaaa-4ae4-9d2f-***"
   },
-  "payment_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***"
+  "resource_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***"
 }
