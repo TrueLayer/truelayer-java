@@ -81,6 +81,22 @@ class ErrorMapperTests {
     }
 
     @SneakyThrows
+    @Test
+    @DisplayName("it should map an no content error response into a generic problem details")
+    public void shouldBuildAProblemDetailsForAErrorResponseWithNoContent() {
+        ErrorMapper sut = new ErrorMapper();
+        Response<?> noContentErrorResponse = mock(Response.class);
+        Headers headers = mock(Headers.class);
+        when(headers.get(TL_CORRELATION_ID)).thenReturn(A_CORRELATION_ID);
+        when(noContentErrorResponse.headers()).thenReturn(headers);
+        when(noContentErrorResponse.code()).thenReturn(400);
+
+        ProblemDetails actual = sut.toProblemDetails(noContentErrorResponse);
+
+        assertEquals(buildGenericError(GENERIC_ERROR_TITLE), actual);
+    }
+
+    @SneakyThrows
     private Response<?> buildErrorResponse(String errorFile) {
         return buildErrorResponse(Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + errorFile)));
     }
