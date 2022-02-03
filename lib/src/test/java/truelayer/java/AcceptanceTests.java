@@ -121,7 +121,7 @@ public class AcceptanceTests {
         URI link = tlClient.hpp()
                 .getHostedPaymentPageLink(
                         createPaymentResponse.getData().getId(),
-                        createPaymentResponse.getData().getPaymentToken(),
+                        createPaymentResponse.getData().getResourceToken(),
                         URI.create(LOCALHOST_RETURN_URI));
         HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
         connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);

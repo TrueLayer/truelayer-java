@@ -12,7 +12,7 @@ import truelayer.java.TrueLayerException;
 class HostedPaymentPageLinkBuilderTests {
 
     public static final String A_RETURN_URI = "https://a-redirect-uri.com";
-    public static final String A_PAYMENT_TOKEN = "a-payment-token";
+    public static final String A_RESOURCE_TOKEN = "a-resource-token";
     public static final String A_PAYMENT_ID = "a-payment-id";
 
     @Test
@@ -20,13 +20,13 @@ class HostedPaymentPageLinkBuilderTests {
     public void itShouldYieldAnHppLink() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
-        URI link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create(A_RETURN_URI));
+        URI link = sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create(A_RETURN_URI));
 
         assertEquals(
                 A_HPP_ENDPOINT + "/payments#payment_id="
                         + A_PAYMENT_ID
                         + "&payment_token="
-                        + A_PAYMENT_TOKEN
+                        + A_RESOURCE_TOKEN
                         + "&return_uri="
                         + A_RETURN_URI,
                 link.toString());
@@ -39,7 +39,7 @@ class HostedPaymentPageLinkBuilderTests {
 
         Throwable thrown = assertThrows(
                 TrueLayerException.class,
-                () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_PAYMENT_TOKEN, URI.create("")));
+                () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, A_RESOURCE_TOKEN, URI.create("")));
 
         assertEquals("return_uri must be set", thrown.getMessage());
     }
@@ -51,13 +51,13 @@ class HostedPaymentPageLinkBuilderTests {
 
         Throwable thrown = assertThrows(
                 TrueLayerException.class,
-                () -> sut.getHostedPaymentPageLink("", A_PAYMENT_TOKEN, URI.create(A_RETURN_URI)));
+                () -> sut.getHostedPaymentPageLink("", A_RESOURCE_TOKEN, URI.create(A_RETURN_URI)));
 
         assertEquals("payment_id must be set", thrown.getMessage());
     }
 
     @Test
-    @DisplayName("it should thrown an exception if payment_token is empty")
+    @DisplayName("it should thrown an exception if resource_token is empty")
     public void itShouldThrowExceptionForEmptyResourceToken() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
@@ -65,7 +65,7 @@ class HostedPaymentPageLinkBuilderTests {
                 TrueLayerException.class,
                 () -> sut.getHostedPaymentPageLink(A_PAYMENT_ID, "", URI.create(A_RETURN_URI)));
 
-        assertEquals("payment_token must be set", thrown.getMessage());
+        assertEquals("resource_token must be set", thrown.getMessage());
     }
 
     private HostedPaymentPageLinkBuilder buildHppBuilder() {
