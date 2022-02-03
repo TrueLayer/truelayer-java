@@ -80,7 +80,6 @@ class ErrorMapperTests {
         assertEquals(buildGenericError(GENERIC_ERROR_TITLE), actual);
     }
 
-    @SneakyThrows
     @Test
     @DisplayName("it should map an no content error response into a generic problem details")
     public void shouldBuildAProblemDetailsForAErrorResponseWithNoContent() {
