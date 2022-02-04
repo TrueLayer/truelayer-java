@@ -147,17 +147,19 @@ public class AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder().returnUri(LOCALHOST_RETURN_URI).build())
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponseResponse = tlClient.payments()
+        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
-        assertNotError(startAuthorizationFlowResponseResponse);
+        assertNotError(startAuthorizationFlowResponse);
 
         // Submit the provider selection
-        ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponseResponse = tlClient.payments()
+        ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponse = tlClient.payments()
                 .submitProviderSelection(
                         createPaymentResponse.getData().getId(),
                         SubmitProviderSelectionRequest.builder()
@@ -165,7 +167,7 @@ public class AcceptanceTests {
                                 .build())
                 .get();
 
-        assertNotError(submitProviderSelectionResponseResponse);
+        assertNotError(submitProviderSelectionResponse);
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {

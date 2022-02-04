@@ -2,6 +2,7 @@ package truelayer.java.payments.entities.paymentdetail;
 
 import static truelayer.java.payments.entities.paymentdetail.RedirectStatus.Type.SUPPORTED;
 
+import java.net.URI;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -10,5 +11,5 @@ import lombok.Value;
 public class SupportedRedirectStatus extends RedirectStatus {
     Type type = SUPPORTED;
 
-    String returnUri;
+    URI returnUri;
 }

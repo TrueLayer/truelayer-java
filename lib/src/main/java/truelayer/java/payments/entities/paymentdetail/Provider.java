@@ -1,5 +1,6 @@
 package truelayer.java.payments.entities.paymentdetail;
 
+import java.net.URI;
 import lombok.Value;
 
 @Value
@@ -8,9 +9,9 @@ public class Provider {
 
     String displayName;
 
-    String iconUri;
+    URI iconUri;
 
-    String logoUri;
+    URI logoUri;
 
     String bgColor;
 
