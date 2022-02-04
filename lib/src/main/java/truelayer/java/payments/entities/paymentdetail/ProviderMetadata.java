@@ -2,6 +2,7 @@ package truelayer.java.payments.entities.paymentdetail;
 
 import static truelayer.java.payments.entities.paymentdetail.Metadata.Type.PROVIDER;
 
+import java.net.URI;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -14,9 +15,9 @@ public class ProviderMetadata extends Metadata {
 
     String displayName;
 
-    String iconUri;
+    URI iconUri;
 
-    String logoUri;
+    URI logoUri;
 
     String bgColor;
 

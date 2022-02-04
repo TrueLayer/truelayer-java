@@ -3,6 +3,7 @@ package truelayer.java.payments.entities;
 import static com.fasterxml.jackson.annotation.JsonInclude.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.net.URI;
 import lombok.*;
 
 @Getter
@@ -25,7 +26,7 @@ public class StartAuthorizationFlowRequest {
     @ToString
     @EqualsAndHashCode
     public static class Redirect {
-        String returnUri;
+        URI returnUri;
     }
 
     public static StartAuthorizationFlowRequestBuilder builder() {
