@@ -32,14 +32,14 @@ public class HttpLoggingInterceptor implements Interceptor {
 
         ThreadContext.put(IDEMPOTENCY_KEY, idempotencyKey);
 
-        logger.debug(
+        logger.trace(
                 "--> {} {} headers={}",
                 request.method(),
                 request.url(),
                 sensitiveHeaderGuard.getSanitizedHeaders(request.headers()));
 
         Response response = chain.proceed(request);
-        logger.debug(
+        logger.trace(
                 "<-- {} {} headers={} error={}",
                 response.code(),
                 request.url(),

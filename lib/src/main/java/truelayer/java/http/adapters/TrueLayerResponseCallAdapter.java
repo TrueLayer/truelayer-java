@@ -3,7 +3,6 @@ package truelayer.java.http.adapters;
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.*;
-import truelayer.java.http.LoggerFactory;
 import truelayer.java.http.entities.ApiResponse;
 
 /**
@@ -18,7 +17,7 @@ public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Com
 
     TrueLayerResponseCallAdapter(Type responseType) {
         this.responseType = responseType;
-        this.errorMapper = new ErrorMapper(LoggerFactory.NewSystemLogger());
+        this.errorMapper = new ErrorMapper();
     }
 
     @Override
