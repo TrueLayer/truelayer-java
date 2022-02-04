@@ -9,8 +9,4 @@ public class LoggerFactory {
     public static TaggedLogger NewHttpLogger() {
         return Logger.tag("HTTP");
     }
-
-    public static TaggedLogger NewSystemLogger() {
-        return Logger.tag("SYSTEM");
-    }
 }

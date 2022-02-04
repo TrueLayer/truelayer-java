@@ -153,7 +153,10 @@ public class TestUtils {
             if (withAuthorization) {
                 request.withHeader(AUTHORIZATION, matching(".*"));
             }
-            return stubFor(request.willReturn(aResponse().withStatus(status).withBodyFile(bodyFile)));
+            return stubFor(request.willReturn(aResponse()
+                    .withHeader(TL_CORRELATION_ID, UUID.randomUUID().toString())
+                    .withStatus(status)
+                    .withBodyFile(bodyFile)));
         }
     }
 }
