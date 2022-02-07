@@ -47,7 +47,7 @@ public class AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create and get by id a payment with user_selection provider")
+    @DisplayName("It should create and get by id a payment with user_selected provider")
     @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
         // create payment
