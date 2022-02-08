@@ -7,6 +7,9 @@ import truelayer.java.ClientCredentials;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 
+/**
+ * @inheritDoc
+ */
 @Value
 public class AuthenticationHandler implements IAuthenticationHandler {
     ClientCredentials clientCredentials;

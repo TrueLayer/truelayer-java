@@ -5,6 +5,9 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 
+/**
+ * Exposes all the payments related capabilities of the library.
+ */
 public interface IPaymentHandler {
 
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest request);

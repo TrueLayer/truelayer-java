@@ -10,6 +10,11 @@ import truelayer.java.TrueLayerException;
 import truelayer.java.common.Constants;
 import truelayer.java.configuration.Configuration.ConfigurationBuilder;
 
+/**
+ * Class responsible for assembling the configuration of this library.
+ *
+ * @see Configuration
+ */
 public class ConfigurationAssembler {
     private static final String CONFIG_FILE_PREXIF = "truelayer-java";
 

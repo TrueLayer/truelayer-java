@@ -6,6 +6,9 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 
+/**
+ * @inheritDoc
+ */
 @Value
 public class PaymentHandler implements IPaymentHandler {
     IPaymentsApi paymentsApi;

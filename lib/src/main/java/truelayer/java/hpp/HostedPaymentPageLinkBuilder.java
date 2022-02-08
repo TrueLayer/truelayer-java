@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import truelayer.java.TrueLayerException;
 
+/**
+ * @inheritDoc
+ */
 @Builder(builderMethodName = "New")
 @Getter
 public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuilder {

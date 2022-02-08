@@ -10,9 +10,7 @@ import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
 
 /**
- * Builder class for TrueLayerClient instances. This is deliberately not managed
- * with Lombok annotations as its building phase is customized and slightly deviate from
- * the way Lombok builds stuff.
+ * Builder class for TrueLayerClient instances.
  */
 public class TrueLayerClientBuilder {
     private Optional<ClientCredentials> clientCredentials = Optional.empty();

@@ -8,6 +8,9 @@ import retrofit2.http.POST;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 
+/**
+ * Interface that models /connect/* endpoints
+ */
 public interface IAuthenticationApi {
 
     @FormUrlEncoded

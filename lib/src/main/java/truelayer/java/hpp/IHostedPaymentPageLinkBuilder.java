@@ -2,6 +2,9 @@ package truelayer.java.hpp;
 
 import java.net.URI;
 
+/**
+ * Exposes all the Hosted Payment Page related capabilities of the library.
+ */
 public interface IHostedPaymentPageLinkBuilder {
     /**
      * Builds a link to TrueLayer HPP with the given details

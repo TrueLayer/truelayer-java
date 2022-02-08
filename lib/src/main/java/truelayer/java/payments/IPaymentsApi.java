@@ -6,6 +6,9 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 
+/**
+ * Interface that models /payments/* endpoints
+ */
 public interface IPaymentsApi {
 
     @POST("/payments")
