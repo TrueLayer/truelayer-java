@@ -6,7 +6,7 @@ import lombok.*;
 
 /**
  * Model for API responses object. Instances of this class can contain either a data or an error object.
- * Comes with a utility method to easily understand whether the object holds a successful or an error response.
+ * Comes with a <code>isError()</code> utility method to easily understand whether the object holds a successful or an error response.
  */
 @Builder
 @Getter
