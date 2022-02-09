@@ -1,7 +1,7 @@
 package truelayer.java.common;
 
 /**
- * Constants class
+ * Library constants class
  */
 public final class Constants {
     /**

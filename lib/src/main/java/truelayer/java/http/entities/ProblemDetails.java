@@ -6,6 +6,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Model for errors in the Problem Details format.
+ *
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc7807">Problem Details RFC</a>
+ */
 @Builder
 @Getter
 @ToString

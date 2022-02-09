@@ -1,4 +1,4 @@
-package truelayer.java.http.adapters;
+package truelayer.java.http.mappers;
 
 import static truelayer.java.common.Constants.HeaderNames.TL_CORRELATION_ID;
 import static truelayer.java.common.Utils.getObjectMapper;
@@ -9,8 +9,8 @@ import okhttp3.Headers;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.ObjectUtils;
 import retrofit2.Response;
-import truelayer.java.http.adapters.entities.LegacyError;
 import truelayer.java.http.entities.ProblemDetails;
+import truelayer.java.http.mappers.entities.LegacyError;
 
 public class ErrorMapper {
     public static final String GENERIC_ERROR_TITLE = "server_error";

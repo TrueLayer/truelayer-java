@@ -4,6 +4,9 @@ import java.util.List;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+/**
+ * Class that models the library configuration.
+ */
 @Builder
 @Getter
 @EqualsAndHashCode

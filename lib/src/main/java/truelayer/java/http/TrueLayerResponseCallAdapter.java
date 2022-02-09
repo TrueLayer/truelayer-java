@@ -1,9 +1,10 @@
-package truelayer.java.http.adapters;
+package truelayer.java.http;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.*;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.http.mappers.ErrorMapper;
 
 /**
  * This class is extends <a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/java8/src/main/java/retrofit2/adapter/java8/Java8CallAdapterFactory.java">Retrofit's ResponseCallAdapter</a>
@@ -11,7 +12,7 @@ import truelayer.java.http.entities.ApiResponse;
  *
  * @see truelayer.java.http.entities.ApiResponse
  */
-public final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, CompletableFuture<ApiResponse<R>>> {
+final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, CompletableFuture<ApiResponse<R>>> {
     private final Type responseType;
     private final ErrorMapper errorMapper;
 

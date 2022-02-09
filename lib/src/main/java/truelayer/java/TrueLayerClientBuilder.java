@@ -10,9 +10,7 @@ import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
 
 /**
- * Builder class for TrueLayerClient instances. This is deliberately not managed
- * with Lombok annotations as its building phase is customized and slightly deviate from
- * the way Lombok builds stuff.
+ * Builder class for TrueLayerClient instances.
  */
 public class TrueLayerClientBuilder {
     private Optional<ClientCredentials> clientCredentials = Optional.empty();
@@ -24,21 +22,43 @@ public class TrueLayerClientBuilder {
 
     TrueLayerClientBuilder() {}
 
+    /**
+     * Utility to set the client credentials required for Oauth2 protected endpoints.
+     * @param credentials the credentials object that holds client id and secret.
+     * @return the instance of the client builder used.
+     * @see ClientCredentials
+     */
     public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
         this.clientCredentials = Optional.of(credentials);
         return this;
     }
 
+    /**
+     * Utility to set the signing options required for payments.
+     * @param signingOptions the signing options object that holds signature related informations.
+     * @return the instance of the client builder used.
+     * @see SigningOptions
+     */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = Optional.of(signingOptions);
         return this;
     }
 
+    /**
+     * Utility to configure the library to interact with TrueLayer sandbox environment.
+     * By default, TrueLayer production environment is used.
+     * @return the instance of the client builder used.
+     */
     public TrueLayerClientBuilder useSandbox() {
         this.useSandbox = true;
         return this;
     }
 
+    /**
+     * Builds the Java library main class to interact with TrueLayer APIs.
+     * @return a client instance
+     * @see TrueLayerClient
+     */
     public TrueLayerClient build() {
         Configuration configuration = new ConfigurationAssembler(this.useSandbox).assemble();
 

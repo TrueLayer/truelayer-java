@@ -15,9 +15,6 @@ import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
 import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 
-/**
- * Custom  builder class
- */
 public class AuthenticationHandlerBuilder {
 
     private Configuration configuration;
