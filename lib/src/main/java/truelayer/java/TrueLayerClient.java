@@ -14,7 +14,7 @@ import truelayer.java.payments.IPaymentHandler;
  * @see TrueLayerClientBuilder
  */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class TrueLayerClient implements ITrueLayerClient {
+public class TrueLayerClient implements ITrueLayerClient {
     private final IAuthenticationHandler authenticationHandler;
     private final Optional<IPaymentHandler> paymentHandler;
     private final IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
