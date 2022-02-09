@@ -1,4 +1,4 @@
-package truelayer.java.http.adapters;
+package truelayer.java.http;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -13,7 +13,7 @@ import retrofit2.Retrofit;
  *
  * @see truelayer.java.http.entities.ApiResponse
  */
-public final class TrueLayerApiAdapterFactory extends CallAdapter.Factory {
+final class TrueLayerApiAdapterFactory extends CallAdapter.Factory {
     @Override
     public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
         if (getRawType(returnType) != CompletableFuture.class) {

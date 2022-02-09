@@ -1,4 +1,4 @@
-package truelayer.java.http.adapters.entities;
+package truelayer.java.http.mappers.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Value;
