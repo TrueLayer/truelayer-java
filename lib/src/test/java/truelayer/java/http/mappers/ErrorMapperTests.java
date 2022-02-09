@@ -1,12 +1,12 @@
-package truelayer.java.http.adapters;
+package truelayer.java.http.mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
 import static truelayer.java.TestUtils.deserializeJsonFileTo;
 import static truelayer.java.common.Constants.HeaderNames.TL_CORRELATION_ID;
-import static truelayer.java.http.adapters.ErrorMapper.GENERIC_ERROR_TITLE;
-import static truelayer.java.http.adapters.ErrorMapper.GENERIC_ERROR_TYPE;
+import static truelayer.java.http.mappers.ErrorMapper.GENERIC_ERROR_TITLE;
+import static truelayer.java.http.mappers.ErrorMapper.GENERIC_ERROR_TYPE;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
