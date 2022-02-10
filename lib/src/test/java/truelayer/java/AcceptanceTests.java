@@ -26,7 +26,7 @@ import truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProvi
 
 @Tag("acceptance")
 public class AcceptanceTests {
-    public static final String LOCALHOST_RETURN_URI = "http://localhost:8080";
+    public static final String LOCALHOST_RETURN_URI = "http://localhost:3000/callback";
     public static final String MOCK_PROVIDER_ID = "mock-payments-gb-redirect";
 
     private static TrueLayerClient tlClient;
@@ -177,7 +177,7 @@ public class AcceptanceTests {
                 .paymentMethod(BankTransfer.builder()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
-                                .merchantAccountId("e83c4c20-b2ad-4b73-8a32-ee855362d72a")
+                                .merchantAccountId("93e2c5f1-d935-47aa-90c0-be4da32738ee")
                                 .build())
                         .build())
                 .user(User.builder()
