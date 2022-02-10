@@ -2,6 +2,9 @@
 
 A simple MVC project based on [Quarkus](https://quarkus.io), that comes with a UI to send donations via TrueLayer Payments API.
 
+![home](./home.png)
+
+
 ## Requirements
 
 To run the project it is enough to have Java 11 installed with  with `JAVA_HOME` environment variable configured appropriately;
