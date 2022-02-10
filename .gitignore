@@ -6,3 +6,6 @@ build
 
 #IJ settings
 .idea
+
+#OSX
+**/.DS_Store
