@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quarkus MVC</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="/donate">Quarkus MVC</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/donate">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        <h1 class="display-4 mb-4 text-center">Make a donation</h1>
+
+        <div class="row justify-content-center">
+            <form class="needs-validation col-sm-10" action="/donate" method="post" novalidate>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" required>
+                        <div class="invalid-feedback">
+                            Please choose a name.
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control form-control-lg" id="email" name="email" required>
+                        <div class="invalid-feedback">
+                            Please choose an email.
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group mb-3 col-md-12">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">GBP</span>
+                        </div>
+                        <input type="text" placeholder="amount in minor" class="form-control form-control-lg" id="amount" name="amount" required/>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary btn-lg">Donate!</button>
+                        </div>
+                        <div class="invalid-feedback">
+                            Please choose an amount.
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2022 - Quarkus MVC
+    </div>
+</footer>
+<script src="/js/site.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
