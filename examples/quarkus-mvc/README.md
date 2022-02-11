@@ -24,6 +24,8 @@ In addition, make sure to properly configure the redirect URI in the [DonationSe
 ```java
 return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId(), paymentResponse.getData().getResourceToken(),
                 URI.create("<redirect_url>"));
+```
+
 If you're using a non final release of the Java library, please refer to [this 
 documentation](https://github.com/TrueLayer/truelayer-java#unstable-releases) to be able to declare the library as dependency of this project
 
