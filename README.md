@@ -32,7 +32,7 @@ repositories {
 }
 ```
 
-Then include a gradle.properties file in your main module which includes your Github username and a personal access token:
+Then include a gradle.properties file in your main module which includes your Github username and a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token):
  
 ```properties
 # gradle.properties
@@ -41,9 +41,11 @@ gpr.key=${your TL PAT}
 ```
 
 Please note that the above personal access token should have at least the following scopes: 
-- repo
-- read:packages
-- read:org
+- `repo`
+- `read:packages`
+- `read:org`
+
+**Also verify that you have configured SSO.** 
 
 Finally make sure you declare the desired library version as dependency of your project: 
 
