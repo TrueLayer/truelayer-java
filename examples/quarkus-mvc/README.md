@@ -20,7 +20,10 @@ set the following environment variables:
 - `TL_CLIENT_SECRET`
 - `TL_SIGNING_KEY_ID`
 - `TL_SIGNING_PRIVATE_KEY_LOCATION`
-
+In addition, make sure to properly configure the redirect URI in the [DonationService.createDonationLink()](./src/main/java/com/truelayer/quarkusmvc/services/DonationService.java#L71) method, so that the value is one of the redirect URIs set as allowed in your Console Application:
+```java
+return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId(), paymentResponse.getData().getResourceToken(),
+                URI.create("<redirect_url>"));
 If you're using a non final release of the Java library, please refer to [this 
 documentation](https://github.com/TrueLayer/truelayer-java#unstable-releases) to be able to declare the library as dependency of this project
 
