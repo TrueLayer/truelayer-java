@@ -1,22 +1,26 @@
 package truelayer.java.payments;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
+import static truelayer.java.common.Constants.Scopes.PAYMENTS;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.Interceptor;
 import retrofit2.Retrofit;
+import truelayer.java.Environment;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
-import truelayer.java.configuration.Configuration;
+import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.http.HttpClientBuilder;
 import truelayer.java.http.interceptors.*;
 import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 
 public class PaymentHandlerBuilder {
-    private Configuration configuration;
+    private VersionInfo versionInfo;
+
+    private Environment environment;
 
     private SigningOptions signingOptions;
 
@@ -24,8 +28,13 @@ public class PaymentHandlerBuilder {
 
     PaymentHandlerBuilder() {}
 
-    public PaymentHandlerBuilder configuration(Configuration configuration) {
-        this.configuration = configuration;
+    public PaymentHandlerBuilder environment(Environment environment) {
+        this.environment = environment;
+        return this;
+    }
+
+    public PaymentHandlerBuilder versionInfo(VersionInfo versionInfo) {
+        this.versionInfo = versionInfo;
         return this;
     }
 
@@ -44,17 +53,17 @@ public class PaymentHandlerBuilder {
         notEmpty(signingOptions.keyId(), "key id must be not empty");
         notNull(signingOptions.privateKey(), "private key must be not empty.");
 
-        List<Interceptor> networkInterceptors = Collections.singletonList(HttpLoggingInterceptor.New());
+        List<Interceptor> networkInterceptors = singletonList(HttpLoggingInterceptor.New());
 
         List<Interceptor> applicationInterceptors = Arrays.asList(
                 new IdempotencyKeyInterceptor(),
-                new UserAgentInterceptor(configuration.versionInfo()),
+                new UserAgentInterceptor(versionInfo),
                 new SignatureInterceptor(signingOptions),
                 new AuthenticationInterceptor(
-                        authenticationHandler, configuration.payments().scopes()));
+                        authenticationHandler, singletonList(PAYMENTS)));
 
         Retrofit paymentHttpClient = new HttpClientBuilder()
-                .baseUrl(configuration.payments().endpointUrl())
+                .baseUrl(environment.getPaymentsApiUri().toString())
                 .applicationInterceptors(applicationInterceptors)
                 .networkInterceptors(networkInterceptors)
                 .build();

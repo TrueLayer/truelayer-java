@@ -13,7 +13,7 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
 
     @Override
     protected Interceptor getInterceptor() {
-        return new UserAgentInterceptor(getConfiguration().versionInfo());
+        return new UserAgentInterceptor(getVersionInfo());
     }
 
     @BeforeEach

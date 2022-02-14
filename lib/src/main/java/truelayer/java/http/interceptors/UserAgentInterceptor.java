@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import truelayer.java.configuration.Configuration;
+import truelayer.java.versioninfo.VersionInfo;
 
 @RequiredArgsConstructor
 public class UserAgentInterceptor implements Interceptor {
-    private final Configuration.VersionInfo versionInfo;
+    private final VersionInfo versionInfo;
 
     @Override
     public Response intercept(Chain chain) throws IOException {

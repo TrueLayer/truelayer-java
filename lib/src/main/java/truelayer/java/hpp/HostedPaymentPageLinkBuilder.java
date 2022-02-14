@@ -13,7 +13,7 @@ import truelayer.java.TrueLayerException;
 @Builder(builderMethodName = "New")
 @Getter
 public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuilder {
-    private String endpoint;
+    private URI uri;
 
     @Override
     public URI getHostedPaymentPageLink(String paymentId, String resource_token, URI returnUri) {
@@ -31,7 +31,7 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
 
         String link = String.format(
                 "%s/payments#payment_id=%s&resource_token=%s&return_uri=%s",
-                endpoint, paymentId, resource_token, returnUri);
+                uri, paymentId, resource_token, returnUri);
         return URI.create(link);
     }
 }

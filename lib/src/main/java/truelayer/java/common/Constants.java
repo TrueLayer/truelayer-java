@@ -4,6 +4,14 @@ package truelayer.java.common;
  * Library constants class
  */
 public final class Constants {
+
+    /**
+     * Oauth scopes
+     */
+    public static final class Scopes {
+        public static final String PAYMENTS = "payments";
+    }
+
     /**
      * Configuration keys
      */

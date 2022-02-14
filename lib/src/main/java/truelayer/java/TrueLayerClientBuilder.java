@@ -1,24 +1,26 @@
 package truelayer.java;
 
-import java.util.Optional;
-import truelayer.java.auth.AuthenticationHandlerBuilder;
+import org.apache.commons.lang3.ObjectUtils;
+import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
-import truelayer.java.configuration.Configuration;
-import truelayer.java.configuration.ConfigurationAssembler;
+import truelayer.java.versioninfo.VersionInfo;
+import truelayer.java.versioninfo.VersionInfoLoader;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
+
+import java.util.Optional;
 
 /**
  * Builder class for TrueLayerClient instances.
  */
 public class TrueLayerClientBuilder {
-    private Optional<ClientCredentials> clientCredentials = Optional.empty();
+    private ClientCredentials clientCredentials;
 
     private Optional<SigningOptions> signingOptions = Optional.empty();
 
     // By default, production is used
-    private boolean useSandbox;
+    private Environment environment = Environment.live();
 
     TrueLayerClientBuilder() {}
 
@@ -29,7 +31,7 @@ public class TrueLayerClientBuilder {
      * @see ClientCredentials
      */
     public TrueLayerClientBuilder clientCredentials(ClientCredentials credentials) {
-        this.clientCredentials = Optional.of(credentials);
+        this.clientCredentials = credentials;
         return this;
     }
 
@@ -45,12 +47,14 @@ public class TrueLayerClientBuilder {
     }
 
     /**
-     * Utility to configure the library to interact with TrueLayer sandbox environment.
+     * Utility to configure the library to interact a specific TrueLayer environment.
      * By default, TrueLayer production environment is used.
+     * @param environment the environment to use
      * @return the instance of the client builder used.
+     * @see Environment
      */
-    public TrueLayerClientBuilder useSandbox() {
-        this.useSandbox = true;
+    public TrueLayerClientBuilder withEnvironment(Environment environment) {
+        this.environment = environment;
         return this;
     }
 
@@ -60,13 +64,15 @@ public class TrueLayerClientBuilder {
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        Configuration configuration = new ConfigurationAssembler(this.useSandbox).assemble();
+        VersionInfo versionInfo = new VersionInfoLoader().load();
 
-        ClientCredentials clientCredentials =
-                this.clientCredentials.orElseThrow(() -> new TrueLayerException("client credentials must be set"));
+        if(ObjectUtils.isEmpty(clientCredentials)){
+            throw new TrueLayerException("client credentials must be set");
+        }
 
-        IAuthenticationHandler authenticationHandler = AuthenticationHandlerBuilder.New()
-                .configuration(configuration)
+        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
+                .versionInfo(versionInfo)
+                .environment(environment)
                 .clientCredentials(clientCredentials)
                 .build();
 
@@ -76,14 +82,15 @@ public class TrueLayerClientBuilder {
                     this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set"));
 
             paymentsHandler = PaymentHandler.New()
-                    .configuration(configuration)
+                    .versionInfo(versionInfo)
+                    .environment(environment)
                     .signingOptions(signingOptions)
                     .authenticationHandler(authenticationHandler)
                     .build();
         }
 
         IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
-                .endpoint(configuration.hostedPaymentPage().endpointUrl())
+                .uri(environment.getHppUri())
                 .build();
 
         return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
