@@ -30,7 +30,7 @@ public class TrueLayerClientProvider {
     public ITrueLayerClient producer(){
 
         return TrueLayerClient.New()
-                .useSandbox()
+                .withEnvironment(Environment.sandbox())
                 .clientCredentials(
                         ClientCredentials.builder()
                                 .clientId(clientId)
