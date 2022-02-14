@@ -40,7 +40,7 @@ class AuthenticationHandlerBuilderTests {
                 NullPointerException.class,
                 () -> AuthenticationHandler.New().versionInfo(getVersionInfo()).build());
 
-        assertEquals("client credentials must be set", thrown.getMessage());
+        assertEquals("environment must be set", thrown.getMessage());
     }
 
     @Test
@@ -50,6 +50,6 @@ class AuthenticationHandlerBuilderTests {
                 .environment(getTestEnvironment(URI.create("http://localhost")))
                 .build());
 
-        assertEquals("client credentials must be set", thrown.getMessage());
+        assertEquals("version info file not present", thrown.getMessage());
     }
 }

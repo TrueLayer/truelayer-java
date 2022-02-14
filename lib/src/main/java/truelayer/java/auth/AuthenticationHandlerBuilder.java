@@ -42,9 +42,13 @@ public class AuthenticationHandlerBuilder {
     }
 
     public AuthenticationHandler build() {
-        notNull(clientCredentials, "signing options must be set");
-        notEmpty(clientCredentials.clientId(), "key id must be not empty");
-        notNull(clientCredentials.clientSecret(), "private key must be not empty.");
+        notNull(versionInfo, "version info file not present");
+
+        notNull(environment, "environment must be set");
+
+        notNull(clientCredentials, "client credentials must be set");
+        notEmpty(clientCredentials.clientId(), "client id must be not empty");
+        notNull(clientCredentials.clientSecret(), "client secret must be not empty.");
 
         List<Interceptor> networkInterceptors = Collections.singletonList(HttpLoggingInterceptor.New());
 

@@ -49,6 +49,10 @@ public class PaymentHandlerBuilder {
     }
 
     public PaymentHandler build() {
+        notNull(versionInfo, "version info file not present");
+
+        notNull(environment, "environment must be set");
+
         notNull(signingOptions, "signing options must be set");
         notEmpty(signingOptions.keyId(), "key id must be not empty");
         notNull(signingOptions.privateKey(), "private key must be not empty.");
