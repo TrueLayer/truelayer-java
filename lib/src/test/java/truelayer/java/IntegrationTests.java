@@ -7,7 +7,6 @@ import static truelayer.java.TestUtils.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;

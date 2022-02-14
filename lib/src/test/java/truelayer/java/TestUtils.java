@@ -8,18 +8,15 @@ import static truelayer.java.common.Utils.getObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.versioninfo.VersionInfo;
 
 public class TestUtils {
 
@@ -38,16 +35,15 @@ public class TestUtils {
                 .build();
     }
 
-    public static VersionInfo getVersionInfo(){
-        return VersionInfo.builder().libraryName(LIBRARY_NAME)
+    public static VersionInfo getVersionInfo() {
+        return VersionInfo.builder()
+                .libraryName(LIBRARY_NAME)
                 .libraryVersion(LIBRARY_VERSION)
                 .build();
-
     }
 
-    public static Environment getTestEnvironment(URI endpointUrl){
-        return Environment.custom(endpointUrl,
-                endpointUrl, endpointUrl);
+    public static Environment getTestEnvironment(URI endpointUrl) {
+        return Environment.custom(endpointUrl, endpointUrl, endpointUrl);
     }
 
     @SneakyThrows

@@ -3,12 +3,11 @@ package truelayer.java.payments;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
-
-import java.net.URI;
 
 class PaymentHandlerBuilderTests {
 
@@ -33,9 +32,9 @@ class PaymentHandlerBuilderTests {
     @Test
     @DisplayName("It should throw and exception if environment is not set")
     public void itShouldThrowExceptionIfEnvironmentNotSet() {
-        Throwable thrown = assertThrows(NullPointerException.class, () -> PaymentHandler.New()
-                .versionInfo(getVersionInfo())
-                .build());
+        Throwable thrown = assertThrows(
+                NullPointerException.class,
+                () -> PaymentHandler.New().versionInfo(getVersionInfo()).build());
 
         assertEquals("client credentials must be set", thrown.getMessage());
     }

@@ -30,8 +30,7 @@ public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuild
         }
 
         String link = String.format(
-                "%s/payments#payment_id=%s&resource_token=%s&return_uri=%s",
-                uri, paymentId, resource_token, returnUri);
+                "%s/payments#payment_id=%s&resource_token=%s&return_uri=%s", uri, paymentId, resource_token, returnUri);
         return URI.create(link);
     }
 }

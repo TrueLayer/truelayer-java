@@ -3,10 +3,9 @@ package truelayer.java.auth;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.net.URI;
 
 class AuthenticationHandlerBuilderTests {
 
@@ -37,9 +36,9 @@ class AuthenticationHandlerBuilderTests {
     @Test
     @DisplayName("It should throw and exception if environment is not set")
     public void itShouldThrowExceptionIfEnvironmentNotSet() {
-        Throwable thrown = assertThrows(NullPointerException.class, () -> AuthenticationHandler.New()
-                .versionInfo(getVersionInfo())
-                .build());
+        Throwable thrown = assertThrows(
+                NullPointerException.class,
+                () -> AuthenticationHandler.New().versionInfo(getVersionInfo()).build());
 
         assertEquals("client credentials must be set", thrown.getMessage());
     }

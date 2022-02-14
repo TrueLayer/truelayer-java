@@ -1,15 +1,14 @@
 package truelayer.java;
 
+import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
-import truelayer.java.versioninfo.VersionInfo;
-import truelayer.java.versioninfo.VersionInfoLoader;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.PaymentHandler;
-
-import java.util.Optional;
+import truelayer.java.versioninfo.VersionInfo;
+import truelayer.java.versioninfo.VersionInfoLoader;
 
 /**
  * Builder class for TrueLayerClient instances.
@@ -66,7 +65,7 @@ public class TrueLayerClientBuilder {
     public TrueLayerClient build() {
         VersionInfo versionInfo = new VersionInfoLoader().load();
 
-        if(ObjectUtils.isEmpty(clientCredentials)){
+        if (ObjectUtils.isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
@@ -89,9 +88,8 @@ public class TrueLayerClientBuilder {
                     .build();
         }
 
-        IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
-                .uri(environment.getHppUri())
-                .build();
+        IHostedPaymentPageLinkBuilder hppBuilder =
+                HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
         return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
     }

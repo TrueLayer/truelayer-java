@@ -1,21 +1,20 @@
 package truelayer.java.auth;
 
-import okhttp3.Interceptor;
-import retrofit2.Retrofit;
-import truelayer.java.ClientCredentials;
-import truelayer.java.Environment;
-import truelayer.java.versioninfo.VersionInfo;
-import truelayer.java.http.HttpClientBuilder;
-import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
-import truelayer.java.http.interceptors.UserAgentInterceptor;
-import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
+import okhttp3.Interceptor;
+import retrofit2.Retrofit;
+import truelayer.java.ClientCredentials;
+import truelayer.java.Environment;
+import truelayer.java.http.HttpClientBuilder;
+import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import truelayer.java.versioninfo.VersionInfo;
 
 public class AuthenticationHandlerBuilder {
 
@@ -49,9 +48,8 @@ public class AuthenticationHandlerBuilder {
 
         List<Interceptor> networkInterceptors = Collections.singletonList(HttpLoggingInterceptor.New());
 
-        List<Interceptor> applicationInterceptors = Arrays.asList(
-                new IdempotencyKeyInterceptor(),
-                new UserAgentInterceptor(versionInfo));
+        List<Interceptor> applicationInterceptors =
+                Arrays.asList(new IdempotencyKeyInterceptor(), new UserAgentInterceptor(versionInfo));
 
         Retrofit authHttpClient = new HttpClientBuilder()
                 .baseUrl(environment.getAuthApiUri().toString())
@@ -59,6 +57,7 @@ public class AuthenticationHandlerBuilder {
                 .networkInterceptors(networkInterceptors)
                 .build();
 
-        return new AuthenticationHandler(versionInfo, environment, clientCredentials, authHttpClient.create(IAuthenticationApi.class));
+        return new AuthenticationHandler(
+                versionInfo, environment, clientCredentials, authHttpClient.create(IAuthenticationApi.class));
     }
 }

@@ -12,10 +12,10 @@ import retrofit2.Retrofit;
 import truelayer.java.Environment;
 import truelayer.java.SigningOptions;
 import truelayer.java.auth.IAuthenticationHandler;
-import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.http.HttpClientBuilder;
 import truelayer.java.http.interceptors.*;
 import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import truelayer.java.versioninfo.VersionInfo;
 
 public class PaymentHandlerBuilder {
     private VersionInfo versionInfo;
@@ -59,8 +59,7 @@ public class PaymentHandlerBuilder {
                 new IdempotencyKeyInterceptor(),
                 new UserAgentInterceptor(versionInfo),
                 new SignatureInterceptor(signingOptions),
-                new AuthenticationInterceptor(
-                        authenticationHandler, singletonList(PAYMENTS)));
+                new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)));
 
         Retrofit paymentHttpClient = new HttpClientBuilder()
                 .baseUrl(environment.getPaymentsApiUri().toString())

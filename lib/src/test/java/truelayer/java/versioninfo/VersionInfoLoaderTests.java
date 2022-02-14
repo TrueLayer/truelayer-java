@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 /**
  * Unit test class for the mechanism that loads the library version information.
  * As the version info file is created at build as part of a Gradle task, we're not
