@@ -46,13 +46,13 @@ public class TrueLayerClientBuilder {
     }
 
     /**
-     * Utility to configure the library to interact a specific TrueLayer environment.
-     * By default, TrueLayer production environment is used.
+     * Utility to configure the library to interact a specific <i>TrueLayer</i> environment.
+     * By default, <i>TrueLayer</i> production environment is used.
      * @param environment the environment to use
      * @return the instance of the client builder used.
      * @see Environment
      */
-    public TrueLayerClientBuilder withEnvironment(Environment environment) {
+    public TrueLayerClientBuilder environment(Environment environment) {
         this.environment = environment;
         return this;
     }
