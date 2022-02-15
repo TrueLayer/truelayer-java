@@ -3,9 +3,10 @@ package truelayer.java.payments;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.auth.AuthenticationHandlerBuilder;
+import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 
 class PaymentHandlerBuilderTests {
@@ -13,12 +14,14 @@ class PaymentHandlerBuilderTests {
     @Test
     @DisplayName("It should yield a payment handler")
     public void itShouldYieldAnAuthenticationHandler() {
-        IAuthenticationHandler authHandler = AuthenticationHandlerBuilder.New()
-                .configuration(getConfiguration())
+        IAuthenticationHandler authHandler = AuthenticationHandler.New()
+                .versionInfo(getVersionInfo())
+                .environment(getTestEnvironment(URI.create("http://localhost")))
                 .clientCredentials(getClientCredentials())
                 .build();
         PaymentHandler paymentHandler = PaymentHandler.New()
-                .configuration(getConfiguration())
+                .versionInfo(getVersionInfo())
+                .environment(getTestEnvironment(URI.create("http://localhost")))
                 .signingOptions(getSigningOptions())
                 .authenticationHandler(authHandler)
                 .build();
@@ -27,12 +30,22 @@ class PaymentHandlerBuilderTests {
     }
 
     @Test
-    @DisplayName("It should throw and exception if signing options are missing")
-    public void itShouldThrowExceptionIfCredentialsMissing() {
+    @DisplayName("It should throw and exception if environment is not set")
+    public void itShouldThrowExceptionIfEnvironmentNotSet() {
         Throwable thrown = assertThrows(
                 NullPointerException.class,
-                () -> PaymentHandler.New().configuration(getConfiguration()).build());
+                () -> PaymentHandler.New().versionInfo(getVersionInfo()).build());
 
-        assertEquals("signing options must be set", thrown.getMessage());
+        assertEquals("environment must be set", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should throw and exception if version info are not set")
+    public void itShouldThrowExceptionIfVersionInfoNotSet() {
+        Throwable thrown = assertThrows(NullPointerException.class, () -> PaymentHandler.New()
+                .environment(getTestEnvironment(URI.create("http://localhost")))
+                .build());
+
+        assertEquals("version info file not present", thrown.getMessage());
     }
 }
