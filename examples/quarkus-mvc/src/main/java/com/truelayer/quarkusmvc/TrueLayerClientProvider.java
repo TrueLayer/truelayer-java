@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import truelayer.java.ClientCredentials;
 import truelayer.java.ITrueLayerClient;
+import truelayer.java.Environment;
 import truelayer.java.SigningOptions;
 import truelayer.java.TrueLayerClient;
 
@@ -30,7 +31,7 @@ public class TrueLayerClientProvider {
     public ITrueLayerClient producer(){
 
         return TrueLayerClient.New()
-                .useSandbox()
+                .environment(Environment.sandbox())
                 .clientCredentials(
                         ClientCredentials.builder()
                                 .clientId(clientId)

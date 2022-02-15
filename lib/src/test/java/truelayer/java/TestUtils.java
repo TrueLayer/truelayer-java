@@ -8,18 +8,15 @@ import static truelayer.java.common.Utils.getObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.configuration.Configuration;
-import truelayer.java.configuration.Configuration.Endpoint;
-import truelayer.java.configuration.Configuration.Payments;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.versioninfo.VersionInfo;
 
 public class TestUtils {
 
@@ -29,11 +26,7 @@ public class TestUtils {
     public static final String LIBRARY_NAME = "truelayer-java";
     public static final String LIBRARY_VERSION = "DEVELOPMENT";
 
-    public static final String A_HPP_ENDPOINT = "https://hpp.truelayer.com";
-    public static final String AN_AUTH_ENDPOINT = "https://auth.truelayer.com";
-    public static final String A_PAYMENTS_ENDPOINT = "https://pay.truelayer.com";
-
-    public static final List<String> A_PAYMENT_SCOPE = Collections.singletonList("https://pay.truelayer.com");
+    public static final URI A_HPP_ENDPOINT = URI.create("https://hpp.truelayer.com");
 
     public static ClientCredentials getClientCredentials() {
         return ClientCredentials.builder()
@@ -42,19 +35,15 @@ public class TestUtils {
                 .build();
     }
 
-    public static Configuration getConfiguration() {
-        return Configuration.builder()
-                .versionInfo(Configuration.VersionInfo.builder()
-                        .libraryName(LIBRARY_NAME)
-                        .libraryVersion(LIBRARY_VERSION)
-                        .build())
-                .hostedPaymentPage(new Endpoint(A_HPP_ENDPOINT))
-                .authentication(new Endpoint(AN_AUTH_ENDPOINT))
-                .payments(Payments.builder()
-                        .scopes(A_PAYMENT_SCOPE)
-                        .endpointUrl(A_PAYMENTS_ENDPOINT)
-                        .build())
+    public static VersionInfo getVersionInfo() {
+        return VersionInfo.builder()
+                .libraryName(LIBRARY_NAME)
+                .libraryVersion(LIBRARY_VERSION)
                 .build();
+    }
+
+    public static Environment getTestEnvironment(URI endpointUrl) {
+        return Environment.custom(endpointUrl, endpointUrl, endpointUrl);
     }
 
     @SneakyThrows

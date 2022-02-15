@@ -69,6 +69,6 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     private HostedPaymentPageLinkBuilder buildHppBuilder() {
-        return HostedPaymentPageLinkBuilder.New().endpoint(A_HPP_ENDPOINT).build();
+        return HostedPaymentPageLinkBuilder.New().uri(A_HPP_ENDPOINT).build();
     }
 }
