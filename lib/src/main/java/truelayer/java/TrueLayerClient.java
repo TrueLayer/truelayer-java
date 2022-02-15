@@ -1,11 +1,10 @@
 package truelayer.java;
 
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.IPaymentHandler;
+import truelayer.java.payments.IPaymentsApi;
 
 /**
  * Main class that holds TrueLayer API client. Should be built with the help of its builder
@@ -16,7 +15,7 @@ import truelayer.java.payments.IPaymentHandler;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TrueLayerClient implements ITrueLayerClient {
     private final IAuthenticationHandler authenticationHandler;
-    private final Optional<IPaymentHandler> paymentHandler;
+    private final IPaymentsApi paymentsHandler;
     private final IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     /**
@@ -39,10 +38,12 @@ public class TrueLayerClient implements ITrueLayerClient {
      * @inheritDoc
      */
     @Override
-    public IPaymentHandler payments() {
-        return paymentHandler.orElseThrow(
-                () -> new TrueLayerException(
-                        "payment handler not initialized. Make sure you specified the required signing options while initializing the library"));
+    public IPaymentsApi payments() {
+        if (paymentsHandler == null) {
+            throw new TrueLayerException(
+                    "payment handler not initialized. Make sure you specified the required signing options while initializing the library");
+        }
+        return paymentsHandler;
     }
 
     /**

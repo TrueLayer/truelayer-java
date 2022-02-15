@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.IPaymentHandler;
+import truelayer.java.payments.IPaymentsApi;
 
 public class TrueLayerClientTests {
 
@@ -45,7 +45,7 @@ public class TrueLayerClientTests {
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
-        IPaymentHandler paymentsHandler = trueLayerClient.payments();
+        IPaymentsApi paymentsHandler = trueLayerClient.payments();
 
         assertNotNull(paymentsHandler);
     }
@@ -59,8 +59,8 @@ public class TrueLayerClientTests {
                 .signingOptions(TestUtils.getSigningOptions())
                 .build();
 
-        IPaymentHandler paymentHandler1 = trueLayerClient.payments();
-        IPaymentHandler paymentHandler2 = trueLayerClient.payments();
+        IPaymentsApi paymentHandler1 = trueLayerClient.payments();
+        IPaymentsApi paymentHandler2 = trueLayerClient.payments();
 
         assertSame(paymentHandler1, paymentHandler2);
     }

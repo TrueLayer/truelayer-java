@@ -1,12 +1,14 @@
 package truelayer.java;
 
-import java.util.Optional;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+
 import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.PaymentHandler;
+import truelayer.java.http.HttpClientFactory;
+import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
 
@@ -16,7 +18,7 @@ import truelayer.java.versioninfo.VersionInfoLoader;
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
 
-    private Optional<SigningOptions> signingOptions = Optional.empty();
+    private SigningOptions signingOptions;
 
     // By default, production is used
     private Environment environment = Environment.live();
@@ -41,7 +43,7 @@ public class TrueLayerClientBuilder {
      * @see SigningOptions
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
-        this.signingOptions = Optional.of(signingOptions);
+        this.signingOptions = signingOptions;
         return this;
     }
 
@@ -63,34 +65,29 @@ public class TrueLayerClientBuilder {
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        VersionInfo versionInfo = new VersionInfoLoader().load();
-
         if (ObjectUtils.isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
+        VersionInfo versionInfo = new VersionInfoLoader().load();
+
+        HttpClientFactory httpClientFactory = new HttpClientFactory(environment, versionInfo, signingOptions);
+
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
-                .versionInfo(versionInfo)
-                .environment(environment)
                 .clientCredentials(clientCredentials)
+                .httpClient(httpClientFactory.newAuthApiHttpClient())
                 .build();
 
-        PaymentHandler paymentsHandler = null;
-        if (this.signingOptions.isPresent()) {
-            SigningOptions signingOptions =
-                    this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set"));
-
-            paymentsHandler = PaymentHandler.New()
-                    .versionInfo(versionInfo)
-                    .environment(environment)
-                    .signingOptions(signingOptions)
-                    .authenticationHandler(authenticationHandler)
-                    .build();
+        IPaymentsApi paymentsHandler = null;
+        if (isNotEmpty(signingOptions)) {
+            paymentsHandler = httpClientFactory
+                    .newPaymentsApiHttpClient(authenticationHandler)
+                    .create(IPaymentsApi.class);
         }
 
         IHostedPaymentPageLinkBuilder hppBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
-        return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
+        return new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
     }
 }
