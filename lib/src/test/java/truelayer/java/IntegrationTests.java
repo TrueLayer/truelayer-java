@@ -22,6 +22,8 @@ import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
+import truelayer.java.merchantaccounts.MerchantAccountsHandler;
+import truelayer.java.merchantaccounts.entities.ListMerchantAccountResponse;
 import truelayer.java.payments.IPaymentHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.*;
@@ -45,6 +47,11 @@ public class IntegrationTests {
                 .environment(testEnvironment)
                 .clientCredentials(getClientCredentials())
                 .build();
+        MerchantAccountsHandler merchantAccountsHandler = MerchantAccountsHandler.New()
+                .versionInfo(getVersionInfo())
+                .environment(testEnvironment)
+                .authenticationHandler(authenticationHandler)
+                .build();
         IPaymentHandler paymentsHandler = PaymentHandler.New()
                 .versionInfo(getVersionInfo())
                 .environment(testEnvironment)
@@ -55,7 +62,11 @@ public class IntegrationTests {
                 .uri(testEnvironment.getHppUri())
                 .build();
 
-        tlClient = new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
+        tlClient = new TrueLayerClient(
+                authenticationHandler,
+                Optional.ofNullable(paymentsHandler),
+                Optional.ofNullable(merchantAccountsHandler),
+                hppBuilder);
     }
 
     @Test
@@ -312,6 +323,33 @@ public class IntegrationTests {
         SubmitProviderSelectionResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should return the list of merchant accounts")
+    public void itShouldReturnTheListOfMerchantAccounts() {
+        String jsonResponseFile = "merchantaccounts/200.list_merchant_accounts.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<ListMerchantAccountResponse> response =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        assertNotError(response);
+        ListMerchantAccountResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, ListMerchantAccountResponse.class);
         assertEquals(expected, response.getData());
     }
 }

@@ -4,7 +4,7 @@ import static truelayer.java.payments.entities.beneficiary.Beneficiary.Type.EXTE
 
 import lombok.Builder;
 import lombok.Getter;
-import truelayer.java.payments.entities.paymentmethod.AccountIdentifier;
+import truelayer.java.entities.AccountIdentifier;
 
 @Builder
 @Getter

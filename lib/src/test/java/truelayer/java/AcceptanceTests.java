@@ -1,8 +1,8 @@
 package truelayer.java;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.common.Constants.HeaderNames.USER_AGENT;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -11,12 +11,13 @@ import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import truelayer.java.entities.BankTransfer;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.merchantaccounts.entities.ListMerchantAccountResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
@@ -44,6 +45,16 @@ public class AcceptanceTests {
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
                 .build();
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of all merchant accounts associated to the client")
+    public void shouldListAllMerchantAccounts() {
+        ApiResponse<ListMerchantAccountResponse> response =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+
+        assertNotError(response);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package truelayer.java.http.interceptors;
 
-import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
-import static truelayer.java.common.Constants.HeaderNames.TL_SIGNATURE;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
-import truelayer.java.payments.entities.paymentmethod.IbanAccountIdentifier;
+import truelayer.java.entities.IbanAccountIdentifier;
 
 class PaymentDetailTests {
 

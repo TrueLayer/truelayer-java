@@ -1,4 +1,4 @@
-package truelayer.java.payments.entities.paymentmethod;
+package truelayer.java.entities;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
 
 @JsonTypeInfo(
         include = JsonTypeInfo.As.EXISTING_PROPERTY,

@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.merchantaccounts.IMerchantAccountsHandler;
+import truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import truelayer.java.payments.IPaymentHandler;
 
 /**
@@ -17,6 +19,7 @@ import truelayer.java.payments.IPaymentHandler;
 public class TrueLayerClient implements ITrueLayerClient {
     private final IAuthenticationHandler authenticationHandler;
     private final Optional<IPaymentHandler> paymentHandler;
+    private final Optional<MerchantAccountsHandler> merchantAccountsHandler;
     private final IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     /**
@@ -43,6 +46,16 @@ public class TrueLayerClient implements ITrueLayerClient {
         return paymentHandler.orElseThrow(
                 () -> new TrueLayerException(
                         "payment handler not initialized. Make sure you specified the required signing options while initializing the library"));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public IMerchantAccountsHandler merchantAccounts() {
+        return merchantAccountsHandler.orElseThrow(
+                () -> new TrueLayerException(
+                        "merchant accounts handler not initialized. Make sure you specified the required signing options while initializing the library"));
     }
 
     /**

@@ -6,6 +6,7 @@ import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import truelayer.java.payments.PaymentHandler;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
@@ -75,6 +76,12 @@ public class TrueLayerClientBuilder {
                 .clientCredentials(clientCredentials)
                 .build();
 
+        MerchantAccountsHandler merchantAccountsHandler = MerchantAccountsHandler.New()
+                .versionInfo(versionInfo)
+                .environment(environment)
+                .authenticationHandler(authenticationHandler)
+                .build();
+
         PaymentHandler paymentsHandler = null;
         if (this.signingOptions.isPresent()) {
             SigningOptions signingOptions =
@@ -91,6 +98,10 @@ public class TrueLayerClientBuilder {
         IHostedPaymentPageLinkBuilder hppBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
-        return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
+        return new TrueLayerClient(
+                authenticationHandler,
+                Optional.ofNullable(paymentsHandler),
+                Optional.ofNullable(merchantAccountsHandler),
+                hppBuilder);
     }
 }

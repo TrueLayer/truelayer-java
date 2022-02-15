@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import truelayer.java.entities.BankTransfer;
 import truelayer.java.payments.entities.beneficiary.Beneficiary;
 
 // Unlike beneficiaries, this union currently comes with one
