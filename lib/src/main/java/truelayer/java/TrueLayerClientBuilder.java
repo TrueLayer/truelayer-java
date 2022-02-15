@@ -1,13 +1,21 @@
 package truelayer.java;
 
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static truelayer.java.common.Constants.Scopes.PAYMENTS;
 
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.http.HttpClientFactory;
+import truelayer.java.http.RetrofitFactory;
+import truelayer.java.http.interceptors.AuthenticationInterceptor;
+import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import truelayer.java.http.interceptors.SignatureInterceptor;
+import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
@@ -70,24 +78,36 @@ public class TrueLayerClientBuilder {
         }
 
         VersionInfo versionInfo = new VersionInfoLoader().load();
-
-        HttpClientFactory httpClientFactory = new HttpClientFactory(environment, versionInfo, signingOptions);
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
+        clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
+        OkHttpClient authHttpClient = clientBuilder.build();
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
-                .httpClient(httpClientFactory.newAuthApiHttpClient())
+                .httpClient(RetrofitFactory.build(authHttpClient, environment.getAuthApiUri()))
                 .build();
 
-        IPaymentsApi paymentsHandler = null;
-        if (isNotEmpty(signingOptions)) {
-            paymentsHandler = httpClientFactory
-                    .newPaymentsApiHttpClient(authenticationHandler)
-                    .create(IPaymentsApi.class);
-        }
-
-        IHostedPaymentPageLinkBuilder hppBuilder =
+        IHostedPaymentPageLinkBuilder hppLinkBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
-        return new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
+        if (isEmpty(signingOptions)) {
+            // return TL client with just authentication and HPP utils enabled
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
+        }
+
+        // By using .newBuilder() we share internal OkHttpClient resources
+        OkHttpClient paymentsHttpClient = authHttpClient
+                .newBuilder()
+                // we just need to add the signature and authentication interceptor
+                // as all the others are inherited
+                .addInterceptor(new SignatureInterceptor(signingOptions))
+                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
+                .build();
+        IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IPaymentsApi.class);
+
+        return new TrueLayerClient(authenticationHandler, paymentsHandler, hppLinkBuilder);
     }
 }

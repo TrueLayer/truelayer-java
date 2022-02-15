@@ -1,7 +1,5 @@
 package truelayer.java;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.payments.IPaymentsApi;
@@ -12,11 +10,25 @@ import truelayer.java.payments.IPaymentsApi;
  *
  * @see TrueLayerClientBuilder
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TrueLayerClient implements ITrueLayerClient {
-    private final IAuthenticationHandler authenticationHandler;
-    private final IPaymentsApi paymentsHandler;
-    private final IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+    private IAuthenticationHandler authenticationHandler;
+    private IPaymentsApi paymentsHandler;
+    private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+
+    public TrueLayerClient(
+            IAuthenticationHandler authenticationHandler, IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+        this.authenticationHandler = authenticationHandler;
+        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+    }
+
+    public TrueLayerClient(
+            IAuthenticationHandler authenticationHandler,
+            IPaymentsApi paymentsHandler,
+            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+        this.authenticationHandler = authenticationHandler;
+        this.paymentsHandler = paymentsHandler;
+        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+    }
 
     /**
      * Static utility to return a builder instance.

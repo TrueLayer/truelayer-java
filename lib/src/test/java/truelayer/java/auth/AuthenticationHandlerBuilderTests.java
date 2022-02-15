@@ -4,11 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
 import java.net.URI;
+import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import retrofit2.Retrofit;
 import truelayer.java.TrueLayerException;
-import truelayer.java.http.HttpClientFactory;
+import truelayer.java.http.RetrofitFactory;
 
 class AuthenticationHandlerBuilderTests {
 
@@ -35,8 +36,6 @@ class AuthenticationHandlerBuilderTests {
     }
 
     private Retrofit getTestHttpClient() {
-        HttpClientFactory testHttpClientFactory = new HttpClientFactory(
-                getTestEnvironment(URI.create("http://localhost")), getVersionInfo(), getSigningOptions());
-        return testHttpClientFactory.newAuthApiHttpClient();
+        return RetrofitFactory.build(new OkHttpClient(), URI.create("http://localhost"));
     }
 }

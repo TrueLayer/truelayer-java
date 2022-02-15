@@ -17,4 +17,6 @@ public class SigningOptions {
     private String keyId;
 
     private byte[] privateKey;
+
+    //todo add custom build with validation
 }

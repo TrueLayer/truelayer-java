@@ -13,16 +13,10 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.auth.AuthenticationHandler;
-import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
-import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.http.HttpClientFactory;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
-import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -38,9 +32,9 @@ public class IntegrationTests {
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
-
-        HttpClientFactory testHttpClientFactory =
-                new HttpClientFactory(testEnvironment, getVersionInfo(), getSigningOptions());
+        /*
+        RetrofitFactory testHttpClientFactory =
+                new RetrofitFactory(testEnvironment, getVersionInfo(), getSigningOptions());
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .httpClient(testHttpClientFactory.newAuthApiHttpClient())
@@ -51,9 +45,15 @@ public class IntegrationTests {
                 .create(IPaymentsApi.class);
         IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
                 .uri(testEnvironment.getHppUri())
+                .build();*/
+
+        tlClient = TrueLayerClient.New()
+                .clientCredentials(getClientCredentials())
+                .signingOptions(getSigningOptions())
+                .environment(testEnvironment)
                 .build();
 
-        tlClient = new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
+        // tlClient = new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
     }
 
     @Test
