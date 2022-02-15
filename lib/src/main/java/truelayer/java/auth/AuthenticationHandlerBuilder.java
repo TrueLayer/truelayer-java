@@ -61,7 +61,6 @@ public class AuthenticationHandlerBuilder {
                 .networkInterceptors(networkInterceptors)
                 .build();
 
-        return new AuthenticationHandler(
-                versionInfo, environment, clientCredentials, authHttpClient.create(IAuthenticationApi.class));
+        return new AuthenticationHandler(clientCredentials, authHttpClient.create(IAuthenticationApi.class));
     }
 }

@@ -14,10 +14,6 @@ import truelayer.java.versioninfo.VersionInfo;
  */
 @Value
 public class AuthenticationHandler implements IAuthenticationHandler {
-    VersionInfo versionInfo;
-
-    Environment environment;
-
     ClientCredentials clientCredentials;
 
     IAuthenticationApi authenticationApi;
