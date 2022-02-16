@@ -27,7 +27,7 @@ public class VersionInfoLoader {
         try {
             return new Configurations().properties(CONFIG_FILE_PREXIF + "." + "version" + ".properties");
         } catch (ConfigurationException e) {
-            throw new TrueLayerException(String.format("Unable to load %s", "version"), e);
+            throw new TrueLayerException("Unable to load library version file", e);
         }
     }
 }
