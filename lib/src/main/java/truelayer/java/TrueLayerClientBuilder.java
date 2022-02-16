@@ -31,6 +31,8 @@ public class TrueLayerClientBuilder {
     // By default, production is used
     private Environment environment = Environment.live();
 
+    private boolean logEnabled;
+
     TrueLayerClientBuilder() {}
 
     /**
@@ -68,6 +70,16 @@ public class TrueLayerClientBuilder {
     }
 
     /**
+     * Utility to enable default logs for HTTP traces. Produced logs are not
+     * leaking sensitive information
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withHttpLogs() {
+        this.logEnabled = true;
+        return this;
+    }
+
+    /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
      * @see TrueLayerClient
@@ -79,9 +91,13 @@ public class TrueLayerClientBuilder {
 
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+        if (logEnabled) {
+            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
+        }
+
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
-        clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
         OkHttpClient authHttpClient = clientBuilder.build();
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()

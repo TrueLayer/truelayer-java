@@ -43,6 +43,7 @@ public class AcceptanceTests {
                         .keyId(System.getenv("TL_SIGNING_KEY_ID"))
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
+                .withHttpLogs()
                 .build();
     }
 
