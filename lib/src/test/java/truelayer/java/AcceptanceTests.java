@@ -16,7 +16,7 @@ import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
@@ -51,7 +51,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
         // create payment
-        UserSelectedProviderSelection userSelectionProvider = UserSelectedProviderSelection.builder()
+        UserSelectedProviderSelection userSelectionProvider = ProviderSelection.newUserSelected()
                 .filter(ProviderFilter.builder()
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
@@ -79,7 +79,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
-        PreselectedProviderSelection preselectionProvider = PreselectedProviderSelection.builder()
+        PreselectedProviderSelection preselectionProvider = ProviderSelection.newPreselected()
                 .providerId(MOCK_PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
@@ -174,7 +174,7 @@ public class AcceptanceTests {
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(CurrencyCode.GBP)
-                .paymentMethod(BankTransfer.builder()
+                .paymentMethod(PaymentMethod.newBankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
                                 .merchantAccountId("93e2c5f1-d935-47aa-90c0-be4da32738ee")

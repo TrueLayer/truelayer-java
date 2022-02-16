@@ -25,6 +25,10 @@ public abstract class PaymentMethod {
         return (BankTransfer) this;
     }
 
+    public static BankTransfer.BankTransferBuilder newBankTransfer() {
+        return new BankTransfer.BankTransferBuilder();
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {
