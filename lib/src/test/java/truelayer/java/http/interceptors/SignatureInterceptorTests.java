@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
-import static truelayer.java.common.Constants.HeaderNames.TL_SIGNATURE;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;

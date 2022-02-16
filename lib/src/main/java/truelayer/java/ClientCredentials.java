@@ -24,5 +24,5 @@ public class ClientCredentials {
 
     public static String GRANT_TYPE = "client_credentials";
 
-    //todo add custom build with validation
+    // todo add custom build with validation
 }

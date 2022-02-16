@@ -1,6 +1,6 @@
 package truelayer.java.http.interceptors;
 
-import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
+import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 
 import java.io.IOException;
 import java.util.List;

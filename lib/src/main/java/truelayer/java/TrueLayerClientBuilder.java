@@ -2,7 +2,7 @@ package truelayer.java;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static truelayer.java.common.Constants.Scopes.PAYMENTS;
+import static truelayer.java.Constants.Scopes.PAYMENTS;
 
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.ObjectUtils;

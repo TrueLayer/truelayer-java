@@ -1,8 +1,8 @@
 package truelayer.java.http.interceptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.common.Constants.HeaderNames.USER_AGENT;
 
 import okhttp3.Interceptor;
 import org.junit.jupiter.api.BeforeEach;

@@ -18,5 +18,5 @@ public class SigningOptions {
 
     private byte[] privateKey;
 
-    //todo add custom build with validation
+    // todo add custom build with validation
 }

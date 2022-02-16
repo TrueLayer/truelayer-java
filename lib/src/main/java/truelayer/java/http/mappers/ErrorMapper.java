@@ -1,7 +1,7 @@
 package truelayer.java.http.mappers;
 
-import static truelayer.java.common.Constants.HeaderNames.TL_CORRELATION_ID;
-import static truelayer.java.common.Utils.getObjectMapper;
+import static truelayer.java.Constants.HeaderNames.TL_CORRELATION_ID;
+import static truelayer.java.Utils.getObjectMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;

@@ -2,8 +2,8 @@ package truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static truelayer.java.common.Constants.HeaderNames.*;
-import static truelayer.java.common.Utils.getObjectMapper;
+import static truelayer.java.Constants.HeaderNames.*;
+import static truelayer.java.Utils.getObjectMapper;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;

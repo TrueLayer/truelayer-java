@@ -1,8 +1,8 @@
 package truelayer.java;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.common.Constants.HeaderNames.USER_AGENT;
 
 import java.net.HttpURLConnection;
 import java.net.URI;

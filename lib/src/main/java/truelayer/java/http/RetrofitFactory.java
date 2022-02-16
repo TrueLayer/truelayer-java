@@ -1,6 +1,6 @@
 package truelayer.java.http;
 
-import static truelayer.java.common.Utils.getObjectMapper;
+import static truelayer.java.Utils.getObjectMapper;
 
 import java.net.URI;
 import okhttp3.OkHttpClient;

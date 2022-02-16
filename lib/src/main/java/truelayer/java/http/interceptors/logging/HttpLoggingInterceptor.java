@@ -1,6 +1,6 @@
 package truelayer.java.http.interceptors.logging;
 
-import static truelayer.java.common.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
 
 import java.io.IOException;
 import okhttp3.Interceptor;
