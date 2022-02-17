@@ -52,7 +52,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
         // create payment
-        UserSelectedProviderSelection userSelectionProvider = ProviderSelection.newUserSelected()
+        UserSelectedProviderSelection userSelectionProvider = ProviderSelection.userSelected()
                 .filter(ProviderFilter.builder()
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
@@ -80,7 +80,7 @@ public class AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
-        PreselectedProviderSelection preselectionProvider = ProviderSelection.newPreselected()
+        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
                 .providerId(MOCK_PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
@@ -175,7 +175,7 @@ public class AcceptanceTests {
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(CurrencyCode.GBP)
-                .paymentMethod(PaymentMethod.newBankTransfer()
+                .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
                                 .merchantAccountId("93e2c5f1-d935-47aa-90c0-be4da32738ee")

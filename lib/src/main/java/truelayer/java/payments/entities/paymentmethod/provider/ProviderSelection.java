@@ -23,11 +23,11 @@ import lombok.ToString;
 public abstract class ProviderSelection {
     protected Type type;
 
-    public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder newUserSelected() {
+    public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder userSelected() {
         return new UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder();
     }
 
-    public static PreselectedProviderSelection.PreselectedProviderSelectionBuilder newPreselected() {
+    public static PreselectedProviderSelection.PreselectedProviderSelectionBuilder preselected() {
         return new PreselectedProviderSelection.PreselectedProviderSelectionBuilder();
     }
 

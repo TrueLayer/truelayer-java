@@ -64,4 +64,8 @@ public abstract class Beneficiary {
         @JsonValue
         private final String type;
     }
+
+    public static MerchantAccount.MerchantAccountBuilder merchantAccount() {
+        return new MerchantAccount.MerchantAccountBuilder();
+    }
 }

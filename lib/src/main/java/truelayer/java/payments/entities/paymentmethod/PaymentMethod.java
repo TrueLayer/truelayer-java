@@ -25,7 +25,7 @@ public abstract class PaymentMethod {
         return (BankTransfer) this;
     }
 
-    public static BankTransfer.BankTransferBuilder newBankTransfer() {
+    public static BankTransfer.BankTransferBuilder bankTransfer() {
         return new BankTransfer.BankTransferBuilder();
     }
 
