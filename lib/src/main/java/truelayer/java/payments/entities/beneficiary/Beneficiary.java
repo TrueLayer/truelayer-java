@@ -68,4 +68,8 @@ public abstract class Beneficiary {
     public static MerchantAccount.MerchantAccountBuilder merchantAccount() {
         return new MerchantAccount.MerchantAccountBuilder();
     }
+
+    public static ExternalAccount.ExternalAccountBuilder externalAccount() {
+        return new ExternalAccount.ExternalAccountBuilder();
+    }
 }
