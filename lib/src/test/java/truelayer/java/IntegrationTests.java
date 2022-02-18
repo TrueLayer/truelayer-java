@@ -7,12 +7,9 @@ import static truelayer.java.TestUtils.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-
 import java.net.URI;
 import java.util.Collections;
-
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,7 +18,6 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
 import truelayer.java.payments.entities.*;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
@@ -323,8 +319,7 @@ public class IntegrationTests {
         return CreatePaymentRequest.builder()
                 .amountInMinor(100)
                 .currency(CurrencyCode.GBP)
-                .paymentMethod(PaymentMethod.bankTransfer()
-                        .build())
+                .paymentMethod(PaymentMethod.bankTransfer().build())
                 .build();
     }
 }

@@ -27,11 +27,10 @@ public class ClientCredentialsBuilderTests {
     @Test
     @DisplayName("It should throw an exception if client id is not set")
     public void itShouldThrowExceptionIfClientIdNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class, () -> ClientCredentials.builder()
-                        .clientId(null)
-                        .clientSecret(A_CLIENT_SECRET)
-                        .build());
+        Throwable thrown = assertThrows(TrueLayerException.class, () -> ClientCredentials.builder()
+                .clientId(null)
+                .clientSecret(A_CLIENT_SECRET)
+                .build());
 
         assertEquals("client id must be set", thrown.getMessage());
     }
@@ -39,12 +38,10 @@ public class ClientCredentialsBuilderTests {
     @Test
     @DisplayName("It should throw an exception if client secret is not set")
     public void itShouldThrowExceptionIfClientSecretNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class,
-                () -> ClientCredentials.builder()
-                        .clientId(A_CLIENT_ID)
-                        .clientSecret(null)
-                        .build());
+        Throwable thrown = assertThrows(TrueLayerException.class, () -> ClientCredentials.builder()
+                .clientId(A_CLIENT_ID)
+                .clientSecret(null)
+                .build());
 
         assertEquals("client secret must be set", thrown.getMessage());
     }
