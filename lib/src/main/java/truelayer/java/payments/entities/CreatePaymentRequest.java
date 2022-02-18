@@ -20,7 +20,8 @@ public class CreatePaymentRequest {
         return new CreatePaymentRequestBuilder();
     }
 
-    public static class CreatePaymentRequestBuilder implements AmountInMinorStep, CurrencyStep, PaymentMethodStep, BuildStep {
+    public static class CreatePaymentRequestBuilder
+            implements AmountInMinorStep, CurrencyStep, PaymentMethodStep, BuildStep {
 
         private CreatePaymentRequest createPaymentRequest;
 
@@ -58,7 +59,6 @@ public class CreatePaymentRequest {
         }
     }
 
-
     public interface AmountInMinorStep {
         CurrencyStep amountInMinor(int amountInMinor);
     }
@@ -73,6 +73,7 @@ public class CreatePaymentRequest {
 
     public interface BuildStep {
         BuildStep user(User user);
+
         CreatePaymentRequest build();
     }
 }
