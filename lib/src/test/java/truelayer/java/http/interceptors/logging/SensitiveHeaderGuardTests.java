@@ -1,7 +1,7 @@
 package truelayer.java.http.interceptors.logging;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static truelayer.java.common.Constants.HeaderNames.*;
+import static truelayer.java.Constants.HeaderNames.*;
 import static truelayer.java.http.interceptors.logging.SensitiveHeaderGuard.SENSITIVE_HEADER_MASK;
 
 import java.util.HashMap;

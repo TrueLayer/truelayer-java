@@ -23,6 +23,14 @@ import lombok.ToString;
 public abstract class ProviderSelection {
     protected Type type;
 
+    public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder userSelected() {
+        return new UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder();
+    }
+
+    public static PreselectedProviderSelection.PreselectedProviderSelectionBuilder preselected() {
+        return new PreselectedProviderSelection.PreselectedProviderSelectionBuilder();
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {

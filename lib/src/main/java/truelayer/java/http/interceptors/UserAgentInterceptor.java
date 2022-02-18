@@ -1,6 +1,6 @@
 package truelayer.java.http.interceptors;
 
-import static truelayer.java.common.Constants.HeaderNames.USER_AGENT;
+import static truelayer.java.Constants.HeaderNames.USER_AGENT;
 
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;

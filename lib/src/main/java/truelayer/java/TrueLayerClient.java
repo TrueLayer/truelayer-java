@@ -1,11 +1,8 @@
 package truelayer.java;
 
-import java.util.Optional;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.IPaymentHandler;
+import truelayer.java.payments.IPaymentsApi;
 
 /**
  * Main class that holds TrueLayer API client. Should be built with the help of its builder
@@ -13,11 +10,25 @@ import truelayer.java.payments.IPaymentHandler;
  *
  * @see TrueLayerClientBuilder
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TrueLayerClient implements ITrueLayerClient {
-    private final IAuthenticationHandler authenticationHandler;
-    private final Optional<IPaymentHandler> paymentHandler;
-    private final IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+    private IAuthenticationHandler authenticationHandler;
+    private IPaymentsApi paymentsHandler;
+    private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+
+    public TrueLayerClient(
+            IAuthenticationHandler authenticationHandler, IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+        this.authenticationHandler = authenticationHandler;
+        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+    }
+
+    public TrueLayerClient(
+            IAuthenticationHandler authenticationHandler,
+            IPaymentsApi paymentsHandler,
+            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+        this.authenticationHandler = authenticationHandler;
+        this.paymentsHandler = paymentsHandler;
+        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+    }
 
     /**
      * Static utility to return a builder instance.
@@ -39,10 +50,12 @@ public class TrueLayerClient implements ITrueLayerClient {
      * @inheritDoc
      */
     @Override
-    public IPaymentHandler payments() {
-        return paymentHandler.orElseThrow(
-                () -> new TrueLayerException(
-                        "payment handler not initialized. Make sure you specified the required signing options while initializing the library"));
+    public IPaymentsApi payments() {
+        if (paymentsHandler == null) {
+            throw new TrueLayerException(
+                    "payment handler not initialized. Make sure you specified the required signing options while initializing the library");
+        }
+        return paymentsHandler;
     }
 
     /**

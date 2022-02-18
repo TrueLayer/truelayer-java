@@ -4,19 +4,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.Value;
 import truelayer.java.ClientCredentials;
-import truelayer.java.Environment;
 import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.versioninfo.VersionInfo;
 
 /**
  * @inheritDoc
  */
 @Value
 public class AuthenticationHandler implements IAuthenticationHandler {
-    VersionInfo versionInfo;
-
-    Environment environment;
 
     ClientCredentials clientCredentials;
 

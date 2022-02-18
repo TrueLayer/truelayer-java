@@ -1,8 +1,8 @@
 package truelayer.java.http.interceptors.logging;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
-import static truelayer.java.common.Constants.HeaderNames.COOKIE;
+import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
+import static truelayer.java.Constants.HeaderNames.COOKIE;
 
 import java.util.ArrayList;
 import java.util.Collections;

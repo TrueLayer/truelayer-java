@@ -3,8 +3,8 @@ package truelayer.java.versioninfo;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import truelayer.java.Constants;
 import truelayer.java.TrueLayerException;
-import truelayer.java.common.Constants;
 
 /**
  * Class the loads the version of the library during the client initialization.
@@ -27,7 +27,7 @@ public class VersionInfoLoader {
         try {
             return new Configurations().properties(CONFIG_FILE_PREXIF + "." + "version" + ".properties");
         } catch (ConfigurationException e) {
-            throw new TrueLayerException(String.format("Unable to load %s", "version"), e);
+            throw new TrueLayerException("Unable to load library version file", e);
         }
     }
 }

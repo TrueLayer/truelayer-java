@@ -3,9 +3,9 @@ package truelayer.java.http.interceptors.logging;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
+import static truelayer.java.Constants.HeaderNames.COOKIE;
 import static truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
-import static truelayer.java.common.Constants.HeaderNames.AUTHORIZATION;
-import static truelayer.java.common.Constants.HeaderNames.COOKIE;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -93,6 +93,7 @@ docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-k
 ```java
 TrueLayerClient client = TrueLayerClient.New()
         .environment(Environment.sandbox()) // optional: to use TL sandbox environment
+        .withHttpLogs() // optional: logs HTTP traces to stdout
         .clientCredentials(
                 ClientCredentials.builder()
                         .clientId("a-client-id")
@@ -105,14 +106,16 @@ TrueLayerClient client = TrueLayerClient.New()
         .build();
 ```
 
+More details about our HTTP logs can be found [here](https://github.com/TrueLayer/truelayer-java/wiki/HTTP-logging).
+
 ### Create a payment
 ```java
 // build the payment request object
 CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
         .amountInMinor(101)
         .currency(CurrencyCode.GBP)
-        .paymentMethod(BankTransfer.builder()
-            .providerSelection(UserSelectedProviderSelection.builder()
+        .paymentMethod(PaymentMethod.bankTransfer()
+            .providerSelection(ProviderSelection.userSelected()
                     .filter(ProviderFilter.builder()
                     .countries(Collections.singletonList(CountryCode.GB))
                     .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
