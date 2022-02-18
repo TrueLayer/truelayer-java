@@ -1,12 +1,22 @@
 package truelayer.java;
 
-import java.util.Optional;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static truelayer.java.Constants.Scopes.PAYMENTS;
+
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.AuthenticationHandler;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.PaymentHandler;
+import truelayer.java.http.RetrofitFactory;
+import truelayer.java.http.interceptors.AuthenticationInterceptor;
+import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import truelayer.java.http.interceptors.SignatureInterceptor;
+import truelayer.java.http.interceptors.UserAgentInterceptor;
+import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
 
@@ -16,10 +26,12 @@ import truelayer.java.versioninfo.VersionInfoLoader;
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
 
-    private Optional<SigningOptions> signingOptions = Optional.empty();
+    private SigningOptions signingOptions;
 
     // By default, production is used
     private Environment environment = Environment.live();
+
+    private boolean logEnabled;
 
     TrueLayerClientBuilder() {}
 
@@ -41,7 +53,7 @@ public class TrueLayerClientBuilder {
      * @see SigningOptions
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
-        this.signingOptions = Optional.of(signingOptions);
+        this.signingOptions = signingOptions;
         return this;
     }
 
@@ -58,39 +70,60 @@ public class TrueLayerClientBuilder {
     }
 
     /**
+     * Utility to enable default logs for HTTP traces. Produced logs are not
+     * leaking sensitive information
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withHttpLogs() {
+        this.logEnabled = true;
+        return this;
+    }
+
+    /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        VersionInfo versionInfo = new VersionInfoLoader().load();
-
         if (ObjectUtils.isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
-        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
-                .versionInfo(versionInfo)
-                .environment(environment)
-                .clientCredentials(clientCredentials)
-                .build();
+        VersionInfo versionInfo = new VersionInfoLoader().load();
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
-        PaymentHandler paymentsHandler = null;
-        if (this.signingOptions.isPresent()) {
-            SigningOptions signingOptions =
-                    this.signingOptions.orElseThrow(() -> new TrueLayerException("signing options must be set"));
-
-            paymentsHandler = PaymentHandler.New()
-                    .versionInfo(versionInfo)
-                    .environment(environment)
-                    .signingOptions(signingOptions)
-                    .authenticationHandler(authenticationHandler)
-                    .build();
+        if (logEnabled) {
+            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
         }
 
-        IHostedPaymentPageLinkBuilder hppBuilder =
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
+        OkHttpClient authHttpClient = clientBuilder.build();
+
+        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
+                .clientCredentials(clientCredentials)
+                .httpClient(RetrofitFactory.build(authHttpClient, environment.getAuthApiUri()))
+                .build();
+
+        IHostedPaymentPageLinkBuilder hppLinkBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
-        return new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
+        if (isEmpty(signingOptions)) {
+            // return TL client with just authentication and HPP utils enabled
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
+        }
+
+        // By using .newBuilder() we share internal OkHttpClient resources
+        OkHttpClient paymentsHttpClient = authHttpClient
+                .newBuilder()
+                // we just need to add the signature and authentication interceptor
+                // as all the others are inherited
+                .addInterceptor(new SignatureInterceptor(signingOptions))
+                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
+                .build();
+        IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IPaymentsApi.class);
+
+        return new TrueLayerClient(authenticationHandler, paymentsHandler, hppLinkBuilder);
     }
 }

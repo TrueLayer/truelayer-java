@@ -31,7 +31,7 @@ public abstract class PaymentDetail {
 
     private Date createdAt;
 
-    private Status status;
+    public abstract Status getStatus();
 
     public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
         if (!(this instanceof AuthorizationRequiredPaymentDetail)) {

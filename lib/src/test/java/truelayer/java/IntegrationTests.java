@@ -9,21 +9,14 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.net.URI;
 import java.util.Collections;
-import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.auth.AuthenticationHandler;
-import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.auth.entities.AccessToken;
-import truelayer.java.hpp.HostedPaymentPageLinkBuilder;
-import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
-import truelayer.java.payments.IPaymentHandler;
-import truelayer.java.payments.PaymentHandler;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -39,23 +32,28 @@ public class IntegrationTests {
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
+        /*
+        RetrofitFactory testHttpClientFactory =
+                new RetrofitFactory(testEnvironment, getVersionInfo(), getSigningOptions());
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
-                .versionInfo(getVersionInfo())
-                .environment(testEnvironment)
+                .httpClient(testHttpClientFactory.newAuthApiHttpClient())
                 .clientCredentials(getClientCredentials())
                 .build();
-        IPaymentHandler paymentsHandler = PaymentHandler.New()
-                .versionInfo(getVersionInfo())
-                .environment(testEnvironment)
-                .signingOptions(getSigningOptions())
-                .authenticationHandler(authenticationHandler)
-                .build();
+        IPaymentsApi paymentsHandler = testHttpClientFactory
+                .newPaymentsApiHttpClient(authenticationHandler)
+                .create(IPaymentsApi.class);
         IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
                 .uri(testEnvironment.getHppUri())
+                .build();*/
+
+        tlClient = TrueLayerClient.New()
+                .clientCredentials(getClientCredentials())
+                .signingOptions(getSigningOptions())
+                .environment(testEnvironment)
                 .build();
 
-        tlClient = new TrueLayerClient(authenticationHandler, Optional.ofNullable(paymentsHandler), hppBuilder);
+        // tlClient = new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
     }
 
     @Test

@@ -2,7 +2,7 @@ package truelayer.java;
 
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import truelayer.java.payments.IPaymentHandler;
+import truelayer.java.payments.IPaymentsApi;
 
 /**
  * TrueLayer client facade. Acts as entrypoint for the Java client library capabilities.
@@ -19,7 +19,7 @@ public interface ITrueLayerClient {
      * Entrypoint for payments endpoints.
      * @return a utility to create and authorize payments.
      */
-    IPaymentHandler payments();
+    IPaymentsApi payments();
 
     /**
      * Entrypoint for Hosted Payment Page related services.
