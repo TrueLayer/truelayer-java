@@ -7,9 +7,12 @@ import static truelayer.java.TestUtils.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+
 import java.net.URI;
 import java.util.Collections;
+
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,9 +21,11 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
 import truelayer.java.payments.entities.*;
+import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
+import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 
 @WireMockTest
 @Tag("integration")
@@ -119,7 +124,7 @@ public class IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = createPaymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -148,7 +153,7 @@ public class IntegrationTests {
                 .status(401)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = createPaymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -206,7 +211,7 @@ public class IntegrationTests {
                 .status(404)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = createPaymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -235,7 +240,7 @@ public class IntegrationTests {
                 .status(400)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = createPaymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -311,5 +316,15 @@ public class IntegrationTests {
                 deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
+    }
+
+    private static CreatePaymentRequest createPaymentRequestStub() {
+
+        return CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .build())
+                .build();
     }
 }

@@ -14,6 +14,7 @@ public class ClientCredentialsBuilderTests {
     @Test
     @DisplayName("It should build client credentials")
     public void itShouldBuildAClientCredentialsInstance() {
+
         ClientCredentials clientCredentials = ClientCredentials.builder()
                 .clientId(A_CLIENT_ID)
                 .clientSecret(A_CLIENT_SECRET)
@@ -27,7 +28,10 @@ public class ClientCredentialsBuilderTests {
     @DisplayName("It should throw an exception if client id is not set")
     public void itShouldThrowExceptionIfClientIdNotSet() {
         Throwable thrown = assertThrows(
-                TrueLayerException.class, () -> ClientCredentials.builder().build());
+                TrueLayerException.class, () -> ClientCredentials.builder()
+                        .clientId(null)
+                        .clientSecret(A_CLIENT_SECRET)
+                        .build());
 
         assertEquals("client id must be set", thrown.getMessage());
     }
@@ -37,7 +41,10 @@ public class ClientCredentialsBuilderTests {
     public void itShouldThrowExceptionIfClientSecretNotSet() {
         Throwable thrown = assertThrows(
                 TrueLayerException.class,
-                () -> ClientCredentials.builder().clientId(A_CLIENT_ID).build());
+                () -> ClientCredentials.builder()
+                        .clientId(A_CLIENT_ID)
+                        .clientSecret(null)
+                        .build());
 
         assertEquals("client secret must be set", thrown.getMessage());
     }
