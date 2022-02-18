@@ -1,6 +1,6 @@
-package truelayer.java.payments.entities.paymentmethod;
+package truelayer.java.entities;
 
-import static truelayer.java.payments.entities.paymentmethod.AccountIdentifier.Type.IBAN;
+import static truelayer.java.entities.AccountIdentifier.Type.IBAN;
 
 import lombok.Builder;
 import lombok.Getter;

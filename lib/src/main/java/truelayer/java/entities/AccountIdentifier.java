@@ -1,4 +1,4 @@
-package truelayer.java.payments.entities.paymentmethod;
+package truelayer.java.entities;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -24,7 +24,7 @@ import lombok.ToString;
 @Getter
 public abstract class AccountIdentifier {
 
-    protected Type type;
+    public abstract Type getType();
 
     @Getter
     @RequiredArgsConstructor

@@ -17,6 +17,7 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
+import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -310,6 +311,33 @@ public class IntegrationTests {
         SubmitProviderSelectionResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of all merchant accounts associated to the given client")
+    public void itShouldListAllMerchantAccounts() {
+        String jsonResponseFile = "merchant_accounts/200.list_merchant_accounts.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<ListMerchantAccountsResponse> response =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        assertNotError(response);
+        ListMerchantAccountsResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, ListMerchantAccountsResponse.class);
         assertEquals(expected, response.getData());
     }
 }

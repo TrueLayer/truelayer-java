@@ -11,14 +11,16 @@ import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import truelayer.java.entities.CurrencyCode;
+import truelayer.java.entities.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import truelayer.java.payments.entities.paymentmethod.Remitter;
-import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
@@ -171,14 +173,31 @@ public class AcceptanceTests {
         assertNotError(submitProviderSelectionResponse);
     }
 
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of merchant accounts for the given client")
+    public void itShouldGetTheListOfMerchantAccounts() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+
+        assertNotError(merchantAccountsResponse);
+    }
+
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
+        truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount =
+                tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
+                        .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                        .findFirst()
+                        .get();
+
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currency(CurrencyCode.GBP)
+                .currency(merchantAccount.getCurrency())
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
-                                .merchantAccountId("93e2c5f1-d935-47aa-90c0-be4da32738ee")
+                                .merchantAccountId(merchantAccount.getId())
                                 .build())
                         .build())
                 .user(User.builder()

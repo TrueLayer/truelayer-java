@@ -2,6 +2,7 @@ package truelayer.java;
 
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import truelayer.java.payments.IPaymentsApi;
 
 /**
@@ -17,9 +18,15 @@ public interface ITrueLayerClient {
 
     /**
      * Entrypoint for payments endpoints.
-     * @return a utility to create and authorize payments.
+     * @return a utility to interact with payments endpoints.
      */
     IPaymentsApi payments();
+
+    /**
+     * Entrypoint for merchant accounts endpoints.
+     * @return a utility to interact with merchant account endpoints.
+     */
+    IMerchantAccountsApi merchantAccounts();
 
     /**
      * Entrypoint for Hosted Payment Page related services.
