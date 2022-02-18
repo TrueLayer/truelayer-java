@@ -184,6 +184,25 @@ public class AcceptanceTests {
     }
 
     @SneakyThrows
+    @Test
+    @DisplayName("It should get the a merchant accounts by id")
+    public void itShouldGetAMerchantAccountById() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+
+        ApiResponse<truelayer.java.merchantaccounts.entities.MerchantAccount> getMerchantAccountByIdResponse =
+                tlClient.merchantAccounts()
+                        .getMerchantAccountById(merchantAccountsResponse
+                                .getData()
+                                .getItems()
+                                .get(0)
+                                .getId())
+                        .get();
+
+        assertNotError(getMerchantAccountByIdResponse);
+    }
+
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
         truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount =
                 tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()

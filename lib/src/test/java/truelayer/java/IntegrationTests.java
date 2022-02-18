@@ -18,6 +18,7 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
+import truelayer.java.merchantaccounts.entities.MerchantAccount;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -29,32 +30,17 @@ public class IntegrationTests {
     private static TrueLayerClient tlClient;
 
     public static final String A_PAYMENT_ID = "a-payment-id";
+    public static final String A_MERCHANT_ACCOUNT_ID = "a-merchant-id";
 
     @BeforeAll
     public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
-        /*
-        RetrofitFactory testHttpClientFactory =
-                new RetrofitFactory(testEnvironment, getVersionInfo(), getSigningOptions());
-
-        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
-                .httpClient(testHttpClientFactory.newAuthApiHttpClient())
-                .clientCredentials(getClientCredentials())
-                .build();
-        IPaymentsApi paymentsHandler = testHttpClientFactory
-                .newPaymentsApiHttpClient(authenticationHandler)
-                .create(IPaymentsApi.class);
-        IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
-                .uri(testEnvironment.getHppUri())
-                .build();*/
 
         tlClient = TrueLayerClient.New()
                 .clientCredentials(getClientCredentials())
                 .signingOptions(getSigningOptions())
                 .environment(testEnvironment)
                 .build();
-
-        // tlClient = new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
     }
 
     @Test
@@ -295,7 +281,7 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("post")
-                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
@@ -338,6 +324,33 @@ public class IntegrationTests {
         assertNotError(response);
         ListMerchantAccountsResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, ListMerchantAccountsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get a merchant account by id")
+    public void itShouldGetAMerchantAccountById() {
+        String jsonResponseFile = "merchant_accounts/200.get_merchant_account_by_id.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<MerchantAccount> response = tlClient.merchantAccounts()
+                .getMerchantAccountById(A_MERCHANT_ACCOUNT_ID)
+                .get();
+        assertNotError(response);
+        MerchantAccount expected = deserializeJsonFileTo(jsonResponseFile, MerchantAccount.class);
         assertEquals(expected, response.getData());
     }
 }
