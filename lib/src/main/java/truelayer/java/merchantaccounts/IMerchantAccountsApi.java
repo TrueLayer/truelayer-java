@@ -1,13 +1,14 @@
 package truelayer.java.merchantaccounts;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
+import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 /**
@@ -43,7 +44,7 @@ public interface IMerchantAccountsApi {
      * @return
      */
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
-    CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(
+    CompletableFuture<ApiResponse<List<Transaction>>> getTransactions(
             @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,

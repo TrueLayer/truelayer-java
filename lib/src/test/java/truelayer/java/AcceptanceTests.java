@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
@@ -17,6 +18,7 @@ import truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIde
 import truelayer.java.entities.beneficiary.MerchantAccount;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
+import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -189,17 +191,29 @@ public class AcceptanceTests {
     public void itShouldGetAMerchantAccountById() {
         ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
                 tlClient.merchantAccounts().listMerchantAccounts().get();
-
+        String merchantAccountId =
+                merchantAccountsResponse.getData().getItems().get(0).getId();
         ApiResponse<truelayer.java.merchantaccounts.entities.MerchantAccount> getMerchantAccountByIdResponse =
                 tlClient.merchantAccounts()
-                        .getMerchantAccountById(merchantAccountsResponse
-                                .getData()
-                                .getItems()
-                                .get(0)
-                                .getId())
+                        .getMerchantAccountById(merchantAccountId)
                         .get();
 
         assertNotError(getMerchantAccountByIdResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of transactions")
+    public void itShouldGetTheListOfTransactions() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        String merchantAccountId =
+                merchantAccountsResponse.getData().getItems().get(0).getId();
+        ApiResponse<List<Transaction>> getTransactionsResponse = tlClient.merchantAccounts()
+                .getTransactions(merchantAccountId, "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
+                .get();
+
+        assertNotError(getTransactionsResponse);
     }
 
     @SneakyThrows

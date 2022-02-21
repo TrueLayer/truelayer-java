@@ -1,5 +1,4 @@
-{
-  "items":[
+[
     {
       "type":"merchant_account_payment",
       "id":"string",
@@ -9,13 +8,11 @@
       "settled_at":"string",
       "payment_source":{
         "id":"e2b41c9d-176k-67aa-b2da-fe1a2b97253c",
-        "account_identifiers":[
-          {
+        "account_identifier":{
             "type":"sort_code_account_number",
             "sort_code":"string",
             "account_number":"string"
-          }
-        ],
+        },
         "account_holder_name":"string"
       },
       "payment_id":"60c0a60ed8d7-4e5b-ac79-401b1d8a8633"
@@ -31,8 +28,8 @@
         "account_holder_name":"Andrea",
         "account_identifier":{
           "type":"sort_code_account_number",
-          "sort_code":"123456",
-          "account_number":"12345678"
+          "sort_code":"string",
+          "account_number":"string"
         }
       }
     },
@@ -67,5 +64,4 @@
       "context_code":"withdrawal",
       "payout_id":"string"
     }
-  ]
-}
+]

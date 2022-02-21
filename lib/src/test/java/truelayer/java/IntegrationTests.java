@@ -4,11 +4,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
+import static truelayer.java.Utils.getObjectMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +22,9 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
-import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
+import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
@@ -375,12 +380,15 @@ public class IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<GetTransactionsResponse> response = tlClient.merchantAccounts()
+        ApiResponse<List<Transaction>> response = tlClient.merchantAccounts()
                 .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
                 .get();
 
         assertNotError(response);
-        GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
+        List<Transaction> expected = getObjectMapper()
+                .readValue(
+                        Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonResponseFile)),
+                        new TypeReference<List<Transaction>>() {});
         assertEquals(expected, response.getData());
     }
 }
