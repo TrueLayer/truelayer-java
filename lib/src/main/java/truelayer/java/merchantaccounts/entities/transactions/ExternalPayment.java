@@ -7,7 +7,7 @@ import truelayer.java.entities.Remitter;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class ExternalPayment {
+public class ExternalPayment extends Transaction {
 
     Transaction.Type type = Transaction.Type.EXTERNAL_PAYMENT;
 

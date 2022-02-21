@@ -31,7 +31,8 @@ public interface IMerchantAccountsApi {
      * @return the details of the given merchant account
      */
     @GET("/merchant-accounts/{merchantAccountId}")
-    CompletableFuture<ApiResponse<MerchantAccount>> getMerchantAccountById(@Path("id") String merchantAccountId);
+    CompletableFuture<ApiResponse<MerchantAccount>> getMerchantAccountById(
+            @Path("merchantAccountId") String merchantAccountId);
 
     /**
      * Get the transactions of a single merchant account.
@@ -43,7 +44,7 @@ public interface IMerchantAccountsApi {
      */
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
     CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(
-            @Path("id") String merchantAccountId,
+            @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,
             @Query("type") TransactionTypeQuery type);

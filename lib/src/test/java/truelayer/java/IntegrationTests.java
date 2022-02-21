@@ -17,8 +17,10 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
+import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
+import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -351,6 +353,34 @@ public class IntegrationTests {
                 .get();
         assertNotError(response);
         MerchantAccount expected = deserializeJsonFileTo(jsonResponseFile, MerchantAccount.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of transactions for a given merchant account")
+    public void shouldGetTransactions() {
+        String jsonResponseFile = "payments/200.get_transactions.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<GetTransactionsResponse> response = tlClient.merchantAccounts()
+                .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
+                .get();
+
+        assertNotError(response);
+        GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
         assertEquals(expected, response.getData());
     }
 }

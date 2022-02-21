@@ -1,10 +1,7 @@
 package truelayer.java.merchantaccounts.entities.transactions;
 
-import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +9,33 @@ import lombok.Value;
 import truelayer.java.entities.CurrencyCode;
 import truelayer.java.entities.beneficiary.Beneficiary;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = PendingPayout.class)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = PendingPayout.class, name = "pending"),
-        @JsonSubTypes.Type(value = ExecutedPayout.class, name = "settled"),
-})
-@Getter
-public abstract class Payout {
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class Payout extends Transaction {
+
+    Transaction.Type type = Transaction.Type.PAYOUT;
+
+    String id;
+
+    CurrencyCode currency;
+
+    int amountInMinor;
+
+    Transaction.Status status;
+
+    String createdAt;
+
+    String settledAt;
+
+    Beneficiary beneficiary;
+
+    Payout.ContextCode contextCode;
+
+    String payoutId;
+
+    public Optional<String> getSettledAt() {
+        return Optional.ofNullable(settledAt);
+    }
 
     @RequiredArgsConstructor
     @Getter

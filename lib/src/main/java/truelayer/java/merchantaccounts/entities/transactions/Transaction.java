@@ -5,17 +5,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import truelayer.java.entities.CurrencyCode;
-import truelayer.java.entities.PaymentSource;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = MerchantAccountPayment.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = MerchantAccountPayment.class, name = "merchant_account_payment"),
     @JsonSubTypes.Type(value = ExternalPayment.class, name = "external_payment"),
-    @JsonSubTypes.Type(value = Payout.class, name = "external_payment"),
+    @JsonSubTypes.Type(value = Payout.class, name = "payout"),
 })
 @Getter
 public abstract class Transaction {
+
+    public abstract Type getType();
 
     @RequiredArgsConstructor
     @Getter
@@ -25,7 +25,7 @@ public abstract class Transaction {
         PAYOUT("payout");
 
         @JsonValue
-        private final String transactionType;
+        private final String type;
     }
 
     @RequiredArgsConstructor
@@ -37,5 +37,4 @@ public abstract class Transaction {
         @JsonValue
         private final String status;
     }
-
 }

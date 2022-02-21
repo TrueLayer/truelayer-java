@@ -9,7 +9,7 @@ import truelayer.java.payments.entities.paymentdetail.*;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class MerchantAccountPayment {
+public class MerchantAccountPayment extends Transaction {
     Type type = Type.MERCHANT_ACCOUNT_PAYMENT;
 
     String id;
