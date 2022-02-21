@@ -8,7 +8,7 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
-import truelayer.java.merchantaccounts.entities.transactions.TransactionType;
+import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 /**
  * Exposes all the merchant accounts related capabilities of the library.
@@ -42,6 +42,9 @@ public interface IMerchantAccountsApi {
      * @return
      */
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
-    CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(@Path("id") String merchantAccountId,
-                        @Query("from") String from, @Query("to") String to, @Query("type") TransactionType type);
+    CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(
+            @Path("id") String merchantAccountId,
+            @Query("from") String from,
+            @Query("to") String to,
+            @Query("type") TransactionTypeQuery type);
 }

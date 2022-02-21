@@ -4,7 +4,7 @@ import static truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.
 
 import lombok.Builder;
 import lombok.Getter;
-import truelayer.java.payments.entities.beneficiary.Beneficiary;
+import truelayer.java.entities.beneficiary.Beneficiary;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 
 @Builder

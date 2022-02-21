@@ -1,6 +1,6 @@
-package truelayer.java.entities;
+package truelayer.java.entities.accountidentifier;
 
-import static truelayer.java.entities.AccountIdentifier.Type.BBAN;
+import static truelayer.java.entities.accountidentifier.AccountIdentifier.Type.BBAN;
 
 import lombok.Builder;
 import lombok.Getter;

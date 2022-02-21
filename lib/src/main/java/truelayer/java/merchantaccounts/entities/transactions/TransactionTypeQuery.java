@@ -6,11 +6,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum TransactionType {
+public enum TransactionTypeQuery {
     PAYOUT("payout"),
     PAYMENT("payment");
 
     @JsonValue
     private final String transactionType;
 }
-

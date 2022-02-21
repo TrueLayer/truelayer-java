@@ -1,4 +1,4 @@
-package truelayer.java.entities;
+package truelayer.java.entities.accountidentifier;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

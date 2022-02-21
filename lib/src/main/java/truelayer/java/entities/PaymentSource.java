@@ -1,8 +1,8 @@
-package truelayer.java.payments.entities.paymentdetail;
+package truelayer.java.entities;
 
 import java.util.List;
 import lombok.Value;
-import truelayer.java.entities.AccountIdentifier;
+import truelayer.java.entities.accountidentifier.AccountIdentifier;
 
 @Value
 public class PaymentSource {
