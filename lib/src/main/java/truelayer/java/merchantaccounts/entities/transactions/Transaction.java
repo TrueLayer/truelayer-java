@@ -17,20 +17,6 @@ import truelayer.java.entities.PaymentSource;
 @Getter
 public abstract class Transaction {
 
-    private String id;
-
-    private CurrencyCode currency;
-
-    private int amountInMinor;
-
-    private Status status;
-
-    private String settledAt;
-
-    private PaymentSource paymentSource;
-
-    String paymentId;
-
     @RequiredArgsConstructor
     @Getter
     public enum Type {
@@ -52,14 +38,4 @@ public abstract class Transaction {
         private final String status;
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    public enum ContextCode {
-        WITHDRAWAL("withdrawal"),
-        SERVICE_PAYMENT("service_payment"),
-        INTERNAL("internal");
-
-        @JsonValue
-        private final String status;
-    }
 }
