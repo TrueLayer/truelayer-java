@@ -1,98 +1,25 @@
-package truelayer.java;
+package truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.Utils.getObjectMapper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.http.mappers.ErrorMapper;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.MerchantAccount;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
-import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
 
-@WireMockTest
-@Tag("integration")
-public class IntegrationTests {
-    private static TrueLayerClient tlClient;
+@DisplayName("Payments integration tests")
+public class PaymentsIntegrationTests extends IntegrationTests {
 
     public static final String A_PAYMENT_ID = "a-payment-id";
-    public static final String A_MERCHANT_ACCOUNT_ID = "a-merchant-id";
-
-    @BeforeAll
-    public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
-
-        tlClient = TrueLayerClient.New()
-                .clientCredentials(getClientCredentials())
-                .signingOptions(getSigningOptions())
-                .environment(testEnvironment)
-                .build();
-    }
-
-    @Test
-    @DisplayName("It should return an error in case on an authorized error from the auth API.")
-    @SneakyThrows
-    public void shouldReturnErrorIfUnauthorized() {
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(400)
-                .bodyFile("auth/400.invalid_client.json")
-                .build();
-
-        ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
-                .get();
-
-        assertTrue(response.isError());
-        ProblemDetails problemDetails = response.getError();
-        assertEquals("invalid_client", problemDetails.getTitle());
-        assertEquals(ErrorMapper.GENERIC_ERROR_TYPE, problemDetails.getType());
-        assertEquals(400, problemDetails.getStatus());
-        assertFalse(problemDetails.getTraceId().isEmpty());
-    }
-
-    @Test
-    @DisplayName("It should create and return an access token")
-    @SneakyThrows
-    public void shouldReturnAnAccessToken() {
-        String jsonResponseFile = "auth/200.access_token.json";
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .bodyFile(jsonResponseFile)
-                .build();
-
-        ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
-                .get();
-
-        assertNotError(response);
-        AccessToken expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
-        assertEquals(expected, response.getData());
-    }
 
     @Test
     @DisplayName("It should create and return a payment")
@@ -304,91 +231,6 @@ public class IntegrationTests {
         SubmitProviderSelectionResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
-        assertEquals(expected, response.getData());
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get the list of all merchant accounts associated to the given client")
-    public void itShouldListAllMerchantAccounts() {
-        String jsonResponseFile = "merchant_accounts/200.list_merchant_accounts.json";
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .bodyFile("auth/200.access_token.json")
-                .build();
-        RequestStub.New()
-                .method("get")
-                .path(urlPathEqualTo("/merchant-accounts"))
-                .withAuthorization()
-                .status(200)
-                .bodyFile(jsonResponseFile)
-                .build();
-
-        ApiResponse<ListMerchantAccountsResponse> response =
-                tlClient.merchantAccounts().listMerchantAccounts().get();
-        assertNotError(response);
-        ListMerchantAccountsResponse expected =
-                deserializeJsonFileTo(jsonResponseFile, ListMerchantAccountsResponse.class);
-        assertEquals(expected, response.getData());
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get a merchant account by id")
-    public void itShouldGetAMerchantAccountById() {
-        String jsonResponseFile = "merchant_accounts/200.get_merchant_account_by_id.json";
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .bodyFile("auth/200.access_token.json")
-                .build();
-        RequestStub.New()
-                .method("get")
-                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID))
-                .withAuthorization()
-                .status(200)
-                .bodyFile(jsonResponseFile)
-                .build();
-
-        ApiResponse<MerchantAccount> response = tlClient.merchantAccounts()
-                .getMerchantAccountById(A_MERCHANT_ACCOUNT_ID)
-                .get();
-        assertNotError(response);
-        MerchantAccount expected = deserializeJsonFileTo(jsonResponseFile, MerchantAccount.class);
-        assertEquals(expected, response.getData());
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get the list of transactions for a given merchant account")
-    public void shouldGetTransactions() {
-        String jsonResponseFile = "payments/200.get_transactions.json";
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .bodyFile("auth/200.access_token.json")
-                .build();
-        RequestStub.New()
-                .method("get")
-                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
-                .withAuthorization()
-                .status(200)
-                .bodyFile(jsonResponseFile)
-                .build();
-
-        ApiResponse<List<Transaction>> response = tlClient.merchantAccounts()
-                .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
-                .get();
-
-        assertNotError(response);
-        List<Transaction> expected = getObjectMapper()
-                .readValue(
-                        Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonResponseFile)),
-                        new TypeReference<List<Transaction>>() {});
         assertEquals(expected, response.getData());
     }
 }
