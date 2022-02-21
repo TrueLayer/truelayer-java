@@ -31,5 +31,7 @@ public class MerchantAccountPayment extends Transaction {
         AccountIdentifier accountIdentifier;
 
         String accountHolderName;
+
+        String userId;
     }
 }

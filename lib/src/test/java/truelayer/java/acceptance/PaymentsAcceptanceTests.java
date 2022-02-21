@@ -1,4 +1,4 @@
-package truelayer.java;
+package truelayer.java.acceptance;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static truelayer.java.Constants.HeaderNames.USER_AGENT;
@@ -6,9 +6,7 @@ import static truelayer.java.TestUtils.*;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
@@ -17,8 +15,6 @@ import truelayer.java.entities.Remitter;
 import truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.entities.beneficiary.MerchantAccount;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -29,27 +25,10 @@ import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 
 @Tag("acceptance")
-public class AcceptanceTests {
+public class PaymentsAcceptanceTests extends AcceptanceTests {
+
     public static final String LOCALHOST_RETURN_URI = "http://localhost:3000/callback";
     public static final String MOCK_PROVIDER_ID = "mock-payments-gb-redirect";
-
-    private static TrueLayerClient tlClient;
-
-    @BeforeAll
-    public static void setup() {
-        tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
-                .clientCredentials(ClientCredentials.builder()
-                        .clientId(System.getenv("TL_CLIENT_ID"))
-                        .clientSecret(System.getenv("TL_CLIENT_SECRET"))
-                        .build())
-                .signingOptions(SigningOptions.builder()
-                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
-                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
-                        .build())
-                .withHttpLogs()
-                .build();
-    }
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selected provider")
@@ -173,47 +152,6 @@ public class AcceptanceTests {
                 .get();
 
         assertNotError(submitProviderSelectionResponse);
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get the list of merchant accounts for the given client")
-    public void itShouldGetTheListOfMerchantAccounts() {
-        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
-                tlClient.merchantAccounts().listMerchantAccounts().get();
-
-        assertNotError(merchantAccountsResponse);
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get the a merchant accounts by id")
-    public void itShouldGetAMerchantAccountById() {
-        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
-                tlClient.merchantAccounts().listMerchantAccounts().get();
-        String merchantAccountId =
-                merchantAccountsResponse.getData().getItems().get(0).getId();
-        ApiResponse<truelayer.java.merchantaccounts.entities.MerchantAccount> getMerchantAccountByIdResponse =
-                tlClient.merchantAccounts()
-                        .getMerchantAccountById(merchantAccountId)
-                        .get();
-
-        assertNotError(getMerchantAccountByIdResponse);
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should get the list of transactions")
-    public void itShouldGetTheListOfTransactions() {
-        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
-                tlClient.merchantAccounts().listMerchantAccounts().get();
-        String merchantAccountId =
-                merchantAccountsResponse.getData().getItems().get(0).getId();
-        ApiResponse<List<Transaction>> getTransactionsResponse = tlClient.merchantAccounts()
-                .getTransactions(merchantAccountId, "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
-                .get();
-
-        assertNotError(getTransactionsResponse);
     }
 
     @SneakyThrows
