@@ -1,4 +1,5 @@
-[
+{
+  "items":[
     {
       "type":"merchant_account_payment",
       "id":"string",
@@ -9,9 +10,9 @@
       "payment_source":{
         "id":"e2b41c9d-176k-67aa-b2da-fe1a2b97253c",
         "account_identifier":{
-            "type":"sort_code_account_number",
-            "sort_code":"string",
-            "account_number":"string"
+          "type":"sort_code_account_number",
+          "sort_code":"string",
+          "account_number":"string"
         },
         "account_holder_name":"string"
       },
@@ -64,4 +65,5 @@
       "context_code":"withdrawal",
       "payout_id":"string"
     }
-]
+  ]
+}
