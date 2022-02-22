@@ -1,4 +1,4 @@
-package truelayer.java;
+package truelayer.java.acceptance;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static truelayer.java.Constants.HeaderNames.USER_AGENT;
@@ -6,46 +6,29 @@ import static truelayer.java.TestUtils.*;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import truelayer.java.entities.CurrencyCode;
+import truelayer.java.entities.Remitter;
+import truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
+import truelayer.java.entities.beneficiary.MerchantAccount;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
-import truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import truelayer.java.payments.entities.paymentmethod.Remitter;
-import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 
 @Tag("acceptance")
-public class AcceptanceTests {
+public class PaymentsAcceptanceTests extends AcceptanceTests {
+
     public static final String LOCALHOST_RETURN_URI = "http://localhost:3000/callback";
     public static final String MOCK_PROVIDER_ID = "mock-payments-gb-redirect";
-
-    private static TrueLayerClient tlClient;
-
-    @BeforeAll
-    public static void setup() {
-        tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
-                .clientCredentials(ClientCredentials.builder()
-                        .clientId(System.getenv("TL_CLIENT_ID"))
-                        .clientSecret(System.getenv("TL_CLIENT_SECRET"))
-                        .build())
-                .signingOptions(SigningOptions.builder()
-                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
-                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
-                        .build())
-                .withHttpLogs()
-                .build();
-    }
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selected provider")
@@ -171,14 +154,21 @@ public class AcceptanceTests {
         assertNotError(submitProviderSelectionResponse);
     }
 
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
+        truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount =
+                tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
+                        .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                        .findFirst()
+                        .get();
+
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currency(CurrencyCode.GBP)
+                .currency(merchantAccount.getCurrency())
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(MerchantAccount.builder()
-                                .merchantAccountId("93e2c5f1-d935-47aa-90c0-be4da32738ee")
+                                .merchantAccountId(merchantAccount.getId())
                                 .build())
                         .build())
                 .user(User.builder()

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import truelayer.java.entities.PaymentSource;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
