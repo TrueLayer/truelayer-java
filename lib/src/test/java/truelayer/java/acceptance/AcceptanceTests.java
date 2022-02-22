@@ -1,5 +1,6 @@
 package truelayer.java.acceptance;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +17,12 @@ public abstract class AcceptanceTests {
     @BeforeAll
     public static void setup() {
         tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
+                //.environment(Environment.sandbox())
+                .environment(Environment.custom(
+                        URI.create("https://auth.t7r.dev"),
+                        URI.create("https://test-pay-api.t7r.dev"),
+                        URI.create("https://payment.t7r.dev")
+                ))
                 .clientCredentials(ClientCredentials.builder()
                         .clientId(System.getenv("TL_CLIENT_ID"))
                         .clientSecret(System.getenv("TL_CLIENT_SECRET"))

@@ -1,35 +1,43 @@
-[
+{
+  "items":[
     {
-      "type":"merchant_account_payment",
-      "id":"string",
-      "currency":"GBP",
-      "amount_in_minor":1,
-      "status":"settled",
-      "settled_at":"string",
-      "payment_source":{
-        "id":"e2b41c9d-176k-67aa-b2da-fe1a2b97253c",
-        "account_identifier":{
-            "type":"sort_code_account_number",
-            "sort_code":"string",
-            "account_number":"string"
-        },
-        "account_holder_name":"string"
+      "type": "merchant_account_payment",
+      "id": "da998081-8370-4e18-a7a9-455983c882f3",
+      "currency": "GBP",
+      "amount_in_minor": 1,
+      "status": "settled",
+      "settled_at": "2022-02-15T15:31:35.410Z",
+      "payment_source": {
+        "id": "bb282cda-9407-4e9d-8ee7-a05843b49450",
+        "account_holder_name": "JAKE OLIVER",
+        "account_identifiers": [
+          {
+            "type": "sort_code_account_number",
+            "sort_code": "040662",
+            "account_number": "00002723"
+          },
+          {
+            "type": "iban",
+            "iban": "GB53CLRB04066200002723"
+          }
+        ],
+        "user_id": "d32e07a6-2ecf-476e-b3f6-31d11119db62"
       },
-      "payment_id":"60c0a60ed8d7-4e5b-ac79-401b1d8a8633"
+      "payment_id": "98edf04e-39af-4b5e-99be-bcb0df1dadaa"
     },
     {
-      "type":"external_payment",
-      "id":"string",
-      "currency":"GBP",
-      "amount_in_minor":1,
-      "status":"settled",
-      "settled_at":"string",
-      "remitter":{
-        "account_holder_name":"Andrea",
-        "account_identifier":{
-          "type":"sort_code_account_number",
-          "sort_code":"string",
-          "account_number":"string"
+      "type": "external_payment",
+      "id": "4b80e9f2-05d8-4972-91a3-8527d4fcce3e",
+      "currency": "GBP",
+      "amount_in_minor": 100000,
+      "status": "settled",
+      "settled_at": "2022-02-10T15:47:17.403Z",
+      "remitter": {
+        "account_holder_name": "TRUELAYER DEV ",
+        "account_identifier": {
+          "type": "sort_code_account_number",
+          "sort_code": "040662",
+          "account_number": "00002775"
         }
       }
     },
@@ -64,4 +72,5 @@
       "context_code":"withdrawal",
       "payout_id":"string"
     }
-]
+  ]
+}
