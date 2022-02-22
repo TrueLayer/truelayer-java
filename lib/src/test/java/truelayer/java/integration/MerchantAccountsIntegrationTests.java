@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
@@ -96,15 +97,12 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<List<Transaction>> response = tlClient.merchantAccounts()
+        ApiResponse<GetTransactionsResponse> response = tlClient.merchantAccounts()
                 .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
                 .get();
 
         assertNotError(response);
-        List<Transaction> expected = getObjectMapper()
-                .readValue(
-                        Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonResponseFile)),
-                        new TypeReference<List<Transaction>>() {});
+        GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
         assertEquals(expected, response.getData());
     }
 }

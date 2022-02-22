@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 
@@ -47,7 +48,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 tlClient.merchantAccounts().listMerchantAccounts().get();
         String merchantAccountId =
                 merchantAccountsResponse.getData().getItems().get(0).getId();
-        ApiResponse<List<Transaction>> getTransactionsResponse = tlClient.merchantAccounts()
+        ApiResponse<GetTransactionsResponse> getTransactionsResponse = tlClient.merchantAccounts()
                 .getTransactions(merchantAccountId, "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
                 .get();
 

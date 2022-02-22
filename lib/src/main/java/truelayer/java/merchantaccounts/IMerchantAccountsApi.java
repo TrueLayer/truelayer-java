@@ -6,6 +6,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import truelayer.java.http.entities.ApiResponse;
+import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.MerchantAccount;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
@@ -41,10 +42,10 @@ public interface IMerchantAccountsApi {
      * @param from Timestamp as a string for the start of the range you are querying. Mandatory
      * @param to Timestamp as a string for the end of the range you are querying. Mandatory
      * @param type Filter transactions by type. If omitted, both payments and payouts will be returned.
-     * @return
+     * @return the list of transactions matching the specified filters
      */
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
-    CompletableFuture<ApiResponse<List<Transaction>>> getTransactions(
+    CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(
             @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,
