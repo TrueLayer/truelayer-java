@@ -2,12 +2,14 @@ package truelayer.java;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.getClientCredentials;
+import static truelayer.java.TestUtils.getSigningOptions;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import truelayer.java.payments.IPaymentsApi;
 
 public class TrueLayerClientTests {
@@ -99,15 +101,43 @@ public class TrueLayerClientTests {
     }
 
     @Test
-    @DisplayName("It should throw an exception if signing options are missing")
-    public void itShouldBuildAnExceptionIfSigningOptionMissing() {
+    @DisplayName(
+            "It should throw an initialization error when invoking the payments handler and signing options are missing")
+    public void itShouldThrowIfPaymentsHadlerIsInvokedWithoutSigningOptions() {
         ITrueLayerClient trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
         Throwable thrown = assertThrows(TrueLayerException.class, trueLayerClient::payments);
 
         assertEquals(
-                "payment handler not initialized. Make sure you specified the required signing options while initializing the library",
+                "payments handler not initialized. Make sure you specified the required signing options while initializing the library",
+                thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should yield a merchant accounts handler")
+    public void itShouldYieldAMerchantAccountsHandler() {
+        ITrueLayerClient trueLayerClient = TrueLayerClient.New()
+                .clientCredentials(getClientCredentials())
+                .signingOptions(getSigningOptions())
+                .build();
+
+        IMerchantAccountsApi merchantAccountsHandler = trueLayerClient.merchantAccounts();
+
+        assertNotNull(merchantAccountsHandler);
+    }
+
+    @Test
+    @DisplayName(
+            "It should throw an initialization error when invoking the merchant accounts handler and signing options are missing")
+    public void itShouldThrowIfMerchantAccountsHadlerIsInvokedWithoutSigningOptions() {
+        ITrueLayerClient trueLayerClient =
+                TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, trueLayerClient::merchantAccounts);
+
+        assertEquals(
+                "merchant accounts handler not initialized. Make sure you specified the required signing options while initializing the library",
                 thrown.getMessage());
     }
 }

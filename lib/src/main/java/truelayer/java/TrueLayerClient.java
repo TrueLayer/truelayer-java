@@ -1,7 +1,10 @@
 package truelayer.java;
 
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import truelayer.java.auth.IAuthenticationHandler;
 import truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import truelayer.java.payments.IPaymentsApi;
 
 /**
@@ -10,23 +13,16 @@ import truelayer.java.payments.IPaymentsApi;
  *
  * @see TrueLayerClientBuilder
  */
+@AllArgsConstructor
 public class TrueLayerClient implements ITrueLayerClient {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsHandler;
+    private IMerchantAccountsApi merchantAccountsHandler;
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler, IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
         this.authenticationHandler = authenticationHandler;
-        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
-    }
-
-    public TrueLayerClient(
-            IAuthenticationHandler authenticationHandler,
-            IPaymentsApi paymentsHandler,
-            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
-        this.authenticationHandler = authenticationHandler;
-        this.paymentsHandler = paymentsHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
     }
 
@@ -51,11 +47,18 @@ public class TrueLayerClient implements ITrueLayerClient {
      */
     @Override
     public IPaymentsApi payments() {
-        if (paymentsHandler == null) {
-            throw new TrueLayerException(
-                    "payment handler not initialized. Make sure you specified the required signing options while initializing the library");
+        if (ObjectUtils.isEmpty(paymentsHandler)) {
+            throw buildInitializationException("payments");
         }
         return paymentsHandler;
+    }
+
+    @Override
+    public IMerchantAccountsApi merchantAccounts() {
+        if (ObjectUtils.isEmpty(merchantAccountsHandler)) {
+            throw buildInitializationException("merchant accounts");
+        }
+        return merchantAccountsHandler;
     }
 
     /**
@@ -64,5 +67,12 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public IHostedPaymentPageLinkBuilder hpp() {
         return this.hostedPaymentPageLinkBuilder;
+    }
+
+    private TrueLayerException buildInitializationException(String handlerName) {
+        return new TrueLayerException(String.format(
+                "%s handler not initialized."
+                        + " Make sure you specified the required signing options while initializing the library",
+                handlerName));
     }
 }

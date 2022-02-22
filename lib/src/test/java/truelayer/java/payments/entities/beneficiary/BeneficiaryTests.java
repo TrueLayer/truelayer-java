@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.TrueLayerException;
+import truelayer.java.entities.beneficiary.Beneficiary;
+import truelayer.java.entities.beneficiary.ExternalAccount;
+import truelayer.java.entities.beneficiary.MerchantAccount;
 
 class BeneficiaryTests {
 

@@ -16,6 +16,7 @@ import truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import truelayer.java.http.interceptors.SignatureInterceptor;
 import truelayer.java.http.interceptors.UserAgentInterceptor;
 import truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
@@ -121,9 +122,14 @@ public class TrueLayerClientBuilder {
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
                 .build();
+
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
-        return new TrueLayerClient(authenticationHandler, paymentsHandler, hppLinkBuilder);
+        IMerchantAccountsApi merchantAccountsHandler = RetrofitFactory.build(
+                        paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IMerchantAccountsApi.class);
+
+        return new TrueLayerClient(authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder);
     }
 }

@@ -1,4 +1,4 @@
-package truelayer.java.payments.entities.beneficiary;
+package truelayer.java.entities.beneficiary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;

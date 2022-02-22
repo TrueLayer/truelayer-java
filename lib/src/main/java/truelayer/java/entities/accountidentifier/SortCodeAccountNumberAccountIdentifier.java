@@ -1,6 +1,6 @@
-package truelayer.java.payments.entities.paymentmethod;
+package truelayer.java.entities.accountidentifier;
 
-import static truelayer.java.payments.entities.paymentmethod.AccountIdentifier.Type.*;
+import static truelayer.java.entities.accountidentifier.AccountIdentifier.Type.*;
 
 import lombok.Builder;
 import lombok.Getter;

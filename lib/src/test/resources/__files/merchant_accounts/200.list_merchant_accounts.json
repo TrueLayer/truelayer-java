@@ -1,0 +1,18 @@
+{
+  "items":[
+    {
+      "id":"string",
+      "currency":"GBP",
+      "account_identifiers":[
+        {
+          "type":"sort_code_account_number",
+          "sort_code":"string",
+          "account_number":"string"
+        }
+      ],
+      "available_balance_in_minor":0,
+      "current_balance_in_minor":0,
+      "account_holder_name":"string"
+    }
+  ]
+}

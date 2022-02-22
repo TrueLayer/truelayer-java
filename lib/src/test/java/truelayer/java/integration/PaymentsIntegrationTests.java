@@ -1,104 +1,25 @@
-package truelayer.java;
+package truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.net.URI;
-import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
-import truelayer.java.http.mappers.ErrorMapper;
 import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import truelayer.java.payments.entities.paymentdetail.Status;
 
-@WireMockTest
-@Tag("integration")
-public class IntegrationTests {
-    private static TrueLayerClient tlClient;
+@DisplayName("Payments integration tests")
+public class PaymentsIntegrationTests extends IntegrationTests {
 
     public static final String A_PAYMENT_ID = "a-payment-id";
-
-    @BeforeAll
-    public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
-        /*
-        RetrofitFactory testHttpClientFactory =
-                new RetrofitFactory(testEnvironment, getVersionInfo(), getSigningOptions());
-
-        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
-                .httpClient(testHttpClientFactory.newAuthApiHttpClient())
-                .clientCredentials(getClientCredentials())
-                .build();
-        IPaymentsApi paymentsHandler = testHttpClientFactory
-                .newPaymentsApiHttpClient(authenticationHandler)
-                .create(IPaymentsApi.class);
-        IHostedPaymentPageLinkBuilder hppBuilder = HostedPaymentPageLinkBuilder.New()
-                .uri(testEnvironment.getHppUri())
-                .build();*/
-
-        tlClient = TrueLayerClient.New()
-                .clientCredentials(getClientCredentials())
-                .signingOptions(getSigningOptions())
-                .environment(testEnvironment)
-                .build();
-
-        // tlClient = new TrueLayerClient(authenticationHandler, paymentsHandler, hppBuilder);
-    }
-
-    @Test
-    @DisplayName("It should return an error in case on an authorized error from the auth API.")
-    @SneakyThrows
-    public void shouldReturnErrorIfUnauthorized() {
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(400)
-                .bodyFile("auth/400.invalid_client.json")
-                .build();
-
-        ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
-                .get();
-
-        assertTrue(response.isError());
-        ProblemDetails problemDetails = response.getError();
-        assertEquals("invalid_client", problemDetails.getTitle());
-        assertEquals(ErrorMapper.GENERIC_ERROR_TYPE, problemDetails.getType());
-        assertEquals(400, problemDetails.getStatus());
-        assertFalse(problemDetails.getTraceId().isEmpty());
-    }
-
-    @Test
-    @DisplayName("It should create and return an access token")
-    @SneakyThrows
-    public void shouldReturnAnAccessToken() {
-        String jsonResponseFile = "auth/200.access_token.json";
-        RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .bodyFile(jsonResponseFile)
-                .build();
-
-        ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
-                .get();
-
-        assertNotError(response);
-        AccessToken expected = deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
-        assertEquals(expected, response.getData());
-    }
 
     @Test
     @DisplayName("It should create and return a payment")
@@ -294,7 +215,7 @@ public class IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("post")
-                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
