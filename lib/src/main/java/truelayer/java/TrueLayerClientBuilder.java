@@ -21,6 +21,8 @@ import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
 
+import java.util.Arrays;
+
 /**
  * Builder class for TrueLayerClient instances.
  */
@@ -93,12 +95,13 @@ public class TrueLayerClientBuilder {
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
+
         if (logEnabled) {
             clientBuilder.addInterceptor(HttpLoggingInterceptor.New());
         }
 
-        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
-        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
         OkHttpClient authHttpClient = clientBuilder.build();
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
@@ -115,13 +118,15 @@ public class TrueLayerClientBuilder {
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
-        OkHttpClient paymentsHttpClient = authHttpClient
-                .newBuilder()
+        OkHttpClient paymentsHttpClient = clientBuilder
                 // we just need to add the signature and authentication interceptor
                 // as all the others are inherited
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
                 .build();
+
+        // todo: we need the logging handler to be always the last one! currently
+        // it's not logging signature and headers on /payments/* apis
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
