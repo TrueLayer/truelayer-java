@@ -98,8 +98,10 @@ public class TrueLayerClientBuilder {
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
 
+        HttpLoggingInterceptor loggingInterceptor = HttpLoggingInterceptor.New();
+
         if (logEnabled) {
-            clientBuilder.addInterceptor(HttpLoggingInterceptor.New());
+            clientBuilder.addInterceptor(loggingInterceptor);
         }
 
         OkHttpClient authHttpClient = clientBuilder.build();
@@ -118,15 +120,22 @@ public class TrueLayerClientBuilder {
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
-        OkHttpClient paymentsHttpClient = clientBuilder
-                // we just need to add the signature and authentication interceptor
-                // as all the others are inherited
-                .addInterceptor(new SignatureInterceptor(signingOptions))
-                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
-                .build();
+        OkHttpClient.Builder paymentsHttpClientBuilder = authHttpClient.newBuilder();
 
-        // todo: we need the logging handler to be always the last one! currently
-        // it's not logging signature and headers on /payments/* apis
+        // we just need to add the signature and authentication interceptor
+        // as all the others are inherited
+        paymentsHttpClientBuilder
+                .addInterceptor(new SignatureInterceptor(signingOptions))
+                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)));
+
+        if (logEnabled) {
+            // If present, removes the logging interceptor and re-append it
+            // as it always needs to be the last in the chain
+            paymentsHttpClientBuilder.interceptors().remove(loggingInterceptor);
+            paymentsHttpClientBuilder.addInterceptor(loggingInterceptor);
+        }
+
+        OkHttpClient paymentsHttpClient = paymentsHttpClientBuilder.build();
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
