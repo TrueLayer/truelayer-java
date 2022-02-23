@@ -12,10 +12,10 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import truelayer.java.entities.CurrencyCode;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.MerchantAccount;
+import truelayer.java.merchantaccounts.entities.*;
+import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import truelayer.java.payments.entities.*;
@@ -103,6 +103,39 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
 
         assertNotError(response);
         GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should update the sweeping settings a given merchant account")
+    public void shouldUpdateSweepingSettings() {
+        String jsonResponseFile = "payments/200.update_sweeping.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
+                .currency(CurrencyCode.EUR)
+                .frequency(Frequency.DAILY)
+                .maxAmountInMinor(100)
+                .build();
+        ApiResponse<UpdateSweepingResponse> response = tlClient.merchantAccounts()
+                .updateSweeping(A_MERCHANT_ACCOUNT_ID, updateSweepingRequest)
+                .get();
+
+        assertNotError(response);
+        UpdateSweepingResponse expected = deserializeJsonFileTo(jsonResponseFile, UpdateSweepingResponse.class);
         assertEquals(expected, response.getData());
     }
 }

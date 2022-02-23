@@ -10,6 +10,9 @@ import truelayer.java.entities.CurrencyCode;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
 import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
+import truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
+import truelayer.java.merchantaccounts.entities.UpdateSweepingResponse;
+import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 
 @DisplayName("Merchant accounts acceptance tests")
@@ -54,5 +57,25 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(getTransactionsResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should update the sweeping settings for the given merchant account")
+    public void itShouldUpdateTheSweepingSettings() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        String merchantAccountId =
+                merchantAccountsResponse.getData().getItems().stream().filter(m->m.getCurrency().equals(CurrencyCode.GBP)).findFirst().get().getId();
+
+        UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
+                .maxAmountInMinor(100)
+                .frequency(Frequency.DAILY)
+                .currency(CurrencyCode.GBP)
+                .build();
+        ApiResponse<UpdateSweepingResponse> updateSweepingResponse = tlClient.merchantAccounts()
+                .updateSweeping(merchantAccountId, updateSweepingRequest).get();
+
+        assertNotError(updateSweepingResponse);
     }
 }

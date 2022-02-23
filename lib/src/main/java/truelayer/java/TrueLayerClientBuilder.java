@@ -94,7 +94,7 @@ public class TrueLayerClientBuilder {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         if (logEnabled) {
-            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
+            clientBuilder.addInterceptor(HttpLoggingInterceptor.New());
         }
 
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
