@@ -93,12 +93,12 @@ public class TrueLayerClientBuilder {
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
-        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
-        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
-
         if (logEnabled) {
             clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
         }
+
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
 
         OkHttpClient authHttpClient = clientBuilder.build();
 
