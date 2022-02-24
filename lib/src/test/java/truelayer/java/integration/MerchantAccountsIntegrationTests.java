@@ -102,8 +102,8 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should update the sweeping settings a given merchant account")
-    public void shouldUpdateSweepingSettings() {
+    @DisplayName("It should update the sweeping setup a given merchant account")
+    public void shouldUpdateSweepingSetup() {
         String jsonResponseFile = "payments/200.update_sweeping.json";
         RequestStub.New()
                 .method("post")
@@ -131,5 +131,29 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
         assertNotError(response);
         UpdateSweepingResponse expected = deserializeJsonFileTo(jsonResponseFile, UpdateSweepingResponse.class);
         assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should disable sweeping for a given merchant account")
+    public void shouldDisableSweeping() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("delete")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
+                .withAuthorization()
+                .status(204)
+                .build();
+
+        ApiResponse<Void> response = tlClient.merchantAccounts()
+                .disableSweeping(A_MERCHANT_ACCOUNT_ID)
+                .get();
+
+        assertNotError(response);
     }
 }

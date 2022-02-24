@@ -58,4 +58,13 @@ public interface IMerchantAccountsApi {
     @POST("/merchant-accounts/{merchantAccountId}/sweeping")
     CompletableFuture<ApiResponse<UpdateSweepingResponse>> updateSweeping(
             @Path("merchantAccountId") String merchantAccountId, @Body UpdateSweepingRequest updateSweepingRequest);
+
+    /**
+     * Disable automatic sweeping for a merchant account.
+     * @param merchantAccountId the id of the merchant account
+     * @return an empty response in case of success
+     * @see <a href="https://docs.truelayer.com/reference/delete_merchant-accounts-id-sweeping"><i>Disable Sweeping</i> API reference</a>
+     */
+    @DELETE("/merchant-accounts/{merchantAccountId}/sweeping")
+    CompletableFuture<ApiResponse<Void>> disableSweeping(@Path("merchantAccountId") String merchantAccountId);
 }

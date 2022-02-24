@@ -1,11 +1,13 @@
 package truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static truelayer.java.Constants.HeaderNames.*;
 import static truelayer.java.Utils.getObjectMapper;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import java.net.URI;
@@ -142,10 +144,16 @@ public class TestUtils {
             if (withAuthorization) {
                 request.withHeader(AUTHORIZATION, matching(".*"));
             }
-            return stubFor(request.willReturn(aResponse()
+
+            ResponseDefinitionBuilder response = aResponse()
                     .withHeader(TL_CORRELATION_ID, UUID.randomUUID().toString())
-                    .withStatus(status)
-                    .withBodyFile(bodyFile)));
+                    .withStatus(status);
+
+            if (!isEmpty(bodyFile)) {
+                response.withBodyFile(bodyFile);
+            }
+
+            return stubFor(request.willReturn(response));
         }
     }
 }

@@ -1,5 +1,7 @@
 package truelayer.java.http.interceptors;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
 import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
@@ -40,6 +42,10 @@ public class SignatureInterceptor implements Interceptor {
     }
 
     private String getBodyAsString(Request request) throws IOException {
+        if (isEmpty(request.body())) {
+            return null;
+        }
+
         try (Buffer buffer = new Buffer()) {
             request.body().writeTo(buffer);
             return buffer.readUtf8();
@@ -47,16 +53,21 @@ public class SignatureInterceptor implements Interceptor {
     }
 
     private boolean needsSignature(Request request) {
-        return request.method().equalsIgnoreCase("post");
+        return !request.method().equalsIgnoreCase("get");
     }
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
         byte[] privateKey = signingOptions.privateKey();
-        return Signer.from(signingOptions.keyId(), privateKey)
+
+        Signer signer = Signer.from(signingOptions.keyId(), privateKey)
                 .header(IDEMPOTENCY_KEY, idempotencyKey)
                 .method(method)
-                .path(path)
-                .body(jsonBody)
-                .sign();
+                .path(path);
+
+        if (isNotEmpty(jsonBody)) {
+            signer.body(jsonBody);
+        }
+
+        return signer.sign();
     }
 }

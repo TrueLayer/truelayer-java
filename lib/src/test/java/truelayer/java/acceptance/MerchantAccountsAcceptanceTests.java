@@ -83,4 +83,22 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
         assertNotError(updateSweepingResponse);
     }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should disable sweeping for the given merchant account")
+    public void itShouldDisableSweeping() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        String merchantAccountId = merchantAccountsResponse.getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                .findFirst()
+                .get()
+                .getId();
+
+        ApiResponse<Void> disableSweepingResponse =
+                tlClient.merchantAccounts().disableSweeping(merchantAccountId).get();
+
+        assertNotError(disableSweepingResponse);
+    }
 }
