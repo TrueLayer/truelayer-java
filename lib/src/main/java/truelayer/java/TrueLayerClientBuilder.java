@@ -118,7 +118,8 @@ public class TrueLayerClientBuilder {
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
-        OkHttpClient paymentsHttpClient = authHttpClient.newBuilder()
+        OkHttpClient paymentsHttpClient = authHttpClient
+                .newBuilder()
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
                 .build();
