@@ -6,6 +6,9 @@ import static org.mockito.Mockito.*;
 import static truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 import static truelayer.java.Constants.HeaderNames.COOKIE;
 import static truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
+import static truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
+import static truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
+import static truelayer.java.http.interceptors.logging.HttpLoggingInterceptor.MESSAGE_FORMAT;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,8 +54,10 @@ class HttpLoggingInterceptorTests {
 
         InOrder interactions = inOrder(logger, chain);
         interactions.verify(chain).request();
-        interactions.verify(logger).trace(startsWith("-->"), eq("GET"), eq(url), anyList());
+        interactions.verify(logger).trace(eq(MESSAGE_FORMAT), eq(OUTGOING), eq("GET"), eq(url), anyList());
         interactions.verify(chain).proceed(request);
-        interactions.verify(logger).trace(startsWith("<--"), eq(responseCode), eq(url), anyList(), isNull());
+        interactions
+                .verify(logger)
+                .trace(eq(MESSAGE_FORMAT), eq(INCOMING), eq(responseCode), eq("GET"), eq(url), anyList());
     }
 }

@@ -14,6 +14,7 @@ import org.tinylog.ThreadContext;
 import truelayer.java.http.LoggerFactory;
 
 public class HttpLoggingInterceptor implements Interceptor {
+    protected static final String MESSAGE_FORMAT = "{} {} {} headers={}";
     private final TaggedLogger logger;
     private final SensitiveHeaderGuard sensitiveHeaderGuard;
 
@@ -34,7 +35,7 @@ public class HttpLoggingInterceptor implements Interceptor {
 
         ThreadContext.put(IDEMPOTENCY_KEY, idempotencyKey);
         logger.trace(
-                "{} {} {} headers={}",
+                MESSAGE_FORMAT,
                 OUTGOING,
                 request.method(),
                 request.url(),
@@ -42,7 +43,7 @@ public class HttpLoggingInterceptor implements Interceptor {
 
         Response response = chain.proceed(request);
         logger.trace(
-                "{} {} {} {} headers={}",
+                MESSAGE_FORMAT,
                 INCOMING,
                 response.code(),
                 request.method(),

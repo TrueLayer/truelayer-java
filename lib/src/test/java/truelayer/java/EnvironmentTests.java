@@ -22,7 +22,7 @@ public class EnvironmentTests {
     @Test
     @DisplayName("It should create a development environment")
     public void shouldCreateADevelopmentEnvironment() {
-        Environment environment = Environment.sandbox();
+        Environment environment = Environment.development();
 
         assertEquals("https://auth.t7r.dev", environment.getAuthApiUri().toString());
         assertEquals("https://api.t7r.dev", environment.getPaymentsApiUri().toString());
