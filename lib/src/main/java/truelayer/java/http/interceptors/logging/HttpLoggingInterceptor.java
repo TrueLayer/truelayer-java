@@ -1,6 +1,8 @@
 package truelayer.java.http.interceptors.logging;
 
 import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
+import static truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
 
 import java.io.IOException;
 import okhttp3.Interceptor;
@@ -31,26 +33,23 @@ public class HttpLoggingInterceptor implements Interceptor {
         String idempotencyKey = request.header(IDEMPOTENCY_KEY);
 
         ThreadContext.put(IDEMPOTENCY_KEY, idempotencyKey);
-
         logger.trace(
-                "--> {} {} headers={}",
+                "{} {} {} headers={}",
+                OUTGOING,
                 request.method(),
                 request.url(),
                 sensitiveHeaderGuard.getSanitizedHeaders(request.headers()));
 
         Response response = chain.proceed(request);
         logger.trace(
-                "<-- {} {} headers={} error={}",
+                "{} {} {} {} headers={}",
+                INCOMING,
                 response.code(),
+                request.method(),
                 request.url(),
-                sensitiveHeaderGuard.getSanitizedHeaders(request.headers()),
-                !response.isSuccessful() ? getBodyAsString(response) : null);
+                sensitiveHeaderGuard.getSanitizedHeaders(request.headers()));
 
         ThreadContext.clear();
         return response;
-    }
-
-    private String getBodyAsString(Response response) throws IOException {
-        return response.peekBody(Long.MAX_VALUE).string();
     }
 }

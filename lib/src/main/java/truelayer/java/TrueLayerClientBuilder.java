@@ -21,8 +21,6 @@ import truelayer.java.payments.IPaymentsApi;
 import truelayer.java.versioninfo.VersionInfo;
 import truelayer.java.versioninfo.VersionInfoLoader;
 
-import java.util.Arrays;
-
 /**
  * Builder class for TrueLayerClient instances.
  */
@@ -98,10 +96,8 @@ public class TrueLayerClientBuilder {
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
 
-        HttpLoggingInterceptor loggingInterceptor = HttpLoggingInterceptor.New();
-
         if (logEnabled) {
-            clientBuilder.addInterceptor(loggingInterceptor);
+            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
         }
 
         OkHttpClient authHttpClient = clientBuilder.build();
@@ -127,13 +123,6 @@ public class TrueLayerClientBuilder {
         paymentsHttpClientBuilder
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)));
-
-        if (logEnabled) {
-            // If present, removes the logging interceptor and re-append it
-            // as it always needs to be the last in the chain
-            paymentsHttpClientBuilder.interceptors().remove(loggingInterceptor);
-            paymentsHttpClientBuilder.addInterceptor(loggingInterceptor);
-        }
 
         OkHttpClient paymentsHttpClient = paymentsHttpClientBuilder.build();
 

@@ -2,7 +2,6 @@ package truelayer.java.acceptance;
 
 import static truelayer.java.TestUtils.assertNotError;
 
-import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
 import truelayer.java.merchantaccounts.entities.UpdateSweepingResponse;
 import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
@@ -50,8 +48,11 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     public void itShouldGetTheListOfTransactions() {
         ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
                 tlClient.merchantAccounts().listMerchantAccounts().get();
-        String merchantAccountId =
-                merchantAccountsResponse.getData().getItems().stream().filter(m->m.getCurrency().equals(CurrencyCode.GBP)).findFirst().get().getId();
+        String merchantAccountId = merchantAccountsResponse.getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                .findFirst()
+                .get()
+                .getId();
         ApiResponse<GetTransactionsResponse> getTransactionsResponse = tlClient.merchantAccounts()
                 .getTransactions(merchantAccountId, "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
                 .get();
@@ -65,8 +66,11 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     public void itShouldUpdateTheSweepingSettings() {
         ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
                 tlClient.merchantAccounts().listMerchantAccounts().get();
-        String merchantAccountId =
-                merchantAccountsResponse.getData().getItems().stream().filter(m->m.getCurrency().equals(CurrencyCode.GBP)).findFirst().get().getId();
+        String merchantAccountId = merchantAccountsResponse.getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                .findFirst()
+                .get()
+                .getId();
 
         UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
                 .maxAmountInMinor(100)
@@ -74,7 +78,8 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .currency(CurrencyCode.GBP)
                 .build();
         ApiResponse<UpdateSweepingResponse> updateSweepingResponse = tlClient.merchantAccounts()
-                .updateSweeping(merchantAccountId, updateSweepingRequest).get();
+                .updateSweeping(merchantAccountId, updateSweepingRequest)
+                .get();
 
         assertNotError(updateSweepingResponse);
     }

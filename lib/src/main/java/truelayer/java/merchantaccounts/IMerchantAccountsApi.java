@@ -1,12 +1,9 @@
 package truelayer.java.merchantaccounts;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 import retrofit2.http.*;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.*;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 /**
@@ -59,6 +56,6 @@ public interface IMerchantAccountsApi {
      * @see <a href="https://docs.truelayer.com/reference/post_merchant-accounts-id-sweeping"><i>Setup/Update Sweeping</i> API reference</a>
      */
     @POST("/merchant-accounts/{merchantAccountId}/sweeping")
-    CompletableFuture<ApiResponse<UpdateSweepingResponse>> updateSweeping(@Path("merchantAccountId") String merchantAccountId,
-             @Body UpdateSweepingRequest updateSweepingRequest);
+    CompletableFuture<ApiResponse<UpdateSweepingResponse>> updateSweeping(
+            @Path("merchantAccountId") String merchantAccountId, @Body UpdateSweepingRequest updateSweepingRequest);
 }

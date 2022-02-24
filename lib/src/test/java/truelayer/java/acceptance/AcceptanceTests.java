@@ -1,6 +1,5 @@
 package truelayer.java.acceptance;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
