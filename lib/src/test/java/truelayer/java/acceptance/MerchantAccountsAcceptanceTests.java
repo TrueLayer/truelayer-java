@@ -1,10 +1,8 @@
 package truelayer.java.acceptance;
 
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static truelayer.java.TestUtils.assertNotError;
 
 import lombok.SneakyThrows;
-import lombok.Synchronized;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.entities.CurrencyCode;
@@ -15,8 +13,6 @@ import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
-
-    private MerchantAccount merchantAccount;
 
     @SneakyThrows
     @Test
@@ -102,23 +98,5 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(getPaymentSources);
-    }
-
-    /**
-     * Internal utility to save some API call
-     */
-    @SneakyThrows
-    @Synchronized
-    private MerchantAccount getMerchantAccount() {
-        if (isNotEmpty(merchantAccount)) {
-            return merchantAccount;
-        }
-
-        merchantAccount = tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
-                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("test merchant account not found"));
-
-        return merchantAccount;
     }
 }
