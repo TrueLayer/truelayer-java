@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.*;
+import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 /**
@@ -52,12 +53,22 @@ public interface IMerchantAccountsApi {
      * of the configured <code>max_amount_in_minor</code> is withdrawn to a pre-configured IBAN.
      * @param merchantAccountId the id of the merchant account
      * @param updateSweepingRequest the update/setup sweeping request
-     * @return the response of the setup/update operation
+     * @return the updated sweeping settings
      * @see <a href="https://docs.truelayer.com/reference/post_merchant-accounts-id-sweeping"><i>Setup/Update Sweeping</i> API reference</a>
      */
     @POST("/merchant-accounts/{merchantAccountId}/sweeping")
-    CompletableFuture<ApiResponse<UpdateSweepingResponse>> updateSweeping(
+    CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
             @Path("merchantAccountId") String merchantAccountId, @Body UpdateSweepingRequest updateSweepingRequest);
+
+    /**
+     * Get the automatic sweeping settings for a merchant account.
+     * @param merchantAccountId the id of the merchant account
+     * @return the sweeping settings for the given merchant account
+     * @see <a href="https://docs.truelayer.com/reference/get_merchant-accounts-id-sweeping"><i>Get Sweeping Settings</i> API reference</a>
+     */
+    @GET("/merchant-accounts/{merchantAccountId}/sweeping")
+    CompletableFuture<ApiResponse<SweepingSettings>> getSweepingSettings(
+            @Path("merchantAccountId") String merchantAccountId);
 
     /**
      * Disable automatic sweeping for a merchant account.
@@ -67,4 +78,8 @@ public interface IMerchantAccountsApi {
      */
     @DELETE("/merchant-accounts/{merchantAccountId}/sweeping")
     CompletableFuture<ApiResponse<Void>> disableSweeping(@Path("merchantAccountId") String merchantAccountId);
+
+    @GET("/merchant-accounts/{merchantAccountId}/payment-sources")
+    CompletableFuture<ApiResponse<GetPaymentSourcesResponse>> getPaymentSources(
+            @Path("merchantAccountId") String merchantAccountId, @Query("user_id") String userId);
 }

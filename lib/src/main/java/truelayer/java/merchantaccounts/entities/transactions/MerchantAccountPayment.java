@@ -1,9 +1,8 @@
 package truelayer.java.merchantaccounts.entities.transactions;
 
-import java.util.List;
 import lombok.*;
 import truelayer.java.entities.CurrencyCode;
-import truelayer.java.entities.accountidentifier.AccountIdentifier;
+import truelayer.java.merchantaccounts.entities.PaymentSource;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -23,15 +22,4 @@ public class MerchantAccountPayment extends Transaction {
     PaymentSource paymentSource;
 
     String paymentId;
-
-    @Value
-    public static class PaymentSource {
-        String id;
-
-        List<AccountIdentifier> accountIdentifiers;
-
-        String accountHolderName;
-
-        String userId;
-    }
 }

@@ -7,11 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.entities.CurrencyCode;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.GetTransactionsResponse;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
-import truelayer.java.merchantaccounts.entities.UpdateSweepingResponse;
+import truelayer.java.merchantaccounts.entities.*;
 import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
+import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
@@ -62,6 +60,25 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Test
+    @DisplayName("It should get the sweeping settings for the given merchant account")
+    public void itShouldGetTheSweepingSettings() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        String merchantAccountId = merchantAccountsResponse.getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                .findFirst()
+                .get()
+                .getId();
+
+        ApiResponse<SweepingSettings> getSweepingSettingsResponse = tlClient.merchantAccounts()
+                .getSweepingSettings(merchantAccountId)
+                .get();
+
+        assertNotError(getSweepingSettingsResponse);
+    }
+
+    @SneakyThrows
+    @Test
     @DisplayName("It should update the sweeping settings for the given merchant account")
     public void itShouldUpdateTheSweepingSettings() {
         ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
@@ -77,7 +94,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .frequency(Frequency.DAILY)
                 .currency(CurrencyCode.GBP)
                 .build();
-        ApiResponse<UpdateSweepingResponse> updateSweepingResponse = tlClient.merchantAccounts()
+        ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
                 .updateSweeping(merchantAccountId, updateSweepingRequest)
                 .get();
 
@@ -100,5 +117,26 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 tlClient.merchantAccounts().disableSweeping(merchantAccountId).get();
 
         assertNotError(disableSweepingResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the payment sources for the given merchant account")
+    public void itShouldGetPaymentSources() {
+        ApiResponse<ListMerchantAccountsResponse> merchantAccountsResponse =
+                tlClient.merchantAccounts().listMerchantAccounts().get();
+        MerchantAccount merchantAccount = merchantAccountsResponse.getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+                .findFirst()
+                .get();
+
+        // todo manage this properly
+        String aUserId = "4c5f09d8-fcb0-46f4-9f43-df58b158d980";
+
+        ApiResponse<GetPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
+                .getPaymentSources(merchantAccount.getId(), aUserId)
+                .get();
+
+        assertNotError(getPaymentSources);
     }
 }
