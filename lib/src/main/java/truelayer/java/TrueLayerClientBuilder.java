@@ -116,15 +116,12 @@ public class TrueLayerClientBuilder {
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
-        OkHttpClient.Builder paymentsHttpClientBuilder = authHttpClient.newBuilder();
-
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
-        paymentsHttpClientBuilder
+        OkHttpClient paymentsHttpClient = authHttpClient.newBuilder()
                 .addInterceptor(new SignatureInterceptor(signingOptions))
-                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)));
-
-        OkHttpClient paymentsHttpClient = paymentsHttpClientBuilder.build();
+                .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
+                .build();
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
