@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -50,10 +51,14 @@ public class ClientCredentialsBuilderTests {
         final String CLIENT_SECRET_VALIDATION_ERROR = "client secret must be set";
 
         return Stream.of(
-                Arguments.of(A_CLIENT_ID, null, new ArrayList<>(Arrays.asList(CLIENT_SECRET_VALIDATION_ERROR))),
-                Arguments.of(A_CLIENT_ID, "", new ArrayList<>(Arrays.asList(CLIENT_SECRET_VALIDATION_ERROR))),
-                Arguments.of(null, A_CLIENT_SECRET, new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR))),
-                Arguments.of("", A_CLIENT_SECRET, new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR))),
+                Arguments.of(
+                        A_CLIENT_ID, null, new ArrayList<>(Collections.singletonList(CLIENT_SECRET_VALIDATION_ERROR))),
+                Arguments.of(
+                        A_CLIENT_ID, "", new ArrayList<>(Collections.singletonList(CLIENT_SECRET_VALIDATION_ERROR))),
+                Arguments.of(
+                        null, A_CLIENT_SECRET, new ArrayList<>(Collections.singletonList(CLIENT_ID_VALIDATION_ERROR))),
+                Arguments.of(
+                        "", A_CLIENT_SECRET, new ArrayList<>(Collections.singletonList(CLIENT_ID_VALIDATION_ERROR))),
                 Arguments.of(
                         "",
                         "",
