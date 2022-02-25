@@ -7,10 +7,9 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
-
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 /**
  * Library constants class
@@ -37,21 +36,18 @@ public class Utils {
     }
 
     public static <T> void validateObject(T object) {
-        final Validator validator = Validation
-                .byDefaultProvider()
+        final Validator validator = Validation.byDefaultProvider()
                 .configure()
                 .messageInterpolator(new ParameterMessageInterpolator())
                 .buildValidatorFactory()
                 .getValidator();
 
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(object);
-        if(!constraintViolations.isEmpty()) {
-            String validationError = constraintViolations
-                    .stream()
+        if (!constraintViolations.isEmpty()) {
+            String validationError = constraintViolations.stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.joining(", "));
             throw new TrueLayerException(validationError);
         }
-
     }
 }
