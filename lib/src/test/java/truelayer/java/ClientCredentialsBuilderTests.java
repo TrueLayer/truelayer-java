@@ -2,9 +2,21 @@ package truelayer.java;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class ClientCredentialsBuilderTests {
 
@@ -23,22 +35,30 @@ public class ClientCredentialsBuilderTests {
         assertEquals(A_CLIENT_SECRET, clientCredentials.clientSecret);
     }
 
-    @Test
-    @DisplayName("It should throw an exception if client id is not set")
-    public void itShouldThrowExceptionIfClientIdNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class, () -> ClientCredentials.builder().build());
 
-        assertEquals("client id must be set", thrown.getMessage());
+    @ParameterizedTest
+    @MethodSource("validationTestData")
+    public void itShouldThrowExceptionIfValidationFails(String clientId, String clientSecret, List<String> expectedValidationErrors) {
+        Throwable thrown = assertThrows(
+                TrueLayerException.class, () -> ClientCredentials.builder()
+                        .clientId(clientId)
+                        .clientSecret(clientSecret)
+                        .build());
+
+        expectedValidationErrors.forEach(validationError -> assertThat(thrown.getMessage(), containsString(validationError)));
     }
 
-    @Test
-    @DisplayName("It should throw an exception if client secret is not set")
-    public void itShouldThrowExceptionIfClientSecretNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class,
-                () -> ClientCredentials.builder().clientId(A_CLIENT_ID).build());
+    private static Stream<Arguments> validationTestData() {
+        final String CLIENT_ID_VALIDATION_ERROR = "client id must be set";
+        final String CLIENT_SECRET_VALIDATION_ERROR = "client secret must be set";
 
-        assertEquals("client secret must be set", thrown.getMessage());
+        return Stream.of(
+                Arguments.of(A_CLIENT_ID, null, new ArrayList<>(Arrays.asList(CLIENT_SECRET_VALIDATION_ERROR))),
+                Arguments.of(A_CLIENT_ID, "", new ArrayList<>(Arrays.asList(CLIENT_SECRET_VALIDATION_ERROR))),
+                Arguments.of(null, A_CLIENT_SECRET, new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR))),
+                Arguments.of("", A_CLIENT_SECRET, new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR))),
+                Arguments.of("", "", new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR, CLIENT_SECRET_VALIDATION_ERROR))),
+                Arguments.of(null, null, new ArrayList<>(Arrays.asList(CLIENT_ID_VALIDATION_ERROR, CLIENT_SECRET_VALIDATION_ERROR)))
+        );
     }
 }

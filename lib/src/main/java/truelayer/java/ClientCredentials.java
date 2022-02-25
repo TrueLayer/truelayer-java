@@ -1,11 +1,11 @@
 package truelayer.java;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Class that models TrueLayer client credentials required for Oauth2 protected endpoints.
@@ -19,8 +19,11 @@ import org.apache.commons.lang3.ObjectUtils;
 @ToString
 @Accessors(fluent = true)
 public class ClientCredentials {
+
+    @NotEmpty(message = "client id must be set")
     String clientId;
 
+    @NotEmpty(message = "client secret must be set")
     String clientSecret;
 
     public static String GRANT_TYPE = "client_credentials";
@@ -28,13 +31,9 @@ public class ClientCredentials {
     public static class ClientCredentialsBuilder {
 
         public ClientCredentials build() {
-            if (ObjectUtils.isEmpty(this.clientId)) {
-                throw new TrueLayerException("client id must be set");
-            }
-            if (ObjectUtils.isEmpty(this.clientSecret)) {
-                throw new TrueLayerException("client secret must be set");
-            }
-            return new ClientCredentials(clientId, clientSecret);
+            ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret);
+            Utils.validateObject(clientCredentials);
+            return clientCredentials;
         }
     }
 }
