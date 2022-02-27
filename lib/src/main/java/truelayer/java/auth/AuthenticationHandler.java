@@ -8,7 +8,7 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 
 /**
- * @inheritDoc
+ * {@inheritDoc}
  */
 @Value
 public class AuthenticationHandler implements IAuthenticationHandler {

@@ -35,7 +35,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IAuthenticationHandler auth() {
@@ -43,7 +43,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IPaymentsApi payments() {
@@ -62,7 +62,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IHostedPaymentPageLinkBuilder hpp() {

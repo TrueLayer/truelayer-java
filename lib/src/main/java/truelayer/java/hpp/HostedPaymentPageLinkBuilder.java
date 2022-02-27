@@ -8,7 +8,7 @@ import lombok.Getter;
 import truelayer.java.TrueLayerException;
 
 /**
- * @inheritDoc
+ * {{@inheritDoc}}
  */
 @Builder(builderMethodName = "New")
 @Getter

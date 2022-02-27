@@ -152,6 +152,16 @@ jacocoTestReport {
     }
 }
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
 publishing {
     repositories {
         maven {
@@ -166,6 +176,8 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from(components.java)
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
 }
