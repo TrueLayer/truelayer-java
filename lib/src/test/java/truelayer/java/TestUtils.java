@@ -86,7 +86,7 @@ public class TestUtils {
     }
 
     public static class RequestStub {
-        private static final String LIBRARY_INFO = "truelayer-java/DEVELOPMENT";
+        private static final String LIBRARY_INFO = "truelayer-java\\/.+";
         private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
 
         private boolean withSignature;
