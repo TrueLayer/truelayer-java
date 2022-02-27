@@ -14,7 +14,6 @@ import truelayer.java.auth.entities.AccessToken;
 import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.http.entities.ProblemDetails;
 import truelayer.java.http.mappers.ErrorMapper;
-import truelayer.java.payments.entities.*;
 
 @WireMockTest
 @Tag("integration")
