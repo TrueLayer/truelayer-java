@@ -5,7 +5,6 @@ import com.truelayer.quarkusmvc.models.DonationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import truelayer.java.ITrueLayerClient;
-import truelayer.java.payments.entities.*;
 import truelayer.java.payments.entities.beneficiary.ExternalAccount;
 import truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
