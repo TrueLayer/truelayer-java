@@ -140,12 +140,12 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    'truelayer/java/**/entities/**',
-                    'truelayer/java/common/Constants.*',
-                    'truelayer/java/common/Constants$*.*',
-                    'truelayer/java/http/TrueLayerApiAdapterFactory.*',
-                    'truelayer/java/http/TrueLayerResponseCallAdapter.*',
-                    'truelayer/java/http/TrueLayerResponseCallAdapter$*.*'
+                    'com/truelayer/java/**/entities/**',
+                    'com/truelayer/java/common/Constants.*',
+                    'com/truelayer/java/common/Constants$*.*',
+                    'com/truelayer/java/http/TrueLayerApiAdapterFactory.*',
+                    'com/truelayer/java/http/TrueLayerResponseCallAdapter.*',
+                    'com/truelayer/java/http/TrueLayerResponseCallAdapter$*.*'
             ])
         }))
     }
