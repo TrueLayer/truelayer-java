@@ -133,7 +133,6 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
     @Test
     @DisplayName("It should update the sweeping setup for a given merchant account")
     public void shouldUpdateSweepingSetup() {
-        String jsonResponseFile = "merchant_accounts/200.sweeping_settings.json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -144,8 +143,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
                 .withAuthorization()
-                .status(200)
-                .bodyFile(jsonResponseFile)
+                .status(204)
                 .build();
 
         UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
@@ -158,8 +156,6 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .get();
 
         assertNotError(response);
-        SweepingSettings expected = deserializeJsonFileTo(jsonResponseFile, SweepingSettings.class);
-        assertEquals(expected, response.getData());
     }
 
     @SneakyThrows
