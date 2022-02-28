@@ -19,10 +19,6 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Get project version
-        run: |
-          projectVersion=$(gradle properties -q | grep "version:" | awk '{print $2}')
-          echo "project_version=$projectVersion" >> $GITHUB_ENV
       - name: Lint
         run: ./gradlew spotlessJavaCheck
       - name: Build
@@ -31,6 +27,24 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Get project version
+        run: |
+          projectVersion=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          echo "Project version: $projectVersion"
+          echo "project_version=$projectVersion" >> $GITHUB_ENV
+      - name: Publish to Sonatype
+        run: ./gradlew publishToSonatype
   coverage:
     runs-on: ubuntu-latest
     steps:
