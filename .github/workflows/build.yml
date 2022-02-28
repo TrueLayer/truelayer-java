@@ -46,6 +46,7 @@ jobs:
           echo "project_version=$projectVersion" >> $GITHUB_ENV
       - name: Publish to Sonatype
         run: ./gradlew publishToSonatype
+
   coverage:
     runs-on: ubuntu-latest
     steps:
