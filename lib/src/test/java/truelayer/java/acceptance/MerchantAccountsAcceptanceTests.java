@@ -3,6 +3,7 @@ package truelayer.java.acceptance;
 import static truelayer.java.TestUtils.assertNotError;
 
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import truelayer.java.entities.CurrencyCode;
@@ -10,6 +11,10 @@ import truelayer.java.http.entities.ApiResponse;
 import truelayer.java.merchantaccounts.entities.*;
 import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
+import truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
+import truelayer.java.merchantaccounts.entities.transactions.Transaction;
+
+import java.util.Optional;
 
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
@@ -40,12 +45,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the list of transactions for a given merchant account")
     public void itShouldGetTheListOfTransactions() {
-        ApiResponse<GetTransactionsResponse> getTransactionsResponse = tlClient.merchantAccounts()
-                .getTransactions(
-                        getMerchantAccount().getId(), "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
-                .get();
-
-        assertNotError(getTransactionsResponse);
+        assertNotError(getTransactions());
     }
 
     @SneakyThrows
@@ -90,13 +90,28 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the payment sources for the given merchant account")
     public void itShouldGetPaymentSources() {
-        // todo manage this properly
-        String aUserId = "4c5f09d8-fcb0-46f4-9f43-df58b158d980";
+        ApiResponse<GetTransactionsResponse> getTransactionsResponse = getTransactions();
+        assertNotError(getTransactionsResponse);
+        MerchantAccountPayment merchantAccountPayment = getTransactionsResponse.getData().getItems().stream().filter(t->t.getType().equals(Transaction.Type.MERCHANT_ACCOUNT_PAYMENT))
+                .findFirst()
+                .orElseThrow(()->new RuntimeException("could not find a merchant account payment transaction"))
+                .asMerchantAccountPayment();
+
+        ;
 
         ApiResponse<GetPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
-                .getPaymentSources(getMerchantAccount().getId(), aUserId)
+                .getPaymentSources(getMerchantAccount().getId(), merchantAccountPayment.getPaymentSource().getUserId())
                 .get();
 
         assertNotError(getPaymentSources);
+    }
+
+    @SneakyThrows
+    @Synchronized
+    private ApiResponse<GetTransactionsResponse> getTransactions(){
+        return tlClient.merchantAccounts()
+                .getTransactions(
+                        getMerchantAccount().getId(), "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
+                .get();
     }
 }

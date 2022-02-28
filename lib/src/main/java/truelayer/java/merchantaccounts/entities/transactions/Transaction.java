@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import truelayer.java.TrueLayerException;
+import truelayer.java.payments.entities.paymentdetail.SettledPaymentDetail;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = MerchantAccountPayment.class)
 @JsonSubTypes({
@@ -36,5 +38,32 @@ public abstract class Transaction {
 
         @JsonValue
         private final String status;
+    }
+
+    public MerchantAccountPayment asMerchantAccountPayment() {
+        if (!(this instanceof MerchantAccountPayment)) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (MerchantAccountPayment) this;
+    }
+
+    public ExternalPayment asExternalPayment() {
+        if (!(this instanceof ExternalPayment)) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (ExternalPayment) this;
+    }
+
+    public Payout asPayout() {
+        if (!(this instanceof Payout)) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (Payout) this;
+    }
+
+    private String buildErrorMessage() {
+        return String.format(
+                "payment is of type %1$s. Consider using as%1$s() instead.",
+                this.getClass().getSimpleName());
     }
 }
