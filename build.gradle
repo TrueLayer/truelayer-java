@@ -205,11 +205,13 @@ publishing {
     }
 }
 
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 signing {
     def signingKey = System.getenv('SONATYPE_GPG_KEY')
     def signingPassword = System.getenv('SONATYPE_GPG_PASSPHRASE')
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign publishing.publications.mavenJava
+    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
 }
 
 nexusPublishing {

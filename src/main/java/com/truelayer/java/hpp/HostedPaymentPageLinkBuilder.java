@@ -13,6 +13,9 @@ import lombok.Getter;
 @Builder(builderMethodName = "New")
 @Getter
 public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuilder {
+    /**
+     * @param uri the hosted payment page URI
+     */
     private URI uri;
 
     @Override
