@@ -14,8 +14,6 @@ import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
 import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 
-import java.util.Optional;
-
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
@@ -92,15 +90,18 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     public void itShouldGetPaymentSources() {
         ApiResponse<GetTransactionsResponse> getTransactionsResponse = getTransactions();
         assertNotError(getTransactionsResponse);
-        MerchantAccountPayment merchantAccountPayment = getTransactionsResponse.getData().getItems().stream().filter(t->t.getType().equals(Transaction.Type.MERCHANT_ACCOUNT_PAYMENT))
+        MerchantAccountPayment merchantAccountPayment = getTransactionsResponse.getData().getItems().stream()
+                .filter(t -> t.getType().equals(Transaction.Type.MERCHANT_ACCOUNT_PAYMENT))
                 .findFirst()
-                .orElseThrow(()->new RuntimeException("could not find a merchant account payment transaction"))
+                .orElseThrow(() -> new RuntimeException("could not find a merchant account payment transaction"))
                 .asMerchantAccountPayment();
 
         ;
 
         ApiResponse<GetPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
-                .getPaymentSources(getMerchantAccount().getId(), merchantAccountPayment.getPaymentSource().getUserId())
+                .getPaymentSources(
+                        getMerchantAccount().getId(),
+                        merchantAccountPayment.getPaymentSource().getUserId())
                 .get();
 
         assertNotError(getPaymentSources);
@@ -108,7 +109,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Synchronized
-    private ApiResponse<GetTransactionsResponse> getTransactions(){
+    private ApiResponse<GetTransactionsResponse> getTransactions() {
         return tlClient.merchantAccounts()
                 .getTransactions(
                         getMerchantAccount().getId(), "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)

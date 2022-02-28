@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import truelayer.java.TrueLayerException;
-import truelayer.java.payments.entities.paymentdetail.SettledPaymentDetail;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = MerchantAccountPayment.class)
 @JsonSubTypes({
