@@ -19,6 +19,10 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Get project version
+        run: |
+          projectVersion=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          echo "project_version=$projectVersion" >> $GITHUB_ENV
       - name: Lint
         run: ./gradlew spotlessJavaCheck
       - name: Build
