@@ -116,7 +116,7 @@ jobs:
           tag_name: ${{ steps.create_tag.outputs.new_tag }}
           generate_release_notes: true
       - name: Publish to Sonatype and Maven Central
-        run: ./gradlew publishToSonatype closeSonatypeStagingRepository
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
