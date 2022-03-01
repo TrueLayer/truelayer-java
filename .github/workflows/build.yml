@@ -61,9 +61,9 @@ jobs:
       - name: Snaphost Semver version check
         run: |
           if [[ "${{env.project_version_snapshot}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)-SNAPSHOT$ ]]; then
-              echo "Project version ${{env.project_version}} is valid"
+              echo "Project version ${{env.project_version_snapshot}} is valid"
           else
-              echo "Project version ${{env.project_version}} is not valid"; exit 1;
+              echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
           fi
       - name: Publish to Sonatype
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
