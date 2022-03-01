@@ -20,15 +20,16 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Get project version
+        id: get-project-version
         run: |
           project_version=$(gradle properties -q | grep "version:" | awk '{print $2}')
           echo "project_version=$project_version" >> $GITHUB_ENV
+          echo "::set-output project_version=${{env.project_version}}"
           echo "Project version: ${{env.project_version}}"
       - name: Semver version check
         run: |
           if [[ "${{env.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
               echo "Project version ${{env.project_version}} is valid"
-              echo "::set-output project_version=${{env.project_version}}"
           else
               echo "Project version ${{env.project_version}} is not valid"; exit 1;
           fi
@@ -41,7 +42,7 @@ jobs:
       - name: Integration tests
         run: ./gradlew integration-tests
     outputs:
-      project_version: ${{ steps.identify.outputs.git_pr_sha }}
+      project_version: ${{ steps.get-project-version.outputs.project_version }}
   release-snapshot:
     runs-on: ubuntu-latest
     if: github.ref != 'ref/head/main'
