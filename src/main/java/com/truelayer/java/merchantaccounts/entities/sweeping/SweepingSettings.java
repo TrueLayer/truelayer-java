@@ -1,7 +1,7 @@
-package truelayer.java.merchantaccounts.entities.sweeping;
+package com.truelayer.java.merchantaccounts.entities.sweeping;
 
+import com.truelayer.java.entities.CurrencyCode;
 import lombok.Value;
-import truelayer.java.entities.CurrencyCode;
 
 @Value
 public class SweepingSettings {

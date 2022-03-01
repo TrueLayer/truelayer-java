@@ -1,6 +1,6 @@
-package truelayer.java.merchantaccounts.entities.sweeping;
+package com.truelayer.java.merchantaccounts.entities.sweeping;
 
-import static truelayer.java.merchantaccounts.entities.sweeping.Destination.Type.IBAN;
+import static com.truelayer.java.merchantaccounts.entities.sweeping.Destination.Type.IBAN;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -1,4 +1,4 @@
-package truelayer.java.http.interceptors.logging;
+package com.truelayer.java.http.interceptors.logging;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,18 +1,18 @@
-package truelayer.java.acceptance;
+package com.truelayer.java.acceptance;
 
-import com.truelayer.java.TestUtils;
+import static com.truelayer.java.TestUtils.assertNotError;
+
+import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
+import com.truelayer.java.merchantaccounts.entities.*;
+import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
+import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
+import com.truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
 import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
-import java.util.List;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
 
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
@@ -31,10 +31,9 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the a merchant accounts by id")
     public void itShouldGetAMerchantAccountById() {
-        ApiResponse<truelayer.java.merchantaccounts.entities.MerchantAccount> getMerchantAccountByIdResponse =
-                tlClient.merchantAccounts()
-                        .getMerchantAccountById(getMerchantAccount().getId())
-                        .get();
+        ApiResponse<MerchantAccount> getMerchantAccountByIdResponse = tlClient.merchantAccounts()
+                .getMerchantAccountById(getMerchantAccount().getId())
+                .get();
 
         assertNotError(getMerchantAccountByIdResponse);
     }

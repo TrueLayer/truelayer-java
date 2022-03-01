@@ -1,4 +1,4 @@
-package truelayer.java.merchantaccounts.entities.sweeping;
+package com.truelayer.java.merchantaccounts.entities.sweeping;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;

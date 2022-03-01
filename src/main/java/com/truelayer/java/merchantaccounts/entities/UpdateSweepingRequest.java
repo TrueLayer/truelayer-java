@@ -1,11 +1,11 @@
-package truelayer.java.merchantaccounts.entities;
+package com.truelayer.java.merchantaccounts.entities;
 
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import truelayer.java.entities.CurrencyCode;
-import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 
 @Builder
 @Getter

@@ -1,6 +1,9 @@
-package truelayer.java.http.interceptors.logging;
+package com.truelayer.java.http.interceptors.logging;
 
-import com.truelayer.java.Constants;
+import static com.truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
+import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
+
 import com.truelayer.java.http.LoggerFactory;
 import java.io.IOException;
 import okhttp3.Interceptor;
@@ -9,7 +12,6 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.TaggedLogger;
 import org.tinylog.ThreadContext;
-import truelayer.java.http.LoggerFactory;
 
 public class HttpLoggingInterceptor implements Interceptor {
     protected static final String MESSAGE_FORMAT = "{} {} {} headers={}";

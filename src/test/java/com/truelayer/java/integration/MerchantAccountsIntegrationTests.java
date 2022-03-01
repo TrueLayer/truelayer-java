@@ -1,28 +1,20 @@
-package truelayer.java.integration;
+package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.truelayer.java.TestUtils;
-import com.truelayer.java.Utils;
+import com.truelayer.java.TestUtils.RequestStub;
+import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
-import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
+import com.truelayer.java.merchantaccounts.entities.*;
+import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
+import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import truelayer.java.entities.CurrencyCode;
-import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.*;
-import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
-import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
-import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 @DisplayName("Merchant accounts integration tests")
 public class MerchantAccountsIntegrationTests extends IntegrationTests {

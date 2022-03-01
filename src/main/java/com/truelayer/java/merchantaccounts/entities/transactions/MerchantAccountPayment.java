@@ -1,7 +1,6 @@
-package truelayer.java.merchantaccounts.entities.transactions;
+package com.truelayer.java.merchantaccounts.entities.transactions;
 
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 

@@ -1,11 +1,13 @@
-package truelayer.java.acceptance;
+package com.truelayer.java.acceptance;
+
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.ClientCredentials;
 import com.truelayer.java.Environment;
 import com.truelayer.java.SigningOptions;
 import com.truelayer.java.TrueLayerClient;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import lombok.Synchronized;

@@ -1,16 +1,14 @@
-package truelayer.java.acceptance;
+package com.truelayer.java.acceptance;
 
+import static com.truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static com.truelayer.java.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static truelayer.java.Constants.HeaderNames.USER_AGENT;
-import static truelayer.java.TestUtils.*;
 
-import com.truelayer.java.Constants;
-import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
-import com.truelayer.java.entities.beneficiary.MerchantAccount;
+import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -25,18 +23,6 @@ import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
-import truelayer.java.entities.Remitter;
-import truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
-import truelayer.java.entities.beneficiary.MerchantAccount;
-import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.payments.entities.*;
-import truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
-import truelayer.java.payments.entities.paymentdetail.PaymentDetail;
-import truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
-import truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
-import truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
-import truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
@@ -170,14 +156,14 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
-        truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount = getMerchantAccount();
+        MerchantAccount merchantAccount = getMerchantAccount();
 
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(merchantAccount.getCurrency())
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
-                        .beneficiary(MerchantAccount.builder()
+                        .beneficiary(Beneficiary.merchantAccount()
                                 .merchantAccountId(merchantAccount.getId())
                                 .build())
                         .build())

@@ -1,12 +1,11 @@
-package truelayer.java.http.interceptors;
+package com.truelayer.java.http.interceptors;
 
-import com.truelayer.java.Constants;
-import com.truelayer.java.SigningOptions;
+import static com.truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static com.truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-import static truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
-import static truelayer.java.Constants.HeaderNames.TL_SIGNATURE;
 
+import com.truelayer.java.SigningOptions;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;

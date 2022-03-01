@@ -1,11 +1,15 @@
-package truelayer.java.http.interceptors.logging;
+package com.truelayer.java.http.interceptors.logging;
 
+import static com.truelayer.java.Constants.HeaderNames.AUTHORIZATION;
+import static com.truelayer.java.Constants.HeaderNames.COOKIE;
+import static com.truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
+import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
+import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
+import static com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor.MESSAGE_FORMAT;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import com.truelayer.java.Constants;
-import com.truelayer.java.TestUtils;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.SneakyThrows;

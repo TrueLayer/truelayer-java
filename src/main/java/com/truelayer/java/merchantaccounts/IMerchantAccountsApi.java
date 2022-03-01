@@ -1,20 +1,14 @@
-package truelayer.java.merchantaccounts;
+package com.truelayer.java.merchantaccounts;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
-import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
+import com.truelayer.java.merchantaccounts.entities.*;
+import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import retrofit2.http.*;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.*;
-import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.*;
-import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
-import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 
 /**
  * Exposes all the merchant accounts related capabilities of the library.

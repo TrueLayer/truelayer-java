@@ -1,10 +1,10 @@
-package truelayer.java;
+package com.truelayer.java;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.truelayer.java.Constants.HeaderNames.*;
+import static com.truelayer.java.Utils.getObjectMapper;
 import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static truelayer.java.Constants.HeaderNames.*;
-import static truelayer.java.Utils.getObjectMapper;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;

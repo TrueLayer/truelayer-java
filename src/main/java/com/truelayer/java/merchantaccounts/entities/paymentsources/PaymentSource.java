@@ -1,8 +1,8 @@
-package truelayer.java.merchantaccounts.entities.transactions;
+package com.truelayer.java.merchantaccounts.entities.paymentsources;
 
+import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import java.util.List;
 import lombok.Value;
-import truelayer.java.entities.accountidentifier.AccountIdentifier;
 
 @Value
 public class PaymentSource {
@@ -11,6 +11,4 @@ public class PaymentSource {
     List<AccountIdentifier> accountIdentifiers;
 
     String accountHolderName;
-
-    String userId;
 }

@@ -3,9 +3,9 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.truelayer.java.TrueLayerException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import truelayer.java.TrueLayerException;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = MerchantAccountPayment.class)
 @JsonSubTypes({
