@@ -14,6 +14,17 @@ public class Environment {
     private final URI hppUri;
 
     /**
+     * Builder for development environment
+     * @return a development environment object
+     */
+    public static Environment development() {
+        return new Environment(
+                URI.create("https://auth.t7r.dev"),
+                URI.create("https://api.t7r.dev"),
+                URI.create("https://payment.t7r.dev"));
+    }
+
+    /**
      * Builder for sandbox environment
      * @return a sandbox environment object
      */

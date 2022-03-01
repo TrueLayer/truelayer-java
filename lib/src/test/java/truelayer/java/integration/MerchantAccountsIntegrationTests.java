@@ -3,25 +3,21 @@ package truelayer.java.integration;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.jupiter.api.Assertions.*;
 import static truelayer.java.TestUtils.*;
-import static truelayer.java.Utils.getObjectMapper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import truelayer.java.entities.CurrencyCode;
 import truelayer.java.http.entities.ApiResponse;
-import truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
-import truelayer.java.merchantaccounts.entities.MerchantAccount;
-import truelayer.java.merchantaccounts.entities.transactions.Transaction;
+import truelayer.java.merchantaccounts.entities.*;
+import truelayer.java.merchantaccounts.entities.sweeping.Frequency;
+import truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
-import truelayer.java.payments.entities.*;
 
 @DisplayName("Merchant accounts integration tests")
 public class MerchantAccountsIntegrationTests extends IntegrationTests {
     public static final String A_MERCHANT_ACCOUNT_ID = "a-merchant-id";
+    public static final String A_USER_ID = "a-user-id";
 
     @SneakyThrows
     @Test
@@ -81,7 +77,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
     @Test
     @DisplayName("It should get the list of transactions for a given merchant account")
     public void shouldGetTransactions() {
-        String jsonResponseFile = "payments/200.get_transactions.json";
+        String jsonResponseFile = "merchant_accounts/200.get_transactions.json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -96,15 +92,121 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<List<Transaction>> response = tlClient.merchantAccounts()
+        ApiResponse<GetTransactionsResponse> response = tlClient.merchantAccounts()
                 .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
                 .get();
 
         assertNotError(response);
-        List<Transaction> expected = getObjectMapper()
-                .readValue(
-                        Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonResponseFile)),
-                        new TypeReference<List<Transaction>>() {});
+        GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the sweeping settings for a given merchant account")
+    public void shouldGetTheSweepingSettings() {
+        String jsonResponseFile = "merchant_accounts/200.sweeping_settings.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<SweepingSettings> response = tlClient.merchantAccounts()
+                .getSweepingSettings(A_MERCHANT_ACCOUNT_ID)
+                .get();
+
+        assertNotError(response);
+        SweepingSettings expected = deserializeJsonFileTo(jsonResponseFile, SweepingSettings.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should update the sweeping setup for a given merchant account")
+    public void shouldUpdateSweepingSetup() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
+                .withAuthorization()
+                .status(204)
+                .build();
+
+        UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
+                .currency(CurrencyCode.EUR)
+                .frequency(Frequency.DAILY)
+                .maxAmountInMinor(100)
+                .build();
+        ApiResponse<SweepingSettings> response = tlClient.merchantAccounts()
+                .updateSweeping(A_MERCHANT_ACCOUNT_ID, updateSweepingRequest)
+                .get();
+
+        assertNotError(response);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should disable sweeping for a given merchant account")
+    public void shouldDisableSweeping() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("delete")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
+                .withAuthorization()
+                .status(204)
+                .build();
+
+        ApiResponse<Void> response = tlClient.merchantAccounts()
+                .disableSweeping(A_MERCHANT_ACCOUNT_ID)
+                .get();
+
+        assertNotError(response);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the payment sources for a given merchant account")
+    public void shouldGetPaymentSources() {
+        String jsonResponseFile = "merchant_accounts/200.payment_sources.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/payment-sources"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<GetPaymentSourcesResponse> response = tlClient.merchantAccounts()
+                .getPaymentSources(A_MERCHANT_ACCOUNT_ID, A_USER_ID)
+                .get();
+
+        assertNotError(response);
+        GetPaymentSourcesResponse expected = deserializeJsonFileTo(jsonResponseFile, GetPaymentSourcesResponse.class);
         assertEquals(expected, response.getData());
     }
 }

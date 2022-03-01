@@ -10,7 +10,6 @@ import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
-import truelayer.java.entities.CurrencyCode;
 import truelayer.java.entities.Remitter;
 import truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import truelayer.java.entities.beneficiary.MerchantAccount;
@@ -156,11 +155,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
-        truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount =
-                tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
-                        .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
-                        .findFirst()
-                        .get();
+        truelayer.java.merchantaccounts.entities.MerchantAccount merchantAccount = getMerchantAccount();
 
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))

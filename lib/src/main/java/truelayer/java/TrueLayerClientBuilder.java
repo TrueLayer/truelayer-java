@@ -99,6 +99,7 @@ public class TrueLayerClientBuilder {
 
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
+
         OkHttpClient authHttpClient = clientBuilder.build();
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
@@ -115,10 +116,10 @@ public class TrueLayerClientBuilder {
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
+        // we just need to add the signature and authentication interceptor
+        // as all the others are inherited
         OkHttpClient paymentsHttpClient = authHttpClient
                 .newBuilder()
-                // we just need to add the signature and authentication interceptor
-                // as all the others are inherited
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(new AuthenticationInterceptor(authenticationHandler, singletonList(PAYMENTS)))
                 .build();

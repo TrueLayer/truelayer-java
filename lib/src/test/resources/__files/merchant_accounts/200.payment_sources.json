@@ -1,0 +1,19 @@
+{
+  "items":[
+    {
+      "id":"bf1877b9-e8e9-4640-85f3-91a29f2e0d25",
+      "account_holder_name":"JAKE OLIVER",
+      "account_identifiers":[
+        {
+          "type":"sort_code_account_number",
+          "sort_code":"040662",
+          "account_number":"00002723"
+        },
+        {
+          "type":"iban",
+          "iban":"GB53CLRB04066200002723"
+        }
+      ]
+    }
+  ]
+}
