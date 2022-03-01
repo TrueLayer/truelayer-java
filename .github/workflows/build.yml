@@ -85,7 +85,7 @@ jobs:
               echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
           fi
       - name: Publish to Sonatype snapshot repository
-        run: ./gradlew publishToSonatype
+        run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
