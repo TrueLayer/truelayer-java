@@ -32,8 +32,6 @@ spotless {
     }
 }
 
-task printVersion { doLast { logger.quiet version } }
-
 shadowJar {
     archiveBaseName.set(archivesBaseName)
 
