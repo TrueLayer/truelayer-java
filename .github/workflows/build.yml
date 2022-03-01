@@ -28,6 +28,7 @@ jobs:
         run: |
           if [[ "${{env.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
               echo "Project version ${{env.project_version}} is valid"
+              echo "::set-output project_version=${{env.project_version}}"
           else
               echo "Project version ${{env.project_version}} is not valid"; exit 1;
           fi
@@ -39,6 +40,8 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
+    outputs:
+      project_version: ${{ steps.identify.outputs.git_pr_sha }}
   release-snapshot:
     runs-on: ubuntu-latest
     if: github.ref != 'ref/head/main'
@@ -54,7 +57,7 @@ jobs:
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Create Snapshot version
         run: |
-          echo "project_version_snapshot=${{env.project_version}}-SNAPSHOT" >> $GITHUB_ENV
+          echo "project_version_snapshot=${{needs.job1.outputs.output1}}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Publish to Sonatype
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
