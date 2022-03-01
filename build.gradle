@@ -39,9 +39,6 @@ shadowJar {
 
     // avoid setting a default 'all' suffix to exported jar
     archiveClassifier.set('')
-
-    // include sources in the exported jar
-    from sourceSets.main.allJava
 }
 
 task createProperties(dependsOn: processResources) {
