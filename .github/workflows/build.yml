@@ -22,16 +22,14 @@ jobs:
       - name: Get project version
         id: get-project-version
         run: |
-          project_version=$(gradle properties -q | grep "version:" | awk '{print $2}')
-          echo "project_version=$project_version" >> $GITHUB_ENV
-          echo "::set-output project_version=${{env.project_version}}"
-          echo "Project version: ${{env.project_version}}"
+          PROJECT_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          echo "::set-output name=project_version::$PROJECT_VERSION"
       - name: Semver version check
         run: |
-          if [[ "${{env.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-              echo "Project version ${{env.project_version}} is valid"
+          if [[ "${{steps.get-project-version.outputs.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+              echo "Project version ${{steps.get-project-version.outputs.project_version}} is valid"
           else
-              echo "Project version ${{env.project_version}} is not valid"; exit 1;
+              echo "Project version ${{steps.get-project-version.outputs.project_version}} is not valid"; exit 1;
           fi
       - name: Lint
         run: ./gradlew spotlessJavaCheck
@@ -60,6 +58,13 @@ jobs:
         run: |
           echo "project_version_snapshot=${{needs.job1.outputs.output1}}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
+      - name: Snaphost Semver version check
+        run: |
+          if [[ "${{env.project_version_snapshot}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)-SNAPSHOT$ ]]; then
+              echo "Project version ${{env.project_version}} is valid"
+          else
+              echo "Project version ${{env.project_version}} is not valid"; exit 1;
+          fi
       - name: Publish to Sonatype
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
         env:
