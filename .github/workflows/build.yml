@@ -19,6 +19,18 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Get project version
+        run: |
+          project_version=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          echo "project_version=$project_version" >> $GITHUB_ENV
+          echo "Project version: ${{env.project_version}}"
+      - name: Semver version check
+        run: |
+          if [[ "${{env.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+              echo "Version {{env.project_version}} is valid"
+          else
+              echo "Version {{env.project_version}} is not valid"; exit 1;
+          fi
       - name: Lint
         run: ./gradlew spotlessJavaCheck
       - name: Build
@@ -27,8 +39,9 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
-  release:
+  release-snapshot:
     runs-on: ubuntu-latest
+    if: github.ref != 'ref/head/main'
     needs: build
     steps:
       - uses: actions/checkout@v2
@@ -39,11 +52,6 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      - name: Get project version
-        run: |
-          projectVersion=$(gradle properties -q | grep "version:" | awk '{print $2}')
-          echo "Project version: $projectVersion"
-          echo "project_version=$projectVersion" >> $GITHUB_ENV
       - name: Publish to Sonatype
         run: ./gradlew publishToSonatype
         env:
@@ -51,6 +59,7 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
   coverage:
     runs-on: ubuntu-latest
+    if: github.ref == 'ref/head/main'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
