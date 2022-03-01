@@ -31,7 +31,6 @@ jobs:
           else
               echo "Project version ${{steps.get_project_version.outputs.project_version}} is not valid"; exit 1;
           fi
-      #todo: check on existing releases with the same version and fail if so
       - name: Lint
         run: ./gradlew spotlessJavaCheck
       - name: Build
@@ -117,7 +116,7 @@ jobs:
           tag_name: ${{ steps.create_tag.outputs.new_tag }}
           generate_release_notes: true
       - name: Publish to Sonatype and Maven Central
-        run: ./gradlew publishToSonatype
+        run: ./gradlew publishToSonatype closeSonatypeStagingRepository
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
