@@ -56,7 +56,7 @@ jobs:
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Create Snapshot version
         run: |
-          echo "project_version_snapshot=${{needs.job1.outputs.output1}}-SNAPSHOT" >> $GITHUB_ENV
+          echo "project_version_snapshot=${{needs.build.outputs.project_version}}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Snaphost Semver version check
         run: |
