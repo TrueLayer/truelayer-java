@@ -55,6 +55,8 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Acceptance tests in sandbox
+        run: ./gradlew acceptance-tests
       - name: Create Snapshot version
         run: |
           echo "project_version_snapshot=${{needs.build.outputs.project_version}}-SNAPSHOT" >> $GITHUB_ENV
@@ -66,8 +68,8 @@ jobs:
           else
               echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
           fi
-      - name: Publish to Sonatype
-        run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
+      - name: Publish to Sonatype snapshot repository
+        run: ./gradlew publishToSonatype
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
@@ -85,6 +87,8 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Acceptance tests in sandbox
+        run: ./gradlew acceptance-tests
       - name: Create tag
         id: create_tag
         uses: mathieudutour/github-tag-action@v6.0
@@ -97,8 +101,8 @@ jobs:
         with:
           tag_name: ${{ steps.create_tag.outputs.new_tag }}
           generate_release_notes: true
-      - name: Publish to Sonatype
-        run: ./gradlew publishToSonatype
+      - name: Publish to Sonatype and Maven Central
+        run: ./gradlew -Pversion=${{needs.build.outputs.project_version}} publishToSonatype
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
