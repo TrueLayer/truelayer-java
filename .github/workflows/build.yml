@@ -27,9 +27,9 @@ jobs:
       - name: Semver version check
         run: |
           if [[ "${{env.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-              echo "Version ${{env.project_version}} is valid"
+              echo "Project version ${{env.project_version}} is valid"
           else
-              echo "Version ${{env.project_version}} is not valid"; exit 1;
+              echo "Project version ${{env.project_version}} is not valid"; exit 1;
           fi
       - name: Lint
         run: ./gradlew spotlessJavaCheck
@@ -52,8 +52,12 @@ jobs:
           distribution: 'adopt'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Create Snapshot version
+        run: |
+          echo "project_version_snapshot=$project_version-SNAPSHOT" >> $GITHUB_ENV
+          echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Publish to Sonatype
-        run: ./gradlew publishToSonatype
+        run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
