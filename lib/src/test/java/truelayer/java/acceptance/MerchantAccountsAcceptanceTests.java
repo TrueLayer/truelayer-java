@@ -50,6 +50,17 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the sweeping settings for the given merchant account")
     public void itShouldGetTheSweepingSettings() {
+        // safely create a sweeping setting first to avoid 404 while getting
+        UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
+                .maxAmountInMinor(100)
+                .frequency(Frequency.DAILY)
+                .currency(CurrencyCode.GBP)
+                .build();
+        ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
+                .updateSweeping(getMerchantAccount().getId(), updateSweepingRequest)
+                .get();
+        assertNotError(updateSweepingResponse);
+
         ApiResponse<SweepingSettings> getSweepingSettingsResponse = tlClient.merchantAccounts()
                 .getSweepingSettings(getMerchantAccount().getId())
                 .get();
