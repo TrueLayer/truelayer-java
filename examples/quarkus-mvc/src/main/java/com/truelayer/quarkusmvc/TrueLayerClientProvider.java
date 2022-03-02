@@ -1,12 +1,8 @@
 package com.truelayer.quarkusmvc;
 
+import com.truelayer.java.*;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import truelayer.java.ClientCredentials;
-import truelayer.java.ITrueLayerClient;
-import truelayer.java.Environment;
-import truelayer.java.SigningOptions;
-import truelayer.java.TrueLayerClient;
 
 import javax.inject.Singleton;
 import java.nio.file.Files;
@@ -32,6 +28,7 @@ public class TrueLayerClientProvider {
 
         return TrueLayerClient.New()
                 .environment(Environment.sandbox())
+                .withHttpLogs()
                 .clientCredentials(
                         ClientCredentials.builder()
                                 .clientId(clientId)

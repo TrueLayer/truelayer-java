@@ -10,56 +10,45 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ### Unstable releases
 
-Unstable releases are published as Github package within this repository. 
+Unstable releases are published as `SNAPSHOT` releases on the Nexus Sonatype repository. 
 
 To use on of those release with Gradle, make sure you have the following repository listed in your build.gradle file: 
 ```gradle
 repositories {
     // ... all your existing repos here
 
-    // signing library repository
-    maven { url 'https://jitpack.io' }
-
-    // truelayer-java library repository
-    maven {
-        name = "GitHubPackages"
-        url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
-        credentials {
-            username = project.findProperty("gpr.user")
-            password = project.findProperty("gpr.key")
-        }
-    }    
+    maven{
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }   
 }
-```
+``` 
 
-Then include a gradle.properties file in your main module which includes your Github username and a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token):
- 
-```properties
-# gradle.properties
-gpr.user=${your TL username}
-gpr.key=${your TL PAT}
-```
-
-Please note that the above personal access token should have at least the following scopes: 
-- `repo`
-- `read:packages`
-- `read:org`
-
-**Also verify that you have configured SSO.** 
-
-Finally make sure you declare the desired library version as dependency of your project: 
+And you declare a dependency with a -SNAPSHOT suffix:
 
 ```gradle
 dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'truelayer-java:lib:0.4.7'
+    implementation 'com.truelayer:truelayer-java:0.4.10-SNAPSHOT'
 }
 ```
+
+There can be multiple artifacts available for a given snapshot. Gradle will automatically look for the latest one. 
+
 ### Final releases
 
-TBD
+As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
+to use a final release. For instance: 
+
+```gradle
+dependencies {
+    // ... your existing dependencies
+
+    // TL Java BE library
+    implementation 'com.truelayer:truelayer-java:0.4.10'
+}
+```
 
 ## Documentation
 
