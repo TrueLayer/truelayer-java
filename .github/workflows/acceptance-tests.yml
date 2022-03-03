@@ -1,3 +1,5 @@
+name: Acceptance tests
+
 on:
   workflow_call
 
