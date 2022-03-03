@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -44,7 +45,13 @@ jobs:
   acceptance-tests:
     needs: build
     uses: ./.github/workflows/acceptance-tests.yml
+    secrets:
+      tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+      tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
+      tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
+      tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
   release-snapshot:
+    name: Release to Nexus snapshots repository
     runs-on: ubuntu-latest
     if: github.ref != 'ref/head/main'
     needs: [build, acceptance-tests]
@@ -75,6 +82,7 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
   release:
+    name: Release to Maven Central
     runs-on: ubuntu-latest
     if: github.ref == 'ref/head/main'
     needs: [build, acceptance-tests]
@@ -107,6 +115,7 @@ jobs:
           SONATYPE_GPG_KEY: ${{ secrets.SONATYPE_GPG_KEY }}
           SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
   coverage:
+    name: Test coverage analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
