@@ -10,16 +10,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '8', '11', '17' ]
-    name: Build and tests on Java ${{ matrix.java }}
+    name: Build and tests
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
+          java-version: '8'
           distribution: 'adopt'
           cache: 'gradle'
       - name: Validate Gradle wrapper
@@ -67,6 +64,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Create Snapshot version
@@ -98,6 +96,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Create tag
@@ -129,6 +128,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Test coverage
