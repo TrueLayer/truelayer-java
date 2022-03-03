@@ -45,7 +45,7 @@ jobs:
   acceptance-tests:
     name: Acceptance tests in Sandbox environment
     needs: build
-    uses: ./.github/workflows/acceptance-tests.yml
+    uses: ./.github/workflows/shared/acceptance-tests.yml
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
