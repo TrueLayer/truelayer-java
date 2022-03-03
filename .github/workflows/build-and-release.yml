@@ -79,7 +79,8 @@ jobs:
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Snaphost Semver version check
         run: |
-          if [[ "${{env.project_version_snapshot}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)-SNAPSHOT$ ]]; then
+          SNAPSHOT_VERSION_REGEX = ^([0-9]+)\.([0-9]+)\.([0-9]+)--${GITHUB_REF##*/}-SNAPSHOT$;
+          if [[ "${{env.project_version_snapshot}}" =~ $SNAPSHOT_VERSION_REGEX ]]; then
               echo "Project version ${{env.project_version_snapshot}} is valid"
           else
               echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
