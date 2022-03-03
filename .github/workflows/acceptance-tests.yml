@@ -1,7 +1,7 @@
 name: Acceptance tests
 
 on:
-  workflow_call
+  workflow_call:
 
 jobs:
   acceptance-tests:
