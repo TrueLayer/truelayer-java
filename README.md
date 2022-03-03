@@ -7,6 +7,19 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ## Installation
 
+### Stable releases
+
+As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
+to use a final release. For instance:
+
+```gradle
+dependencies {
+    // ... your existing dependencies
+
+    // TL Java BE library
+    implementation 'com.truelayer:truelayer-java:0.4.10'
+}
+```
 
 ### Unstable releases
 
@@ -34,21 +47,7 @@ dependencies {
 }
 ```
 
-There can be multiple artifacts available for a given snapshot. Gradle will automatically look for the latest one. 
-
-### Final releases
-
-As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
-to use a final release. For instance: 
-
-```gradle
-dependencies {
-    // ... your existing dependencies
-
-    // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.4.10'
-}
-```
+There can be multiple artifacts available for a given snapshot. Gradle will automatically look for the latest one.
 
 ## Documentation
 
@@ -139,6 +138,11 @@ URI hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-
 ```
 
 ## Building locally
+
+To build the solution run:
+```sh
+./gradlew build
+```
 
 ## Testing
 ### Unit tests
