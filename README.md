@@ -41,7 +41,7 @@ repositories {
 }
 ``` 
 
-And you declare a dependency with a -SNAPSHOT suffix:
+And you declare a dependency with a `-SNAPSHOT` suffix:
 
 ```gradle
 dependencies {
