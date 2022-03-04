@@ -96,9 +96,9 @@ tasks.register('acceptance-tests', Test) {
 
 dependencies {
     // Utilities
-    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidatorVersion
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: beanUtilsVersion
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: apacheCommonsConfigurationVersion
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidatorVersion
 
     // HTTP client
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion

@@ -5,12 +5,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.beneficiary.MerchantAccount;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import com.truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,7 +45,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = paymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -69,7 +74,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(401)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = paymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -127,7 +132,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(404)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = paymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -156,7 +161,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(400)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = paymentRequestStub();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -232,5 +237,22 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
+    }
+
+    private static CreatePaymentRequest paymentRequestStub() {
+        return CreatePaymentRequest.builder()
+                .amountInMinor(10)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(BankTransfer.builder()
+                        .beneficiary(MerchantAccount.builder()
+                                .accountHolderName("Bob")
+                                .merchantAccountId(UUID.randomUUID().toString())
+                                .build())
+                        .providerSelection(PreselectedProviderSelection.builder()
+                                .providerId("mock-bank")
+                                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                                .build())
+                        .build())
+                .build();
     }
 }

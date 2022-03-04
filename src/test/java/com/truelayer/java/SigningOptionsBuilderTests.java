@@ -1,11 +1,21 @@
 package com.truelayer.java;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class SigningOptionsBuilderTests {
 
@@ -24,22 +34,38 @@ public class SigningOptionsBuilderTests {
         assertEquals(A_PRIVATE_KEY, signingOptions.privateKey());
     }
 
-    @Test
-    @DisplayName("It should throw an exception if key id is not set")
-    public void itShouldThrowExceptionIfKeyIdNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class, () -> SigningOptions.builder().build());
+    @ParameterizedTest
+    @MethodSource("validationTestData")
+    public void itShouldThrowExceptionIfValidationFails(
+            String keyId, byte[] privateKey, List<String> expectedValidationErrors) {
+        Throwable thrown = assertThrows(TrueLayerException.class, () -> SigningOptions.builder()
+                .keyId(keyId)
+                .privateKey(privateKey)
+                .build());
 
-        assertEquals("key id must be set", thrown.getMessage());
+        expectedValidationErrors.forEach(
+                validationError -> assertThat(thrown.getMessage(), containsString(validationError)));
     }
 
-    @Test
-    @DisplayName("It should throw an exception if private key is not set")
-    public void itShouldThrowExceptionIfPrivateKeyNotSet() {
-        Throwable thrown = assertThrows(
-                TrueLayerException.class,
-                () -> SigningOptions.builder().keyId(A_KEY_ID).build());
+    private static Stream<Arguments> validationTestData() {
+        final String KEY_ID_VALIDATION_ERROR = "key id must be set";
+        final String PRIVATE_KEY_VALIDATION_ERROR = "private key must be set";
 
-        assertEquals("private key must be set", thrown.getMessage());
+        return Stream.of(
+                Arguments.of(A_KEY_ID, null, new ArrayList<>(Collections.singletonList(PRIVATE_KEY_VALIDATION_ERROR))),
+                Arguments.of(
+                        A_KEY_ID,
+                        new byte[] {},
+                        new ArrayList<>(Collections.singletonList(PRIVATE_KEY_VALIDATION_ERROR))),
+                Arguments.of(null, A_PRIVATE_KEY, new ArrayList<>(Collections.singletonList(KEY_ID_VALIDATION_ERROR))),
+                Arguments.of("", A_PRIVATE_KEY, new ArrayList<>(Collections.singletonList(KEY_ID_VALIDATION_ERROR))),
+                Arguments.of(
+                        "",
+                        new byte[] {},
+                        new ArrayList<>(Arrays.asList(KEY_ID_VALIDATION_ERROR, PRIVATE_KEY_VALIDATION_ERROR))),
+                Arguments.of(
+                        null,
+                        null,
+                        new ArrayList<>(Arrays.asList(KEY_ID_VALIDATION_ERROR, PRIVATE_KEY_VALIDATION_ERROR))));
     }
 }

@@ -1,9 +1,9 @@
 package com.truelayer.java;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Class that models TrueLayer signing options required for payments.
@@ -15,20 +15,19 @@ import org.apache.commons.lang3.ObjectUtils;
 @Getter
 @Accessors(fluent = true)
 public class SigningOptions {
+
+    @NotEmpty(message = "key id must be set")
     private String keyId;
 
+    @NotEmpty(message = "private key must be set")
     private byte[] privateKey;
 
     public static class SigningOptionsBuilder {
 
         public SigningOptions build() {
-            if (ObjectUtils.isEmpty(this.keyId)) {
-                throw new TrueLayerException("key id must be set");
-            }
-            if (ObjectUtils.isEmpty(this.privateKey)) {
-                throw new TrueLayerException("private key must be set");
-            }
-            return new SigningOptions(keyId, privateKey);
+            SigningOptions signingOptions = new SigningOptions(keyId, privateKey);
+            Utils.validateObject(signingOptions);
+            return signingOptions;
         }
     }
 }
