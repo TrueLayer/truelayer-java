@@ -9,7 +9,7 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ### Stable releases
 
-Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java/0.4.10/jar).
+Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java).
 As such, it's enough to simply declare the desired `truelayer-java` artifact dependency
 :
 
