@@ -47,6 +47,13 @@ jobs:
           else
               echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
           fi
+      - name: Generate javadoc
+        run: ./gradlew javadoc
+      - name: Deploy javadoc
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
       - name: Publish to Sonatype snapshot repository
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
         env:
