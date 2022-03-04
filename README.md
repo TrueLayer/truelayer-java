@@ -195,7 +195,8 @@ the builds will fail if not compliant.
 When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
 
 ## Library Documentation
-TBD
+
+Our library javadoc is available [here](https://truelayer.github.io/truelayer-java). 
 
 ## Contributing
 
