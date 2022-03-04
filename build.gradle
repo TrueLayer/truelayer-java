@@ -147,6 +147,11 @@ jacocoTestReport {
     }
 }
 
+task javadoc(overwrite: true, type: Javadoc) {
+    source = sourceSets.main.allJava
+    destinationDir = file('docs')
+}
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
