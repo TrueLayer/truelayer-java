@@ -12,10 +12,18 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 ### Stable releases
 
 Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java).
+
 As such, it's enough to simply declare the desired `truelayer-java` artifact dependency
 :
 
 ```gradle
+repositories {
+    // ... all your existing repos here
+    
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     // ... your existing dependencies
 
@@ -34,7 +42,10 @@ To use on of those release with Gradle, make sure you have the following reposit
 ```gradle
 repositories {
     // ... all your existing repos here
-
+    
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
+    
     maven{
         url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
     }   
