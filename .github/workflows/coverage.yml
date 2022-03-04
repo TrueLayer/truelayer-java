@@ -7,7 +7,7 @@ on:
         required: true
         type: string
     secrets:
-      coveralls_repo_roken:
+      coveralls_repo_token:
         required: true
 
 jobs:
@@ -27,5 +27,5 @@ jobs:
       - name: Test coverage
         run: ./gradlew jacocoTestReport coveralls
         env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.coveralls_repo_roken }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.coveralls_repo_token }}
           CI_BRANCH: ${{ inputs.branch }}
