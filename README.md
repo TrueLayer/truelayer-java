@@ -1,7 +1,9 @@
 # TrueLayer Java
 
-[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/) [![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml) [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
-
+[![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.truelayer/truelayer-java/badge.svg)](https://search.maven.org/artifact/com.truelayer/truelayer-java)
+[![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
 
