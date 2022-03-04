@@ -1,10 +1,16 @@
 on:
-  workflow_call
+  workflow_call:
+    outputs:
+      project_version:
+        description: "The project version"
+        value: ${{ jobs.build.outputs.project_version }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build and tests
+    outputs:
+      project_version: ${{ steps.get_project_version.outputs.project_version }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 8
@@ -35,5 +41,3 @@ jobs:
         run: ./gradlew unit-tests
       - name: Integration tests
         run: ./gradlew integration-tests
-    outputs:
-      project_version: ${{ steps.get_project_version.outputs.project_version }}
