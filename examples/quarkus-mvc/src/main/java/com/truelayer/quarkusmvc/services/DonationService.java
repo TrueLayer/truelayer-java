@@ -1,20 +1,22 @@
 package com.truelayer.quarkusmvc.services;
 
+import com.truelayer.java.ITrueLayerClient;
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
+import com.truelayer.java.entities.beneficiary.ExternalAccount;
+import com.truelayer.java.payments.entities.User;
+import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
+import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 import com.truelayer.quarkusmvc.models.DonationResult;
 import com.truelayer.quarkusmvc.models.DonationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import truelayer.java.ITrueLayerClient;
-import truelayer.java.payments.entities.*;
-import truelayer.java.payments.entities.beneficiary.ExternalAccount;
-import truelayer.java.payments.entities.paymentmethod.BankTransfer;
-import truelayer.java.payments.entities.paymentmethod.SortCodeAccountNumberAccountIdentifier;
-import truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.net.URI;
 
-import static truelayer.java.payments.entities.CreatePaymentRequest.builder;
+import static com.truelayer.java.payments.entities.CreatePaymentRequest.builder;
+
 
 @ApplicationScoped
 @RequiredArgsConstructor
