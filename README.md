@@ -201,8 +201,6 @@ TBD
 
 Contributions are always welcome!
 
-See //todo
-
 Please adhere to this project's [code of conduct](CODE_OF_CONDUCT.md).
 
   
