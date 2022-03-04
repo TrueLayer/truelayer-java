@@ -53,7 +53,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          publish_dir: ./build/docs/javadoc
       - name: Publish to Sonatype snapshot repository
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
         env:
