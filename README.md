@@ -43,9 +43,13 @@ dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.4.10-SNAPSHOT'
+    implementation 'com.truelayer:truelayer-java:$version-$featureName-SNAPSHOT'
 }
 ```
+
+A sample snapshot artifact would be `com.truelayer:truelayer-java:0.4.10-jsdk-9-SNAPSHOT`, 
+where `0.4.10` represents the future final version of the library and `jsdk-9` is the
+branch name on which the new feature is being implemented.
 
 There can be multiple artifacts available for a given snapshot. Gradle will automatically look for the latest one.
 
