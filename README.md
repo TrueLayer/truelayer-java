@@ -9,17 +9,20 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ### Stable releases
 
-As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
-to use a final release. For instance:
+Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java/0.4.10/jar).
+As such, it's enough to simply declare the desired `truelayer-java` artifact dependency
+:
 
 ```gradle
 dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.4.10'
+    implementation 'com.truelayer:truelayer-java:$version'
 }
 ```
+
+To know more about our final releases please see our [Releases](https://github.com/TrueLayer/truelayer-java/releases) section.
 
 ### Unstable releases
 
@@ -55,31 +58,13 @@ There can be multiple artifacts available for a given snapshot. Gradle will auto
 
 ## Documentation
 
-For a comprehensive list of examples, check out the [API documentation](https://docs.truelayer.com).
+Check out the [API documentation](https://docs.truelayer.com) and [Java library documentation](https://truelayer.github.io/truelayer-java).
 
 ## Usage
 
 ### Prerequisites
 
-First [sign up](https://console.truelayer.com/) for a developer account. Follow the instructions to set up a new application and obtain your Client ID and Secret. Once the application has been created you must add your application redirected URIs in order to test your integration end-to-end. 
-
-Next, generate a signing key pair used to sign API requests.
-
-To generate a private key, run:
-
-```sh
-docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ecparam -genkey -name secp521r1 -noout -out ec512-private-key.pem
-```
-
-To obtain the public key, run:
-
-```sh
-docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-key.pem -pubout -out ec512-public-key.pem
-```
-
-
-### Configure Settings
-
+Before using the Java library you need a developer account and a signing key pair as explained [here](https://docs.truelayer.com/docs/sign-your-requests#step-1-generate-a-signing-key-pair).
 
 ### Initialize TrueLayerClient
 ```java
@@ -193,10 +178,6 @@ Bear in mind that the above checks are enforced at CI time, thus
 the builds will fail if not compliant.
 
 When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
-
-## Library Documentation
-
-Our library javadoc is available [here](https://truelayer.github.io/truelayer-java). 
 
 ## Contributing
 
