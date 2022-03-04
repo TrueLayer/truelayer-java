@@ -55,7 +55,7 @@ jobs:
   release-snapshot:
     name: Release to Nexus snapshots repository
     runs-on: ubuntu-latest
-    if: github.ref != 'ref/head/main'
+    if: github.ref != 'refs/head/main'
     needs: [build, acceptance-tests]
     steps:
       - uses: actions/checkout@v2
@@ -87,7 +87,7 @@ jobs:
   release:
     name: Release to Maven Central
     runs-on: ubuntu-latest
-    if: github.ref == 'ref/head/main'
+    if: github.ref == 'refs/head/main'
     needs: [build, acceptance-tests]
     steps:
       - uses: actions/checkout@v2
