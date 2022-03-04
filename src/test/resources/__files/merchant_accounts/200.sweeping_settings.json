@@ -1,0 +1,9 @@
+{
+  "max_amount_in_minor":1,
+  "currency":"GBP",
+  "frequency":"daily",
+  "destination":{
+    "type":"iban",
+    "iban":"string"
+  }
+}

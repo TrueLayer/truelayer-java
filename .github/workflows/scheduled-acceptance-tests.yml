@@ -1,0 +1,15 @@
+name: Scheduled acceptance tests
+
+on:
+  schedule:
+    - cron: "0 7-19/2 * * *" # every 2 hours between 10 and 20 (UTC)
+
+jobs:
+  scheduled-acceptance-tests:
+    name: Scheduled acceptance tests in Sandbox environment
+    uses: ./.github/workflows/acceptance-tests.yml
+    secrets:
+      tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+      tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
+      tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
+      tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}

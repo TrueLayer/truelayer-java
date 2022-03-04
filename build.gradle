@@ -1,0 +1,214 @@
+plugins {
+    id 'java-library'
+    // to unleash the lombok magic
+    id "io.freefair.lombok" version "6.2.0"
+    // to support Kotlin
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+    // to make our tests output more fancy
+    id 'com.adarshr.test-logger' version '3.1.0'
+    // to build fat jars
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+    // to publish packages
+    id 'maven-publish'
+    // code linting
+    id "com.diffplug.spotless" version "6.2.0"
+    //  test coverage
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.12.0'
+    // signing
+    id "signing"
+    // nexus publishing
+    id "io.github.gradle-nexus.publish-plugin"  version "1.1.0"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+spotless {
+    java {
+        palantirJavaFormat()
+    }
+}
+
+shadowJar {
+    archiveBaseName.set(archivesBaseName)
+
+    // avoid setting a default 'all' suffix to exported jar
+    archiveClassifier.set('')
+}
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/truelayer-java.version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['name'] = archivesBaseName
+            p['version'] = project.version != "unspecified" ? project.version : "DEVELOPMENT"
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
+}
+
+test {
+    useJUnitPlatform{
+        excludeTags "acceptance" // exclude acceptance tests from the default test task
+    }
+}
+
+testlogger {
+    theme 'mocha'
+}
+
+tasks.register('unit-tests', Test) {
+    outputs.upToDateWhen { false }
+    useJUnitPlatform{
+        excludeTags "integration"
+        excludeTags "acceptance"
+    }
+}
+
+tasks.register('integration-tests', Test) {
+    outputs.upToDateWhen { false }
+    useJUnitPlatform{
+        includeTags "integration"
+    }
+}
+
+tasks.register('acceptance-tests', Test) {
+    outputs.upToDateWhen { false }
+    useJUnitPlatform{
+        includeTags "acceptance"
+    }
+    testLogging.showStandardStreams = true
+}
+
+dependencies {
+    // Utilities
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidatorVersion
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: beanUtilsVersion
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: apacheCommonsConfigurationVersion
+
+    // HTTP client
+    implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
+    implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
+
+    // TL signing library
+    implementation group: 'com.github.truelayer', name: 'truelayer-signing', version: tlSigningVersion
+
+    // Serialization
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
+
+    // Logging
+    implementation group: 'org.tinylog', name: 'tinylog-api', version: tinyLogVersion
+    implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
+
+    // JUnit test framework.
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
+    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: hamcrestVersion
+
+    // Mocking libraries
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
+    testImplementation group: "com.github.tomakehurst", name:"wiremock-jre8", version: wireMockVersion
+}
+
+jacocoTestReport {
+    dependsOn "unit-tests"
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/unit-tests.exec"))
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'com/truelayer/java/**/entities/**',
+                    'com/truelayer/java/common/Constants.*',
+                    'com/truelayer/java/common/Constants$*.*',
+                    'com/truelayer/java/http/TrueLayerApiAdapterFactory.*',
+                    'com/truelayer/java/http/TrueLayerResponseCallAdapter.*',
+                    'com/truelayer/java/http/TrueLayerResponseCallAdapter$*.*'
+            ])
+        }))
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = project_name
+                packaging = 'jar'
+                description = project_description
+                url = project_url
+                scm {
+                    connection = project_scm
+                    developerConnection = project_scm
+                    url = project_url
+                }
+                licenses {
+                    license {
+                        name = project_license_name
+                        url = project_license_url
+                    }
+                }
+                developers {
+                    developer {
+                        id = project_developer
+                        name = project_developer
+                    }
+                }
+            }
+        }
+    }
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+signing {
+    def signingKey = System.getenv('SONATYPE_GPG_KEY')
+    def signingPassword = System.getenv('SONATYPE_GPG_PASSPHRASE')
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri(sonatype_repository_url)
+            snapshotRepositoryUrl = uri(sonatype_snapshot_repository_url)
+            username = System.getenv("SONATYPE_USERNAME")
+            password = System.getenv("SONATYPE_PASSWORD")
+        }
+    }
+}

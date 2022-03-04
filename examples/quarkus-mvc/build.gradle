@@ -7,15 +7,6 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
-    // repository for the java library
-    maven {
-        name = "GitHubPackages"
-        url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
-        credentials {
-            username = project.findProperty("gpr.user")
-            password = project.findProperty("gpr.key")
-        }
-    }
     // repository for our signing library
     maven { url 'https://jitpack.io' }
 }
@@ -28,7 +19,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'truelayer-java:lib:0.4.7'
+    implementation 'com.truelayer:truelayer-java:0.4.10'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

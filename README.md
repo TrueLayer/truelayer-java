@@ -1,65 +1,57 @@
 # TrueLayer Java
 
-[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/) [![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml) [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/) [![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml) [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
 
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
 
 ## Installation
 
+### Stable releases
 
-### Unstable releases
-
-Unstable releases are published as Github package within this repository. 
-
-To use on of those release with Gradle, make sure you have the following repository listed in your build.gradle file: 
-```gradle
-repositories {
-    // ... all your existing repos here
-
-    // signing library repository
-    maven { url 'https://jitpack.io' }
-
-    // truelayer-java library repository
-    maven {
-        name = "GitHubPackages"
-        url = "https://maven.pkg.github.com/TrueLayer/truelayer-java"
-        credentials {
-            username = project.findProperty("gpr.user")
-            password = project.findProperty("gpr.key")
-        }
-    }    
-}
-```
-
-Then include a gradle.properties file in your main module which includes your Github username and a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token):
- 
-```properties
-# gradle.properties
-gpr.user=${your TL username}
-gpr.key=${your TL PAT}
-```
-
-Please note that the above personal access token should have at least the following scopes: 
-- `repo`
-- `read:packages`
-- `read:org`
-
-**Also verify that you have configured SSO.** 
-
-Finally make sure you declare the desired library version as dependency of your project: 
+As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
+to use a final release. For instance:
 
 ```gradle
 dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'truelayer-java:lib:0.4.7'
+    implementation 'com.truelayer:truelayer-java:0.4.10'
 }
 ```
-### Final releases
 
-TBD
+### Unstable releases
+
+Unstable releases are published as `SNAPSHOT` releases on the Nexus Sonatype repository. 
+
+To use on of those release with Gradle, make sure you have the following repository listed in your build.gradle file: 
+```gradle
+repositories {
+    // ... all your existing repos here
+
+    maven{
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }   
+}
+``` 
+
+And you declare a dependency with a -SNAPSHOT suffix:
+
+```gradle
+dependencies {
+    // ... your existing dependencies
+
+    // TL Java BE library
+    implementation 'com.truelayer:truelayer-java:$version-$featureName-SNAPSHOT'
+}
+```
+
+A sample snapshot artifact would be `com.truelayer:truelayer-java:0.4.10-jsdk-9-SNAPSHOT`, 
+where `0.4.10` represents the future final version of the library and `jsdk-9` is the
+branch name on which the new feature is being implemented.
+
+There can be multiple artifacts available for a given snapshot. Gradle will automatically look for the latest one.
 
 ## Documentation
 
@@ -120,7 +112,7 @@ CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
                     .countries(Collections.singletonList(CountryCode.GB))
                     .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                     .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                    .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
+                    .providerIds(Collections.singletonList("mock-payments-gb-redirect"))
                     .build())
                 .build())
             .beneficiary(MerchantAccount.builder()
@@ -150,6 +142,11 @@ URI hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-
 ```
 
 ## Building locally
+
+To build the solution run:
+```sh
+./gradlew build
+```
 
 ## Testing
 ### Unit tests
