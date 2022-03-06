@@ -6,8 +6,6 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.31'
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '3.1.0'
-    // to build fat jars
-    id "com.github.johnrengelman.shadow" version "7.1.0"
     // to publish packages
     id 'maven-publish'
     // code linting
@@ -30,13 +28,6 @@ spotless {
     java {
         palantirJavaFormat()
     }
-}
-
-shadowJar {
-    archiveBaseName.set(archivesBaseName)
-
-    // avoid setting a default 'all' suffix to exported jar
-    archiveClassifier.set('')
 }
 
 task createProperties(dependsOn: processResources) {
