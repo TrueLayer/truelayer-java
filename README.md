@@ -1,6 +1,6 @@
 # TrueLayer Java
 
-[![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml)
+[![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.truelayer/truelayer-java/badge.svg)](https://search.maven.org/artifact/com.truelayer/truelayer-java)
 [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
