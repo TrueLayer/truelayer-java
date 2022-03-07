@@ -12,7 +12,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.Buffer;
-import org.jetbrains.annotations.NotNull;
 import truelayer.signing.Signer;
 
 @RequiredArgsConstructor
@@ -20,9 +19,8 @@ public class SignatureInterceptor implements Interceptor {
 
     private final SigningOptions signingOptions;
 
-    @NotNull
     @Override
-    public Response intercept(@NotNull Chain chain) throws IOException {
+    public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
         if (needsSignature(request)) {
