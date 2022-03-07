@@ -1,7 +1,9 @@
 # TrueLayer Java
 
-[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/) [![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml) [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
-
+[![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build-and-release.yml)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.truelayer/truelayer-java/badge.svg)](https://search.maven.org/artifact/com.truelayer/truelayer-java)
+[![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
 
@@ -9,17 +11,28 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ### Stable releases
 
-As we use the Maven Central repository, it's enough to simply declare the truelayer-java dependency
-to use a final release. For instance:
+Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java).
+
+As such, it's enough to simply declare the desired `truelayer-java` artifact dependency
+:
 
 ```gradle
+repositories {
+    // ... all your existing repos here
+    
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     // ... your existing dependencies
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.4.10'
+    implementation 'com.truelayer:truelayer-java:$version'
 }
 ```
+
+To know more about our final releases please see our [Releases](https://github.com/TrueLayer/truelayer-java/releases) section.
 
 ### Unstable releases
 
@@ -29,14 +42,17 @@ To use on of those release with Gradle, make sure you have the following reposit
 ```gradle
 repositories {
     // ... all your existing repos here
-
+    
+    // repository for our signing library
+    maven { url 'https://jitpack.io' }
+    
     maven{
         url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
     }   
 }
 ``` 
 
-And you declare a dependency with a -SNAPSHOT suffix:
+And you declare a dependency with a `-SNAPSHOT` suffix:
 
 ```gradle
 dependencies {
@@ -55,31 +71,13 @@ There can be multiple artifacts available for a given snapshot. Gradle will auto
 
 ## Documentation
 
-For a comprehensive list of examples, check out the [API documentation](https://docs.truelayer.com).
+Check out the [API documentation](https://docs.truelayer.com) and [Java library documentation](https://truelayer.github.io/truelayer-java).
 
 ## Usage
 
 ### Prerequisites
 
-First [sign up](https://console.truelayer.com/) for a developer account. Follow the instructions to set up a new application and obtain your Client ID and Secret. Once the application has been created you must add your application redirected URIs in order to test your integration end-to-end. 
-
-Next, generate a signing key pair used to sign API requests.
-
-To generate a private key, run:
-
-```sh
-docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ecparam -genkey -name secp521r1 -noout -out ec512-private-key.pem
-```
-
-To obtain the public key, run:
-
-```sh
-docker run --rm -v ${PWD}:/out -w /out -it alpine/openssl ec -in ec512-private-key.pem -pubout -out ec512-public-key.pem
-```
-
-
-### Configure Settings
-
+Before using the Java library you need a developer account and a signing key pair as explained [here](https://docs.truelayer.com/docs/sign-your-requests#step-1-generate-a-signing-key-pair).
 
 ### Initialize TrueLayerClient
 ```java
@@ -194,17 +192,11 @@ the builds will fail if not compliant.
 
 When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
 
-## Library Documentation
-TBD
-
 ## Contributing
 
 Contributions are always welcome!
 
-See //todo
-
 Please adhere to this project's [code of conduct](CODE_OF_CONDUCT.md).
-
   
 ## License
 

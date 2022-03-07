@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements Interceptor {
@@ -21,9 +20,8 @@ public class AuthenticationInterceptor implements Interceptor {
 
     private final List<String> scopes;
 
-    @NotNull
     @Override
-    public Response intercept(@NotNull Chain chain) throws IOException {
+    public Response intercept(Chain chain) throws IOException {
         AccessToken accessToken = tryGetToken(authenticationHandler.getOauthToken(scopes));
 
         Request request = chain.request();
