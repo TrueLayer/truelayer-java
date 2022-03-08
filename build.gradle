@@ -47,7 +47,11 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
     // repository for our signing library
-    maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }
+
+
 }
 
 test {
@@ -93,7 +97,7 @@ dependencies {
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
     // TL signing library
-    implementation group: 'com.github.truelayer', name: 'truelayer-signing', version: tlSigningVersion
+    implementation group: 'com.truelayer', name: 'truelayer-signing', version: tlSigningVersion
 
     // Serialization
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion

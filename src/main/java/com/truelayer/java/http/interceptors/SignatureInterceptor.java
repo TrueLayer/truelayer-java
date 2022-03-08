@@ -12,7 +12,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.Buffer;
-import truelayer.signing.Signer;
+import com.truelayer.signing.Signer;
 
 @RequiredArgsConstructor
 public class SignatureInterceptor implements Interceptor {
