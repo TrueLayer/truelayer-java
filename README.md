@@ -17,10 +17,6 @@ As such, it's enough to simply declare the desired `truelayer-java` artifact dep
 :
 
 ```gradle
-repositories {
-    // ... all your existing repos here
-}
-
 dependencies {
     // ... your existing dependencies
 

@@ -7,8 +7,6 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
-    // repository for our signing library
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -19,7 +17,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.4.10'
+    implementation 'com.truelayer:truelayer-java:0.4.13'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
