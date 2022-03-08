@@ -46,12 +46,6 @@ classes {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-    // repository for our signing library
-    maven {
-        url 'https://s01.oss.sonatype.org/content/repositories/staging/'
-    }
-
-
 }
 
 test {
