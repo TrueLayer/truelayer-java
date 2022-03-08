@@ -6,13 +6,13 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.SigningOptions;
+import com.truelayer.signing.Signer;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.Buffer;
-import truelayer.signing.Signer;
 
 @RequiredArgsConstructor
 public class SignatureInterceptor implements Interceptor {
