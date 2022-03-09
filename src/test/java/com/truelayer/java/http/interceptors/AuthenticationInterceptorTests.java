@@ -11,6 +11,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.util.Collections;
@@ -41,7 +42,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
-        this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
+        this.interceptor = new AuthenticationInterceptor(new AccessTokenManager(authenticationHandler, scopes));
 
         intercept();
 
@@ -62,7 +63,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                                 .detail("error: invalid_client")
                                 .build())
                         .build()));
-        this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
+        this.interceptor = new AuthenticationInterceptor(new AccessTokenManager(authenticationHandler, scopes));
 
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, this::intercept);
 

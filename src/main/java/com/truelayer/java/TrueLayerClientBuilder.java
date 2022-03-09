@@ -8,6 +8,7 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.RetrofitFactory;
+import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
@@ -121,7 +122,7 @@ public class TrueLayerClientBuilder {
                 .newBuilder()
                 .addInterceptor(new SignatureInterceptor(signingOptions))
                 .addInterceptor(
-                        new AuthenticationInterceptor(authenticationHandler, singletonList(Constants.Scopes.PAYMENTS)))
+                        new AuthenticationInterceptor(new AccessTokenManager(authenticationHandler, singletonList(Constants.Scopes.PAYMENTS))))
                 .build();
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
