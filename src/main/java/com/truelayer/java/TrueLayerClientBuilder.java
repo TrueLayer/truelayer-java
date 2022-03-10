@@ -8,7 +8,6 @@ import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.AccessTokenManager;
-import com.truelayer.java.http.auth.AccessTokenManager.AccessTokenManagerBuilder;
 import com.truelayer.java.http.auth.cache.SimpleAccessTokenCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
@@ -35,8 +34,6 @@ public class TrueLayerClientBuilder {
     private Environment environment = Environment.live();
 
     private boolean logEnabled;
-
-    private boolean tokenCacheEnabled = true;
 
     TrueLayerClientBuilder() {}
 
@@ -85,16 +82,6 @@ public class TrueLayerClientBuilder {
     }
 
     /**
-     * Utility to disable the default access token caching mechanism.
-     * All calls requiring authentication will fire an Oauth request internally
-     * @return the instance of the client builder used.
-     */
-    public TrueLayerClientBuilder disableTokenCache() {
-        this.tokenCacheEnabled = false;
-        return this;
-    }
-
-    /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
      * @see TrueLayerClient
@@ -129,12 +116,10 @@ public class TrueLayerClientBuilder {
             return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
         }
 
-        AccessTokenManagerBuilder accessTokenManagerBuilder =
-                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
-
-        if (tokenCacheEnabled) {
-            accessTokenManagerBuilder.accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()));
-        }
+        AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .authenticationHandler(authenticationHandler)
+                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
+                .build();
 
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
@@ -142,7 +127,7 @@ public class TrueLayerClientBuilder {
         OkHttpClient paymentsHttpClient = authHttpClient
                 .newBuilder()
                 .addInterceptor(new SignatureInterceptor(signingOptions))
-                .addInterceptor(new AuthenticationInterceptor(accessTokenManagerBuilder.build()))
+                .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
                 .build();
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())

@@ -1,7 +1,6 @@
 package com.truelayer.java.http.auth;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
@@ -24,25 +23,13 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     @Override
     public AccessToken getToken() {
-        if (isCachingDisabled()) {
-            return tryGetToken();
-        }
-
         return accessTokenCache.get().orElse(tryGetToken());
     }
 
     @Override
     @Synchronized
     public void invalidateToken() {
-        if (isCachingDisabled()) {
-            return;
-        }
-
         accessTokenCache.clear();
-    }
-
-    private boolean isCachingDisabled() {
-        return isEmpty(accessTokenCache);
     }
 
     private AccessToken tryGetToken() {
