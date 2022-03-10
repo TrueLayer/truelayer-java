@@ -9,8 +9,7 @@ import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 /**
  * Test class meant to test OkHttp client interceptors and authenticator behavior
