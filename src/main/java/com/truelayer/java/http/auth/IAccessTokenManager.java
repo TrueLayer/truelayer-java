@@ -11,10 +11,10 @@ public interface IAccessTokenManager {
      * Gets either a cached or a fresh token based on internal decisions.
      * @return the access token
      */
-    AccessToken get();
+    AccessToken getToken();
 
     /**
-     * Reset the state for access tokens. Usually called in case of 401 received by the API
+     * Reset the state for access tokens. Called in case of 401 received by the API
      */
-    void invalidate();
+    void invalidateToken();
 }

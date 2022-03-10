@@ -1,39 +1,48 @@
 package com.truelayer.java.http.auth;
 
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+
+import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.http.auth.cache.IAccessTokenCache;
 import com.truelayer.java.http.entities.ApiResponse;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import lombok.Builder;
 import lombok.Synchronized;
 
-import java.util.List;
-
-@RequiredArgsConstructor
+@Builder
 public class AccessTokenManager implements IAccessTokenManager {
-
-    /**
-     * Internal state
-     */
-    private AccessToken accessToken;
 
     private final IAuthenticationHandler authenticationHandler;
 
-    private final List<String> scopes;
+    private final IAccessTokenCache accessTokenCache;
+
+    private final List<String> scopes = singletonList(Constants.Scopes.PAYMENTS);
 
     @Override
-    public AccessToken get() {
-        this.accessToken = tryGetToken();
+    public AccessToken getToken() {
+        if (isCachingDisabled()) {
+            return tryGetToken();
+        }
 
-        //todo: cache
-
-        return this.accessToken;
+        return accessTokenCache.get().orElse(tryGetToken());
     }
 
     @Override
     @Synchronized
-    public void invalidate() {
-        this.accessToken = null;
+    public void invalidateToken() {
+        if (isCachingDisabled()) {
+            return;
+        }
+
+        accessTokenCache.clear();
+    }
+
+    private boolean isCachingDisabled() {
+        return isEmpty(accessTokenCache);
     }
 
     private AccessToken tryGetToken() {

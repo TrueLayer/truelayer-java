@@ -3,9 +3,7 @@ package com.truelayer.java.http.interceptors;
 import com.truelayer.java.Constants;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.auth.IAccessTokenManager;
-
 import java.io.IOException;
-
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -18,7 +16,7 @@ public class AuthenticationInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        AccessToken accessToken = tokenManager.get();
+        AccessToken accessToken = tokenManager.getToken();
 
         Request request = chain.request();
         Request newRequest = request.newBuilder()
@@ -27,7 +25,6 @@ public class AuthenticationInterceptor implements Interceptor {
 
         return chain.proceed(newRequest);
     }
-
 
     private String buildAuthorizationHeader(String token) {
         return "Bearer " + token;
