@@ -81,7 +81,6 @@ public class AccessTokenManagementTests extends IntegrationTests {
     @Test
     @DisplayName("It should refresh the access token if expired")
     public void itShouldRefreshTheAccessTokenIfExpired() throws InterruptedException {
-        long tokenExpirationMs = 1500;
         String accessTokenImmediateExpirationJsonFile = "auth/200.access_token.immediate_expiration.json";
         String accessTokenJsonFile = "auth/200.access_token.json";
         RequestStub.New()
@@ -98,10 +97,12 @@ public class AccessTokenManagementTests extends IntegrationTests {
                 .status(201)
                 .bodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
+        AccessToken expectedImmediateExpirationToken =
+                deserializeJsonFileTo(accessTokenImmediateExpirationJsonFile, AccessToken.class);
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         tlClient.payments().createPayment(paymentRequest).get();
-        sleep(tokenExpirationMs);
+        sleep(expectedImmediateExpirationToken.getExpiresIn() * 1000L);
         // below will supersede previous similar request
         RequestStub.New()
                 .method("post")
@@ -112,8 +113,6 @@ public class AccessTokenManagementTests extends IntegrationTests {
         tlClient.payments().createPayment(paymentRequest).get();
 
         verify(2, postRequestedFor(urlPathEqualTo("/connect/token")));
-        AccessToken expectedImmediateExpirationToken =
-                deserializeJsonFileTo(accessTokenImmediateExpirationJsonFile, AccessToken.class);
         verify(
                 1,
                 postRequestedFor(urlPathEqualTo("/payments"))
