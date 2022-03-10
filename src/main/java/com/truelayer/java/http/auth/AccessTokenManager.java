@@ -23,7 +23,12 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     @Override
     public AccessToken getToken() {
-        return accessTokenCache.get().orElse(tryGetToken());
+        return accessTokenCache
+                .get().orElseGet(()->{
+                    AccessToken token = tryGetToken();
+                    accessTokenCache.store(token);
+                    return token;
+                });
     }
 
     @Override
