@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class SimpleAccessTokenCacheTests {
+class SimpleAccessTokenManagementTests {
 
     @Test
     @DisplayName("It should store a token record")
