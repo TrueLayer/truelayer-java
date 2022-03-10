@@ -2,9 +2,11 @@ package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
@@ -26,13 +28,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
         String jsonResponseFile = "payments/201.create_payment.merchant_account.json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -45,7 +47,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();
 
-        TestUtils.assertNotError(response);
+        assertNotError(response);
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
         assertEquals(expected, response.getData());
     }
@@ -55,13 +57,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldReturnErrorIfSignatureIsInvalid() {
         String jsonResponseFile = "payments/401.invalid_signature.json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -85,13 +87,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldReturnAPaymentDetail(Status expectedStatus) {
         String jsonResponseFile = "payments/200.get_payment_by_id." + expectedStatus.getStatus() + ".json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("get")
                 .path(urlPathMatching("/payments/" + A_PAYMENT_ID))
                 .withAuthorization()
@@ -102,7 +104,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<PaymentDetail> response =
                 tlClient.payments().getPayment(A_PAYMENT_ID).get();
 
-        TestUtils.assertNotError(response);
+        assertNotError(response);
         PaymentDetail expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
@@ -113,13 +115,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldThrowIfPaymentNotFound() {
         String jsonResponseFile = "payments/404.payment_not_found.json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -142,13 +144,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @DisplayName("It should return a request invalid error")
     public void shouldThrowARequestInvalidError() {
         String jsonResponseFile = "payments/400.request_invalid.json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
@@ -172,13 +174,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @DisplayName("It should start an authorization flow")
     public void shouldStartAnAuthorizationFlow(AuthorizationFlowAction.Type flowType) {
         String jsonResponseFile = "payments/200.start_authorization_flow." + flowType.getType() + ".json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
                 .withAuthorization()
@@ -192,7 +194,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .startAuthorizationFlow(A_PAYMENT_ID, request)
                 .get();
 
-        TestUtils.assertNotError(response);
+        assertNotError(response);
         StartAuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, StartAuthorizationFlowResponse.class);
         assertEquals(
@@ -207,13 +209,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @DisplayName("It should submit a provider selection")
     public void shouldSubmitProviderSelection(SubmitProviderSelectionResponse.Status status) {
         String jsonResponseFile = "payments/200.submit_provider_selection." + status.getStatus() + ".json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
@@ -227,7 +229,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
                 .get();
 
-        TestUtils.assertNotError(response);
+        assertNotError(response);
         SubmitProviderSelectionResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
         assertEquals(status, response.getData().getStatus());
