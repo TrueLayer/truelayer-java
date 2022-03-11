@@ -6,3 +6,6 @@ updates:
       interval: daily
     commit-message:
       prefix: "[Dependabot]"
+    labels:
+      - "skip-release"
+      - "dependencies"
