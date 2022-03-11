@@ -3,7 +3,7 @@ plugins {
     // to unleash the lombok magic
     id "io.freefair.lombok" version "6.2.0"
     // to make our tests output more fancy
-    id 'com.adarshr.test-logger' version '3.1.0'
+    id 'com.adarshr.test-logger' version '3.2.0'
     // to publish packages
     id 'maven-publish'
     // code linting
