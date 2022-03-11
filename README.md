@@ -186,6 +186,8 @@ When developing on IntelliJ you can optionally install this [Spotless IntelliJ G
 
 Contributions are always welcome!
 
+See our [contributing guide](./CONTRIBUTING.md).
+
 Please adhere to this project's [code of conduct](CODE_OF_CONDUCT.md).
   
 ## License
