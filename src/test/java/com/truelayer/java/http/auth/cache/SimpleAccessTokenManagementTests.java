@@ -53,7 +53,7 @@ class SimpleAccessTokenManagementTests {
         Instant aPastInstant = Clock.systemUTC().instant().minus(accessToken.getExpiresIn() + 5, ChronoUnit.SECONDS);
         Clock fakeClock = Mockito.mock(Clock.class);
         // when storing a token the clock will compute a time in the past.
-        // Upon getting the token i will return the current timestamp.
+        // Upon getting the token it will return the current timestamp.
         when(fakeClock.instant())
                 .thenReturn(aPastInstant)
                 .thenReturn(Clock.systemUTC().instant());
