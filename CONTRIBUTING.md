@@ -25,7 +25,7 @@ Report a bug by [opening a new issue](https://github.com/TrueLayer/truelayer-jav
 - Library version and environment information, as well as other relevant notes
 
 ## Discussions
-We use the [discussion](https://github.com/TrueLayer/truelayer-java/discussions) section to talk about the current state of the project as well as 
+We use the [discussion](https://github.com/TrueLayer/truelayer-java/discussions/89) section to talk about the current state of the project as well as 
 to propose new features.
 
 ## Submit changes
