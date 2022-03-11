@@ -35,7 +35,7 @@ In order to submit changes to the TrueLayer Java project the follwoing steps are
 1. Fork the repo and create your branch from `main`.
 2. Make sure to add proper tests in case of code changes. 
 3. Make sure to update the documentation in case of API changes.
-4. Once code linting and tests passes, you can raise a pull request. 
+4. Once [code linting](https://github.com/TrueLayer/truelayer-java#code-linting) and tests passes, you can raise a pull request. 
 
 ## License
 By contributing, you agree that your contributions will be licensed under its [MIT License](./LICENSE).
