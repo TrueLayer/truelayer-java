@@ -22,6 +22,9 @@ public class HttpLogMessage {
 
     private List<Header> headers;
 
+    /**
+     * Builder class for HTTP log messages
+     */
     public static class HttpLogMessageBuilder {
         public String build() {
             return String.format(
