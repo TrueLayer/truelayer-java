@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * In memory cache
+ * Default in-memory cache implementation.
+ * Class constructor accepts a Clock instance for improved testing purposes. Please note that this is not a monotonic implementation.
+ * @see <a href="https://www.thoughtworks.com/insights/blog/test-driven-development-best-thing-has-happened-software-design">this article</a> for more context,
  */
 public class SimpleAccessTokenCache implements IAccessTokenCache {
 
@@ -21,6 +23,10 @@ public class SimpleAccessTokenCache implements IAccessTokenCache {
 
     private final Clock clock;
 
+    /**
+     * Constructor for this class.
+     * @param clock clock instance
+     */
     public SimpleAccessTokenCache(Clock clock) {
         this.clock = clock;
     }
