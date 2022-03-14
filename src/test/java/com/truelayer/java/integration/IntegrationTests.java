@@ -6,16 +6,16 @@ import com.truelayer.java.Environment;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerClient;
 import java.net.URI;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 @WireMockTest
 @Tag("integration")
 public abstract class IntegrationTests {
-    protected static TrueLayerClient tlClient;
+    protected TrueLayerClient tlClient;
 
-    @BeforeAll
-    public static void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    @BeforeEach
+    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
         Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
 
         tlClient = TrueLayerClient.New()
