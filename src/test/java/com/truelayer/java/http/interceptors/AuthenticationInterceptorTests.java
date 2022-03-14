@@ -11,8 +11,11 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.http.auth.AccessTokenManager;
+import com.truelayer.java.http.auth.cache.SimpleAccessTokenCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,7 +44,13 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
-        this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
+
+        AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
+                .authenticationHandler(authenticationHandler)
+                .build();
+
+        this.interceptor = new AuthenticationInterceptor(accessTokenManager);
 
         intercept();
 
@@ -59,10 +68,16 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                 .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
                                 .type("error")
-                                .detail("error: invalid_client")
+                                .detail("invalid_client")
                                 .build())
                         .build()));
-        this.interceptor = new AuthenticationInterceptor(authenticationHandler, scopes);
+
+        AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
+                .authenticationHandler(authenticationHandler)
+                .build();
+
+        this.interceptor = new AuthenticationInterceptor(accessTokenManager);
 
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, this::intercept);
 

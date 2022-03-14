@@ -1,8 +1,8 @@
 # Contributing to TrueLayer Java
 We aim to make contributing to this project as easy and transparent as possible, whether it's:
 
-- Reporting a bug
-- Discussing the current state of the code or proposing a new feature
+- [Reporting a bug](https://github.com/TrueLayer/truelayer-java/issues/new?assignees=&labels=bug&template=bug_report.md&title=)
+- Discussing the current state of the code or proposing a [new feature](https://github.com/TrueLayer/truelayer-java/issues/new?assignees=&labels=bug&template=feature_request.md&title=)
 - Submitting code changes
 - Proposing new features
 
@@ -10,7 +10,7 @@ We aim to make contributing to this project as easy and transparent as possible,
 We use GitHub issues to track public bugs. Before opening a new issue, please make 
 sure that similar ones are not there already.
 
-Report a bug by [opening a new issue](https://github.com/TrueLayer/truelayer-java/issues/new) selecting the **bug** template.
+Report a bug by [opening a new issue](https://github.com/TrueLayer/truelayer-java/issues/new?assignees=&labels=bug&template=bug_report.md&title=).
 
 ## Discussions
 We use the [discussion](https://github.com/TrueLayer/truelayer-java/discussions/89) section to talk about the current state of the project as well as 

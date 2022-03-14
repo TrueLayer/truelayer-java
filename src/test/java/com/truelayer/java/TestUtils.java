@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.RandomUtils;
 
 public class TestUtils {
 
@@ -64,7 +63,7 @@ public class TestUtils {
     public static ApiResponse<AccessToken> buildAccessToken() {
         AccessToken accessToken = new AccessToken(
                 UUID.randomUUID().toString(),
-                RandomUtils.nextInt(),
+                3600,
                 UUID.randomUUID().toString(),
                 UUID.randomUUID().toString());
         return ApiResponse.<AccessToken>builder().data(accessToken).build();

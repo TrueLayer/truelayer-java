@@ -1,0 +1,7 @@
+{
+  "type": "https://docs.truelayer.com/docs/error-types#unauthenticated",
+  "title": "Unauthenticated",
+  "status": 401,
+  "trace_id": "96ce50247f87f540bb2d86771b3728b8",
+  "detail": "A Bearer token must be provided in the Authorization header."
+}

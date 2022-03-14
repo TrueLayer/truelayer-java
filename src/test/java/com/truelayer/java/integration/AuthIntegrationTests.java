@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
@@ -25,7 +26,7 @@ public class AuthIntegrationTests extends IntegrationTests {
     @DisplayName("It should return an error in case on an authorized error from the auth API.")
     @SneakyThrows
     public void shouldReturnErrorIfUnauthorized() {
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(400)
@@ -49,7 +50,7 @@ public class AuthIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldReturnAnAccessToken() {
         String jsonResponseFile = "auth/200.access_token.json";
-        TestUtils.RequestStub.New()
+        RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
