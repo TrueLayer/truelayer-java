@@ -11,11 +11,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/donate")
-public class DonateController {
+@Path("/donations")
+public class DonationsController {
 
     @Inject
-    Template donate;
+    Template donations;
 
     @Inject
     private IDonationService donationService;
@@ -23,7 +23,7 @@ public class DonateController {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance home(){
-        return donate.instance();
+        return donations.instance();
     }
 
     @POST
