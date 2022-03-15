@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-//todo
+// todo
 @Disabled
 @DisplayName("Mandates integration tests")
 public class MandatesIntegrationTests extends IntegrationTests {
