@@ -3,11 +3,6 @@ package com.truelayer.java.http.interceptors.logging;
 import static com.truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 import static com.truelayer.java.Constants.HeaderNames.COOKIE;
 import static com.truelayer.java.TestUtils.JSON_RESPONSES_LOCATION;
-import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
-import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
-import static com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor.MESSAGE_FORMAT;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.nio.file.Files;
@@ -18,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.tinylog.TaggedLogger;
 
 class HttpLoggingInterceptorTests {
 
@@ -46,18 +40,17 @@ class HttpLoggingInterceptorTests {
                 .header(COOKIE, "a-cookie")
                 .build();
         when(chain.proceed(request)).thenReturn(response);
-        TaggedLogger logger = Mockito.mock(TaggedLogger.class);
+
+        DefaultLogConsumer logConsumer = Mockito.mock(DefaultLogConsumer.class);
         SensitiveHeaderGuard sensitiveHeaderGuard = Mockito.mock(SensitiveHeaderGuard.class);
-        HttpLoggingInterceptor sut = new HttpLoggingInterceptor(logger, sensitiveHeaderGuard);
+        HttpLoggingInterceptor sut = new HttpLoggingInterceptor(logConsumer, sensitiveHeaderGuard);
 
         sut.intercept(chain);
 
-        InOrder interactions = inOrder(logger, chain);
+        InOrder interactions = inOrder(logConsumer, chain);
         interactions.verify(chain).request();
-        interactions.verify(logger).trace(eq(MESSAGE_FORMAT), eq(OUTGOING), eq("GET"), eq(url), anyList());
+        interactions.verify(logConsumer).accept(anyString());
         interactions.verify(chain).proceed(request);
-        interactions
-                .verify(logger)
-                .trace(eq(MESSAGE_FORMAT), eq(INCOMING), eq(responseCode), eq("GET"), eq(url), anyList());
+        interactions.verify(logConsumer).accept(anyString());
     }
 }
