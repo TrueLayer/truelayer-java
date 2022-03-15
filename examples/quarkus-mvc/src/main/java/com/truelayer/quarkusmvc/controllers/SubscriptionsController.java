@@ -18,6 +18,9 @@ public class SubscriptionsController {
     Template subscriptions;
 
     @Inject
+    Template callback;
+
+    @Inject
     private ISubscriptionService subscriptionService;
 
     @GET
@@ -31,5 +34,13 @@ public class SubscriptionsController {
     public Response subscribe(@Form SubscriptionRequest subscriptionRequest){
         var hppUrl = subscriptionService.createSubscriptionLink(subscriptionRequest);
         return Response.seeOther(hppUrl).build();
+    }
+
+    @GET
+    @Path("/callback")
+    public TemplateInstance callback(@QueryParam("mandate_id") String mandateId){
+        // subs otherwise
+        var subscription = subscriptionService.getSubscriptionById(mandateId);
+        return callback.data(subscription);
     }
 }

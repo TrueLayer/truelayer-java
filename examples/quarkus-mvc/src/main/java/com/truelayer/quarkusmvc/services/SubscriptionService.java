@@ -11,6 +11,7 @@ import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
 import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
+import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodicAlignment.CALENDAR;
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodicType.MONTH;
+import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static java.util.Calendar.MONTH;
 
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -61,10 +62,11 @@ public class SubscriptionService implements ISubscriptionService{
                         .email("andrea.dilisio@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        .periodicLimits(List.of(Constraints.PeriodicLimit.builder()
-                                        .periodicAlignment(CALENDAR)
-                                        .periodicType(MONTH)
-                                        .maximumAmount(req.getAmount())
+                        .maximumIndividualAmount(req.getAmount())
+                        .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
+                                .periodAlignment(CALENDAR)
+                                .periodType(Constraints.PeriodicLimit.PeriodType.MONTH)
+                                .maximumAmount(req.getAmount())
                                 .build()))
                         .build())
                 .build();
@@ -78,7 +80,7 @@ public class SubscriptionService implements ISubscriptionService{
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .withProviderSelection()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create("http://localhost:8080/callback"))
+                        .returnUri(URI.create("http://localhost:8080/subscriptions/callback"))
                         .build())
                 .build();
         ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient.mandates()
@@ -105,15 +107,21 @@ public class SubscriptionService implements ISubscriptionService{
 
         if(submitProviderSelectionResponse.isError()){
             throw new RuntimeException(String.format("submit provider selection error: %s",
-                    startAuthorizationFlowResponse.getError()));
+                    submitProviderSelectionResponse.getError()));
         }
 
         return submitProviderSelectionResponse.getData().getAuthorizationFlow()
                 .getActions().getNext().asRedirect().getUri();
     }
 
+    @SneakyThrows
     @Override
     public SubscriptionResult getSubscriptionById(String id) {
-        throw new NotImplementedYetException();
+        ApiResponse<MandateDetail> getMandateById = trueLayerClient.mandates().getMandate(id).get();
+
+        return SubscriptionResult.builder()
+                .status(getMandateById.getData().getStatus().getStatus())
+                .id(getMandateById.getData().getId())
+                .build();
     }
 }

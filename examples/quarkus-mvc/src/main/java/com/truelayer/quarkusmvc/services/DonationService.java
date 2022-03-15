@@ -71,6 +71,6 @@ public class DonationService implements IDonationService {
         }
 
         return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId(), paymentResponse.getData().getResourceToken(),
-                URI.create("http://localhost:8080/callback"));
+                URI.create("http://localhost:8080/donations/callback"));
     }
 }

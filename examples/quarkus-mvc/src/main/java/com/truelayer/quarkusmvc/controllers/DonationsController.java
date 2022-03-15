@@ -18,6 +18,9 @@ public class DonationsController {
     Template donations;
 
     @Inject
+    Template callback;
+
+    @Inject
     private IDonationService donationService;
 
     @GET
@@ -31,5 +34,12 @@ public class DonationsController {
     public Response donate(@Form DonationRequest donationRequest){
         var hppUrl = donationService.createDonationLink(donationRequest);
         return Response.seeOther(hppUrl).build();
+    }
+
+    @GET
+    @Path("/callback")
+    public TemplateInstance callback(@QueryParam("payment_id") String paymentId){
+        var donation = donationService.getDonationById(paymentId);
+        return callback.data(donation);
     }
 }
