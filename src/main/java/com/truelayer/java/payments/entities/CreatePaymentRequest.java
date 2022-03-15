@@ -1,6 +1,7 @@
 package com.truelayer.java.payments.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

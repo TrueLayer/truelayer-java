@@ -1,4 +1,4 @@
-package com.truelayer.java.payments.entities.paymentmethod.provider;
+package com.truelayer.java.entities;
 
 import com.truelayer.java.payments.entities.CountryCode;
 import com.truelayer.java.payments.entities.CustomerSegment;

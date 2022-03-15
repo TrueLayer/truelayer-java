@@ -4,7 +4,9 @@ import static com.truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static com.truelayer.java.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.Remitter;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
@@ -14,7 +16,6 @@ import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redire
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 import java.net.HttpURLConnection;

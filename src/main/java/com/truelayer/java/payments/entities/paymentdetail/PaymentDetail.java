@@ -3,7 +3,7 @@ package com.truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.payments.entities.User;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.util.Date;
 import lombok.*;

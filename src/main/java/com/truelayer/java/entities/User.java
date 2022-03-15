@@ -1,4 +1,4 @@
-package com.truelayer.java.payments.entities;
+package com.truelayer.java.entities;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import java.util.Optional;
