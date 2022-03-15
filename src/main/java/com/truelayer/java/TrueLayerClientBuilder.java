@@ -17,6 +17,7 @@ import com.truelayer.java.http.interceptors.UserAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.recurringpayments.IMandatesApi;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
@@ -139,6 +140,10 @@ public class TrueLayerClientBuilder {
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
 
-        return new TrueLayerClient(authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder);
+        IMandatesApi mandatesHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IMandatesApi.class);
+
+        return new TrueLayerClient(
+                authenticationHandler, paymentsHandler, merchantAccountsHandler, mandatesHandler, hppLinkBuilder);
     }
 }

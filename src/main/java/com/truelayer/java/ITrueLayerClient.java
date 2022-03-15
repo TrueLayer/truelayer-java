@@ -4,6 +4,7 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.recurringpayments.IMandatesApi;
 
 /**
  * TrueLayer client facade. Acts as entrypoint for the Java client library capabilities.
@@ -27,6 +28,12 @@ public interface ITrueLayerClient {
      * @return a utility to interact with merchant account endpoints.
      */
     IMerchantAccountsApi merchantAccounts();
+
+    /**
+     * Entrypoint for mandates endpoints
+     * @return a utility to interact with mandates endpoints.
+     */
+    IMandatesApi mandates();
 
     /**
      * Entrypoint for Hosted Payment Page related services.

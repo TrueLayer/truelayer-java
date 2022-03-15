@@ -10,6 +10,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class Mandate {
 
+    public static VRPSweepingMandate.VRPSweepingMandateBuilder vrpSweepingMandate() {
+        return new VRPSweepingMandate.VRPSweepingMandateBuilder();
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {
