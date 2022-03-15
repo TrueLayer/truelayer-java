@@ -62,7 +62,7 @@
                             <li>Help center access</li>
                         </ul>
                         <form action="/subscriptions" method="post" novalidate>
-                            <input type="hidden" class="form-control form-control-lg" id="amount" name="amount" value="1500" required>
+                            <input type="hidden" class="form-control form-control-lg" name="amount" value="1500" required>
                             <button type="submit" class="w-100 btn btn-lg btn-primary">Get started</button>
                         </form>
                     </div>
@@ -81,7 +81,10 @@
                             <li>Phone and email support</li>
                             <li>Help center access</li>
                         </ul>
-                        <button type="button" class="w-100 btn btn-lg btn-primary">Go big</button>
+                        <form action="/subscriptions" method="post" novalidate>
+                            <input type="hidden" class="form-control form-control-lg" name="amount" value="2900" required>
+                            <button type="submit" class="w-100 btn btn-lg btn-primary">Go big</button>
+                        </form>
                     </div>
                 </div>
             </div>

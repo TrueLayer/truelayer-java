@@ -2,12 +2,12 @@ package com.truelayer.java.recurringpayments.entities.mandatedetail;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
-import com.truelayer.java.payments.entities.paymentdetail.*;
-import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import java.util.Date;
-import lombok.Getter;
+import java.util.List;
+import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredMandateDetail.class)
 @JsonSubTypes({
@@ -32,51 +32,66 @@ public abstract class MandateDetail {
 
     public abstract Status getStatus();
 
-    /*public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
-            if (!(this instanceof AuthorizationRequiredPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (AuthorizationRequiredPaymentDetail) this;
+    public AuthorizationRequiredMandateDetail asAuthorizationRequiredMandateDetail() {
+        if (!(this instanceof AuthorizationRequiredMandateDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
         }
+        return (AuthorizationRequiredMandateDetail) this;
+    }
 
-        public AuthorizedPaymentDetail asAuthorizedPaymentDetail() {
-            if (!(this instanceof AuthorizedPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (AuthorizedPaymentDetail) this;
+    public AuthorizedMandateDetail asAuthorizedMandateDetail() {
+        if (!(this instanceof AuthorizedMandateDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
         }
+        return (AuthorizedMandateDetail) this;
+    }
 
-        public AuthorizingPaymentDetail asAuthorizingPaymentDetail() {
-            if (!(this instanceof AuthorizingPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (AuthorizingPaymentDetail) this;
+    public AuthorizingMandateDetail asAuthorizingMandateDetail() {
+        if (!(this instanceof AuthorizingMandateDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
         }
+        return (AuthorizingMandateDetail) this;
+    }
 
-        public FailedPaymentDetail asFailedPaymentDetail() {
-            if (!(this instanceof FailedPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (FailedPaymentDetail) this;
+    public FailedMandateDetail asFailedMandateDetail() {
+        if (!(this instanceof FailedMandateDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
         }
+        return (FailedMandateDetail) this;
+    }
 
-        public ExecutedPaymentDetail asSucceededPaymentDetail() {
-            if (!(this instanceof ExecutedPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (ExecutedPaymentDetail) this;
+    public RevokedMandateDetail asSucceededMandateDetail() {
+        if (!(this instanceof RevokedMandateDetail)) {
+            throw new TrueLayerException(buildErrorMessage());
         }
+        return (RevokedMandateDetail) this;
+    }
 
-        public SettledPaymentDetail asSettledPaymentDetail() {
-            if (!(this instanceof SettledPaymentDetail)) {
-                throw new TrueLayerException(buildErrorMessage());
-            }
-            return (SettledPaymentDetail) this;
-        }
-    */
     private String buildErrorMessage() {
         return String.format(
                 "payment is of type %1$s. Consider using as%1$s() instead.",
                 this.getClass().getSimpleName());
+    }
+
+    // todo: trash this in the bin as soon as REC-285 is done
+    @Value
+    public static class Constraints {
+
+        String validFrom;
+
+        String validTo;
+
+        Integer maximumIndividualAmount;
+
+        List<PeriodicLimit> periodicLimits;
+
+        @Value
+        public static class PeriodicLimit {
+            int maximumAmount;
+
+            String periodAlignment;
+
+            String periodType;
+        }
     }
 }

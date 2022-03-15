@@ -25,13 +25,13 @@ public class Constraints {
     public static class PeriodicLimit {
         private int maximumAmount;
 
-        private PeriodicAlignment periodicAlignment;
+        private PeriodAlignment periodAlignment;
 
-        private PeriodicType periodicType;
+        private PeriodType periodType;
 
         @RequiredArgsConstructor
         @Getter
-        public enum PeriodicAlignment {
+        public enum PeriodAlignment {
             CONSENT("consent"),
             CALENDAR("calendar");
 
@@ -41,7 +41,7 @@ public class Constraints {
 
         @RequiredArgsConstructor
         @Getter
-        public enum PeriodicType {
+        public enum PeriodType {
             DAY("day"),
             WEEK("week"),
             FORTNIGHT("fortnight"),

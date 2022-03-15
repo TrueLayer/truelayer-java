@@ -2,9 +2,9 @@ package com.truelayer.quarkusmvc.services;
 
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.ExternalAccount;
-import com.truelayer.java.payments.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 import com.truelayer.quarkusmvc.models.DonationResult;

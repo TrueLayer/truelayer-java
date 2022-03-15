@@ -1,6 +1,8 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
+import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
@@ -15,12 +17,9 @@ import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
 import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -108,10 +107,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .email("john@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        // todo: review below date. They seem not be always in iso format
-                        .validFrom(ZonedDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .validTo(ZonedDateTime.now().plusDays(25).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .maximumIndividualAmount(100)
+                        .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
+                                .periodAlignment(CALENDAR)
+                                .periodType(MONTH)
+                                .maximumAmount(1000)
+                                .build()))
                         .build())
                 .build();
     }
