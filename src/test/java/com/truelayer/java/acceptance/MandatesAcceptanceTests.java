@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should create a mandate")
     @SneakyThrows
     public void itShouldCreateAMandate() {
-        // create payment
+        // create mandate
         CreateMandateRequest createMandateRequest = CreateMandateRequest.builder()
                 .mandate(Mandate.vrpSweepingMandate()
                         .beneficiary(Beneficiary.externalAccount()
@@ -49,8 +50,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .email("john@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        .validFrom(LocalDateTime.now().plusDays(5).format(DateTimeFormatter.ISO_DATE_TIME))
-                        .validTo(LocalDateTime.now().plusDays(25).format(DateTimeFormatter.ISO_DATE_TIME))
+                        .validFrom(ZonedDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        .validTo(ZonedDateTime.now().plusDays(25).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .maximumIndividualAmount(100)
                         .build())
                 .build();

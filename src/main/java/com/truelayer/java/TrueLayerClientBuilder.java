@@ -14,13 +14,17 @@ import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
 import com.truelayer.java.http.interceptors.UserAgentInterceptor;
+import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.recurringpayments.IMandatesApi;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
+import java.util.Optional;
+import java.util.function.Consumer;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -35,7 +39,7 @@ public class TrueLayerClientBuilder {
     // By default, production is used
     private Environment environment = Environment.live();
 
-    private boolean logEnabled;
+    private Optional<Consumer<String>> logMessageConsumer = Optional.empty();
 
     TrueLayerClientBuilder() {}
 
@@ -74,12 +78,23 @@ public class TrueLayerClientBuilder {
     }
 
     /**
-     * Utility to enable default logs for HTTP traces. Produced logs are not
-     * leaking sensitive information
-     * @return the instance of the client builder used.
+     * Utility to enable default logs for HTTP traces.
+     * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withHttpLogs() {
-        this.logEnabled = true;
+        this.logMessageConsumer = Optional.of(new DefaultLogConsumer());
+        return this;
+    }
+
+    /**
+     * Utility to enable custom logging for HTTP traces. Please notice that blocking
+     * in the context of this consumer invocation will affect performance. An asynchronous implementation is
+     * strongly advised.
+     * @param logConsumer a custom log consumer
+     * @return the instance of the client builder used
+     */
+    public TrueLayerClientBuilder withHttpLogs(Consumer<String> logConsumer) {
+        this.logMessageConsumer = Optional.of(logConsumer);
         return this;
     }
 
@@ -96,9 +111,9 @@ public class TrueLayerClientBuilder {
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
-        if (logEnabled) {
-            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor.New());
-        }
+        // Setup logging if required
+        logMessageConsumer.ifPresent(logConsumer -> clientBuilder.addNetworkInterceptor(
+                new HttpLoggingInterceptor(logConsumer, new SensitiveHeaderGuard())));
 
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
