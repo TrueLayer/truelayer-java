@@ -1,10 +1,7 @@
-package com.truelayer.java.payments.entities.paymentdetail;
+package com.truelayer.java.recurringpayments.entities.mandatedetail;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
-import java.util.Date;
-import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +9,9 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class FailedPaymentDetail extends PaymentDetail {
+public class FailedMandateDetail extends MandateDetail {
 
     Status status = Status.FAILED;
-
-    Date failedAt;
 
     FailureStage failureStage;
 
@@ -24,13 +19,9 @@ public class FailedPaymentDetail extends PaymentDetail {
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 
-    @JsonGetter
-    public Optional<AuthorizationFlowWithConfiguration> getAuthorizationFlow() {
-        return Optional.ofNullable(authorizationFlow);
-    }
-
     @RequiredArgsConstructor
     @Getter
+    // todo: can this be extracted ?
     public enum FailureStage {
         AUTHORIZATION_REQUIRED("authorization_required"),
         AUTHORIZING("authorizing"),

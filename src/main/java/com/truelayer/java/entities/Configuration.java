@@ -1,5 +1,6 @@
-package com.truelayer.java.payments.entities.paymentdetail;
+package com.truelayer.java.entities;
 
+import com.truelayer.java.payments.entities.paymentdetail.RedirectStatus;
 import lombok.Value;
 
 @Value

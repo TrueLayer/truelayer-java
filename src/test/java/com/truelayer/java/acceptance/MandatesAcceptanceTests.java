@@ -13,6 +13,7 @@ import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
 import com.truelayer.java.recurringpayments.entities.CreateMandateResponse;
 import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
+import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,36 +37,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void itShouldCreateAMandate() {
         // create mandate
-        CreateMandateRequest createMandateRequest = CreateMandateRequest.builder()
-                .mandate(Mandate.vrpSweepingMandate()
-                        .providerFilter(ProviderFilter.builder()
-                                .countries(Collections.singletonList(CountryCode.GB))
-                                .releaseChannel(ReleaseChannel.PRIVATE_BETA)
-                                .build())
-                        .beneficiary(Beneficiary.externalAccount()
-                                .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
-                                        .accountNumber("10003957")
-                                        .sortCode("140662")
-                                        .build())
-                                .accountHolderName("Andrea Java SDK")
-                                .reference("a reference")
-                                .build())
-                        .build())
-                .currency(CurrencyCode.GBP)
-                .user(User.builder()
-                        .id(UUID.randomUUID().toString())
-                        .name("John Smith")
-                        .email("john@truelayer.com")
-                        .build())
-                .constraints(Constraints.builder()
-                        .validFrom(ZonedDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .validTo(ZonedDateTime.now().plusDays(25).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .maximumIndividualAmount(100)
-                        .build())
-                .build();
-
         ApiResponse<CreateMandateResponse> createMandateResponse =
-                tlClient.mandates().createMandate(createMandateRequest).get();
+                tlClient.mandates().createMandate(createMandateRequest()).get();
 
         assertNotError(createMandateResponse);
 
@@ -92,5 +65,54 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(submitProviderSelectionResponse);
+    }
+
+    @Test
+    @DisplayName("It should create and get a mandate by id")
+    @SneakyThrows
+    public void itShouldCreateAndGetAMandate() {
+        // create mandate
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest()).get();
+
+        assertNotError(createMandateResponse);
+
+        // get mandate by id
+        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
+                .getMandate(createMandateResponse.getData().getId())
+                .get();
+
+        assertNotError(getMandateResponse);
+    }
+
+    private CreateMandateRequest createMandateRequest() {
+        return CreateMandateRequest.builder()
+                .mandate(Mandate.vrpSweepingMandate()
+                        .providerFilter(ProviderFilter.builder()
+                                .countries(Collections.singletonList(CountryCode.GB))
+                                .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                                .build())
+                        .beneficiary(Beneficiary.externalAccount()
+                                .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
+                                        .accountNumber("10003957")
+                                        .sortCode("140662")
+                                        .build())
+                                .accountHolderName("Andrea Java SDK")
+                                .reference("a reference")
+                                .build())
+                        .build())
+                .currency(CurrencyCode.GBP)
+                .user(User.builder()
+                        .id(UUID.randomUUID().toString())
+                        .name("John Smith")
+                        .email("john@truelayer.com")
+                        .build())
+                .constraints(Constraints.builder()
+                        // todo: review below date. They seem not be always in iso format
+                        .validFrom(ZonedDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        .validTo(ZonedDateTime.now().plusDays(25).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        .maximumIndividualAmount(100)
+                        .build())
+                .build();
     }
 }

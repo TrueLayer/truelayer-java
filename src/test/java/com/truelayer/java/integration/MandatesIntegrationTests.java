@@ -21,4 +21,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
     @Test
     @DisplayName("It should submit a provider selection")
     public void shouldSubmitProviderSelection() {}
+
+    @Test
+    @DisplayName("It should get a mandate by id")
+    public void shouldGetAMandateById() {}
 }
