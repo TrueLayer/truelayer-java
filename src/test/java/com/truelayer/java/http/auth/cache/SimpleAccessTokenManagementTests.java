@@ -19,7 +19,7 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should store a token record")
     public void shouldStoreATokenRecord() {
         AccessToken expectedToken = buildAccessToken().getData();
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
         sut.store(expectedToken);
 
@@ -29,7 +29,7 @@ class SimpleAccessTokenManagementTests {
     @Test
     @DisplayName("It should clear a token record")
     public void itShouldClearTheExistingToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
         sut.store(buildAccessToken().getData());
 
         sut.clear();
@@ -40,7 +40,7 @@ class SimpleAccessTokenManagementTests {
     @Test
     @DisplayName("It should yield an empty optional if there are no cached tokens")
     public void itShouldYieldAnEmptyOptionalIfNoToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
         assertFalse(sut.get().isPresent());
     }
@@ -58,7 +58,7 @@ class SimpleAccessTokenManagementTests {
                 .thenReturn(aPastInstant)
                 .thenReturn(Clock.systemUTC().instant());
         when(fakeClock.getZone()).thenReturn(ZoneOffset.UTC);
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(fakeClock);
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(fakeClock);
         sut.store(accessToken);
 
         assertFalse(sut.get().isPresent());
@@ -67,7 +67,7 @@ class SimpleAccessTokenManagementTests {
     @Test
     @DisplayName("It should yield an token if token is not expired")
     public void itShouldYieldAnToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
         sut.store(buildAccessToken().getData());
 
         assertTrue(sut.get().isPresent());

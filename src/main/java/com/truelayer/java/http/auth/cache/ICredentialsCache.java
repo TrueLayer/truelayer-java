@@ -3,7 +3,7 @@ package com.truelayer.java.http.auth.cache;
 import com.truelayer.java.auth.entities.AccessToken;
 import java.util.Optional;
 
-public interface IAccessTokenCache {
+public interface ICredentialsCache {
 
     /**
      * Gets a cached access token.

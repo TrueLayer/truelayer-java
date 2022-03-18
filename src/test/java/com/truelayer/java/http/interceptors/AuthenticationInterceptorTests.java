@@ -12,7 +12,7 @@ import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.auth.AccessTokenManager;
-import com.truelayer.java.http.auth.cache.SimpleAccessTokenCache;
+import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
@@ -46,7 +46,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
+                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
 
@@ -73,7 +73,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                         .build()));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
+                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
 
