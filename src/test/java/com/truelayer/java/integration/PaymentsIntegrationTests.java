@@ -81,7 +81,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         assertEquals(expected, paymentResponse.getError());
     }
 
-    @DisplayName("it should get the payment details")
+    @DisplayName("It should get the payment details")
     @ParameterizedTest(name = "of a payment with status {0}")
     @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
     @SneakyThrows

@@ -18,7 +18,7 @@ class HttpLoggingInterceptorTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("it should log request and response")
+    @DisplayName("It should log request and response")
     public void shouldLogRequestAndResponse() {
         int responseCode = 200;
         HttpUrl url = HttpUrl.get("http://localhost");

@@ -42,6 +42,7 @@ public class TrueLayerClientProvider {
                         .privateKey(Files.readAllBytes(Path.of(signingPrivateKeyLocation)))
                         .build())
                 .withHttpLogs(LOG::info)
+                .withCredentialsCaching()
                 .build();
     }
 }

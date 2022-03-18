@@ -25,7 +25,7 @@ class ErrorMapperTests {
     private static final String A_CORRELATION_ID = "a-correlation-id";
 
     @Test
-    @DisplayName("it should build a problem details error object")
+    @DisplayName("It should build a problem details error object")
     public void shouldBuildAProblemDetailsError() {
         String errorJsonFile = "/payments/401.invalid_signature.json";
         ErrorMapper sut = new ErrorMapper();
@@ -38,7 +38,7 @@ class ErrorMapperTests {
     }
 
     @Test
-    @DisplayName("it should map a legacy error into a problem details")
+    @DisplayName("It should map a legacy error into a problem details")
     public void shouldBuildAProblemDetailsForALegacyError() {
         ErrorMapper sut = new ErrorMapper();
         Response<?> invalidClientResponse = buildErrorResponse("/auth/400.invalid_client.json");
@@ -49,7 +49,7 @@ class ErrorMapperTests {
     }
 
     @Test
-    @DisplayName("it should map an unexpected format error into a generic problem details")
+    @DisplayName("It should map an unexpected format error into a generic problem details")
     public void shouldBuildAProblemDetailsForAnUnexpectedError() {
         ErrorMapper sut = new ErrorMapper();
         Response<?> invalidClientResponse = buildErrorResponse("internal error".getBytes(StandardCharsets.UTF_8));
@@ -61,7 +61,7 @@ class ErrorMapperTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("it should map an IO error into a generic problem details")
+    @DisplayName("It should map an IO error into a generic problem details")
     public void shouldBuildAProblemDetailsForAnIOError() {
         ErrorMapper sut = new ErrorMapper();
         Response<?> ioErrorResponse = mock(Response.class);
@@ -78,7 +78,7 @@ class ErrorMapperTests {
     }
 
     @Test
-    @DisplayName("it should map an no content error response into a generic problem details")
+    @DisplayName("It should map an no content error response into a generic problem details")
     public void shouldBuildAProblemDetailsForAErrorResponseWithNoContent() {
         ErrorMapper sut = new ErrorMapper();
         Response<?> noContentErrorResponse = mock(Response.class);

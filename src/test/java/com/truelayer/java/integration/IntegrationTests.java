@@ -22,6 +22,7 @@ public abstract class IntegrationTests {
                 .clientCredentials(TestUtils.getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
                 .environment(testEnvironment)
+                .withCredentialsCaching()
                 .build();
     }
 }

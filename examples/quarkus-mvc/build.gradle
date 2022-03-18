@@ -7,9 +7,6 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven{
-        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-    }
 }
 
 dependencies {
@@ -20,7 +17,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:0.6.0-jsdk-55-SNAPSHOT'
+    implementation 'com.truelayer:truelayer-java:0.7.0'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

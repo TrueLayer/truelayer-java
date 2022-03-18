@@ -34,6 +34,7 @@ public abstract class AcceptanceTests {
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
                 .withHttpLogs()
+                .withCredentialsCaching()
                 .build();
     }
 
