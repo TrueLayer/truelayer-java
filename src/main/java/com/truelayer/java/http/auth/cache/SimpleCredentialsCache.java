@@ -32,7 +32,7 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     }
 
     @Override
-    public Optional<AccessToken> get() {
+    public Optional<AccessToken> getToken() {
         if (isEmpty(tokenRecord) || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
             return Optional.empty();
         }
@@ -41,12 +41,12 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     }
 
     @Override
-    public void store(AccessToken token) {
+    public void storeToken(AccessToken token) {
         tokenRecord = new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
     }
 
     @Override
-    public void clear() {
+    public void clearToken() {
         tokenRecord = null;
     }
 

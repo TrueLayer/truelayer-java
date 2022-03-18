@@ -1,4 +1,4 @@
-package com.truelayer.java.integration;
+package com.truelayer.java.integration.cache;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.AUTHORIZATION;
@@ -7,20 +7,16 @@ import static java.lang.Thread.sleep;
 
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.integration.IntegrationTests;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
-/**
- * Test class meant to test OkHttp client interceptors and authenticator behavior
- * in integration mode. Deliberately kept simple due to the existing unit tests
- * on single collaborators.
- */
-public class AccessTokenManagementTests extends IntegrationTests {
+public class DefaultAccessTokenCacheTests extends IntegrationTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should use a cached token")
+    @DisplayName("It should use a cached token when creating multiple payments")
     public void itShouldUseACachedToken() {
         String accessTokenJsonFile = "auth/200.access_token.json";
         RequestStub.New()

@@ -24,14 +24,14 @@ class AccessTokenManagerTests {
     public void itShouldGetACachedToken() {
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        when(cache.get()).thenReturn(Optional.of(expectedToken));
+        when(cache.getToken()).thenReturn(Optional.of(expectedToken));
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
 
         AccessToken actualToken = sut.getToken();
 
         assertEquals(expectedToken, actualToken);
-        verify(cache, times(1)).get();
+        verify(cache, times(1)).getToken();
         verify(authenticationHandler, never()).getOauthToken(eq(singletonList(PAYMENTS)));
     }
 
@@ -40,7 +40,7 @@ class AccessTokenManagerTests {
     public void itShouldGetAFreshToken() {
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        when(cache.get()).thenReturn(Optional.empty());
+        when(cache.getToken()).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         when(authenticationHandler.getOauthToken(eq(singletonList(PAYMENTS))))
                 .thenReturn(CompletableFuture.completedFuture(
@@ -50,9 +50,9 @@ class AccessTokenManagerTests {
         AccessToken actualToken = sut.getToken();
 
         assertEquals(expectedToken, actualToken);
-        verify(cache, times(1)).get();
+        verify(cache, times(1)).getToken();
         verify(authenticationHandler, times(1)).getOauthToken(eq(singletonList(PAYMENTS)));
-        verify(cache, times(1)).store(eq(expectedToken));
+        verify(cache, times(1)).storeToken(eq(expectedToken));
     }
 
     @Test
@@ -64,6 +64,6 @@ class AccessTokenManagerTests {
 
         sut.invalidateToken();
 
-        verify(cache, times(1)).clear();
+        verify(cache, times(1)).clearToken();
     }
 }

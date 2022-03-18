@@ -28,12 +28,13 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     @Override
     public AccessToken getToken() {
-        getCredentialsCache()
-                .ifPresent(credentialsCache -> credentialsCache.get().orElseGet(() -> {
-                    AccessToken token = tryGetToken();
-                    credentialsCache.store(token);
-                    return token;
-                }));
+        if (getCredentialsCache().isPresent()) {
+            return getCredentialsCache().get().getToken().orElseGet(() -> {
+                AccessToken token = tryGetToken();
+                credentialsCache.storeToken(token);
+                return token;
+            });
+        }
 
         return tryGetToken();
     }
@@ -41,7 +42,7 @@ public class AccessTokenManager implements IAccessTokenManager {
     @Override
     @Synchronized
     public void invalidateToken() {
-        getCredentialsCache().ifPresent(ICredentialsCache::clear);
+        getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
     }
 
     private AccessToken tryGetToken() {

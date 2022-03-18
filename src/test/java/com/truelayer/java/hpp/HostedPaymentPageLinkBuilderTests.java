@@ -16,7 +16,7 @@ class HostedPaymentPageLinkBuilderTests {
     public static final String A_PAYMENT_ID = "a-payment-id";
 
     @Test
-    @DisplayName("it should yield an HPP link with the given details")
+    @DisplayName("It should yield an HPP link with the given details")
     public void itShouldYieldAnHppLink() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
@@ -33,7 +33,7 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     @Test
-    @DisplayName("it should thrown an exception if redirect_uri is empty")
+    @DisplayName("It should thrown an exception if redirect_uri is empty")
     public void itShouldThrowExceptionForEmptyRedirectUrl() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
@@ -45,7 +45,7 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     @Test
-    @DisplayName("it should thrown an exception if payment_id is empty")
+    @DisplayName("It should thrown an exception if payment_id is empty")
     public void itShouldThrowExceptionForEmptyPaymentId() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 
@@ -57,7 +57,7 @@ class HostedPaymentPageLinkBuilderTests {
     }
 
     @Test
-    @DisplayName("it should thrown an exception if resource_token is empty")
+    @DisplayName("It should thrown an exception if resource_token is empty")
     public void itShouldThrowExceptionForEmptyResourceToken() {
         IHostedPaymentPageLinkBuilder sut = buildHppBuilder();
 

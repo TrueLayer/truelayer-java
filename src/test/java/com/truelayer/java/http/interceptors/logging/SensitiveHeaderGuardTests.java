@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class SensitiveHeaderGuardTests {
 
     @Test
-    @DisplayName("it should mask sensitive headers")
+    @DisplayName("It should mask sensitive headers")
     public void shouldMaskSensitiveHeaders() {
         SensitiveHeaderGuard sut = new SensitiveHeaderGuard();
         Map<String, String> headersMap = new HashMap<>();
