@@ -156,6 +156,50 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
+    @Test
+    @DisplayName("It should complete an authorization flow for a payment with provider preselected")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderPreselected() {
+        // create payment
+        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
+                .providerId(MOCK_PROVIDER_ID)
+                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                .remitter(Remitter.builder()
+                        .accountHolderName("Andrea")
+                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
+                                .accountNumber("12345678")
+                                .sortCode("123456")
+                                .build())
+                        .build())
+                .build();
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+
+        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        URI bankUri = startAuthorizationFlowResponse.getData().getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+
+        assertNotError(startAuthorizationFlowResponse);
+    }
+
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
         MerchantAccount merchantAccount = getMerchantAccount();
 

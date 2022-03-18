@@ -3,17 +3,22 @@ package com.truelayer.quarkusmvc.services;
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
+import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
+import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
+import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
 import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
 import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
+import io.quarkus.logging.Log;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jboss.resteasy.spi.NotImplementedYetException;
@@ -47,11 +52,10 @@ public class SubscriptionService implements ISubscriptionService{
                                 .build())
                         .beneficiary(Beneficiary.externalAccount()
                                 .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
-                                        //replace below
                                         .accountNumber("10003957")
                                         .sortCode("140662")
                                         .build())
-                                .accountHolderName("Andrei Sorbun")
+                                .accountHolderName("John Smith")
                                 .reference("a reference")
                                 .build())
                         .build())

@@ -41,4 +41,4 @@ Alternatively, you can load the project in your favorite IDE and rely on IDE plu
 
 ## Testing the application
 
-Browse to http://localhost:8080/donate
+Browse to http://localhost:8080/donations
