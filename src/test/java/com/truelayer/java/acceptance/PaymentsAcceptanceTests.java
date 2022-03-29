@@ -185,8 +185,20 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertNotError(startAuthorizationFlowResponse);
 
         // assert that the link returned is good to be browsed
-        URI bankPage = startAuthorizationFlowResponse.getData().getAuthorizationFlow().getActions().getNext().asRedirect().getUri();
+        URI bankPage = startAuthorizationFlowResponse
+                .getData()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
         assertCanBrowseLink(bankPage);
+    }
+
+    @Test
+    @DisplayName("It should complete an authorization flow for a payment with a provider return params")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturnParams() {
+        // todo
     }
 
     @SneakyThrows
@@ -221,9 +233,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         return buildPaymentRequestWithProviderSelection(userSelectionProvider);
     }
 
-
     @SneakyThrows
-    private void assertCanBrowseLink(URI link){
+    private void assertCanBrowseLink(URI link) {
         HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
         connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);
         connection.setConnectTimeout(10000);

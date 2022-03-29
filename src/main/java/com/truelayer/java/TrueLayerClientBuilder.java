@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.RetrofitFactory;
@@ -158,9 +159,14 @@ public class TrueLayerClientBuilder {
         IHostedPaymentPageLinkBuilder hppLinkBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
+        // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
+        // endpoint
+        ICommonApi commonApiHandler = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
+                .create(ICommonApi.class);
+
         if (isEmpty(signingOptions)) {
-            // return TL client with just authentication and HPP utils enabled
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
+            // return TL client with just authentication, HPP and common utils enabled
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonApiHandler);
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
@@ -195,6 +201,7 @@ public class TrueLayerClientBuilder {
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
 
-        return new TrueLayerClient(authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder);
+        return new TrueLayerClient(
+                authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder, commonApiHandler);
     }
 }

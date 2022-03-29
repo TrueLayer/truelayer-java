@@ -1,9 +1,14 @@
 package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
+import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -14,16 +19,20 @@ import org.apache.commons.lang3.ObjectUtils;
  * @see TrueLayerClientBuilder
  */
 @AllArgsConstructor
-public class TrueLayerClient implements ITrueLayerClient {
+public class TrueLayerClient implements ITrueLayerClient, ICommonApi {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsHandler;
     private IMerchantAccountsApi merchantAccountsHandler;
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+    private ICommonApi commonApi;
 
     public TrueLayerClient(
-            IAuthenticationHandler authenticationHandler, IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+            IAuthenticationHandler authenticationHandler,
+            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
+            ICommonApi commonApi) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+        this.commonApi = commonApi;
     }
 
     /**
@@ -74,5 +83,11 @@ public class TrueLayerClient implements ITrueLayerClient {
                 "%s handler not initialized."
                         + " Make sure you specified the required signing options while initializing the library",
                 handlerName));
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
+            SubmitPaymentReturnParametersRequest request) {
+        return commonApi.submitPaymentReturnsParameters(request);
     }
 }
