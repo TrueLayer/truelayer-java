@@ -107,14 +107,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         createPaymentResponse.getData().getId(),
                         createPaymentResponse.getData().getResourceToken(),
                         URI.create(LOCALHOST_RETURN_URI));
-        HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
-        connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);
-        connection.setConnectTimeout(10000);
-        connection.setRequestMethod("GET");
 
-        int responseCode = connection.getResponseCode();
-
-        assertTrue(responseCode >= 200 && responseCode < 300);
+        assertCanBrowseLink(link);
     }
 
     @SneakyThrows
@@ -155,6 +149,47 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
+    @Test
+    @DisplayName("It should complete an authorization flow for a payment with a preselected provider")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithPreselectedProvider() {
+        // create payment
+        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
+                .providerId(MOCK_PROVIDER_ID)
+                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                .remitter(Remitter.builder()
+                        .accountHolderName("Andrea Di Lisio")
+                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
+                                .accountNumber("12345678")
+                                .sortCode("123456")
+                                .build())
+                        .build())
+                .build();
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // assert that the link returned is good to be browsed
+        URI bankPage = startAuthorizationFlowResponse.getData().getAuthorizationFlow().getActions().getNext().asRedirect().getUri();
+        assertCanBrowseLink(bankPage);
+    }
+
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
         MerchantAccount merchantAccount = getMerchantAccount();
 
@@ -184,5 +219,18 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build())
                 .build();
         return buildPaymentRequestWithProviderSelection(userSelectionProvider);
+    }
+
+
+    @SneakyThrows
+    private void assertCanBrowseLink(URI link){
+        HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
+        connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);
+        connection.setConnectTimeout(10000);
+        connection.setRequestMethod("GET");
+
+        int responseCode = connection.getResponseCode();
+
+        assertTrue(responseCode >= 200 && responseCode < 300);
     }
 }
