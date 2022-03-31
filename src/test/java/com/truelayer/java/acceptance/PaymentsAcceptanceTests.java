@@ -4,6 +4,8 @@ import static com.truelayer.java.Constants.HeaderNames.USER_AGENT;
 import static com.truelayer.java.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
@@ -195,10 +197,39 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertCanBrowseLink(bankPage);
     }
 
+    @Disabled("To understand how to properly test this")
+    @SneakyThrows
     @Test
-    @DisplayName("It should complete an authorization flow for a payment with a provider return params")
-    public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturnParams() {
-        // todo
+    @DisplayName("It should complete an authorization flow for a payment with provider return")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturn() {
+        // create payment
+        CreatePaymentRequest paymentRequest = buildPaymentRequest();
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .directReturnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+        assertNotError(startAuthorizationFlowResponse);
+
+        SubmitPaymentReturnParametersRequest submitProviderReturn = SubmitPaymentReturnParametersRequest.builder()
+                .query("")
+                .fragment("")
+                .build();
+        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
+                tlClient.submitPaymentReturnsParameters(submitProviderReturn).get();
+        assertNotError(submitPaymentReturnParametersResponse);
     }
 
     @SneakyThrows
