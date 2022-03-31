@@ -1,8 +1,9 @@
 package com.truelayer.java.http.mappers;
 
+import static com.truelayer.java.Utils.getObjectMapper;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.truelayer.java.Constants;
-import com.truelayer.java.Utils;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.http.mappers.entities.LegacyError;
 import java.io.IOException;
@@ -30,16 +31,21 @@ public class ErrorMapper {
             return buildFallbackError(response.code(), correlationId, GENERIC_ERROR_TITLE);
         }
 
+        ProblemDetails problemDetails;
         try {
-            return Utils.getObjectMapper().readValue(errorBodyString, ProblemDetails.class);
+            problemDetails = getObjectMapper().readValue(errorBodyString, ProblemDetails.class);
         } catch (JsonProcessingException e) {
             return tryMapLegacyError(response.code(), correlationId, errorBodyString);
         }
+
+        return problemDetails.isWellFormed()
+                ? problemDetails
+                : tryMapLegacyError(response.code(), correlationId, errorBodyString);
     }
 
     private ProblemDetails tryMapLegacyError(int code, String correlationId, String errorBody) {
         try {
-            LegacyError legacyError = Utils.getObjectMapper().readValue(errorBody, LegacyError.class);
+            LegacyError legacyError = getObjectMapper().readValue(errorBody, LegacyError.class);
             return buildFallbackError(code, correlationId, legacyError.getError());
         } catch (JsonProcessingException e) {
             return buildFallbackError(code, correlationId, GENERIC_ERROR_TITLE);
