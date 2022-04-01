@@ -10,9 +10,9 @@ import lombok.Getter;
 public class PreselectedProviderSelection extends ProviderSelection {
     private final Type type = Type.PRESELECTED;
 
-    private String providerId;
+    protected String providerId;
 
-    private SchemeId schemeId;
+    protected SchemeId schemeId;
 
     private Remitter remitter;
 }
