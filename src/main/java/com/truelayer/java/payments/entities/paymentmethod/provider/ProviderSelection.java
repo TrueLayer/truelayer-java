@@ -3,10 +3,7 @@ package com.truelayer.java.payments.entities.paymentmethod.provider;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @JsonTypeInfo(
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -29,6 +26,14 @@ public abstract class ProviderSelection {
 
     public static PreselectedProviderSelection.PreselectedProviderSelectionBuilder preselected() {
         return new PreselectedProviderSelection.PreselectedProviderSelectionBuilder();
+    }
+
+    public UserSelectedProviderSelection asUserSelected() {
+        return (UserSelectedProviderSelection) this;
+    }
+
+    public PreselectedProviderSelection asPreselected() {
+        return (PreselectedProviderSelection) this;
     }
 
     @RequiredArgsConstructor
