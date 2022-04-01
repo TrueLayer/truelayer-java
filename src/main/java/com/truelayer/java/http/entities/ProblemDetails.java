@@ -1,5 +1,8 @@
 package com.truelayer.java.http.entities;
 
+import static org.apache.commons.lang3.ObjectUtils.allNotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,4 +25,9 @@ public class ProblemDetails {
     private Integer status;
     private String traceId;
     private JsonNode errors;
+
+    @JsonIgnore
+    public boolean isWellFormed() {
+        return allNotNull(type, title, status);
+    }
 }

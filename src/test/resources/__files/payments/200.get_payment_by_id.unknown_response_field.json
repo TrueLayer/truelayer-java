@@ -1,0 +1,63 @@
+{
+  "id":"c7f3f6c5-ae17-4d43-829c-***",
+  "amount_in_minor":101,
+  "currency":"GBP",
+  "user":{
+    "id":"ac459f9f-37df-4cd7-ada5-***",
+    "name":"Andrea Di Lisio",
+    "email":"andrea@truelayer.com"
+  },
+  "this_is_new": "hello",
+  "payment_method":{
+    "type":"bank_transfer",
+    "provider_selection":{
+      "type":"user_selected",
+      "filter":{
+        "countries":[
+          "GB"
+        ],
+        "release_channel":"general_availability",
+        "customer_segments":[
+          "retail"
+        ],
+        "provider_ids":[
+          "mock-payments-gb-redirect"
+        ],
+        "excludes":{
+          "provider_ids":[
+            "ob-exclude-this-bank"
+          ]
+        }
+      }
+    },
+    "beneficiary":{
+      "type":"merchant_account",
+      "merchant_account_id":"e83c4c20-b2ad-4b73-8a32-***",
+      "account_holder_name":"john smith"
+    }
+  },
+  "created_at":"2022-01-17T17:13:18.214924Z",
+  "status":"settled",
+  "payment_source":{
+    "id":"1122hj-37df-4cd7-ada5-***",
+    "account_identifiers":[
+      {
+        "type":"iban",
+        "iban":"IT60X0542811101000000123456"
+      }
+    ],
+    "account_holder_name":"John Doe"
+  },
+  "succeeded_at":"2022-01-17T17:13:18.214924Z",
+  "settled_at":"2022-01-17T17:13:18.214924Z",
+  "authorization_flow":{
+    "configuration":{
+      "provider_selection":{
+        "status":"supported"
+      },
+      "redirect":{
+        "status":"not_supported"
+      }
+    }
+  }
+}
