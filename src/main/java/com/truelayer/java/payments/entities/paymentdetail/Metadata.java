@@ -13,6 +13,10 @@ import lombok.ToString;
 public abstract class Metadata {
     protected Type type;
 
+    public ProviderMetadata asProviderMetadata() {
+        return (ProviderMetadata) this;
+    }
+
     public enum Type {
         PROVIDER("provider");
 

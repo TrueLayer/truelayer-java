@@ -13,6 +13,10 @@ import lombok.ToString;
 @Getter
 public abstract class Destination {
 
+    public Iban asIban() {
+        return (Iban) this;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {

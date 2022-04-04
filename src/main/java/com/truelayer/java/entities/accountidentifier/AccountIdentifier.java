@@ -54,4 +54,24 @@ public abstract class AccountIdentifier {
     public static NrbAccountIdentifier.NrbAccountIdentifierBuilder nrb() {
         return new NrbAccountIdentifier.NrbAccountIdentifierBuilder();
     }
+
+    public boolean isSortCodeAccountNumber() {
+        return this instanceof SortCodeAccountNumberAccountIdentifier;
+    }
+
+    public SortCodeAccountNumberAccountIdentifier asSortCodeAccountNumber() {
+        return (SortCodeAccountNumberAccountIdentifier) this;
+    }
+
+    public IbanAccountIdentifier asIban() {
+        return (IbanAccountIdentifier) this;
+    }
+
+    public BbanAccountIdentifier asBban() {
+        return (BbanAccountIdentifier) this;
+    }
+
+    public NrbAccountIdentifier asNrb() {
+        return (NrbAccountIdentifier) this;
+    }
 }
