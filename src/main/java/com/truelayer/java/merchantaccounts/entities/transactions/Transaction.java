@@ -1,5 +1,6 @@
 package com.truelayer.java.merchantaccounts.entities.transactions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -39,30 +40,46 @@ public abstract class Transaction {
         private final String status;
     }
 
+    @JsonIgnore
+    public boolean isMerchantAccountPayment() {
+        return this instanceof MerchantAccountPayment;
+    }
+
+    @JsonIgnore
+    public boolean isExternalPayment() {
+        return this instanceof ExternalPayment;
+    }
+
+    @JsonIgnore
+    public boolean isPayout() {
+        return this instanceof Payout;
+    }
+
+    @JsonIgnore
     public MerchantAccountPayment asMerchantAccountPayment() {
-        if (!(this instanceof MerchantAccountPayment)) {
+        if (!isMerchantAccountPayment()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (MerchantAccountPayment) this;
     }
 
+    @JsonIgnore
     public ExternalPayment asExternalPayment() {
-        if (!(this instanceof ExternalPayment)) {
+        if (!isExternalPayment()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (ExternalPayment) this;
     }
 
+    @JsonIgnore
     public Payout asPayout() {
-        if (!(this instanceof Payout)) {
+        if (!isPayout()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (Payout) this;
     }
 
     private String buildErrorMessage() {
-        return String.format(
-                "payment is of type %1$s. Consider using as%1$s() instead.",
-                this.getClass().getSimpleName());
+        return String.format("Payment is of type %s.", this.getClass().getSimpleName());
     }
 }
