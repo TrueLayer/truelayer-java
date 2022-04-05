@@ -1,5 +1,6 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
@@ -33,51 +34,121 @@ public abstract class PaymentDetail {
 
     public abstract Status getStatus();
 
-    public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
-        if (!(this instanceof AuthorizationRequiredPaymentDetail)) {
+    @JsonIgnore
+    public boolean isAuthorizationRequired() {
+        return this instanceof AuthorizationRequiredPaymentDetail;
+    }
+
+    @JsonIgnore
+    public boolean isAuthorized() {
+        return this instanceof AuthorizedPaymentDetail;
+    }
+
+    @JsonIgnore
+    public boolean isAuthorizing() {
+        return this instanceof AuthorizingPaymentDetail;
+    }
+
+    @JsonIgnore
+    public boolean isFailed() {
+        return this instanceof FailedPaymentDetail;
+    }
+
+    @JsonIgnore
+    public boolean isExecuted() {
+        return this instanceof ExecutedPaymentDetail;
+    }
+
+    @JsonIgnore
+    public boolean isSettled() {
+        return this instanceof SettledPaymentDetail;
+    }
+
+    @JsonIgnore
+    public AuthorizationRequiredPaymentDetail asAuthorizationRequired() {
+        if (!isAuthorizationRequired()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizationRequiredPaymentDetail) this;
     }
 
-    public AuthorizedPaymentDetail asAuthorizedPaymentDetail() {
-        if (!(this instanceof AuthorizedPaymentDetail)) {
+    @JsonIgnore
+    @Deprecated
+    public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
+        return asAuthorizationRequired();
+    }
+
+    @JsonIgnore
+    public AuthorizedPaymentDetail asAuthorized() {
+        if (!isAuthorized()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizedPaymentDetail) this;
     }
 
-    public AuthorizingPaymentDetail asAuthorizingPaymentDetail() {
-        if (!(this instanceof AuthorizingPaymentDetail)) {
+    @JsonIgnore
+    @Deprecated
+    public AuthorizedPaymentDetail asAuthorizedPaymentDetail() {
+        return asAuthorized();
+    }
+
+    @JsonIgnore
+    public AuthorizingPaymentDetail asAuthorizing() {
+        if (!isAuthorizing()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizingPaymentDetail) this;
     }
 
-    public FailedPaymentDetail asFailedPaymentDetail() {
-        if (!(this instanceof FailedPaymentDetail)) {
+    @JsonIgnore
+    @Deprecated
+    public AuthorizingPaymentDetail asAuthorizingPaymentDetail() {
+        return asAuthorizing();
+    }
+
+    @JsonIgnore
+    public FailedPaymentDetail asFailed() {
+        if (!isFailed()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (FailedPaymentDetail) this;
     }
 
-    public ExecutedPaymentDetail asSucceededPaymentDetail() {
-        if (!(this instanceof ExecutedPaymentDetail)) {
+    @Deprecated
+    @JsonIgnore
+    public FailedPaymentDetail asFailedPaymentDetail() {
+        return asFailed();
+    }
+
+    @JsonIgnore
+    public ExecutedPaymentDetail asExecuted() {
+        if (!isExecuted()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (ExecutedPaymentDetail) this;
     }
 
-    public SettledPaymentDetail asSettledPaymentDetail() {
-        if (!(this instanceof SettledPaymentDetail)) {
+    @Deprecated
+    @JsonIgnore
+    public ExecutedPaymentDetail asSucceededPaymentDetail() {
+        return asExecuted();
+    }
+
+    @JsonIgnore
+    public SettledPaymentDetail asSettled() {
+        if (!isSettled()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SettledPaymentDetail) this;
     }
 
+    @Deprecated
+    @JsonIgnore
+    public SettledPaymentDetail asSettledPaymentDetail() {
+        return asSettled();
+    }
+
     private String buildErrorMessage() {
-        return String.format(
-                "payment is of type %1$s. Consider using as%1$s() instead.",
-                this.getClass().getSimpleName());
+        return String.format("Payment is of type %s.", this.getClass().getSimpleName());
     }
 }
