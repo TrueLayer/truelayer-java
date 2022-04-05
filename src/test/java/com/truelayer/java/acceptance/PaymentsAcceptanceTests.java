@@ -132,14 +132,14 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
         assertNotError(startAuthorizationFlowResponse);
 
         // Submit the provider selection
-        ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponse = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
                 .submitProviderSelection(
                         createPaymentResponse.getData().getId(),
                         SubmitProviderSelectionRequest.builder()
@@ -180,7 +180,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
@@ -218,7 +218,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
         assertNotError(startAuthorizationFlowResponse);

@@ -3,11 +3,10 @@ package com.truelayer.java.payments.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @JsonTypeInfo(
@@ -22,7 +21,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public abstract class SubmitProviderSelectionResponse {
+public abstract class PaymentAuthorizationFlowResponse {
 
     protected Status status;
 
@@ -56,15 +55,5 @@ public abstract class SubmitProviderSelectionResponse {
 
     private String buildErrorMessage() {
         return String.format("Response is of type %s.", this.getClass().getSimpleName());
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    public enum Status {
-        AUTHORIZING("authorizing"),
-        FAILED("failed");
-
-        @JsonValue
-        private final String status;
     }
 }
