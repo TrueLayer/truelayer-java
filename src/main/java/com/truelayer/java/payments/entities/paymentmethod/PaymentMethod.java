@@ -1,8 +1,8 @@
 package com.truelayer.java.payments.entities.paymentmethod;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.truelayer.java.entities.beneficiary.Beneficiary;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,7 @@ public abstract class PaymentMethod {
 
     protected Type type;
 
-    private Beneficiary beneficiary;
-
+    @JsonIgnore
     public BankTransfer asBankTransfer() {
         return (BankTransfer) this;
     }

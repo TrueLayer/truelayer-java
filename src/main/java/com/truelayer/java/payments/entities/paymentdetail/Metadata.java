@@ -1,5 +1,6 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
@@ -12,6 +13,11 @@ import lombok.ToString;
 @Getter
 public abstract class Metadata {
     protected Type type;
+
+    @JsonIgnore
+    public ProviderMetadata asProviderMetadata() {
+        return (ProviderMetadata) this;
+    }
 
     public enum Type {
         PROVIDER("provider");
