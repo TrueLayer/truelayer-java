@@ -121,7 +121,7 @@ class PaymentDetailTests {
     public void shouldYieldTrueIfSettledPaymentDetail() {
         PaymentDetail sut = new SettledPaymentDetail(null, new Date(), new Date(), new Date(), null);
 
-        assertTrue(sut.isFailed());
+        assertTrue(sut.isSettled());
     }
 
     @Test
