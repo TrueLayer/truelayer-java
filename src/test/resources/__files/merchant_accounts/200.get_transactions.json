@@ -47,7 +47,7 @@
       "currency":"GBP",
       "amount_in_minor":1,
       "status":"pending",
-      "created_at":"string",
+      "created_at":"2022-02-10T15:47:17.403Z",
       "beneficiary":{
         "type":"merchant_account",
         "merchant_account_id":"e83c4c20-b2ad-4b73-8a32-***",
@@ -62,8 +62,8 @@
       "currency":"GBP",
       "amount_in_minor":1,
       "status":"settled",
-      "created_at":"string",
-      "settled_at":"string",
+      "created_at":"2022-02-10T15:47:17.403Z",
+      "settled_at":"2022-02-10T15:47:17.403Z",
       "beneficiary":{
         "type":"merchant_account",
         "merchant_account_id":"e83c4c20-b2ad-4b73-8a32-***",
