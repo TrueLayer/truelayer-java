@@ -36,6 +36,7 @@ class PaymentDetailTests {
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
+    @Test
     @DisplayName("It should yield true if instance is of type AuthorizingPaymentDetail")
     public void shouldYieldTrueIfAuthorizingPaymentDetail() {
         PaymentDetail sut = new AuthorizingPaymentDetail(new AuthorizationFlowWithConfiguration(null));
@@ -61,6 +62,7 @@ class PaymentDetailTests {
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
+    @Test
     @DisplayName("It should yield true if instance is of type AuthorizedPaymentDetail")
     public void shouldYieldTrueIfAuthorizedPaymentDetail() {
         PaymentDetail sut = new AuthorizedPaymentDetail(new AuthorizationFlowWithConfiguration(null));
@@ -86,6 +88,7 @@ class PaymentDetailTests {
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
+    @Test
     @DisplayName("It should yield true if instance is of type FailedPaymentDetail")
     public void shouldYieldTrueIfFailedPaymentDetail() {
         PaymentDetail sut = new FailedPaymentDetail(
@@ -113,6 +116,7 @@ class PaymentDetailTests {
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
+    @Test
     @DisplayName("It should yield true if instance is of type SettledPaymentDetail")
     public void shouldYieldTrueIfSettledPaymentDetail() {
         PaymentDetail sut = new SettledPaymentDetail(null, new Date(), new Date(), new Date(), null);
@@ -138,6 +142,7 @@ class PaymentDetailTests {
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
+    @Test
     @DisplayName("It should yield true if instance is of type ExecutedPaymentDetail")
     public void shouldYieldTrueIfExecutedPaymentDetail() {
         PaymentDetail sut = new ExecutedPaymentDetail(null, new Date(), null);

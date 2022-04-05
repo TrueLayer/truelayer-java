@@ -65,8 +65,7 @@ public abstract class AuthorizationFlowAction {
 
     private String buildErrorMessage() {
         return String.format(
-                "authorization flow is of type %1$s. Consider using as%1$s() instead.",
-                this.getClass().getSimpleName());
+                "Authorization flow is of type %s.", this.getClass().getSimpleName());
     }
 
     @RequiredArgsConstructor
