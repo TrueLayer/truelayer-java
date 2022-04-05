@@ -1,8 +1,10 @@
 package com.truelayer.java.entities.accountidentifier;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.truelayer.java.TrueLayerException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -55,23 +57,59 @@ public abstract class AccountIdentifier {
         return new NrbAccountIdentifier.NrbAccountIdentifierBuilder();
     }
 
+    @JsonIgnore
     public boolean isSortCodeAccountNumber() {
         return this instanceof SortCodeAccountNumberAccountIdentifier;
     }
 
+    @JsonIgnore
+    public boolean isIban() {
+        return this instanceof IbanAccountIdentifier;
+    }
+
+    @JsonIgnore
+    public boolean isBban() {
+        return this instanceof BbanAccountIdentifier;
+    }
+
+    @JsonIgnore
+    public boolean isNrb() {
+        return this instanceof NrbAccountIdentifier;
+    }
+
+    @JsonIgnore
     public SortCodeAccountNumberAccountIdentifier asSortCodeAccountNumber() {
+        if (!isSortCodeAccountNumber()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
         return (SortCodeAccountNumberAccountIdentifier) this;
     }
 
+    @JsonIgnore
     public IbanAccountIdentifier asIban() {
+        if (!isIban()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
         return (IbanAccountIdentifier) this;
     }
 
+    @JsonIgnore
     public BbanAccountIdentifier asBban() {
+        if (!isBban()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
         return (BbanAccountIdentifier) this;
     }
 
+    @JsonIgnore
     public NrbAccountIdentifier asNrb() {
+        if (!isNrb()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
         return (NrbAccountIdentifier) this;
+    }
+
+    private String buildErrorMessage() {
+        return String.format("Identifier is of type %s.", this.getClass().getSimpleName());
     }
 }
