@@ -1,6 +1,7 @@
 package com.truelayer.java.merchantaccounts.entities.transactions;
 
 import com.truelayer.java.entities.CurrencyCode;
+import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -17,7 +18,7 @@ public class MerchantAccountPayment extends Transaction {
 
     Transaction.Status status;
 
-    String settledAt;
+    Date settledAt;
 
     PaymentSource paymentSource;
 
