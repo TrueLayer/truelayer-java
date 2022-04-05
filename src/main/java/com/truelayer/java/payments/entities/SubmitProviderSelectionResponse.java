@@ -45,7 +45,7 @@ public abstract class SubmitProviderSelectionResponse {
         return (PaymentAuthorizationFlowAuthorizing) this;
     }
 
-    public PaymentAuthorizationFlowAuthorizationFailed asFailed() {
+    public PaymentAuthorizationFlowAuthorizationFailed asAuthorizationFailed() {
         if (!isAuthorizationFailed()) {
             throw new TrueLayerException(buildErrorMessage());
         }
@@ -53,9 +53,7 @@ public abstract class SubmitProviderSelectionResponse {
     }
 
     private String buildErrorMessage() {
-        return String.format(
-                "Response type is of type %s. Consider using as%s.",
-                this.getClass().getSimpleName(), getStatus().getStatus());
+        return String.format("Response is of type %s.", this.getClass().getSimpleName());
     }
 
     @RequiredArgsConstructor
