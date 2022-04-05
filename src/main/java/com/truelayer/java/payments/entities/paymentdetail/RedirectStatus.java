@@ -3,6 +3,7 @@ package com.truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.truelayer.java.TrueLayerException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,17 @@ import lombok.ToString;
 public abstract class RedirectStatus {
 
     protected Type type;
+
+    public boolean isSupported() {
+        return this instanceof SupportedRedirectStatus;
+    }
+
+    public SupportedRedirectStatus asSupported() {
+        if (!isSupported()) {
+            throw new TrueLayerException("Redirect is not supported.");
+        }
+        return (SupportedRedirectStatus) this;
+    }
 
     @RequiredArgsConstructor
     @Getter

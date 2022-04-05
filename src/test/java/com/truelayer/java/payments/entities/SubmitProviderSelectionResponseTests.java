@@ -46,7 +46,7 @@ class SubmitProviderSelectionResponseTests {
 
     @Test
     @DisplayName("It should convert to an instance of class PaymentAuthorizationFlowAuthorizationFailed")
-    public void shouldConvertToAuthorazionFailed() {
+    public void shouldConvertToAuthorizationFailed() {
         SubmitProviderSelectionResponse sut =
                 new PaymentAuthorizationFlowAuthorizationFailed("some stage", "some reason");
 
@@ -55,7 +55,7 @@ class SubmitProviderSelectionResponseTests {
 
     @Test
     @DisplayName("It should throw an error when converting to PaymentAuthorizationFlowAuthorizationFailed")
-    public void shouldNotConvertToAuthorationFailed() {
+    public void shouldNotConvertToAuthorizationFailed() {
         SubmitProviderSelectionResponse sut = new PaymentAuthorizationFlowAuthorizing();
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizationFailed);
