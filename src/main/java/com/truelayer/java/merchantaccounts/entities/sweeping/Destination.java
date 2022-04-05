@@ -1,5 +1,6 @@
 package com.truelayer.java.merchantaccounts.entities.sweeping;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @Getter
 public abstract class Destination {
 
+    @JsonIgnore
     public Iban asIban() {
         return (Iban) this;
     }
