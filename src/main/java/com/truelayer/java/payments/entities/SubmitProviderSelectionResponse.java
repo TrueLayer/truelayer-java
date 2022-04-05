@@ -38,6 +38,7 @@ public abstract class SubmitProviderSelectionResponse {
         return this instanceof PaymentAuthorizationFlowAuthorizationFailed;
     }
 
+    @JsonIgnore
     public PaymentAuthorizationFlowAuthorizing asAuthorizing() {
         if (!isAuthorizing()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -45,6 +46,7 @@ public abstract class SubmitProviderSelectionResponse {
         return (PaymentAuthorizationFlowAuthorizing) this;
     }
 
+    @JsonIgnore
     public PaymentAuthorizationFlowAuthorizationFailed asAuthorizationFailed() {
         if (!isAuthorizationFailed()) {
             throw new TrueLayerException(buildErrorMessage());
