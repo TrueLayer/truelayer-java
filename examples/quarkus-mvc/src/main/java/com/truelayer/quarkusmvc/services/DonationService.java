@@ -50,12 +50,9 @@ public class DonationService implements IDonationService {
                         .providerSelection(UserSelectedProviderSelection.builder().build())
                         .beneficiary(ExternalAccount.builder()
                                 .accountHolderName("A test donation account")
-                                /*.accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
+                                .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
                                         .accountNumber("11223344")
                                         .sortCode("012345")
-                                        .build())*/
-                                .accountIdentifier(IbanAccountIdentifier.builder()
-                                        .iban("FR00001")
                                         .build())
                                 .reference("test donation")
                                 .build())
