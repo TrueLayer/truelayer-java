@@ -1,9 +1,13 @@
 package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * TrueLayer client facade. Acts as entrypoint for the Java client library capabilities.
@@ -33,4 +37,13 @@ public interface ITrueLayerClient {
      * @return a utility to build a Hosted Payment Page URL.
      */
     IHostedPaymentPageLinkBuilder hpp();
+
+    /**
+     * Utility to submit payment returns parameters.
+     * @param request a submit payment return parameters payload
+     * @return the response of the <i>Submit payment returns parameters</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/submit-payments-provider-return-parameters"><i>Submit payments return parameters</i> API reference</a>
+     */
+    CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
+            SubmitPaymentReturnParametersRequest request);
 }

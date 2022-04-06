@@ -19,7 +19,7 @@ import org.apache.commons.lang3.ObjectUtils;
  * @see TrueLayerClientBuilder
  */
 @AllArgsConstructor
-public class TrueLayerClient implements ITrueLayerClient, ICommonApi {
+public class TrueLayerClient implements ITrueLayerClient {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsHandler;
     private IMerchantAccountsApi merchantAccountsHandler;
@@ -62,6 +62,9 @@ public class TrueLayerClient implements ITrueLayerClient, ICommonApi {
         return paymentsHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IMerchantAccountsApi merchantAccounts() {
         if (ObjectUtils.isEmpty(merchantAccountsHandler)) {
@@ -78,16 +81,19 @@ public class TrueLayerClient implements ITrueLayerClient, ICommonApi {
         return this.hostedPaymentPageLinkBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
+            SubmitPaymentReturnParametersRequest request) {
+        return commonApi.submitPaymentReturnsParameters(request);
+    }
+
     private TrueLayerException buildInitializationException(String handlerName) {
         return new TrueLayerException(String.format(
                 "%s handler not initialized."
                         + " Make sure you specified the required signing options while initializing the library",
                 handlerName));
-    }
-
-    @Override
-    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
-            SubmitPaymentReturnParametersRequest request) {
-        return commonApi.submitPaymentReturnsParameters(request);
     }
 }
