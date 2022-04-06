@@ -32,7 +32,7 @@ class TransactionTests {
     @DisplayName("It should convert to an instance of class MerchantAccountPayment")
     public void shouldConvertToMerchantAccountPayment() {
         Transaction sut = new MerchantAccountPayment(
-                "74134072-80dc-4ccd-9903-a2b503e2e5b6",
+                UUID.randomUUID().toString(),
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
