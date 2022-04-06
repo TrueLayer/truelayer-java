@@ -19,30 +19,30 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should store a token record")
     public void shouldStoreATokenRecord() {
         AccessToken expectedToken = buildAccessToken().getData();
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
-        sut.store(expectedToken);
+        sut.storeToken(expectedToken);
 
-        assertEquals(expectedToken, sut.get().get());
+        assertEquals(expectedToken, sut.getToken().get());
     }
 
     @Test
     @DisplayName("It should clear a token record")
     public void itShouldClearTheExistingToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
-        sut.store(buildAccessToken().getData());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        sut.storeToken(buildAccessToken().getData());
 
-        sut.clear();
+        sut.clearToken();
 
-        assertFalse(sut.get().isPresent());
+        assertFalse(sut.getToken().isPresent());
     }
 
     @Test
     @DisplayName("It should yield an empty optional if there are no cached tokens")
     public void itShouldYieldAnEmptyOptionalIfNoToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
-        assertFalse(sut.get().isPresent());
+        assertFalse(sut.getToken().isPresent());
     }
 
     @Test
@@ -58,18 +58,18 @@ class SimpleAccessTokenManagementTests {
                 .thenReturn(aPastInstant)
                 .thenReturn(Clock.systemUTC().instant());
         when(fakeClock.getZone()).thenReturn(ZoneOffset.UTC);
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(fakeClock);
-        sut.store(accessToken);
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(fakeClock);
+        sut.storeToken(accessToken);
 
-        assertFalse(sut.get().isPresent());
+        assertFalse(sut.getToken().isPresent());
     }
 
     @Test
     @DisplayName("It should yield an token if token is not expired")
     public void itShouldYieldAnToken() {
-        SimpleAccessTokenCache sut = new SimpleAccessTokenCache(Clock.systemUTC());
-        sut.store(buildAccessToken().getData());
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        sut.storeToken(buildAccessToken().getData());
 
-        assertTrue(sut.get().isPresent());
+        assertTrue(sut.getToken().isPresent());
     }
 }

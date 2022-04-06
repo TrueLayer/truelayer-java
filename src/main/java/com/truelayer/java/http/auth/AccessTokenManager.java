@@ -6,9 +6,10 @@ import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
-import com.truelayer.java.http.auth.cache.IAccessTokenCache;
+import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import java.util.List;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Synchronized;
 
@@ -17,23 +18,31 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     private final IAuthenticationHandler authenticationHandler;
 
-    private final IAccessTokenCache accessTokenCache;
+    private final ICredentialsCache credentialsCache;
 
     private final List<String> scopes = singletonList(Constants.Scopes.PAYMENTS);
 
+    private Optional<ICredentialsCache> getCredentialsCache() {
+        return Optional.ofNullable(credentialsCache);
+    }
+
     @Override
     public AccessToken getToken() {
-        return accessTokenCache.get().orElseGet(() -> {
-            AccessToken token = tryGetToken();
-            accessTokenCache.store(token);
-            return token;
-        });
+        if (getCredentialsCache().isPresent()) {
+            return getCredentialsCache().get().getToken().orElseGet(() -> {
+                AccessToken token = tryGetToken();
+                credentialsCache.storeToken(token);
+                return token;
+            });
+        }
+
+        return tryGetToken();
     }
 
     @Override
     @Synchronized
     public void invalidateToken() {
-        accessTokenCache.clear();
+        getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
     }
 
     private AccessToken tryGetToken() {

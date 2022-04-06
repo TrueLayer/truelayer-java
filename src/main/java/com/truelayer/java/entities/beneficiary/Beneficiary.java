@@ -35,6 +35,7 @@ public abstract class Beneficiary {
         return this instanceof ExternalAccount;
     }
 
+    @JsonIgnore
     public MerchantAccount asMerchantAccount() {
         if (!isMerchantAccount()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -42,6 +43,7 @@ public abstract class Beneficiary {
         return (MerchantAccount) this;
     }
 
+    @JsonIgnore
     public ExternalAccount asExternalAccount() {
         if (!isExternalAccount()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -50,9 +52,7 @@ public abstract class Beneficiary {
     }
 
     private String buildErrorMessage() {
-        return String.format(
-                "beneficiary is of type %1$s. Consider using as%1$s() instead.",
-                this.getClass().getSimpleName());
+        return String.format("Beneficiary is of type %s.", this.getClass().getSimpleName());
     }
 
     @Getter

@@ -190,7 +190,9 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
-        URI bankUri = startAuthorizationFlowResponse.getData().getAuthorizationFlow()
+        URI bankUri = startAuthorizationFlowResponse
+                .getData()
+                .getAuthorizationFlow()
                 .getActions()
                 .getNext()
                 .asRedirect()

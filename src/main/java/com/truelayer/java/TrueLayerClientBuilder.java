@@ -9,7 +9,9 @@ import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.AccessTokenInvalidator;
 import com.truelayer.java.http.auth.AccessTokenManager;
-import com.truelayer.java.http.auth.cache.SimpleAccessTokenCache;
+import com.truelayer.java.http.auth.AccessTokenManager.AccessTokenManagerBuilder;
+import com.truelayer.java.http.auth.cache.ICredentialsCache;
+import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
@@ -39,9 +41,19 @@ public class TrueLayerClientBuilder {
     // By default, production is used
     private Environment environment = Environment.live();
 
-    private Optional<Consumer<String>> logMessageConsumer = Optional.empty();
+    private Consumer<String> logMessageConsumer;
+
+    private ICredentialsCache credentialsCache;
 
     TrueLayerClientBuilder() {}
+
+    private Optional<Consumer<String>> getLogMessageConsumer() {
+        return Optional.ofNullable(logMessageConsumer);
+    }
+
+    private Optional<ICredentialsCache> getCredentialsCache() {
+        return Optional.ofNullable(credentialsCache);
+    }
 
     /**
      * Utility to set the client credentials required for Oauth2 protected endpoints.
@@ -78,11 +90,12 @@ public class TrueLayerClientBuilder {
     }
 
     /**
-     * Utility to enable default logs for HTTP traces.
-     * @return the instance of the client builder used
+     * Utility to enable default logs for HTTP traces. Produced logs are not
+     * leaking sensitive information
+     * @return the instance of the client builder used.
      */
     public TrueLayerClientBuilder withHttpLogs() {
-        this.logMessageConsumer = Optional.of(new DefaultLogConsumer());
+        this.logMessageConsumer = new DefaultLogConsumer();
         return this;
     }
 
@@ -94,7 +107,25 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withHttpLogs(Consumer<String> logConsumer) {
-        this.logMessageConsumer = Optional.of(logConsumer);
+        this.logMessageConsumer = logConsumer;
+        return this;
+    }
+
+    /**
+     * Utility to enable default in memory caching for Oauth credentials.
+     * @return the instance of the client builder used
+     */
+    public TrueLayerClientBuilder withCredentialsCaching() {
+        this.credentialsCache = new SimpleCredentialsCache(Clock.systemUTC());
+        return this;
+    }
+
+    /**
+     * Utility to enable a custom cache for Oauth credentials.
+     * @return the instance of the client builder used
+     */
+    public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
+        this.credentialsCache = credentialsCache;
         return this;
     }
 
@@ -112,8 +143,9 @@ public class TrueLayerClientBuilder {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         // Setup logging if required
-        logMessageConsumer.ifPresent(logConsumer -> clientBuilder.addNetworkInterceptor(
-                new HttpLoggingInterceptor(logConsumer, new SensitiveHeaderGuard())));
+        getLogMessageConsumer()
+                .ifPresent(logConsumer -> clientBuilder.addNetworkInterceptor(
+                        new HttpLoggingInterceptor(logConsumer, new SensitiveHeaderGuard())));
 
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
@@ -133,20 +165,30 @@ public class TrueLayerClientBuilder {
             return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
         }
 
-        AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .authenticationHandler(authenticationHandler)
-                .accessTokenCache(new SimpleAccessTokenCache(Clock.systemUTC()))
-                .build();
-
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
-        OkHttpClient paymentsHttpClient = authHttpClient
-                .newBuilder()
-                .addInterceptor(new SignatureInterceptor(signingOptions))
-                .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
-                .authenticator(new AccessTokenInvalidator(accessTokenManager))
-                .build();
+        OkHttpClient.Builder paymentsHttpClientBuilder =
+                authHttpClient.newBuilder().addInterceptor(new SignatureInterceptor(signingOptions));
+
+        AccessTokenManagerBuilder accessTokenManagerBuilder =
+                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
+
+        // setup credentials caching if required
+        if (getCredentialsCache().isPresent()) {
+            AccessTokenManager accessTokenManager = accessTokenManagerBuilder
+                    .credentialsCache(getCredentialsCache().get())
+                    .build();
+
+            paymentsHttpClientBuilder
+                    .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
+                    .authenticator(new AccessTokenInvalidator(accessTokenManager));
+        } else {
+            AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
+            paymentsHttpClientBuilder.addInterceptor(new AuthenticationInterceptor(accessTokenManager));
+        }
+
+        OkHttpClient paymentsHttpClient = paymentsHttpClientBuilder.build();
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);

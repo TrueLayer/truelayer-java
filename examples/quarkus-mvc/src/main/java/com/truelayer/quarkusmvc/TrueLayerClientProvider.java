@@ -3,15 +3,12 @@ package com.truelayer.quarkusmvc;
 import com.truelayer.java.*;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
 
 import javax.inject.Singleton;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class TrueLayerClientProvider {
-
-    private static final Logger LOG = Logger.getLogger("TL SDK Custom logger");
 
     @ConfigProperty(name = "tl.client.id")
     String clientId;
@@ -42,6 +39,7 @@ public class TrueLayerClientProvider {
                         .privateKey(Files.readAllBytes(Path.of(signingPrivateKeyLocation)))
                         .build())
                 .withHttpLogs(LOG::info)
+                .withCredentialsCaching()
                 .build();
     }
 }

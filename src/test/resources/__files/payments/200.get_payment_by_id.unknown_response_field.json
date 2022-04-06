@@ -7,6 +7,7 @@
     "name":"Andrea Di Lisio",
     "email":"andrea@truelayer.com"
   },
+  "this_is_new": "hello",
   "payment_method":{
     "type":"bank_transfer",
     "provider_selection":{
@@ -27,9 +28,7 @@
             "ob-exclude-this-bank"
           ]
         }
-      },
-      "provider_id": "a-provider-id",
-      "scheme_id": "faster_payments_service"
+      }
     },
     "beneficiary":{
       "type":"merchant_account",

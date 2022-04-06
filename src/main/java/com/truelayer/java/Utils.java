@@ -1,6 +1,7 @@
 package com.truelayer.java;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -23,6 +24,8 @@ public class Utils {
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
             // do not include null fields in JSON
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            // do not fail in case of unknown properties returned JSON payloads
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             OBJECT_MAPPER_INSTANCE = objectMapper;
         }

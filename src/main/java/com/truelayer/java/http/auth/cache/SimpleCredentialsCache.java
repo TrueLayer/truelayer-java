@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
  * Class constructor accepts a Clock instance for improved testing purposes. Please note that this is not a monotonic implementation.
  * @see <a href="https://www.thoughtworks.com/insights/blog/test-driven-development-best-thing-has-happened-software-design">this article</a> for more context,
  */
-public class SimpleAccessTokenCache implements IAccessTokenCache {
+public class SimpleCredentialsCache implements ICredentialsCache {
 
     /**
      * internal state
@@ -27,12 +27,12 @@ public class SimpleAccessTokenCache implements IAccessTokenCache {
      * Constructor for this class.
      * @param clock clock instance
      */
-    public SimpleAccessTokenCache(Clock clock) {
+    public SimpleCredentialsCache(Clock clock) {
         this.clock = clock;
     }
 
     @Override
-    public Optional<AccessToken> get() {
+    public Optional<AccessToken> getToken() {
         if (isEmpty(tokenRecord) || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
             return Optional.empty();
         }
@@ -41,12 +41,12 @@ public class SimpleAccessTokenCache implements IAccessTokenCache {
     }
 
     @Override
-    public void store(AccessToken token) {
+    public void storeToken(AccessToken token) {
         tokenRecord = new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
     }
 
     @Override
-    public void clear() {
+    public void clearToken() {
         tokenRecord = null;
     }
 
