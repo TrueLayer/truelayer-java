@@ -266,7 +266,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .fragment(responseUrl.getFragment())
                 .build();
         ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
-                tlClient.submitPaymentReturnsParameters(submitProviderReturn).get();
+                tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
         assertNotError(submitPaymentReturnParametersResponse);
     }
 

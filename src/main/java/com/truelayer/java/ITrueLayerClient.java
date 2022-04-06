@@ -44,6 +44,6 @@ public interface ITrueLayerClient {
      * @return the response of the <i>Submit payment returns parameters</i> operation
      * @see <a href="https://docs.truelayer.com/reference/submit-payments-provider-return-parameters"><i>Submit payments return parameters</i> API reference</a>
      */
-    CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
+    CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
             SubmitPaymentReturnParametersRequest request);
 }

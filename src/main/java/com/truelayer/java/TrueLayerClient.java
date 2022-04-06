@@ -85,9 +85,9 @@ public class TrueLayerClient implements ITrueLayerClient {
      * {@inheritDoc}
      */
     @Override
-    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnsParameters(
+    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
             SubmitPaymentReturnParametersRequest request) {
-        return commonApi.submitPaymentReturnsParameters(request);
+        return commonApi.submitPaymentReturnParameters(request);
     }
 
     private TrueLayerException buildInitializationException(String handlerName) {

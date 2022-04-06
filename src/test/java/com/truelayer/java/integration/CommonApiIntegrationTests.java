@@ -28,7 +28,7 @@ public class CommonApiIntegrationTests extends IntegrationTests {
                 .build();
 
         ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
-                tlClient.submitPaymentReturnsParameters(
+                tlClient.submitPaymentReturnParameters(
                                 SubmitPaymentReturnParametersRequest.builder().build())
                         .get();
 
