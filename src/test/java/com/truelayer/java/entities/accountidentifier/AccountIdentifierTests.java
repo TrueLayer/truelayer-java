@@ -3,11 +3,8 @@ package com.truelayer.java.entities.accountidentifier;
 import static com.truelayer.java.Utils.getObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.Utils;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +25,9 @@ class AccountIdentifierTests {
         AccountIdentifier sut = new SortCodeAccountNumberAccountIdentifier("123456", "12345678");
 
         assertDoesNotThrow(sut::asSortCodeAccountNumber);
-        assertEquals("{\"sort_code\":\"123456\",\"account_number\":\"12345678\",\"type\":\"sort_code_account_number\"}", getObjectMapper().writeValueAsString(sut));
+        assertEquals(
+                "{\"sort_code\":\"123456\",\"account_number\":\"12345678\",\"type\":\"sort_code_account_number\"}",
+                getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -56,7 +55,8 @@ class AccountIdentifierTests {
         AccountIdentifier sut = new IbanAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asIban);
-        assertEquals("{\"iban\":\"12345678\",\"type\":\"iban\"}", getObjectMapper().writeValueAsString(sut));
+        assertEquals(
+                "{\"iban\":\"12345678\",\"type\":\"iban\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -84,7 +84,8 @@ class AccountIdentifierTests {
         AccountIdentifier sut = new BbanAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asBban);
-        assertEquals("{\"bban\":\"12345678\",\"type\":\"bban\"}", getObjectMapper().writeValueAsString(sut));
+        assertEquals(
+                "{\"bban\":\"12345678\",\"type\":\"bban\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -112,7 +113,8 @@ class AccountIdentifierTests {
         AccountIdentifier sut = new NrbAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asNrb);
-        assertEquals("{\"nrb\":\"12345678\",\"type\":\"nrb\"}", getObjectMapper().writeValueAsString(sut));
+        assertEquals(
+                "{\"nrb\":\"12345678\",\"type\":\"nrb\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test

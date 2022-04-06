@@ -85,7 +85,7 @@ public abstract class AccountIdentifier {
         return (SortCodeAccountNumberAccountIdentifier) this;
     }
 
-    //@JsonIgnore
+    // @JsonIgnore
     public IbanAccountIdentifier asIban() {
         if (!isIbanIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
