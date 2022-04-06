@@ -20,7 +20,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:1.0.0-jsdk-60-SNAPSHOT'
+    implementation 'com.truelayer:truelayer-java:0.7.5-jsdk-66-SNAPSHOT'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
