@@ -1,8 +1,13 @@
 package com.truelayer.java.entities.accountidentifier;
 
+import static com.truelayer.java.Utils.getObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.Utils;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,15 +18,17 @@ class AccountIdentifierTests {
     public void shouldYieldTrueIfSortCodeAccNumber() {
         AccountIdentifier sut = new SortCodeAccountNumberAccountIdentifier("123456", "12345678");
 
-        assertTrue(sut.isSortCodeAccountNumber());
+        assertTrue(sut.isSortCodeAccountNumberIdentifier());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class SortCodeAccountNumberAccountIdentifier")
     public void shouldConvertToSortCodeAccNumber() {
         AccountIdentifier sut = new SortCodeAccountNumberAccountIdentifier("123456", "12345678");
 
         assertDoesNotThrow(sut::asSortCodeAccountNumber);
+        assertEquals("{\"sort_code\":\"123456\",\"account_number\":\"12345678\",\"type\":\"sort_code_account_number\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -39,15 +46,17 @@ class AccountIdentifierTests {
     public void shouldYieldTrueIfIban() {
         AccountIdentifier sut = new IbanAccountIdentifier("12345678");
 
-        assertTrue(sut.isIban());
+        assertTrue(sut.isIbanIdentifier());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class IbanAccountIdentifier")
     public void shouldConvertToIban() {
         AccountIdentifier sut = new IbanAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asIban);
+        assertEquals("{\"iban\":\"12345678\",\"type\":\"iban\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -65,15 +74,17 @@ class AccountIdentifierTests {
     public void shouldYieldTrueIfBban() {
         AccountIdentifier sut = new BbanAccountIdentifier("12345678");
 
-        assertTrue(sut.isBban());
+        assertTrue(sut.isBbanIdentifier());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class BbanAccountIdentifier")
     public void shouldConvertToBban() {
         AccountIdentifier sut = new BbanAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asBban);
+        assertEquals("{\"bban\":\"12345678\",\"type\":\"bban\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test
@@ -91,15 +102,17 @@ class AccountIdentifierTests {
     public void shouldYieldTrueIfNrb() {
         AccountIdentifier sut = new NrbAccountIdentifier("12345678");
 
-        assertTrue(sut.isNrb());
+        assertTrue(sut.isNrbIdentifier());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class NrbAccountIdentifier")
     public void shouldConvertToNrb() {
         AccountIdentifier sut = new NrbAccountIdentifier("12345678");
 
         assertDoesNotThrow(sut::asNrb);
+        assertEquals("{\"nrb\":\"12345678\",\"type\":\"nrb\"}", getObjectMapper().writeValueAsString(sut));
     }
 
     @Test

@@ -1,11 +1,16 @@
 package com.truelayer.java.merchantaccounts.entities.transactions;
 
+import static com.truelayer.java.Utils.getObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +31,12 @@ class TransactionTests {
         assertTrue(sut.isMerchantAccountPayment());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class MerchantAccountPayment")
     public void shouldConvertToMerchantAccountPayment() {
         Transaction sut = new MerchantAccountPayment(
-                UUID.randomUUID().toString(),
+                "74134072-80dc-4ccd-9903-a2b503e2e5b6",
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,

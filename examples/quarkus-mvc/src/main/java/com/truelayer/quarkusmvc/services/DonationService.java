@@ -2,13 +2,14 @@ package com.truelayer.quarkusmvc.services;
 
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.accountidentifier.IbanAccountIdentifier;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.ExternalAccount;
 import com.truelayer.java.payments.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
-import com.truelayer.quarkusmvc.models.DonationResult;
 import com.truelayer.quarkusmvc.models.DonationRequest;
+import com.truelayer.quarkusmvc.models.DonationResult;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -49,9 +50,12 @@ public class DonationService implements IDonationService {
                         .providerSelection(UserSelectedProviderSelection.builder().build())
                         .beneficiary(ExternalAccount.builder()
                                 .accountHolderName("A test donation account")
-                                .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
+                                /*.accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
                                         .accountNumber("11223344")
                                         .sortCode("012345")
+                                        .build())*/
+                                .accountIdentifier(IbanAccountIdentifier.builder()
+                                        .iban("FR00001")
                                         .build())
                                 .reference("test donation")
                                 .build())
