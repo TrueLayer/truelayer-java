@@ -58,28 +58,28 @@ public abstract class AccountIdentifier {
     }
 
     @JsonIgnore
-    public boolean isSortCodeAccountNumber() {
+    public boolean isSortCodeAccountNumberIdentifier() {
         return this instanceof SortCodeAccountNumberAccountIdentifier;
     }
 
     @JsonIgnore
-    public boolean isIban() {
+    public boolean isIbanIdentifier() {
         return this instanceof IbanAccountIdentifier;
     }
 
     @JsonIgnore
-    public boolean isBban() {
+    public boolean isBbanIdentifier() {
         return this instanceof BbanAccountIdentifier;
     }
 
     @JsonIgnore
-    public boolean isNrb() {
+    public boolean isNrbIdentifier() {
         return this instanceof NrbAccountIdentifier;
     }
 
     @JsonIgnore
     public SortCodeAccountNumberAccountIdentifier asSortCodeAccountNumber() {
-        if (!isSortCodeAccountNumber()) {
+        if (!isSortCodeAccountNumberIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SortCodeAccountNumberAccountIdentifier) this;
@@ -87,7 +87,7 @@ public abstract class AccountIdentifier {
 
     @JsonIgnore
     public IbanAccountIdentifier asIban() {
-        if (!isIban()) {
+        if (!isIbanIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (IbanAccountIdentifier) this;
@@ -95,7 +95,7 @@ public abstract class AccountIdentifier {
 
     @JsonIgnore
     public BbanAccountIdentifier asBban() {
-        if (!isBban()) {
+        if (!isBbanIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (BbanAccountIdentifier) this;
@@ -103,7 +103,7 @@ public abstract class AccountIdentifier {
 
     @JsonIgnore
     public NrbAccountIdentifier asNrb() {
-        if (!isNrb()) {
+        if (!isNrbIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (NrbAccountIdentifier) this;
