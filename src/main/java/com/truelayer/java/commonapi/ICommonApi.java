@@ -3,7 +3,6 @@ package com.truelayer.java.commonapi;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.http.entities.ApiResponse;
-
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
