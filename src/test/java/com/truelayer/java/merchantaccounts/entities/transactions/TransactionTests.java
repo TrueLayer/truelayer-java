@@ -6,6 +6,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
 import java.util.Date;
 import java.util.UUID;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ class TransactionTests {
         assertTrue(sut.isMerchantAccountPayment());
     }
 
+    @SneakyThrows
     @Test
     @DisplayName("It should convert to an instance of class MerchantAccountPayment")
     public void shouldConvertToMerchantAccountPayment() {
