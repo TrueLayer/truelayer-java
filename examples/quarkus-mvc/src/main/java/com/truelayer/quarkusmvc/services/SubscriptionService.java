@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
 
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -45,23 +46,23 @@ public class SubscriptionService implements ISubscriptionService{
                                         .accountNumber("10003957")
                                         .sortCode("140662")
                                         .build())
-                                .accountHolderName("John Smith")
+                                .accountHolderName("Andrea Java SDK")
                                 .reference("a reference")
                                 .build())
                         .build())
                 .currency(CurrencyCode.GBP)
                 .user(User.builder()
                         .id(UUID.randomUUID().toString())
-                        .name("Andrea Di Lisio")
-                        .email("andrea.dilisio@truelayer.com")
+                        .name("John Smith")
+                        .email("john@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        .maximumIndividualAmount(req.getAmount())
                         .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
                                 .periodAlignment(CALENDAR)
-                                .periodType(Constraints.PeriodicLimit.PeriodType.MONTH)
-                                .maximumAmount(req.getAmount())
+                                .periodType(MONTH)
+                                .maximumAmount(2000)
                                 .build()))
+                        .maximumIndividualAmount(1000)
                         .build())
                 .build();
         var mandate = trueLayerClient.mandates().createMandate(createMandateReq).get();
