@@ -3,6 +3,7 @@ package com.truelayer.quarkusmvc;
 import com.truelayer.java.*;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 import javax.inject.Singleton;
 import java.nio.file.Files;
@@ -21,6 +22,8 @@ public class TrueLayerClientProvider {
 
     @ConfigProperty(name = "tl.signing.private_key_location")
     String signingPrivateKeyLocation;
+
+    private static final Logger LOG = Logger.getLogger(TrueLayerClientProvider.class);
 
     @Singleton
     @SneakyThrows

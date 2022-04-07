@@ -1,4 +1,4 @@
-package com.truelayer.java.recurringpayments.entities.mandatedetail;
+package com.truelayer.java.mandates.entities.mandatedetail;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;

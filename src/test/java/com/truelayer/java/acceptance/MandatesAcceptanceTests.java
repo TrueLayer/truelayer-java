@@ -1,8 +1,8 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
@@ -10,12 +10,12 @@ import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.CreateMandateRequest;
+import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.mandate.Constraints;
+import com.truelayer.java.mandates.entities.mandate.Mandate;
+import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
-import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
-import com.truelayer.java.recurringpayments.entities.CreateMandateResponse;
-import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
-import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
-import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;

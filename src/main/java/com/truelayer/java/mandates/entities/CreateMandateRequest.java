@@ -1,9 +1,9 @@
-package com.truelayer.java.recurringpayments.entities;
+package com.truelayer.java.mandates.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
-import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
-import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
+import com.truelayer.java.mandates.entities.mandate.Constraints;
+import com.truelayer.java.mandates.entities.mandate.Mandate;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

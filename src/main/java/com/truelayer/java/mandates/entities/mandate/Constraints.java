@@ -1,4 +1,4 @@
-package com.truelayer.java.recurringpayments.entities.mandate;
+package com.truelayer.java.mandates.entities.mandate;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.truelayer.java.recurringpayments.entities.mandatedetail;
+package com.truelayer.java.mandates.entities.mandatedetail;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -2,9 +2,9 @@ package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
-import com.truelayer.java.recurringpayments.IMandatesApi;
 
 /**
  * TrueLayer client facade. Acts as entrypoint for the Java client library capabilities.

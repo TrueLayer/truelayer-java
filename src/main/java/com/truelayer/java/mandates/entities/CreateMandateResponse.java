@@ -1,4 +1,4 @@
-package com.truelayer.java.recurringpayments.entities;
+package com.truelayer.java.mandates.entities;
 
 import lombok.Value;
 

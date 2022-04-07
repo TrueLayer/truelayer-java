@@ -1,6 +1,6 @@
-package com.truelayer.java.recurringpayments.entities.mandate;
+package com.truelayer.java.mandates.entities.mandate;
 
-import static com.truelayer.java.recurringpayments.entities.mandate.Mandate.Type.SWEEPING;
+import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
 
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.beneficiary.Beneficiary;

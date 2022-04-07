@@ -1,13 +1,13 @@
-package com.truelayer.java.recurringpayments;
+package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.CreateMandateRequest;
+import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionResponse;
-import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
-import com.truelayer.java.recurringpayments.entities.CreateMandateResponse;
-import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

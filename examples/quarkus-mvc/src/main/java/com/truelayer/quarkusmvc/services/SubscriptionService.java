@@ -3,36 +3,26 @@ package com.truelayer.quarkusmvc.services;
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
-import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
-import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
-import com.truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
 import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
 import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
 import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
-import io.quarkus.logging.Log;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.jboss.resteasy.spi.NotImplementedYetException;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static java.util.Calendar.MONTH;
 
 @ApplicationScoped
 @RequiredArgsConstructor
