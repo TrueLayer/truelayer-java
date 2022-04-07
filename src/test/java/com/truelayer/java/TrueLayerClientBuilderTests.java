@@ -82,4 +82,18 @@ class TrueLayerClientBuilderTests {
                 "merchant accounts handler not initialized. Make sure you specified the required signing options while initializing the library",
                 thrown.getMessage());
     }
+
+    @Test
+    @DisplayName(
+            "It should throw an initialization error when invoking the mandates handler and signing options are missing")
+    public void itShouldThrowIfMandatesHandlerIsInvokedWithoutSigningOptions() {
+        ITrueLayerClient trueLayerClient =
+                TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, trueLayerClient::mandates);
+
+        assertEquals(
+                "mandates handler not initialized. Make sure you specified the required signing options while initializing the library",
+                thrown.getMessage());
+    }
 }
