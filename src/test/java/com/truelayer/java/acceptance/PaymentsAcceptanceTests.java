@@ -28,8 +28,8 @@ import org.junit.jupiter.api.*;
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
 
-    public static final String LOCALHOST_RETURN_URI = "http://localhost:3000/callback";
-    public static final String MOCK_PROVIDER_ID = "mock-payments-gb-redirect";
+    public static final String RETURN_URI = "http://localhost:3000/callback";
+    public static final String PROVIDER_ID = "mock-payments-gb-redirect";
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selected provider")
@@ -41,7 +41,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                        .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
+                        .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider);
@@ -65,7 +65,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
         PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(MOCK_PROVIDER_ID)
+                .providerId(PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea Di Lisio")
@@ -107,7 +107,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getHostedPaymentPageLink(
                         createPaymentResponse.getData().getId(),
                         createPaymentResponse.getData().getResourceToken(),
-                        URI.create(LOCALHOST_RETURN_URI));
+                        URI.create(RETURN_URI));
         HttpURLConnection connection = (HttpURLConnection) link.toURL().openConnection();
         connection.setRequestProperty(USER_AGENT, LIBRARY_NAME + "/" + LIBRARY_VERSION);
         connection.setConnectTimeout(10000);
@@ -133,7 +133,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder()
-                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .returnUri(URI.create(RETURN_URI))
                         .build())
                 .withProviderSelection()
                 .build();
@@ -148,7 +148,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .submitProviderSelection(
                         createPaymentResponse.getData().getId(),
                         SubmitProviderSelectionRequest.builder()
-                                .providerId(MOCK_PROVIDER_ID)
+                                .providerId(PROVIDER_ID)
                                 .build())
                 .get();
 
@@ -161,7 +161,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderPreselected() {
         // create payment
         PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(MOCK_PROVIDER_ID)
+                .providerId(PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea")
@@ -181,7 +181,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder()
-                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .returnUri(URI.create(RETURN_URI))
                         .build())
                 .withProviderSelection()
                 .build();
@@ -227,7 +227,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                        .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
+                        .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
         return buildPaymentRequestWithProviderSelection(userSelectionProvider);

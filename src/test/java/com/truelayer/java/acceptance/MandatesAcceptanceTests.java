@@ -25,11 +25,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 @Tag("acceptance")
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
-    public static final URI A_REDIRECT_URI = URI.create("https://48941d32f8bd7826841d8224f9390525.m.pipedream.net");
+    public static final String RETURN_URI = "http://localhost:3000/callback";
     public static final String PROVIDER_ID = "ob-natwest-vrp-sandbox";
 
     @Test
@@ -46,7 +45,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .withProviderSelection()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(A_REDIRECT_URI)
+                        .returnUri(URI.create(RETURN_URI))
                         .build())
                 .build();
 
@@ -111,8 +110,9 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
                                 .periodAlignment(CALENDAR)
                                 .periodType(MONTH)
-                                .maximumAmount(1000)
+                                .maximumAmount(2000)
                                 .build()))
+                        .maximumIndividualAmount(1000)
                         .build())
                 .build();
     }
