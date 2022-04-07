@@ -132,9 +132,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder()
-                        .returnUri(URI.create(RETURN_URI))
-                        .build())
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
         ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
@@ -180,9 +178,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder()
-                        .returnUri(URI.create(RETURN_URI))
-                        .build())
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
 

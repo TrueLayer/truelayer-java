@@ -1,5 +1,9 @@
 package com.truelayer.java.integration;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.truelayer.java.TestUtils.assertNotError;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
@@ -10,10 +14,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.truelayer.java.TestUtils.assertNotError;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Mandates integration tests")
 public class MandatesIntegrationTests extends IntegrationTests {
@@ -37,7 +37,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreateMandateRequest createMandateRequest = CreateMandateRequest.builder().build();
+        CreateMandateRequest createMandateRequest =
+                CreateMandateRequest.builder().build();
 
         ApiResponse<CreateMandateResponse> response =
                 tlClient.mandates().createMandate(createMandateRequest).get();
