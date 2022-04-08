@@ -7,11 +7,11 @@ import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.CreateMandateRequest;
+import com.truelayer.java.mandates.entities.mandate.Constraints;
+import com.truelayer.java.mandates.entities.mandate.Mandate;
+import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
-import com.truelayer.java.recurringpayments.entities.CreateMandateRequest;
-import com.truelayer.java.recurringpayments.entities.mandate.Constraints;
-import com.truelayer.java.recurringpayments.entities.mandate.Mandate;
-import com.truelayer.java.recurringpayments.entities.mandatedetail.MandateDetail;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
 
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static com.truelayer.java.recurringpayments.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
 
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -78,6 +78,7 @@ public class SubscriptionService implements ISubscriptionService{
                         .returnUri(URI.create("http://localhost:8080/subscriptions/callback"))
                         .build())
                 .build();
+
         ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient.mandates()
                 .startAuthorizationFlow(mandate.getData().getId(), startAuthorizationFlowRequest)
                 .get();
@@ -89,6 +90,7 @@ public class SubscriptionService implements ISubscriptionService{
 
         var providerId = startAuthorizationFlowResponse.getData().getAuthorizationFlow()
                 .getActions().getNext().asProviderSelection().getProviders().stream()
+                .filter(provider -> provider.getProviderId().contains("sandbox"))
                 .findFirst()
                 .orElseThrow().getProviderId();
 
@@ -96,7 +98,7 @@ public class SubscriptionService implements ISubscriptionService{
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().providerId(providerId).build();
 
-        ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponse = trueLayerClient.mandates()
+            ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponse = trueLayerClient.mandates()
                 .submitProviderSelection(mandate.getData().getId(), submitProviderSelectionRequest)
                 .get();
 
