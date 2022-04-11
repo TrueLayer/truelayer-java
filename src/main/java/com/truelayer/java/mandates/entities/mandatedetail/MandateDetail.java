@@ -15,6 +15,7 @@ import lombok.*;
     @JsonSubTypes.Type(value = AuthorizingMandateDetail.class, name = "authorizing"),
     @JsonSubTypes.Type(value = AuthorizedMandateDetail.class, name = "authorized"),
     @JsonSubTypes.Type(value = FailedMandateDetail.class, name = "failed"),
+    @JsonSubTypes.Type(value = RevokedMandateDetail.class, name = "revoked")
 })
 @Getter
 public abstract class MandateDetail {

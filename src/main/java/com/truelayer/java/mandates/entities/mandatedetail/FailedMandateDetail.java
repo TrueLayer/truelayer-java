@@ -21,7 +21,6 @@ public class FailedMandateDetail extends MandateDetail {
 
     @RequiredArgsConstructor
     @Getter
-    // todo: can this be extracted ?
     public enum FailureStage {
         AUTHORIZATION_REQUIRED("authorization_required"),
         AUTHORIZING("authorizing"),
