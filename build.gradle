@@ -115,6 +115,10 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.32.0'
+
+    // Contract testing
+    testImplementation group: 'com.atlassian.ta', name: 'wiremock-pact-generator', version: '2.4.3'
+
 }
 
 jacocoTestReport {
