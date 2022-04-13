@@ -1,6 +1,8 @@
 com.truelayer.java
 com.truelayer.java.auth
 com.truelayer.java.auth.entities
+com.truelayer.java.commonapi
+com.truelayer.java.commonapi.entities
 com.truelayer.java.entities
 com.truelayer.java.entities.accountidentifier
 com.truelayer.java.entities.beneficiary
