@@ -1,0 +1,11 @@
+{
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"redirect",
+        "uri":"https://a-redirect-uri.com"
+      }
+    }
+  },
+  "status":"authorizing"
+}

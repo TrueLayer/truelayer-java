@@ -12,6 +12,8 @@ import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
+import com.truelayer.java.payments.entities.PaymentAuthorizationFlowResponse;
+import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -81,11 +83,36 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertEquals(expected, response.getData());
     }
 
-    @Test
-    @Disabled
+    @SneakyThrows
+    @ParameterizedTest(name = "and get a response of type {0}")
+    @ValueSource(strings = {"provider_selection", "redirect", "wait"})
     @DisplayName("It should start an authorization flow")
-    public void shouldStartAnAuthorizationFlow() {
-        // todo
+    public void shouldStartAnAuthorizationFlow(String status) {
+        String jsonResponseFile = "mandates/200.start_authorization_flow.authorizing." + status + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathMatching("/mandates/" + A_MANDATE_ID + "/authorization-flow"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.mandates()
+                .startAuthorizationFlow(A_MANDATE_ID, request)
+                .get();
+
+        assertNotError(response);
+        PaymentAuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
+        assertEquals(expected, response.getData());
     }
 
     @Test
