@@ -13,15 +13,15 @@ import lombok.ToString;
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "status",
-        defaultImpl = PaymentAuthorizationFlowAuthorizing.class)
+        defaultImpl = AuthorizationFlowAuthorizing.class)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = PaymentAuthorizationFlowAuthorizing.class, name = "authorizing"),
-    @JsonSubTypes.Type(value = PaymentAuthorizationFlowAuthorizationFailed.class, name = "failed")
+    @JsonSubTypes.Type(value = AuthorizationFlowAuthorizing.class, name = "authorizing"),
+    @JsonSubTypes.Type(value = AuthorizationFlowAuthorizationFailed.class, name = "failed")
 })
 @Getter
 @ToString
 @EqualsAndHashCode
-public abstract class PaymentAuthorizationFlowResponse {
+public abstract class AuthorizationFlowResponse {
 
     protected Status status;
 
@@ -29,28 +29,28 @@ public abstract class PaymentAuthorizationFlowResponse {
 
     @JsonIgnore
     public boolean isAuthorizing() {
-        return this instanceof PaymentAuthorizationFlowAuthorizing;
+        return this instanceof AuthorizationFlowAuthorizing;
     }
 
     @JsonIgnore
     public boolean isAuthorizationFailed() {
-        return this instanceof PaymentAuthorizationFlowAuthorizationFailed;
+        return this instanceof AuthorizationFlowAuthorizationFailed;
     }
 
     @JsonIgnore
-    public PaymentAuthorizationFlowAuthorizing asAuthorizing() {
+    public AuthorizationFlowAuthorizing asAuthorizing() {
         if (!isAuthorizing()) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (PaymentAuthorizationFlowAuthorizing) this;
+        return (AuthorizationFlowAuthorizing) this;
     }
 
     @JsonIgnore
-    public PaymentAuthorizationFlowAuthorizationFailed asAuthorizationFailed() {
+    public AuthorizationFlowAuthorizationFailed asAuthorizationFailed() {
         if (!isAuthorizationFailed()) {
             throw new TrueLayerException(buildErrorMessage());
         }
-        return (PaymentAuthorizationFlowAuthorizationFailed) this;
+        return (AuthorizationFlowAuthorizationFailed) this;
     }
 
     private String buildErrorMessage() {

@@ -50,7 +50,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .build())
                 .build();
 
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
                 .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
@@ -60,7 +60,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().providerId(PROVIDER_ID).build();
 
-        ApiResponse<PaymentAuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.mandates()
+        ApiResponse<AuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.mandates()
                 .submitProviderSelection(createMandateResponse.getData().getId(), submitProviderSelectionRequest)
                 .get();
 

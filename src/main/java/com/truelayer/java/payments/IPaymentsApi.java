@@ -42,7 +42,7 @@ public interface IPaymentsApi {
      * @see <a href="https://docs.truelayer.com/reference/start-payment-authorization-flow"><i>Start Authorization Flow</i> API reference</a>
      */
     @POST("/payments/{id}/authorization-flow")
-    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> startAuthorizationFlow(
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             @Path("id") String paymentId, @Body StartAuthorizationFlowRequest request);
 
     /**
@@ -53,6 +53,6 @@ public interface IPaymentsApi {
      * @see <a href="https://docs.truelayer.com/reference/submit-provider-selection"><i>Submit Provider Selection</i> API reference</a>
      */
     @POST("/payments/{id}/authorization-flow/actions/provider-selection")
-    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> submitProviderSelection(
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             @Path("id") String paymentId, @Body SubmitProviderSelectionRequest request);
 }

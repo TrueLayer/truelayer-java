@@ -10,6 +10,4 @@ public class Redirect extends AuthorizationFlowAction {
     Type type = Type.REDIRECT;
 
     URI uri;
-
-    Metadata metadata;
 }

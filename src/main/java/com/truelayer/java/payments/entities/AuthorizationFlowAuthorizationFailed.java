@@ -6,6 +6,10 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class PaymentAuthorizationFlowAuthorizing extends PaymentAuthorizationFlowResponse {
-    Status status = Status.AUTHORIZING;
+public class AuthorizationFlowAuthorizationFailed extends AuthorizationFlowResponse {
+    Status status = Status.FAILED;
+
+    String failureStage;
+
+    String failureReason;
 }

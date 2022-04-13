@@ -69,7 +69,7 @@ class AuthorizationFlowActionTests {
     @Test
     @DisplayName("It should yield true if instance is of type Redirect")
     public void shouldYieldTrueIfRedirect() {
-        AuthorizationFlowAction sut = new Redirect(URI.create("http://localhost"), null);
+        AuthorizationFlowAction sut = new Redirect(URI.create("http://localhost"));
 
         assertTrue(sut.isRedirect());
     }
@@ -77,7 +77,7 @@ class AuthorizationFlowActionTests {
     @Test
     @DisplayName("It should convert to an instance of class Redirect")
     public void shouldConvertToRedirect() {
-        AuthorizationFlowAction sut = new Redirect(URI.create("http://localhost"), null);
+        AuthorizationFlowAction sut = new Redirect(URI.create("http://localhost"));
 
         assertDoesNotThrow(sut::asRedirect);
     }

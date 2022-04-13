@@ -12,10 +12,10 @@ import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
-import com.truelayer.java.payments.entities.PaymentAuthorizationFlowResponse;
+import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
+import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -105,18 +105,46 @@ public class MandatesIntegrationTests extends IntegrationTests {
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
 
-        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.mandates()
+        ApiResponse<AuthorizationFlowResponse> response = tlClient.mandates()
                 .startAuthorizationFlow(A_MANDATE_ID, request)
                 .get();
 
         assertNotError(response);
-        PaymentAuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
+        AuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(expected, response.getData());
     }
 
-    @Test
-    @Disabled
+    @SneakyThrows
+    @ParameterizedTest(name = "and get a response of type {0}")
+    @ValueSource(strings = {"AUTHORIZING", "FAILED"})
     @DisplayName("It should submit a provider selection")
-    public void shouldSubmitProviderSelection() {}
+    public void shouldSubmitProviderSelection(com.truelayer.java.payments.entities.paymentdetail.Status status) {
+        String jsonResponseFile = "mandates/200.submit_provider_selection." + status.getStatus() + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/mandatesC/" + A_MANDATE_ID + "/authorization-flow/actions/provider-selection"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        SubmitProviderSelectionRequest submitProviderSelectionRequest =
+                SubmitProviderSelectionRequest.builder().build();
+        ApiResponse<AuthorizationFlowResponse> response = tlClient.mandates()
+                .submitProviderSelection(A_MANDATE_ID, submitProviderSelectionRequest)
+                .get();
+
+        assertNotError(response);
+        AuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
+        assertEquals(status, response.getData().getStatus());
+        assertEquals(expected, response.getData());
+    }
 }

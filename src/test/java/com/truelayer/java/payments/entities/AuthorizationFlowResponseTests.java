@@ -6,12 +6,12 @@ import com.truelayer.java.TrueLayerException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class PaymentAuthorizationFlowResponseTests {
+class AuthorizationFlowResponseTests {
 
     @Test
     @DisplayName("It should yield true if instance is of type PaymentAuthorizationFlowAuthorizing")
     public void shouldYieldTrueIfAuthorizing() {
-        PaymentAuthorizationFlowResponse sut = new PaymentAuthorizationFlowAuthorizing();
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizing();
 
         assertTrue(sut.isAuthorizing());
     }
@@ -19,7 +19,7 @@ class PaymentAuthorizationFlowResponseTests {
     @Test
     @DisplayName("It should convert to an instance of class PaymentAuthorizationFlowAuthorizing")
     public void shouldConvertToAuthorizing() {
-        PaymentAuthorizationFlowResponse sut = new PaymentAuthorizationFlowAuthorizing();
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizing();
 
         assertDoesNotThrow(sut::asAuthorizing);
     }
@@ -27,8 +27,7 @@ class PaymentAuthorizationFlowResponseTests {
     @Test
     @DisplayName("It should throw an error when converting to PaymentAuthorizationFlowAuthorizing")
     public void shouldNotConvertToAuthorizing() {
-        PaymentAuthorizationFlowResponse sut =
-                new PaymentAuthorizationFlowAuthorizationFailed("some stage", "some reason");
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizationFailed("some stage", "some reason");
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizing);
 
@@ -38,8 +37,7 @@ class PaymentAuthorizationFlowResponseTests {
     @Test
     @DisplayName("It should yield true if instance is of type PaymentAuthorizationFlowAuthorizationFailed")
     public void shouldYieldTrueIfAuthorizationFailed() {
-        PaymentAuthorizationFlowResponse sut =
-                new PaymentAuthorizationFlowAuthorizationFailed("some stage", "some reason");
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizationFailed("some stage", "some reason");
 
         assertTrue(sut.isAuthorizationFailed());
     }
@@ -47,8 +45,7 @@ class PaymentAuthorizationFlowResponseTests {
     @Test
     @DisplayName("It should convert to an instance of class PaymentAuthorizationFlowAuthorizationFailed")
     public void shouldConvertToAuthorizationFailed() {
-        PaymentAuthorizationFlowResponse sut =
-                new PaymentAuthorizationFlowAuthorizationFailed("some stage", "some reason");
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizationFailed("some stage", "some reason");
 
         assertDoesNotThrow(sut::asAuthorizationFailed);
     }
@@ -56,7 +53,7 @@ class PaymentAuthorizationFlowResponseTests {
     @Test
     @DisplayName("It should throw an error when converting to PaymentAuthorizationFlowAuthorizationFailed")
     public void shouldNotConvertToAuthorizationFailed() {
-        PaymentAuthorizationFlowResponse sut = new PaymentAuthorizationFlowAuthorizing();
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizing();
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizationFailed);
 

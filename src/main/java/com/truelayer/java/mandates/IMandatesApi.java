@@ -4,7 +4,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
-import com.truelayer.java.payments.entities.PaymentAuthorizationFlowResponse;
+import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import java.util.concurrent.CompletableFuture;
@@ -19,11 +19,11 @@ public interface IMandatesApi {
     CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Body CreateMandateRequest request);
 
     @POST("/mandates/{id}/authorization-flow")
-    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> startAuthorizationFlow(
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             @Path("id") String mandateId, @Body StartAuthorizationFlowRequest request);
 
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
-    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> submitProviderSelection(
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             @Path("id") String mandateId, @Body SubmitProviderSelectionRequest request);
 
     @GET("/mandates/{id}")

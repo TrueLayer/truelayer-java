@@ -131,14 +131,14 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
         assertNotError(startAuthorizationFlowResponse);
 
         // Submit the provider selection
-        ApiResponse<PaymentAuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
                 .submitProviderSelection(
                         createPaymentResponse.getData().getId(),
                         SubmitProviderSelectionRequest.builder()
@@ -177,7 +177,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
@@ -225,7 +225,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
         assertNotError(startAuthorizationFlowResponse);
