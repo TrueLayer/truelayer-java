@@ -129,7 +129,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("post")
-                .path(urlPathEqualTo("/mandatesC/" + A_MANDATE_ID + "/authorization-flow/actions/provider-selection"))
+                .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
