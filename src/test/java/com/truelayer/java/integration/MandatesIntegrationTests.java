@@ -170,4 +170,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
 
         assertNotError(response);
     }
+
+    @Test
+    @DisplayName("It should return a list of mandates")
+    public void shouldReturnAListOfMandate() {}
 }

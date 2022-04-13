@@ -3,16 +3,15 @@ package com.truelayer.java.mandates;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import java.util.concurrent.CompletableFuture;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
+// todo: javadoc
 public interface IMandatesApi {
 
     @POST("/mandates")
@@ -25,6 +24,10 @@ public interface IMandatesApi {
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             @Path("id") String mandateId, @Body SubmitProviderSelectionRequest request);
+
+    @GET("/mandates")
+    CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates(
+            @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") int limit);
 
     @GET("/mandates/{id}")
     CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Path("id") String mandateId);

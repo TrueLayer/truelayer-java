@@ -5,5 +5,5 @@ import lombok.Value;
 
 @Value
 public class ListMerchantAccountsResponse {
-    private List<MerchantAccount> items;
+    List<MerchantAccount> items;
 }
