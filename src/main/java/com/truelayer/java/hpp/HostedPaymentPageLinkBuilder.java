@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * {{@inheritDoc}}
+ * {@inheritDoc}
  */
 @Builder(builderMethodName = "New")
 @Getter

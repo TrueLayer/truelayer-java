@@ -1,13 +1,13 @@
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "6.4.1"
+    id "io.freefair.lombok" version "6.4.2"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '3.2.0'
     // to publish packages
     id 'maven-publish'
     // code linting
-    id "com.diffplug.spotless" version "6.4.1"
+    id "com.diffplug.spotless" version "6.4.2"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.0'
@@ -114,7 +114,7 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
-    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.32.0'
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.33.1'
 }
 
 jacocoTestReport {

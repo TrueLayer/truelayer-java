@@ -73,23 +73,11 @@ public abstract class PaymentDetail {
     }
 
     @JsonIgnore
-    @Deprecated
-    public AuthorizationRequiredPaymentDetail asAuthorizationRequiredPaymentDetail() {
-        return asAuthorizationRequired();
-    }
-
-    @JsonIgnore
     public AuthorizedPaymentDetail asAuthorized() {
         if (!isAuthorized()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizedPaymentDetail) this;
-    }
-
-    @JsonIgnore
-    @Deprecated
-    public AuthorizedPaymentDetail asAuthorizedPaymentDetail() {
-        return asAuthorized();
     }
 
     @JsonIgnore
@@ -101,23 +89,11 @@ public abstract class PaymentDetail {
     }
 
     @JsonIgnore
-    @Deprecated
-    public AuthorizingPaymentDetail asAuthorizingPaymentDetail() {
-        return asAuthorizing();
-    }
-
-    @JsonIgnore
     public FailedPaymentDetail asFailed() {
         if (!isFailed()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (FailedPaymentDetail) this;
-    }
-
-    @Deprecated
-    @JsonIgnore
-    public FailedPaymentDetail asFailedPaymentDetail() {
-        return asFailed();
     }
 
     @JsonIgnore
@@ -128,24 +104,12 @@ public abstract class PaymentDetail {
         return (ExecutedPaymentDetail) this;
     }
 
-    @Deprecated
-    @JsonIgnore
-    public ExecutedPaymentDetail asSucceededPaymentDetail() {
-        return asExecuted();
-    }
-
     @JsonIgnore
     public SettledPaymentDetail asSettled() {
         if (!isSettled()) {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SettledPaymentDetail) this;
-    }
-
-    @Deprecated
-    @JsonIgnore
-    public SettledPaymentDetail asSettledPaymentDetail() {
-        return asSettled();
     }
 
     private String buildErrorMessage() {
