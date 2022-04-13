@@ -3,6 +3,7 @@ package com.truelayer.java.acceptance;
 import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
 import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
@@ -20,10 +21,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
 @Disabled
@@ -83,6 +81,27 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(getMandateResponse);
+    }
+
+    @Test
+    @DisplayName("It should create and revoke a mandate and get an invalid state validation error")
+    @SneakyThrows
+    public void itShouldCreateAndRevokeAMandate() {
+        // create mandate
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest()).get();
+
+        assertNotError(createMandateResponse);
+
+        // revoke mandate by id
+        ApiResponse<Void> revokeMandateResponse = tlClient.mandates()
+                .revokeMandate(createMandateResponse.getData().getId())
+                .get();
+
+        // this is the best we can do as of now. there's no way of forcing an authorized state, which is the only that
+        // can transition to the revoked state.
+        assertTrue(revokeMandateResponse.isError()
+                && revokeMandateResponse.getError().getTitle().equalsIgnoreCase("invalid state"));
     }
 
     private CreateMandateRequest createMandateRequest() {

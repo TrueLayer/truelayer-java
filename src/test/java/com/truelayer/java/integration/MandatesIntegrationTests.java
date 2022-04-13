@@ -147,4 +147,27 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should revoke a mandate")
+    public void shouldRevokeAMandate() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/revoke"))
+                .withAuthorization()
+                .status(204)
+                .build();
+
+        ApiResponse<Void> response =
+                tlClient.mandates().revokeMandate(A_MANDATE_ID).get();
+
+        assertNotError(response);
+    }
 }

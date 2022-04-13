@@ -28,4 +28,7 @@ public interface IMandatesApi {
 
     @GET("/mandates/{id}")
     CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Path("id") String mandateId);
+
+    @POST("/mandates/{id}/revoke")
+    CompletableFuture<ApiResponse<Void>> revokeMandate(@Path("id") String mandateId);
 }
