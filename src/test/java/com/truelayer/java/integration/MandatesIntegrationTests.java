@@ -85,7 +85,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
     @Disabled
     @DisplayName("It should start an authorization flow")
     public void shouldStartAnAuthorizationFlow() {
-        //todo
+        // todo
     }
 
     @Test

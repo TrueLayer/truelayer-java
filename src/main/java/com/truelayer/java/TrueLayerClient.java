@@ -1,10 +1,15 @@
 package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
+import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -21,11 +26,15 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IMerchantAccountsApi merchantAccountsHandler;
     private IMandatesApi mandatesHandler;
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+    private ICommonApi commonApi;
 
     public TrueLayerClient(
-            IAuthenticationHandler authenticationHandler, IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder) {
+            IAuthenticationHandler authenticationHandler,
+            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
+            ICommonApi commonApi) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+        this.commonApi = commonApi;
     }
 
     /**
@@ -55,6 +64,9 @@ public class TrueLayerClient implements ITrueLayerClient {
         return paymentsHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IMerchantAccountsApi merchantAccounts() {
         if (ObjectUtils.isEmpty(merchantAccountsHandler)) {
@@ -77,6 +89,15 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public IHostedPaymentPageLinkBuilder hpp() {
         return this.hostedPaymentPageLinkBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
+            SubmitPaymentReturnParametersRequest request) {
+        return commonApi.submitPaymentReturnParameters(request);
     }
 
     private TrueLayerException buildInitializationException(String handlerName) {

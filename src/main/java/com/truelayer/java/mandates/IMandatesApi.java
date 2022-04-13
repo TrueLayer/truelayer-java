@@ -4,10 +4,9 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
+import com.truelayer.java.payments.entities.PaymentAuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
-import com.truelayer.java.payments.entities.StartAuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
-import com.truelayer.java.payments.entities.SubmitProviderSelectionResponse;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -20,11 +19,11 @@ public interface IMandatesApi {
     CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Body CreateMandateRequest request);
 
     @POST("/mandates/{id}/authorization-flow")
-    CompletableFuture<ApiResponse<StartAuthorizationFlowResponse>> startAuthorizationFlow(
+    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> startAuthorizationFlow(
             @Path("id") String mandateId, @Body StartAuthorizationFlowRequest request);
 
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
-    CompletableFuture<ApiResponse<SubmitProviderSelectionResponse>> submitProviderSelection(
+    CompletableFuture<ApiResponse<PaymentAuthorizationFlowResponse>> submitProviderSelection(
             @Path("id") String mandateId, @Body SubmitProviderSelectionRequest request);
 
     @GET("/mandates/{id}")
