@@ -27,7 +27,7 @@ public interface IMandatesApi {
 
     @GET("/mandates")
     CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates(
-            @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") int limit);
+            @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") Integer limit);
 
     @GET("/mandates/{id}")
     CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Path("id") String mandateId);

@@ -6,7 +6,7 @@ import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersReques
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.mandates.IMandatesApi;
+import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +24,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsHandler;
     private IMerchantAccountsApi merchantAccountsHandler;
-    private IMandatesApi mandatesHandler;
+    private IMandatesHandler mandatesHandler;
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
     private ICommonApi commonApi;
 
@@ -76,7 +76,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     }
 
     @Override
-    public IMandatesApi mandates() {
+    public IMandatesHandler mandates() {
         if (ObjectUtils.isEmpty(mandatesHandler)) {
             throw buildInitializationException("mandates");
         }

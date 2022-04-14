@@ -21,6 +21,8 @@ import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.mandates.IMandatesApi;
+import com.truelayer.java.mandates.IMandatesHandler;
+import com.truelayer.java.mandates.MandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.versioninfo.VersionInfo;
@@ -202,8 +204,9 @@ public class TrueLayerClientBuilder {
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
 
-        IMandatesApi mandatesHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);
+        IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
 
         return new TrueLayerClient(
                 authenticationHandler,

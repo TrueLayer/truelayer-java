@@ -24,7 +24,8 @@ public abstract class AcceptanceTests {
     @BeforeAll
     public static void setup() {
         tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
+                // .environment(Environment.sandbox())
+                .environment(Environment.development())
                 .clientCredentials(ClientCredentials.builder()
                         .clientId(System.getenv("TL_CLIENT_ID"))
                         .clientSecret(System.getenv("TL_CLIENT_SECRET"))
