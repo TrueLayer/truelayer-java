@@ -24,6 +24,8 @@ import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.mandates.MandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
+import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
+import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
@@ -200,10 +202,10 @@ public class TrueLayerClientBuilder {
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
-        // todo: use an handler and abstract API similarly to mandates
-        IMerchantAccountsApi merchantAccountsHandler = RetrofitFactory.build(
+        IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
+        IMerchantAccountsHandler merchantAccountsHandler = new MerchantAccountsHandler(merchantAccountsApi);
 
         IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);

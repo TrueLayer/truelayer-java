@@ -9,6 +9,7 @@ import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
 import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
+import java.util.Date;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.Disabled;
@@ -100,7 +101,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the payment sources for the given merchant account")
     public void itShouldGetPaymentSources() {
-        ApiResponse<GetTransactionsResponse> getTransactionsResponse = getTransactions();
+        ApiResponse<ListTransactionsResponse> getTransactionsResponse = getTransactions();
         assertNotError(getTransactionsResponse);
         MerchantAccountPayment merchantAccountPayment = getTransactionsResponse.getData().getItems().stream()
                 .filter(t -> t.getType().equals(Transaction.Type.MERCHANT_ACCOUNT_PAYMENT))
@@ -110,10 +111,14 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
         ;
 
-        ApiResponse<GetPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
-                .getPaymentSources(
+        ApiResponse<ListPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
+                .listPaymentSources(
                         getMerchantAccount().getId(),
-                        merchantAccountPayment.getPaymentSource().getUserId())
+                        ListPaymentSourcesQuery.builder()
+                                .userId(merchantAccountPayment
+                                        .getPaymentSource()
+                                        .getUserId())
+                                .build())
                 .get();
 
         assertNotError(getPaymentSources);
@@ -125,10 +130,15 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Synchronized
-    private ApiResponse<GetTransactionsResponse> getTransactions() {
+    private ApiResponse<ListTransactionsResponse> getTransactions() {
+        // todo use sensible date params
         return tlClient.merchantAccounts()
-                .getTransactions(
-                        getMerchantAccount().getId(), "2021-03-01T00:00:00.000Z", "2022-03-01T00:00:00.000Z", null)
+                .listTransactions(
+                        getMerchantAccount().getId(),
+                        ListTransactionsQuery.builder()
+                                .from(new Date())
+                                .to(new Date())
+                                .build())
                 .get();
     }
 }

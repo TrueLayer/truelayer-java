@@ -94,12 +94,12 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<GetTransactionsResponse> response = tlClient.merchantAccounts()
-                .getTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
+        ApiResponse<ListTransactionsResponse> response = tlClient.merchantAccounts()
+                .listTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
                 .get();
 
         assertNotError(response);
-        GetTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetTransactionsResponse.class);
+        ListTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, ListTransactionsResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -203,12 +203,12 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<GetPaymentSourcesResponse> response = tlClient.merchantAccounts()
-                .getPaymentSources(A_MERCHANT_ACCOUNT_ID, A_USER_ID)
+        ApiResponse<ListPaymentSourcesResponse> response = tlClient.merchantAccounts()
+                .listPaymentSources(A_MERCHANT_ACCOUNT_ID, A_USER_ID)
                 .get();
 
         assertNotError(response);
-        GetPaymentSourcesResponse expected = deserializeJsonFileTo(jsonResponseFile, GetPaymentSourcesResponse.class);
+        ListPaymentSourcesResponse expected = deserializeJsonFileTo(jsonResponseFile, ListPaymentSourcesResponse.class);
         assertEquals(expected, response.getData());
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Value;
 
 @Value
-public class GetTransactionsResponse {
+public class ListTransactionsResponse {
 
     List<Transaction> items;
 }

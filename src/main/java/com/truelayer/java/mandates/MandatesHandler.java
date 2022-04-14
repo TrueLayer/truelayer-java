@@ -40,7 +40,7 @@ public class MandatesHandler implements IMandatesHandler {
 
     @Override
     public CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates(ListMandatesQuery query) {
-        return mandatesApi.listMandates(query.getUserId(), query.getCursor(), query.getLimit());
+        return mandatesApi.listMandates(query.userId(), query.cursor(), query.limit());
     }
 
     @Override
