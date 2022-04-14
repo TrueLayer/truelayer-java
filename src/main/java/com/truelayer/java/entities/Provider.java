@@ -1,11 +1,11 @@
-package com.truelayer.java.payments.entities.paymentdetail;
+package com.truelayer.java.entities;
 
 import java.net.URI;
 import lombok.Value;
 
 @Value
 public class Provider {
-    String providerId;
+    String id;
 
     String displayName;
 
