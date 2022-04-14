@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class MandatesHandlerTests {
-    private static String A_MANDATE_ID = "a-mandate-id";
-    private static String A_CURSOR = "a-cursor";
-    private static String A_USER_ID = "a-user-id";
-    private static int A_LIMIT = 15;
+    private static final String A_MANDATE_ID = "a-mandate-id";
+    private static final String A_CURSOR = "a-cursor";
+    private static final String A_USER_ID = "a-user-id";
+    private static final int A_LIMIT = 15;
 
     @Test
     @DisplayName("It should call the create mandate endpoint")
