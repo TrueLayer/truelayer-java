@@ -200,6 +200,7 @@ public class TrueLayerClientBuilder {
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
+        //todo: use an handler and abstract API similarly to mandates
         IMerchantAccountsApi merchantAccountsHandler = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
