@@ -109,8 +109,6 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .orElseThrow(() -> new RuntimeException("could not find a merchant account payment transaction"))
                 .asMerchantAccountPayment();
 
-        ;
-
         ApiResponse<ListPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
                 .listPaymentSources(
                         getMerchantAccount().getId(),

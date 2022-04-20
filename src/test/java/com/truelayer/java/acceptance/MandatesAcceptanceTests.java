@@ -14,6 +14,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
@@ -24,7 +25,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
-@Disabled
+// @Disabled
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
@@ -65,7 +66,15 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(submitProviderSelectionResponse);
     }
 
-    //todo:list mandates tests
+    @Test
+    @DisplayName("It should get a list of mandates")
+    @SneakyThrows
+    public void itShouldGetAListOfMandates() {
+        ApiResponse<ListMandatesResponse> listMandatesResponse =
+                tlClient.mandates().listMandates().get();
+
+        assertNotError(listMandatesResponse);
+    }
 
     @Test
     @DisplayName("It should create and get a mandate by id")

@@ -10,6 +10,7 @@ import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -56,7 +57,31 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertEquals(expected, response.getData());
     }
 
-    //todo:list mandates tests
+    @Test
+    @DisplayName("It should get a list of mandates")
+    @SneakyThrows
+    public void shouldGetAListOfMandates() {
+        String jsonResponseFile = "mandates/200.list_mandates.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/mandates"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<ListMandatesResponse> response =
+                tlClient.mandates().listMandates().get();
+
+        ListMandatesResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ListMandatesResponse.class);
+        assertEquals(expected, response.getData());
+    }
 
     @SneakyThrows
     @DisplayName("It should get the mandate details")
@@ -80,6 +105,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
 
         ApiResponse<MandateDetail> response =
                 tlClient.mandates().getMandate(A_MANDATE_ID).get();
+
         MandateDetail expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, MandateDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());

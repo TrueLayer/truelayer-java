@@ -11,7 +11,6 @@ import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
-// todo: javadoc
 public interface IMandatesApi {
 
     @POST("/mandates")
