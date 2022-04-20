@@ -2,6 +2,7 @@ package com.truelayer.java.mandates.entities.mandatedetail;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
+import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ public class FailedMandateDetail extends MandateDetail {
     FailureStage failureStage;
 
     String failureReason;
+
+    ZonedDateTime failedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 
