@@ -12,6 +12,7 @@ import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
+import java.time.ZonedDateTime;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,8 +95,13 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
+        ListTransactionsQuery query = ListTransactionsQuery.builder()
+                .from(ZonedDateTime.parse("2021-03-01T00:00:00Z"))
+                .to(ZonedDateTime.parse("2022-03-01T00:00:00Z"))
+                .type(TransactionTypeQuery.PAYMENT)
+                .build();
         ApiResponse<ListTransactionsResponse> response = tlClient.merchantAccounts()
-                .listTransactions(A_MERCHANT_ACCOUNT_ID, "2021-03-01", "2022-03-01", TransactionTypeQuery.PAYMENT)
+                .listTransactions(A_MERCHANT_ACCOUNT_ID, query)
                 .get();
 
         assertNotError(response);
@@ -203,8 +209,10 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
+        ListPaymentSourcesQuery query =
+                ListPaymentSourcesQuery.builder().userId(A_USER_ID).build();
         ApiResponse<ListPaymentSourcesResponse> response = tlClient.merchantAccounts()
-                .listPaymentSources(A_MERCHANT_ACCOUNT_ID, A_USER_ID)
+                .listPaymentSources(A_MERCHANT_ACCOUNT_ID, query)
                 .get();
 
         assertNotError(response);

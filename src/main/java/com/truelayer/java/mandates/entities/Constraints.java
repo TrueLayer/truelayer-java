@@ -1,4 +1,4 @@
-package com.truelayer.java.mandates.entities.mandate;
+package com.truelayer.java.mandates.entities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;

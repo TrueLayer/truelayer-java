@@ -1,7 +1,7 @@
 package com.truelayer.java.merchantaccounts.entities;
 
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -10,9 +10,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 public class ListTransactionsQuery {
-    private Date from;
+    private ZonedDateTime from;
 
-    private Date to;
+    private ZonedDateTime to;
 
     private TransactionTypeQuery type;
 }

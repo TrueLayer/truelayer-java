@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.mandates.entities.Constraints;
 import java.util.Date;
-import java.util.List;
 import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredMandateDetail.class)
@@ -72,27 +72,5 @@ public abstract class MandateDetail {
         return String.format(
                 "payment is of type %1$s. Consider using as%1$s() instead.",
                 this.getClass().getSimpleName());
-    }
-
-    // todo: trash this in the bin as soon as REC-285 is done
-    @Value
-    public static class Constraints {
-
-        String validFrom;
-
-        String validTo;
-
-        Integer maximumIndividualAmount;
-
-        List<PeriodicLimit> periodicLimits;
-
-        @Value
-        public static class PeriodicLimit {
-            int maximumAmount;
-
-            String periodAlignment;
-
-            String periodType;
-        }
     }
 }

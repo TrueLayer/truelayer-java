@@ -3,6 +3,7 @@ package com.truelayer.java.merchantaccounts;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 import lombok.Value;
 
@@ -24,9 +25,11 @@ public class MerchantAccountsHandler implements IMerchantAccountsHandler {
     @Override
     public CompletableFuture<ApiResponse<ListTransactionsResponse>> listTransactions(
             String merchantAccountId, ListTransactionsQuery query) {
-        // todo fix dates to string conversions
         return merchantAccountsApi.listTransactions(
-                merchantAccountId, query.from().toString(), query.to().toString(), query.type());
+                merchantAccountId,
+                DateTimeFormatter.ISO_DATE_TIME.format(query.from()),
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.to()),
+                query.type());
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
-import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimit.PeriodType.MONTH;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.entities.CurrencyCode;
@@ -11,9 +11,9 @@ import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.mandate.Constraints;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
@@ -24,7 +24,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
-@Disabled
+// @Disabled
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";

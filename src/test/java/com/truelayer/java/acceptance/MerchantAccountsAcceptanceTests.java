@@ -9,12 +9,14 @@ import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
 import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
-import java.util.Date;
+import java.time.*;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+// todo: replace all java.util.Date in favor of ZonedDateTime
 
 @Disabled
 @DisplayName("Merchant accounts acceptance tests")
@@ -131,13 +133,12 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     @Synchronized
     private ApiResponse<ListTransactionsResponse> getTransactions() {
-        // todo use sensible date params
         return tlClient.merchantAccounts()
                 .listTransactions(
                         getMerchantAccount().getId(),
                         ListTransactionsQuery.builder()
-                                .from(new Date())
-                                .to(new Date())
+                                .from(ZonedDateTime.parse("2021-03-01T00:00:00Z"))
+                                .to(ZonedDateTime.parse("2022-03-01T00:00:00Z"))
                                 .build())
                 .get();
     }
