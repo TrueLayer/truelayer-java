@@ -56,6 +56,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertEquals(expected, response.getData());
     }
 
+    //todo:list mandates tests
+
     @SneakyThrows
     @DisplayName("It should get the mandate details")
     @ParameterizedTest(name = "of a mandate with status {0}")

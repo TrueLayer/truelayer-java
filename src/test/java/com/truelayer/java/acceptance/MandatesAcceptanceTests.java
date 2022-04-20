@@ -65,6 +65,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(submitProviderSelectionResponse);
     }
 
+    //todo:list mandates tests
+
     @Test
     @DisplayName("It should create and get a mandate by id")
     @SneakyThrows
