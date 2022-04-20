@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * Library constants class
@@ -20,6 +21,8 @@ public class Utils {
 
             // required for optionals deserialization
             objectMapper.registerModule(new Jdk8Module());
+            // required for ZonedDatetime instances
+            objectMapper.registerModule(new JavaTimeModule());
             // serialize all camel cases fields to snake
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
             // do not include null fields in JSON

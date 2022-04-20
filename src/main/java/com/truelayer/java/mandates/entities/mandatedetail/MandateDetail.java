@@ -6,7 +6,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.mandates.entities.Constraints;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredMandateDetail.class)
@@ -27,7 +27,7 @@ public abstract class MandateDetail {
 
     private User user;
 
-    private Date createdAt;
+    private ZonedDateTime createdAt;
 
     private Constraints constraints;
 

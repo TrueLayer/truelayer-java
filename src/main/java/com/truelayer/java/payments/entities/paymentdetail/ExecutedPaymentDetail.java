@@ -3,7 +3,7 @@ package com.truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
 import com.truelayer.java.entities.PaymentSource;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -15,7 +15,7 @@ public class ExecutedPaymentDetail extends PaymentDetail {
 
     PaymentSource paymentSource;
 
-    Date executedAt;
+    ZonedDateTime executedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 

@@ -3,7 +3,7 @@ package com.truelayer.java.payments.entities.paymentdetail;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class FailedPaymentDetail extends PaymentDetail {
 
     Status status = Status.FAILED;
 
-    Date failedAt;
+    ZonedDateTime failedAt;
 
     FailureStage failureStage;
 

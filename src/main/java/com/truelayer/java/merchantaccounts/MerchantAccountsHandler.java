@@ -27,7 +27,7 @@ public class MerchantAccountsHandler implements IMerchantAccountsHandler {
             String merchantAccountId, ListTransactionsQuery query) {
         return merchantAccountsApi.listTransactions(
                 merchantAccountId,
-                DateTimeFormatter.ISO_DATE_TIME.format(query.from()),
+                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.from()),
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.to()),
                 query.type());
     }
