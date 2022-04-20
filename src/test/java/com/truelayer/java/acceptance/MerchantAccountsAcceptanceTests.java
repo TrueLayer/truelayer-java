@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-// todo: replace all java.util.Date in favor of ZonedDateTime
-
 @Disabled
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
