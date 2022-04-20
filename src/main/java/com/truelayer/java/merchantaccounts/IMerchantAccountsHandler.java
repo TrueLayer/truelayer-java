@@ -6,7 +6,6 @@ import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
-// todo javadoc
 public interface IMerchantAccountsHandler {
 
     CompletableFuture<ApiResponse<ListMerchantAccountsResponse>> listMerchantAccounts();
