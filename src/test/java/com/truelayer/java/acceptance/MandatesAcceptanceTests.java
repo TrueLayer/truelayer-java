@@ -18,11 +18,10 @@ import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
-
-import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
@@ -138,13 +137,16 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // create a payment on mandate
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
-                .paymentMethod(PaymentMethod.mandate().mandateId(getMandateResponse.getData().getId()).build())
+                .paymentMethod(PaymentMethod.mandate()
+                        .mandateId(getMandateResponse.getData().getId())
+                        .build())
                 .build();
 
-        ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
-                .createPayment(createPaymentRequest).get();
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(createPaymentRequest).get();
 
-        // this is the best we can do as of now. there's no way of forcing an authorized state, which is required for creating
+        // this is the best we can do as of now. there's no way of forcing an authorized state, which is required for
+        // creating
         // a payment
         // todo: improve this with a mock provider
         assertTrue(createPaymentResponse.isError()
