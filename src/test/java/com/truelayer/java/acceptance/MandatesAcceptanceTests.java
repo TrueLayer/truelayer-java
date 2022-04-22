@@ -26,7 +26,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
-// @Disabled
+@Disabled
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
