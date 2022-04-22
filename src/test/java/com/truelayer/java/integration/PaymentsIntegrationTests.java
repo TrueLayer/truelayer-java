@@ -26,7 +26,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @DisplayName("It should create and return a payment")
     @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        String jsonResponseFile = "payments/201.create_payment.merchant_account.json";
+        String jsonResponseFile = "payments/201.create_payment.json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))

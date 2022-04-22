@@ -31,7 +31,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.merchant_account.json")
+                .bodyFile("payments/201.create_payment.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -91,7 +91,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.merchant_account.json")
+                .bodyFile("payments/201.create_payment.json")
                 .build();
         AccessToken expectedImmediateExpirationToken =
                 deserializeJsonFileTo(accessTokenImmediateExpirationJsonFile, AccessToken.class);

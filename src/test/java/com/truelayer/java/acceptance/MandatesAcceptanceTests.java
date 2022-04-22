@@ -21,6 +21,8 @@ import com.truelayer.java.payments.entities.*;
 import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
+
+import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
@@ -111,8 +113,42 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // this is the best we can do as of now. there's no way of forcing an authorized state, which is the only that
         // can transition to the revoked state.
+        // todo: improve this with a mock provider
         assertTrue(revokeMandateResponse.isError()
                 && revokeMandateResponse.getError().getTitle().equalsIgnoreCase("invalid state"));
+    }
+
+    @Test
+    @DisplayName("It should create a payment on mandate")
+    @SneakyThrows
+    public void itShouldCreateAPaymentOnMandate() {
+        // create mandate
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest()).get();
+
+        assertNotError(createMandateResponse);
+
+        // get mandate by id
+        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
+                .getMandate(createMandateResponse.getData().getId())
+                .get();
+
+        assertNotError(getMandateResponse);
+
+        // create a payment on mandate
+        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
+                .paymentMethod(PaymentMethod.mandate().mandateId(getMandateResponse.getData().getId()).build())
+                .build();
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
+                .createPayment(createPaymentRequest).get();
+
+        // this is the best we can do as of now. there's no way of forcing an authorized state, which is required for creating
+        // a payment
+        // todo: improve this with a mock provider
+        assertTrue(createPaymentResponse.isError()
+                && createPaymentResponse.getError().getTitle().equalsIgnoreCase("invalid state"));
     }
 
     private CreateMandateRequest createMandateRequest() {
