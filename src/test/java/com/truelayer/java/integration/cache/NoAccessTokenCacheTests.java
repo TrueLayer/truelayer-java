@@ -3,7 +3,6 @@ package com.truelayer.java.integration.cache;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.AUTHORIZATION;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.truelayer.java.Environment;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
@@ -19,13 +18,15 @@ import org.junit.jupiter.api.Test;
 /**
  * Simple test for a client built without credentials caching capabilities
  */
+@DisplayName("No access token cache integration tests")
 public class NoAccessTokenCacheTests extends IntegrationTests {
 
     // overrides the default implementation by not setting the cache for credentials
     @BeforeEach
     @Override
-    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
+    public void setup() {
+        Environment testEnvironment = TestUtils.getTestEnvironment(
+                URI.create(wireMock.getRuntimeInfo().getHttpBaseUrl()));
 
         tlClient = TrueLayerClient.New()
                 .clientCredentials(TestUtils.getClientCredentials())
