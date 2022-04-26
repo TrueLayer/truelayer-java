@@ -44,7 +44,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .withResponseBody(accessTokenJsonFile)
+                .withResponseBodyFile(accessTokenJsonFile)
                 .build();
         RequestStub.New()
                 .method("post")
@@ -52,7 +52,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .withResponseBody("payments/201.create_payment.merchant_account.json")
+                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 

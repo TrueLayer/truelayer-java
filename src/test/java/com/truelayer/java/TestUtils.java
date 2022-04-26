@@ -93,7 +93,7 @@ public class TestUtils {
         private String method;
         private UrlPattern path;
         private int status;
-        private String bodyFile;
+        private String responseBodyFile;
 
         private RequestStub() {}
 
@@ -116,8 +116,8 @@ public class TestUtils {
             return this;
         }
 
-        public RequestStub withResponseBody(String bodyFile) {
-            this.bodyFile = bodyFile;
+        public RequestStub withResponseBodyFile(String bodyFile) {
+            this.responseBodyFile = bodyFile;
             return this;
         }
 
@@ -148,8 +148,8 @@ public class TestUtils {
                     .withHeader(TL_CORRELATION_ID, UUID.randomUUID().toString())
                     .withStatus(status);
 
-            if (!isEmpty(bodyFile)) {
-                response.withBodyFile(bodyFile);
+            if (!isEmpty(responseBodyFile)) {
+                response.withBodyFile(responseBodyFile);
             }
 
             return stubFor(request.willReturn(response));

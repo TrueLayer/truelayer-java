@@ -30,7 +30,7 @@ public class PaymentsContractTests extends ContractTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .withResponseBody("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         TestUtils.RequestStub.New()
                 .method("post")
@@ -38,14 +38,14 @@ public class PaymentsContractTests extends ContractTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .withResponseBody("payments/201.create_payment.merchant_account.json")
+                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
         TestUtils.RequestStub.New()
                 .method("post")
                 .path(urlPathMatching("/payments/.*/authorization-flow"))
                 .withAuthorization()
                 .status(200)
-                .withResponseBody("payments/200.start_authorization_flow.redirect.json")
+                .withResponseBodyFile("payments/200.start_authorization_flow.redirect.json")
                 .build();
 
         // 1. Create a payment with preselected provider
