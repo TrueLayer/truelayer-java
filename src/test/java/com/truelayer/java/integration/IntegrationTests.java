@@ -23,16 +23,7 @@ public abstract class IntegrationTests {
             .options(wireMockConfig()
                     .dynamicPort()
                     .dynamicHttpsPort()
-                    .extensions(WiremockPactExtension.builder()
-                            .userOptions(new WireMockPactGeneratorUserOptions(
-                                    "my-consumer",
-                                    "my-provider",
-                                    Collections.emptyList(),
-                                    Collections.emptyList(),
-                                    true,
-                                    Collections.emptyList(),
-                                    Collections.emptyList()))
-                            .build()))
+                    .extensions(WiremockPactExtension.builder().build()))
             .configureStaticDsl(true)
             .build();
 
