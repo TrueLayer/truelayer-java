@@ -163,6 +163,18 @@ and finally run:
 ```sh
 ./gradlew acceptance-tests
 ```
+
+### Contract tests
+
+Contract testing is an experimental feature based on [Pact](https://pact.io/).
+To run the current contract test suite: 
+
+```sh
+./gradlew contract-tests
+```
+
+Generated Pact files will be collected into the `build/pacts` directory.
+
 ## Code linting
 To enforce coding style guidelines the project uses [palantir-java-format styles via Spotless gradle plugin](https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format).
 

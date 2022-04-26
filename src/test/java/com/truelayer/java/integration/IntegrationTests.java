@@ -1,36 +1,22 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
-import com.atlassian.ta.wiremockpactgenerator.WireMockPactGeneratorUserOptions;
-import com.github.tomakehurst.wiremock.http.*;
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.truelayer.java.Environment;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerClient;
 import java.net.URI;
-import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Tag("integration")
+@WireMockTest
 public abstract class IntegrationTests {
     protected TrueLayerClient tlClient;
 
-    @RegisterExtension
-    protected static WireMockExtension wireMock = WireMockExtension.newInstance()
-            .options(wireMockConfig()
-                    .dynamicPort()
-                    .dynamicHttpsPort()
-                    .extensions(WiremockPactExtension.builder().build()))
-            .configureStaticDsl(true)
-            .build();
-
     @BeforeEach
-    public void setup() {
-        Environment testEnvironment = TestUtils.getTestEnvironment(
-                URI.create(wireMock.getRuntimeInfo().getHttpBaseUrl()));
+    public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        Environment testEnvironment = TestUtils.getTestEnvironment(URI.create(wireMockRuntimeInfo.getHttpBaseUrl()));
 
         tlClient = TrueLayerClient.New()
                 .clientCredentials(TestUtils.getClientCredentials())

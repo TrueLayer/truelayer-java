@@ -1,4 +1,4 @@
-package com.truelayer.java.integration;
+package com.truelayer.java.contract;
 
 import com.atlassian.ta.wiremockpactgenerator.WireMockPactGeneratorUserOptions;
 import com.atlassian.ta.wiremockpactgenerator.pactgenerator.PactGeneratorRegistry;
@@ -24,7 +24,7 @@ public class WiremockPactExtension extends PostServeAction {
 
     @Override
     public String getName() {
-        return "WM-PACT-EXTENSION";
+        return this.getClass().getSimpleName();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class WiremockPactExtension extends PostServeAction {
         final PactGeneratorResponse.Builder responseBuilder = new PactGeneratorResponse.Builder()
                 .withStatus(response.getStatus())
                 .withHeaders(extractHeaders(response.getHeaders()))
-                .withIsConfiguredResponse(true) //todo: no idea what this means. review
+                .withIsConfiguredResponse(true) // todo: no idea what this means. review
                 .withBody(response.getBody() == null ? "" : response.getBodyAsString());
 
         PactGeneratorRegistry.processInteraction(
@@ -50,8 +50,8 @@ public class WiremockPactExtension extends PostServeAction {
                         :
                         // default user options
                         new WireMockPactGeneratorUserOptions(
-                                "consumer",
-                                "provider",
+                                "java-sdk",
+                                "payments-v3-api",
                                 Collections.emptyList(),
                                 Collections.emptyList(),
                                 true,

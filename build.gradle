@@ -50,7 +50,7 @@ repositories {
 
 test {
     useJUnitPlatform{
-        excludeTags "acceptance" // exclude acceptance tests from the default test task
+        excludeTags "acceptance", "contract" // exclude acceptance tests from the default test task
     }
 }
 
@@ -79,6 +79,14 @@ tasks.register('acceptance-tests', Test) {
         includeTags "acceptance"
     }
     testLogging.showStandardStreams = true
+}
+
+tasks.register('contract-tests', Test) {
+    outputs.upToDateWhen { false }
+    testLogging.showStandardStreams = true
+    useJUnitPlatform{
+        includeTags "contract"
+    }
 }
 
 dependencies {

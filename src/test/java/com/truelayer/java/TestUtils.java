@@ -116,7 +116,7 @@ public class TestUtils {
             return this;
         }
 
-        public RequestStub bodyFile(String bodyFile) {
+        public RequestStub withResponseBody(String bodyFile) {
             this.bodyFile = bodyFile;
             return this;
         }
