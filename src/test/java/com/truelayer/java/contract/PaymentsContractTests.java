@@ -3,11 +3,14 @@ package com.truelayer.java.contract;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.truelayer.java.TestUtils.assertNotError;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
@@ -91,5 +94,34 @@ public class PaymentsContractTests extends ContractTests {
 
         // todo: what kind of assertions do we want here ?
         assertNotError(createPaymentResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should return a request invalid error")
+    public void shouldThrowARequestInvalidError() {
+        String jsonResponseFile = "payments/400.request_invalid.json";
+        TestUtils.RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .withResponseBodyFile("auth/200.access_token.json")
+                .build();
+        TestUtils.RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .status(400)
+                .withResponseBodyFile(jsonResponseFile)
+                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+
+        ApiResponse<CreatePaymentResponse> paymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertTrue(paymentResponse.isError());
+        ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
+        assertEquals(expected, paymentResponse.getError());
     }
 }
