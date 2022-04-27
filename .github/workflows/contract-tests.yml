@@ -1,0 +1,30 @@
+name: Contract tests
+
+on:
+  workflow_call:
+    secrets:
+      tl_pact_broker_url:
+        required: true
+      tl_pact_broker_token:
+        required: true
+
+jobs:
+  contract-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Run contract tests
+        run: ./gradlew contract-tests
+      - name: Publish Pact file to broker
+        env:
+          TL_PACT_BROKER_URL: ${{ secrets.tl_pact_broker_url }}
+          TL_PACT_BROKER_TOKEN: ${{ secrets.tl_pact_broker_token }}
+        run: ./gradlew pactPublish
