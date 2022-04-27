@@ -50,8 +50,8 @@ public class WiremockPactExtension extends PostServeAction {
                         :
                         // default user options
                         new WireMockPactGeneratorUserOptions(
-                                "java-sdk",
-                                "payments-v3-api",
+                                "JavaSDK",
+                                "PaymentsV3",
                                 Collections.emptyList(),
                                 Collections.emptyList(),
                                 true,

@@ -15,6 +15,8 @@ plugins {
     id "signing"
     // nexus publishing
     id "io.github.gradle-nexus.publish-plugin"  version "1.1.0"
+    // contract testing, used to publish the Pact file to the broker
+    id 'au.com.dius.pact' version '4.1.7'
 }
 
 java {
@@ -63,6 +65,7 @@ tasks.register('unit-tests', Test) {
     useJUnitPlatform{
         excludeTags "integration"
         excludeTags "acceptance"
+        excludeTags "contract"
     }
 }
 
@@ -211,5 +214,35 @@ nexusPublishing {
             username = System.getenv("SONATYPE_USERNAME")
             password = System.getenv("SONATYPE_PASSWORD")
         }
+    }
+}
+
+//todo: review effective usage
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+//todo: review effective usage
+def getGitBranch = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+pact {
+    publish {
+        pactDirectory = 'build/pacts'
+        pactBrokerUrl = System.getenv("PACT_BROKER_URL")
+        pactBrokerToken = System.getenv("PACT_BROKER_TOKEN")
+        tags = [getGitBranch()]
+        consumerVersion = getGitHash()
     }
 }
