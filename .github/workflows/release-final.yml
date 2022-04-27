@@ -23,8 +23,8 @@ jobs:
     needs: build
     uses: ./.github/workflows/contract-tests.yml
     secrets:
-      tl_pact_broker_url: ${{ secrets.PACT_BROKER_URL }}
-      tl_pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+      pact_broker_url: ${{ secrets.PACT_BROKER_URL }}
+      pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
   acceptance-tests:
     name: Acceptance tests in Sandbox environment
     needs: contract-tests
