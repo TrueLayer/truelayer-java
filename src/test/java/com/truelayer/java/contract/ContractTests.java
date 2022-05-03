@@ -4,9 +4,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.truelayer.java.Environment;
-import com.truelayer.java.TestUtils;
-import com.truelayer.java.TrueLayerClient;
+import com.truelayer.java.*;
+
 import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -33,10 +32,15 @@ public abstract class ContractTests {
 
         tlClient = TrueLayerClient.New()
                 .clientCredentials(TestUtils.getClientCredentials())
-                .signingOptions(TestUtils.getSigningOptions())
+                .signingOptions(SigningOptions.builder()
+                        .keyId(System.getenv("Certificate_keyId"))
+                        .privateKey(TestUtils.getPrivateKey())
+                        .build())
                 .environment(testEnvironment)
                 .withCredentialsCaching()
                 .withHttpLogs()
                 .build();
     }
+
+
 }
