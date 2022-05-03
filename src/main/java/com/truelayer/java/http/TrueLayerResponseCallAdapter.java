@@ -2,8 +2,10 @@ package com.truelayer.java.http;
 
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.mappers.ErrorMapper;
+
 import java.lang.reflect.Type;
-import java.util.concurrent.CompletableFuture;
+
+import lombok.SneakyThrows;
 import retrofit2.*;
 
 /**
@@ -12,7 +14,7 @@ import retrofit2.*;
  *
  * @see ApiResponse
  */
-final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, CompletableFuture<ApiResponse<R>>> {
+final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, ApiResponse<R>> {
     private final Type responseType;
     private final ErrorMapper errorMapper;
 
@@ -26,48 +28,11 @@ final class TrueLayerResponseCallAdapter<R> implements CallAdapter<R, Completabl
         return responseType;
     }
 
+    @SneakyThrows
     @Override
-    public CompletableFuture<ApiResponse<R>> adapt(final Call<R> call) {
-        CompletableFuture<ApiResponse<R>> future = new CallCancelCompletableFuture<>(call);
-        call.enqueue(new ResponseCallback(future));
-        return future;
-    }
+    public ApiResponse<R> adapt(final Call<R> call) {
+        Response<R> response = call.execute();
 
-    protected class ResponseCallback implements Callback<R> {
-        private final CompletableFuture<ApiResponse<R>> future;
-
-        public ResponseCallback(CompletableFuture<ApiResponse<R>> future) {
-            this.future = future;
-        }
-
-        @Override
-        public void onResponse(Call<R> call, Response<R> response) {
-            future.complete(handleResponse(response));
-        }
-
-        @Override
-        public void onFailure(Call<R> call, Throwable t) {
-            future.completeExceptionally(t);
-        }
-    }
-
-    private static final class CallCancelCompletableFuture<T> extends CompletableFuture<T> {
-        private final Call<?> call;
-
-        CallCancelCompletableFuture(Call<?> call) {
-            this.call = call;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            if (mayInterruptIfRunning) {
-                call.cancel();
-            }
-            return super.cancel(mayInterruptIfRunning);
-        }
-    }
-
-    private ApiResponse<R> handleResponse(Response<R> response) {
         if (response.isSuccessful()) {
             return ApiResponse.<R>builder().data(response.body()).build();
         }

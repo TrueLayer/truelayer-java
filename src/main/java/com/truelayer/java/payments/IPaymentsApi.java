@@ -23,7 +23,16 @@ public interface IPaymentsApi {
      * @see <a href="https://docs.truelayer.com/reference/create-payment"><i>Create Payment</i> API reference</a>
      */
     @POST("/payments")
-    CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(@Body CreatePaymentRequest request);
+    CompletableFuture<ApiResponse<CreatePaymentResponse>> createPaymentAsync(@Body CreatePaymentRequest request);
+
+    /**
+     * Initialises a payment resource.
+     * @param request a create payment request payload
+     * @return the response of the <i>Create Payment</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/create-payment"><i>Create Payment</i> API reference</a>
+     */
+    @POST("/payments")
+    ApiResponse<CreatePaymentResponse> createPayment(@Body CreatePaymentRequest request);
 
     /**
      * Gets a payment resource by id.
@@ -32,7 +41,16 @@ public interface IPaymentsApi {
      * @see <a href="https://docs.truelayer.com/reference/get-payment-1"><i>Get Payment</i> API reference</a>
      */
     @GET("/payments/{id}")
-    CompletableFuture<ApiResponse<PaymentDetail>> getPayment(@Path("id") String paymentId);
+    CompletableFuture<ApiResponse<PaymentDetail>> getPaymentAsync(@Path("id") String paymentId);
+
+    /**
+     * Gets a payment resource by id.
+     * @param paymentId the payment identifier
+     * @return the response of the <i>Get Payment</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/get-payment-1"><i>Get Payment</i> API reference</a>
+     */
+    @GET("/payments/{id}")
+    ApiResponse<PaymentDetail> getPayment(@Path("id") String paymentId);
 
     /**
      * Starts an authorization flow for a given payment resource.

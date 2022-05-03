@@ -13,6 +13,7 @@ public class RetrofitFactory {
                 .baseUrl(baseUrl.toString())
                 .addConverterFactory(JacksonConverterFactory.create(Utils.getObjectMapper()))
                 .addCallAdapterFactory(new TrueLayerApiAdapterFactory())
+                .addCallAdapterFactory(new TrueLayerAsyncApiAdapterFactory())
                 .build();
     }
 }

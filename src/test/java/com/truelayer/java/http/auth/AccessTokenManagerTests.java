@@ -32,7 +32,7 @@ class AccessTokenManagerTests {
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, never()).getOauthToken(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, never()).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
     }
 
     @Test
@@ -42,7 +42,7 @@ class AccessTokenManagerTests {
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
         when(cache.getToken()).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        when(authenticationHandler.getOauthToken(eq(singletonList(PAYMENTS))))
+        when(authenticationHandler.getOauthTokenAsync(eq(singletonList(PAYMENTS))))
                 .thenReturn(CompletableFuture.completedFuture(
                         ApiResponse.<AccessToken>builder().data(expectedToken).build()));
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
@@ -51,7 +51,7 @@ class AccessTokenManagerTests {
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, times(1)).getOauthToken(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, times(1)).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
         verify(cache, times(1)).storeToken(eq(expectedToken));
     }
 

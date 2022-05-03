@@ -22,7 +22,13 @@ public class AuthenticationHandler implements IAuthenticationHandler {
     }
 
     @Override
-    public CompletableFuture<ApiResponse<AccessToken>> getOauthToken(List<String> scopes) {
+    public CompletableFuture<ApiResponse<AccessToken>> getOauthTokenAsync(List<String> scopes) {
+        return authenticationApi.getOauthTokenAsync(
+                clientCredentials.clientId(), clientCredentials.clientSecret(), ClientCredentials.GRANT_TYPE, scopes);
+    }
+
+    @Override
+    public ApiResponse<AccessToken> getOauthToken(List<String> scopes) {
         return authenticationApi.getOauthToken(
                 clientCredentials.clientId(), clientCredentials.clientSecret(), ClientCredentials.GRANT_TYPE, scopes);
     }

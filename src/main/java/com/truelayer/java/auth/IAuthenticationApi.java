@@ -15,7 +15,15 @@ public interface IAuthenticationApi {
 
     @FormUrlEncoded
     @POST("/connect/token")
-    CompletableFuture<ApiResponse<AccessToken>> getOauthToken(
+    CompletableFuture<ApiResponse<AccessToken>> getOauthTokenAsync(
+            @Field("client_id") String clientId,
+            @Field("client_secret") String clientSecret,
+            @Field("grant_type") String grantType,
+            @Field("scopes") List<String> scopes);
+
+    @FormUrlEncoded
+    @POST("/connect/token")
+    ApiResponse<AccessToken> getOauthToken(
             @Field("client_id") String clientId,
             @Field("client_secret") String clientSecret,
             @Field("grant_type") String grantType,

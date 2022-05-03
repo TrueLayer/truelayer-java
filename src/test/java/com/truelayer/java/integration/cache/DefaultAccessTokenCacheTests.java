@@ -35,8 +35,8 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        tlClient.payments().createPayment(paymentRequest).get();
-        tlClient.payments().createPayment(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         verify(1, postRequestedFor(urlPathEqualTo("/connect/token")));
         AccessToken expectedToken = deserializeJsonFileTo(accessTokenJsonFile, AccessToken.class);
@@ -66,8 +66,8 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        tlClient.payments().createPayment(paymentRequest).get();
-        tlClient.payments().createPayment(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         verify(2, postRequestedFor(urlPathEqualTo("/connect/token")));
         verify(2, postRequestedFor(urlPathEqualTo("/payments")));
@@ -97,7 +97,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 deserializeJsonFileTo(accessTokenImmediateExpirationJsonFile, AccessToken.class);
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        tlClient.payments().createPayment(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
         sleep(expectedImmediateExpirationToken.getExpiresIn() * 1000L);
         // below will supersede previous similar request
         RequestStub.New()
@@ -106,7 +106,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .status(200)
                 .bodyFile(accessTokenJsonFile)
                 .build();
-        tlClient.payments().createPayment(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         verify(2, postRequestedFor(urlPathEqualTo("/connect/token")));
         verify(

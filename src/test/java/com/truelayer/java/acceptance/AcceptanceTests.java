@@ -24,7 +24,7 @@ public abstract class AcceptanceTests {
     @BeforeAll
     public static void setup() {
         tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
+                .environment(Environment.development())
                 .clientCredentials(ClientCredentials.builder()
                         .clientId(System.getenv("TL_CLIENT_ID"))
                         .clientSecret(System.getenv("TL_CLIENT_SECRET"))
@@ -34,6 +34,7 @@ public abstract class AcceptanceTests {
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
                 .withHttpLogs()
+                .withHttpLogs(msg -> System.out.printf("Thread id: %s, Message: %s%n", Thread.currentThread().getId(), msg))
                 .withCredentialsCaching()
                 .build();
     }

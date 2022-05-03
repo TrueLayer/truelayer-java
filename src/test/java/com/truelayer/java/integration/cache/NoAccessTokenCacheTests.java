@@ -55,8 +55,8 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
-        tlClient.payments().createPayment(paymentRequest).get();
-        tlClient.payments().createPayment(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
+        tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         verify(2, postRequestedFor(urlPathEqualTo("/connect/token")));
         verify(2, postRequestedFor(urlPathEqualTo("/payments")).withHeader(AUTHORIZATION, matching("Bearer .*")));

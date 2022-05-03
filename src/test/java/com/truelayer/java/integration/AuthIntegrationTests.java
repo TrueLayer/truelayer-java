@@ -35,7 +35,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .build();
 
         ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
+                .getOauthTokenAsync(Collections.singletonList("payments"))
                 .get();
 
         assertTrue(response.isError());
@@ -59,7 +59,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .build();
 
         ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"))
+                .getOauthTokenAsync(Collections.singletonList("payments"))
                 .get();
 
         assertNotError(response);

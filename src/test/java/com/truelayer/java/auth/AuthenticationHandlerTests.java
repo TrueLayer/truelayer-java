@@ -26,7 +26,7 @@ public class AuthenticationHandlerTests {
         ClientCredentials clientCredentials = TestUtils.getClientCredentials();
         IAuthenticationApi authenticationApi = mock(IAuthenticationApi.class);
         ApiResponse<AccessToken> expectedToken = TestUtils.buildAccessToken();
-        when(authenticationApi.getOauthToken(
+        when(authenticationApi.getOauthTokenAsync(
                         clientCredentials.clientId(),
                         clientCredentials.clientSecret(),
                         ClientCredentials.GRANT_TYPE,
@@ -34,7 +34,7 @@ public class AuthenticationHandlerTests {
                 .thenReturn(CompletableFuture.completedFuture(expectedToken));
         AuthenticationHandler sut = new AuthenticationHandler(clientCredentials, authenticationApi);
 
-        ApiResponse<AccessToken> token = sut.getOauthToken(SCOPES).get();
+        ApiResponse<AccessToken> token = sut.getOauthTokenAsync(SCOPES).get();
 
         assertEquals(expectedToken, token);
     }

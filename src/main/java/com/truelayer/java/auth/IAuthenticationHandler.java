@@ -19,5 +19,8 @@ public interface IAuthenticationHandler {
      * @return the response of the <i>Generate Access token</i> operation
      * @see <a href="https://docs.truelayer.com/reference/generateaccesstoken"><i>Generate Access token</i> API reference</a>
      */
-    CompletableFuture<ApiResponse<AccessToken>> getOauthToken(List<String> scopes);
+    CompletableFuture<ApiResponse<AccessToken>> getOauthTokenAsync(List<String> scopes);
+
+    //todo: remove. test only
+    ApiResponse<AccessToken> getOauthToken(List<String> scopes);
 }

@@ -48,14 +48,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPayment(paymentRequest);
 
         assertNotError(createPaymentResponse);
 
         // get it by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
-                .getPayment(createPaymentResponse.getData().getId())
-                .get();
+                .getPayment(createPaymentResponse.getData().getId());
 
         assertNotError(getPaymentByIdResponse);
     }
@@ -79,13 +78,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
         // get it by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
-                .getPayment(createPaymentResponse.getData().getId())
+                .getPaymentAsync(createPaymentResponse.getData().getId())
                 .get();
 
         assertNotError(getPaymentByIdResponse);
@@ -99,7 +98,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequest();
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 
@@ -121,7 +120,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequest();
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
 

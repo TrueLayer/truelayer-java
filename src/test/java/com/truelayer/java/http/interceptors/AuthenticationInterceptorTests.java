@@ -42,7 +42,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         List<String> scopes = Collections.singletonList("payments");
         ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
-        when(authenticationHandler.getOauthToken(scopes))
+        when(authenticationHandler.getOauthTokenAsync(scopes))
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
@@ -64,7 +64,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     public void shouldThrowException() {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         List<String> scopes = Collections.singletonList("payments");
-        when(authenticationHandler.getOauthToken(scopes))
+        when(authenticationHandler.getOauthTokenAsync(scopes))
                 .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
                                 .type("error")

@@ -27,7 +27,10 @@ import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**

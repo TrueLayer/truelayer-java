@@ -44,7 +44,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> response =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertNotError(response);
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
@@ -73,7 +73,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
@@ -101,7 +101,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .build();
 
         ApiResponse<PaymentDetail> response =
-                tlClient.payments().getPayment(A_PAYMENT_ID).get();
+                tlClient.payments().getPaymentAsync(A_PAYMENT_ID).get();
 
         assertNotError(response);
         PaymentDetail expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentDetail.class);
@@ -131,7 +131,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
@@ -160,7 +160,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPaymentAsync(paymentRequest).get();
 
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
