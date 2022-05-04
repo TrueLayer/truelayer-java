@@ -9,6 +9,7 @@ import com.truelayer.java.*;
 import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Tag("contract")
@@ -32,10 +33,7 @@ public abstract class ContractTests {
 
         tlClient = TrueLayerClient.New()
                 .clientCredentials(TestUtils.getClientCredentials())
-                .signingOptions(SigningOptions.builder()
-                        .keyId(System.getenv("Certificate_keyId"))
-                        .privateKey(TestUtils.getPrivateKey())
-                        .build())
+                .signingOptions(TestUtils.getSigningOptions())
                 .environment(testEnvironment)
                 .withCredentialsCaching()
                 .withHttpLogs()

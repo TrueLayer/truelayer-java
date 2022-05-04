@@ -50,7 +50,7 @@ public class TestUtils {
     @SneakyThrows
     public static SigningOptions getSigningOptions() {
         return SigningOptions.builder()
-                .keyId("a-key-id")
+                .keyId("Certificate_keyId")
                 .privateKey(getPrivateKey())
                 .build();
     }
