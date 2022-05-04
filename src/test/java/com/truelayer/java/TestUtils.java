@@ -84,6 +84,11 @@ public class TestUtils {
         return getObjectMapper().readValue(Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonFile)), type);
     }
 
+    @SneakyThrows
+    public static String readJsonFile(String jsonFile) {
+        return new String(Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonFile)));
+    }
+
     public static class RequestStub {
         private static final String LIBRARY_INFO = "truelayer-java\\/.+";
         private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";

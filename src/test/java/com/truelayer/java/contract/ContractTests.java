@@ -1,44 +1,27 @@
 package com.truelayer.java.contract;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.truelayer.java.*;
-
+import au.com.dius.pact.consumer.MockServer;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import com.truelayer.java.TestUtils;
+import com.truelayer.java.TrueLayerClient;
 import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("contract")
-public abstract class ContractTests {
+@ExtendWith(PactConsumerTestExt.class)
+public class ContractTests {
     protected TrueLayerClient tlClient;
 
-    @RegisterExtension
-    protected static WireMockExtension wireMock = WireMockExtension.newInstance()
-            .options(wireMockConfig()
-                    .notifier(new ConsoleNotifier(true)) // todo: review, debugging purposes
-                    .dynamicPort()
-                    .dynamicHttpsPort()
-                    .extensions(WiremockPactExtension.builder().build()))
-            .configureStaticDsl(true)
-            .build();
-
     @BeforeEach
-    public void setup() {
-        Environment testEnvironment = TestUtils.getTestEnvironment(
-                URI.create(wireMock.getRuntimeInfo().getHttpBaseUrl()));
-
+    public void setup(MockServer pactServer) {
         tlClient = TrueLayerClient.New()
                 .clientCredentials(TestUtils.getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
-                .environment(testEnvironment)
+                .environment(TestUtils.getTestEnvironment(URI.create(pactServer.getUrl())))
                 .withCredentialsCaching()
                 .withHttpLogs()
                 .build();
     }
-
-
 }

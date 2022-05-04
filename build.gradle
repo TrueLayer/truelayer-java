@@ -128,8 +128,10 @@ dependencies {
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.32.0'
 
     // Contract testing
+    //todo: remove
     testImplementation group: 'com.atlassian.ta', name: 'wiremock-pact-generator', version: '2.4.3'
-
+    def pactJvmVersion = '4.1.35'
+    testImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: pactJvmVersion
 }
 
 jacocoTestReport {

@@ -1,59 +1,92 @@
 package com.truelayer.java.contract;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.truelayer.java.TestUtils.assertNotError;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.truelayer.java.TestUtils.readJsonFile;
 
+import au.com.dius.pact.consumer.dsl.FormPostBuilder;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
+import com.truelayer.java.ClientCredentials;
+import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.Utils;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import java.net.URI;
 import java.util.Collections;
-import java.util.UUID;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class PaymentsContractTests extends ContractTests {
 
-    @Test
-    @DisplayName("It should complete a payment flow with preselected provider")
     @SneakyThrows
-    public void itShouldCreateAPayment() {
-        TestUtils.RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
+    @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
+    RequestResponsePact createPayment(PactDslWithProvider builder) {
+        return builder.uponReceiving("Create token call")
+                .method("POST")
+                .path("/connect/token")
+                .body(
+                        new String(new FormPostBuilder()
+                                .stringMatcher(
+                                        "client_id",
+                                        TestUtils.getClientCredentials().clientId())
+                                .stringValue(
+                                        "client_secret",
+                                        TestUtils.getClientCredentials().clientSecret())
+                                .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
+                                .stringValue("scopes", Constants.Scopes.PAYMENTS)
+                                .buildBody()),
+                        "application/x-www-form-urlencoded")
+                .willRespondWith()
                 .status(200)
-                .withResponseBodyFile("auth/200.access_token.json")
-                .build();
-        TestUtils.RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/payments"))
-                .withAuthorization()
-                .withSignature()
+                .body(readJsonFile("auth/200.access_token.json"))
+                .uponReceiving("Create payment call")
+                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, ".*")
+                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, ".*")
+                .method("POST")
+                .path("/payments")
+                .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
+                .willRespondWith()
                 .status(201)
-                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
-                .build();
-        TestUtils.RequestStub.New()
-                .method("post")
-                .path(urlPathMatching("/payments/.*/authorization-flow"))
-                .withAuthorization()
+                .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
+                .uponReceiving("Start authorization flow call")
+                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, ".*")
+                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, ".*")
+                .method("POST")
+                .matchPath("/payments/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/authorization-flow")
+                .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
+                .willRespondWith()
                 .status(200)
-                .withResponseBodyFile("payments/200.start_authorization_flow.redirect.json")
-                .build();
+                .body(readJsonFile("payments/200.start_authorization_flow.redirect.json"))
+                .toPact();
+    }
 
+    @SneakyThrows
+    @Test
+    @PactTestFor(pactMethod = "createPayment")
+    public void shouldCreatePayment() {
         // 1. Create a payment with preselected provider
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
-                .amountInMinor(RandomUtils.nextInt(50, 500))
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(getCreatePaymentRequest()).get();
+
+        // 2. Start the auth flow
+        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), getStartAuthFlowRequest())
+                .get();
+
+        assertNotError(createPaymentResponse);
+    }
+
+    private CreatePaymentRequest getCreatePaymentRequest() {
+        return CreatePaymentRequest.builder()
+                .amountInMinor(50)
                 .currency(CurrencyCode.GBP)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.userSelected()
@@ -65,7 +98,7 @@ public class PaymentsContractTests extends ContractTests {
                                         .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
-                                .merchantAccountId(UUID.randomUUID().toString())
+                                .merchantAccountId("a-merchant-id")
                                 .build())
                         .build())
                 .user(User.builder()
@@ -73,55 +106,14 @@ public class PaymentsContractTests extends ContractTests {
                         .email("contract-test@truelayer.com")
                         .build())
                 .build();
+    }
 
-        ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
-
-        // todo: what kind of assertions do we want here ?
-        assertNotError(createPaymentResponse);
-
-        // 2. Start the authorization flow and complete the payment
-        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+    private StartAuthorizationFlowRequest getStartAuthFlowRequest() {
+        return StartAuthorizationFlowRequest.builder()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create("http://localhost:8080/callback"))
                         .build())
                 .withProviderSelection()
                 .build();
-
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
-                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
-                .get();
-
-        // todo: what kind of assertions do we want here ?
-        assertNotError(createPaymentResponse);
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("It should return a request invalid error")
-    public void shouldThrowARequestInvalidError() {
-        String jsonResponseFile = "payments/400.request_invalid.json";
-        TestUtils.RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/connect/token"))
-                .status(200)
-                .withResponseBodyFile("auth/200.access_token.json")
-                .build();
-        TestUtils.RequestStub.New()
-                .method("post")
-                .path(urlPathEqualTo("/payments"))
-                .withAuthorization()
-                .withSignature()
-                .status(400)
-                .withResponseBodyFile(jsonResponseFile)
-                .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
-
-        ApiResponse<CreatePaymentResponse> paymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
-
-        assertTrue(paymentResponse.isError());
-        ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
-        assertEquals(expected, paymentResponse.getError());
     }
 }

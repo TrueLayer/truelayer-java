@@ -19,6 +19,7 @@ import lombok.Builder;
 import org.apache.commons.lang3.ObjectUtils;
 
 @Builder
+@Deprecated
 public class WiremockPactExtension extends PostServeAction {
     WireMockPactGeneratorUserOptions userOptions;
 
