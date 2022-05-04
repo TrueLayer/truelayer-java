@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Test;
 
 public class PaymentsContractTests extends ContractTests {
 
+    public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    public static final String JWT_REGEX = "(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)";
+
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createPayment(PactDslWithProvider builder) {
@@ -48,8 +51,8 @@ public class PaymentsContractTests extends ContractTests {
                 .status(200)
                 .body(readJsonFile("auth/200.access_token.json"))
                 .uponReceiving("Create payment call")
-                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, ".*")
-                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, ".*")
+                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID_REGEX)
+                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, JWT_REGEX)
                 .method("POST")
                 .path("/payments")
                 .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
@@ -57,10 +60,10 @@ public class PaymentsContractTests extends ContractTests {
                 .status(201)
                 .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
                 .uponReceiving("Start authorization flow call")
-                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, ".*")
-                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, ".*")
+                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID_REGEX)
+                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, JWT_REGEX)
                 .method("POST")
-                .matchPath("/payments/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/authorization-flow")
+                .matchPath("/payments/" + UUID_REGEX + "/authorization-flow")
                 .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
