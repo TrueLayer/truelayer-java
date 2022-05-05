@@ -46,6 +46,7 @@ public class AccessTokenManager implements IAccessTokenManager {
     }
 
     private AccessToken tryGetToken() {
+        /*
         ApiResponse<AccessToken> accessTokenResponse;
         try {
             accessTokenResponse =
@@ -53,6 +54,8 @@ public class AccessTokenManager implements IAccessTokenManager {
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }
+        */
+        ApiResponse<AccessToken> accessTokenResponse = authenticationHandler.getOauthToken(scopes);
 
         if (accessTokenResponse.isError()) {
             throw new TrueLayerException(
