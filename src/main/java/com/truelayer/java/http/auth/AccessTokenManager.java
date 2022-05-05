@@ -36,7 +36,7 @@ public class AccessTokenManager implements IAccessTokenManager {
             });
         }
 
-        return tryGetTokenAsync();
+        return tryGetToken();
     }
 
     @Override
