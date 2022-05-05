@@ -4,6 +4,7 @@ import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.readJsonFile;
 
 import au.com.dius.pact.consumer.dsl.FormPostBuilder;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -27,11 +28,13 @@ import org.junit.jupiter.api.Test;
 public class PaymentsContractTests extends ContractTests {
 
     public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+    public static final String TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
     public static final String JWT_REGEX = "(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createPayment(PactDslWithProvider builder) {
+
         return builder.uponReceiving("Create token call")
                 .method("POST")
                 .path("/connect/token")
@@ -51,23 +54,21 @@ public class PaymentsContractTests extends ContractTests {
                 .status(200)
                 .body(readJsonFile("auth/200.access_token.json"))
                 .uponReceiving("Create payment call")
-                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID_REGEX)
-                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, JWT_REGEX)
                 .method("POST")
                 .path("/payments")
                 .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
-                .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
+                .body(CreatePaymentMerchantAccountResponseBody())
+                //  .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
                 .uponReceiving("Start authorization flow call")
-                .matchHeader(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID_REGEX)
-                .matchHeader(Constants.HeaderNames.TL_SIGNATURE, JWT_REGEX)
                 .method("POST")
                 .matchPath("/payments/" + UUID_REGEX + "/authorization-flow")
                 .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
-                .body(readJsonFile("payments/200.start_authorization_flow.redirect.json"))
+                .body(startAuthorizationFlowRedirectResponseBody())
+                //  .body(readJsonFile("payments/200.start_authorization_flow.redirect.json"))
                 .toPact();
     }
 
@@ -118,5 +119,31 @@ public class PaymentsContractTests extends ContractTests {
                         .build())
                 .withProviderSelection()
                 .build();
+    }
+
+    private PactDslJsonBody CreatePaymentMerchantAccountResponseBody() {
+        return new PactDslJsonBody()
+                .stringMatcher("id", UUID_REGEX)
+                .stringMatcher("resource_token", TOKEN_REGEX)
+                .object("user")
+                .stringMatcher("id", UUID_REGEX);
+    }
+
+    private PactDslJsonBody startAuthorizationFlowRedirectResponseBody() {
+        return new PactDslJsonBody()
+                .stringType("status", "authorizing")
+                .object("authorization_flow")
+                .object("actions")
+                .object("next")
+                .stringType("type", "redirect")
+                .matchUrl("uri", "https://a-redirect-uri.com")
+                .object("metadata")
+                .stringType("type", "provider")
+                .stringType("provider_id", "ob-bank-name")
+                .stringType("display_name", "Bank Name")
+                .matchUrl("icon_uri", "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
+                .matchUrl("logo_uri", "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
+                .stringType("bg_color", "#000000")
+                .stringType("country_code", "GB");
     }
 }
