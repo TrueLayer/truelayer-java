@@ -13,7 +13,6 @@ import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,8 @@ class AccessTokenManagerTests {
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, never()).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
+        // verify(authenticationHandler, never()).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, never()).getOauthToken(eq(singletonList(PAYMENTS)));
     }
 
     @Test
@@ -42,16 +42,20 @@ class AccessTokenManagerTests {
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
         when(cache.getToken()).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        when(authenticationHandler.getOauthTokenAsync(eq(singletonList(PAYMENTS))))
-                .thenReturn(CompletableFuture.completedFuture(
-                        ApiResponse.<AccessToken>builder().data(expectedToken).build()));
+        /*when(authenticationHandler.getOauthTokenAsync(eq(singletonList(PAYMENTS))))
+        .thenReturn(CompletableFuture.completedFuture(
+                ApiResponse.<AccessToken>builder().data(expectedToken).build()));*/
+        when(authenticationHandler.getOauthToken(eq(singletonList(PAYMENTS))))
+                .thenReturn(
+                        ApiResponse.<AccessToken>builder().data(expectedToken).build());
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
 
         AccessToken actualToken = sut.getToken();
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, times(1)).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
+        // verify(authenticationHandler, times(1)).getOauthTokenAsync(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, times(1)).getOauthToken(eq(singletonList(PAYMENTS)));
         verify(cache, times(1)).storeToken(eq(expectedToken));
     }
 
