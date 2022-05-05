@@ -30,13 +30,13 @@ public class AccessTokenManager implements IAccessTokenManager {
     public AccessToken getToken() {
         if (getCredentialsCache().isPresent()) {
             return getCredentialsCache().get().getToken().orElseGet(() -> {
-                AccessToken token = tryGetToken();
+                AccessToken token = tryGetTokenAsync();
                 credentialsCache.storeToken(token);
                 return token;
             });
         }
 
-        return tryGetToken();
+        return tryGetTokenAsync();
     }
 
     @Override
@@ -45,8 +45,7 @@ public class AccessTokenManager implements IAccessTokenManager {
         getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
     }
 
-    private AccessToken tryGetToken() {
-        /*
+    private AccessToken tryGetTokenAsync() {
         ApiResponse<AccessToken> accessTokenResponse;
         try {
             accessTokenResponse =
@@ -54,7 +53,16 @@ public class AccessTokenManager implements IAccessTokenManager {
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }
-        */
+
+        if (accessTokenResponse.isError()) {
+            throw new TrueLayerException(
+                    String.format("Unable to authenticate request: %s", accessTokenResponse.getError()));
+        }
+
+        return accessTokenResponse.getData();
+    }
+
+    private AccessToken tryGetToken() {
         ApiResponse<AccessToken> accessTokenResponse = authenticationHandler.getOauthToken(scopes);
 
         if (accessTokenResponse.isError()) {
