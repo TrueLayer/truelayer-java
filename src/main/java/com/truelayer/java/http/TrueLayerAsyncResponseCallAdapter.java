@@ -2,13 +2,12 @@ package com.truelayer.java.http;
 
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.mappers.ErrorMapper;
+import java.lang.reflect.Type;
+import java.util.concurrent.CompletableFuture;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.lang.reflect.Type;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This class is extends <a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/java8/src/main/java/retrofit2/adapter/java8/Java8CallAdapterFactory.java">Retrofit's ResponseCallAdapter</a>

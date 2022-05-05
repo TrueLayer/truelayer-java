@@ -53,8 +53,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertNotError(createPaymentResponse);
 
         // get it by id
-        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
-                .getPayment(createPaymentResponse.getData().getId());
+        ApiResponse<PaymentDetail> getPaymentByIdResponse =
+                tlClient.payments().getPayment(createPaymentResponse.getData().getId());
 
         assertNotError(getPaymentByIdResponse);
     }
@@ -168,7 +168,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPayment(paymentRequest);
 
         assertNotError(createPaymentResponse);
 
@@ -215,7 +215,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(paymentRequest).get();
+                tlClient.payments().createPayment(paymentRequest);
 
         assertNotError(createPaymentResponse);
 

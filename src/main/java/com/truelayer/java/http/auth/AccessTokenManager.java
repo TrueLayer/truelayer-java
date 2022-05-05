@@ -48,7 +48,8 @@ public class AccessTokenManager implements IAccessTokenManager {
     private AccessToken tryGetToken() {
         ApiResponse<AccessToken> accessTokenResponse;
         try {
-            accessTokenResponse = authenticationHandler.getOauthTokenAsync(scopes).get();
+            accessTokenResponse =
+                    authenticationHandler.getOauthTokenAsync(scopes).get();
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }

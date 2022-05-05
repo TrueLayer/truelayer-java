@@ -14,8 +14,7 @@ public class AuthAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get an access token")
     public void itShouldGetAnAccessToken() {
-        ApiResponse<AccessToken> response = tlClient.auth()
-                .getOauthToken(Collections.singletonList("payments"));
+        ApiResponse<AccessToken> response = tlClient.auth().getOauthToken(Collections.singletonList("payments"));
 
         TestUtils.assertNotError(response);
     }

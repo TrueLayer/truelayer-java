@@ -21,6 +21,6 @@ public interface IAuthenticationHandler {
      */
     CompletableFuture<ApiResponse<AccessToken>> getOauthTokenAsync(List<String> scopes);
 
-    //todo: remove. test only
+    // todo: remove. test only
     ApiResponse<AccessToken> getOauthToken(List<String> scopes);
 }

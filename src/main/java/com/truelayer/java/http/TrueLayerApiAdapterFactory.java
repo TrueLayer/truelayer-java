@@ -1,13 +1,11 @@
 package com.truelayer.java.http;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import retrofit2.CallAdapter;
-import retrofit2.Retrofit;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.concurrent.CompletableFuture;
+import retrofit2.CallAdapter;
+import retrofit2.Retrofit;
 
 /**
  * This class is extends <a href="https://github.com/square/retrofit/blob/master/retrofit-adapters/java8/src/main/java/retrofit2/adapter/java8/Java8CallAdapterFactory.java">Retrofit's Java8CallAdapterFactory</a>

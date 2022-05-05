@@ -2,9 +2,7 @@ package com.truelayer.java.http;
 
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.mappers.ErrorMapper;
-
 import java.lang.reflect.Type;
-
 import lombok.SneakyThrows;
 import retrofit2.*;
 
