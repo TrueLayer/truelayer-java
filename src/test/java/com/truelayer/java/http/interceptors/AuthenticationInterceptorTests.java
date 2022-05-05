@@ -18,7 +18,6 @@ import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import okhttp3.Interceptor;
 import org.junit.jupiter.api.*;
 
@@ -42,8 +41,9 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         List<String> scopes = Collections.singletonList("payments");
         ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
-        when(authenticationHandler.getOauthTokenAsync(scopes))
-                .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
+        /* when(authenticationHandler.getOauthTokenAsync(scopes))
+        .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));*/
+        when(authenticationHandler.getOauthToken(scopes)).thenReturn(expectedAccessToken);
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
                 .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
@@ -64,13 +64,20 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     public void shouldThrowException() {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         List<String> scopes = Collections.singletonList("payments");
-        when(authenticationHandler.getOauthTokenAsync(scopes))
-                .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
+        /*when(authenticationHandler.getOauthTokenAsync(scopes))
+        .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
+                .error(ProblemDetails.builder()
+                        .type("error")
+                        .detail("invalid_client")
+                        .build())
+                .build()));*/
+        when(authenticationHandler.getOauthToken(scopes))
+                .thenReturn(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
                                 .type("error")
                                 .detail("invalid_client")
                                 .build())
-                        .build()));
+                        .build());
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
                 .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
