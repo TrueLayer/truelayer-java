@@ -1,6 +1,7 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
@@ -25,10 +26,10 @@ import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Consumer;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Builder class for TrueLayerClient instances.
@@ -37,6 +38,13 @@ public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
 
     private SigningOptions signingOptions;
+
+    /**
+     * Optional timeout configuration that defines a time limit for a complete HTTP call.
+     * This includes resolving DNS, connecting, writing the request body, server processing, as well as
+     * reading the response body. If not set, the internal HTTP client configuration are used.
+     */
+    private Duration timeout;
 
     // By default, production is used
     private Environment environment = Environment.live();
@@ -74,6 +82,18 @@ public class TrueLayerClientBuilder {
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = signingOptions;
+        return this;
+    }
+
+    /**
+     * Utility to set a call timeout for the client.
+     * @param timeout Optional timeout configuration that defines a time limit for a complete HTTP call.
+     * This includes resolving DNS, connecting, writing the request body, server processing, as well as
+     * reading the response body. If not set, the internal HTTP client configuration are used.
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withTimeout(Duration timeout) {
+        this.timeout = timeout;
         return this;
     }
 
@@ -134,12 +154,16 @@ public class TrueLayerClientBuilder {
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        if (ObjectUtils.isEmpty(clientCredentials)) {
+        if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+        if (isNotEmpty(timeout)) {
+            clientBuilder.callTimeout(timeout);
+        }
 
         // Setup logging if required
         getLogMessageConsumer()

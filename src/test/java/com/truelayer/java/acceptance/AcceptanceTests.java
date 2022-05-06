@@ -2,13 +2,11 @@ package com.truelayer.java.acceptance;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
-import com.truelayer.java.ClientCredentials;
-import com.truelayer.java.Environment;
-import com.truelayer.java.SigningOptions;
-import com.truelayer.java.TrueLayerClient;
+import com.truelayer.java.*;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,6 +31,7 @@ public abstract class AcceptanceTests {
                         .keyId(System.getenv("TL_SIGNING_KEY_ID"))
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
+                .withTimeout(Duration.ofSeconds(3))
                 .withHttpLogs()
                 .withCredentialsCaching()
                 .build();
