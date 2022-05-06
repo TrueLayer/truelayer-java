@@ -21,7 +21,7 @@ public class ContractTests {
                 .signingOptions(TestUtils.getSigningOptions())
                 .environment(TestUtils.getTestEnvironment(URI.create(pactServer.getUrl())))
                 .withCredentialsCaching()
-                //.withHttpLogs()
+                // .withHttpLogs()
                 .build();
     }
 }

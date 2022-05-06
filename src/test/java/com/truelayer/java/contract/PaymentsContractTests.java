@@ -1,7 +1,5 @@
 package com.truelayer.java.contract;
 
-import static com.truelayer.java.TestUtils.readJsonFile;
-
 import au.com.dius.pact.consumer.dsl.FormPostBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
@@ -31,7 +29,8 @@ public class PaymentsContractTests extends ContractTests {
     public static final String JWT_TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
 
     // Samples
-    public static final String A_JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+    public static final String A_JWT_TOKEN =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
@@ -41,24 +40,23 @@ public class PaymentsContractTests extends ContractTests {
                 .method("POST")
                 .path("/connect/token")
                 .body(
-                    new String(new FormPostBuilder()
-                            .stringMatcher(
-                                    "client_id",
-                                    TestUtils.getClientCredentials().clientId())
-                            .stringValue(
-                                    "client_secret",
-                                    TestUtils.getClientCredentials().clientSecret())
-                            .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
-                            .stringValue("scopes", Constants.Scopes.PAYMENTS)
-                            .buildBody()),
-                    "application/x-www-form-urlencoded")
+                        new String(new FormPostBuilder()
+                                .stringMatcher(
+                                        "client_id",
+                                        TestUtils.getClientCredentials().clientId())
+                                .stringValue(
+                                        "client_secret",
+                                        TestUtils.getClientCredentials().clientSecret())
+                                .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
+                                .stringValue("scopes", Constants.Scopes.PAYMENTS)
+                                .buildBody()),
+                        "application/x-www-form-urlencoded")
                 .willRespondWith()
                 .status(200)
-                //.body(readJsonFile("auth/200.access_token.json"))
+                // .body(readJsonFile("auth/200.access_token.json"))
                 .body(new PactDslJsonBody()
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                        .integerType("expires_in")
-                )
+                        .integerType("expires_in"))
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
