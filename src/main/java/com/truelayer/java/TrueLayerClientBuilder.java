@@ -3,6 +3,7 @@ package com.truelayer.java;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
+import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.ICommonApi;
@@ -28,7 +29,10 @@ import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 /**
@@ -45,6 +49,16 @@ public class TrueLayerClientBuilder {
      * reading the response body. If not set, the internal HTTP client configuration are used.
      */
     private Duration timeout;
+
+    /**
+     * Optional configuration for internal connection pool.
+     */
+    private ConnectionPoolOptions connectionPoolOptions;
+
+    /**
+     * Optional execution service to be used by the internal HTTP client.
+     */
+    private ExecutorService requestExecutor;
 
     // By default, production is used
     private Environment environment = Environment.live();
@@ -94,6 +108,26 @@ public class TrueLayerClientBuilder {
      */
     public TrueLayerClientBuilder withTimeout(Duration timeout) {
         this.timeout = timeout;
+        return this;
+    }
+
+    /**
+     * Sets a connection pool for the internal HTTP client
+     * @param connectionPoolOptions optional connection pool to be used
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withConnectionPool(ConnectionPoolOptions connectionPoolOptions) {
+        this.connectionPoolOptions = connectionPoolOptions;
+        return this;
+    }
+
+    /**
+     * Sets a custom HTTP request dispatcher for the internal HTTP client
+     * @param requestExecutor an executor service responsible for handling the HTTP requests
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withRequestExecutor(ExecutorService requestExecutor) {
+        this.requestExecutor = requestExecutor;
         return this;
     }
 
@@ -163,6 +197,18 @@ public class TrueLayerClientBuilder {
 
         if (isNotEmpty(timeout)) {
             clientBuilder.callTimeout(timeout);
+        }
+
+        if (isNotEmpty(connectionPoolOptions)) {
+            KeepAliveDuration keepAliveDuration = connectionPoolOptions.getKeepAliveDuration();
+            clientBuilder.connectionPool(new ConnectionPool(
+                    connectionPoolOptions.getMaxIdleConnections(),
+                    keepAliveDuration.getDuration(),
+                    keepAliveDuration.getTimeUnit()));
+        }
+
+        if (isNotEmpty(requestExecutor)) {
+            clientBuilder.dispatcher(new Dispatcher(requestExecutor));
         }
 
         // Setup logging if required
