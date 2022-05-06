@@ -30,13 +30,13 @@ public class AccessTokenManager implements IAccessTokenManager {
     public AccessToken getToken() {
         if (getCredentialsCache().isPresent()) {
             return getCredentialsCache().get().getToken().orElseGet(() -> {
-                AccessToken token = tryGetToken();
+                AccessToken token = tryGetTokenAsync();
                 credentialsCache.storeToken(token);
                 return token;
             });
         }
 
-        return tryGetToken();
+        return tryGetTokenAsync();
     }
 
     @Override
