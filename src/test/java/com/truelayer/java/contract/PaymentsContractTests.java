@@ -1,6 +1,5 @@
 package com.truelayer.java.contract;
 
-import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.readJsonFile;
 
 import au.com.dius.pact.consumer.dsl.FormPostBuilder;
@@ -27,9 +26,12 @@ import org.junit.jupiter.api.Test;
 
 public class PaymentsContractTests extends ContractTests {
 
+    // Matchers
     public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-    public static final String TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
-    public static final String JWT_REGEX = "(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)";
+    public static final String JWT_TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
+
+    // Samples
+    public static final String A_JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
@@ -39,20 +41,24 @@ public class PaymentsContractTests extends ContractTests {
                 .method("POST")
                 .path("/connect/token")
                 .body(
-                        new String(new FormPostBuilder()
-                                .stringMatcher(
-                                        "client_id",
-                                        TestUtils.getClientCredentials().clientId())
-                                .stringValue(
-                                        "client_secret",
-                                        TestUtils.getClientCredentials().clientSecret())
-                                .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
-                                .stringValue("scopes", Constants.Scopes.PAYMENTS)
-                                .buildBody()),
-                        "application/x-www-form-urlencoded")
+                    new String(new FormPostBuilder()
+                            .stringMatcher(
+                                    "client_id",
+                                    TestUtils.getClientCredentials().clientId())
+                            .stringValue(
+                                    "client_secret",
+                                    TestUtils.getClientCredentials().clientSecret())
+                            .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
+                            .stringValue("scopes", Constants.Scopes.PAYMENTS)
+                            .buildBody()),
+                    "application/x-www-form-urlencoded")
                 .willRespondWith()
                 .status(200)
-                .body(readJsonFile("auth/200.access_token.json"))
+                //.body(readJsonFile("auth/200.access_token.json"))
+                .body(new PactDslJsonBody()
+                        .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
+                        .integerType("expires_in")
+                )
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
@@ -81,11 +87,9 @@ public class PaymentsContractTests extends ContractTests {
                 tlClient.payments().createPayment(getCreatePaymentRequest()).get();
 
         // 2. Start the auth flow
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), getStartAuthFlowRequest())
                 .get();
-
-        assertNotError(createPaymentResponse);
     }
 
     private CreatePaymentRequest getCreatePaymentRequest() {
@@ -124,7 +128,7 @@ public class PaymentsContractTests extends ContractTests {
     private PactDslJsonBody CreatePaymentMerchantAccountResponseBody() {
         return new PactDslJsonBody()
                 .stringMatcher("id", UUID_REGEX)
-                .stringMatcher("resource_token", TOKEN_REGEX)
+                .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                 .object("user")
                 .stringMatcher("id", UUID_REGEX);
     }
