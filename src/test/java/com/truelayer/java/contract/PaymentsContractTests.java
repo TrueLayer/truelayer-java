@@ -53,10 +53,9 @@ public class PaymentsContractTests extends ContractTests {
                         "application/x-www-form-urlencoded")
                 .willRespondWith()
                 .status(200)
-                // .body(readJsonFile("auth/200.access_token.json"))
                 .body(new PactDslJsonBody()
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                        .integerType("expires_in"))
+                        .numberType("expires_in"))
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
@@ -67,12 +66,13 @@ public class PaymentsContractTests extends ContractTests {
                 //  .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
                 .uponReceiving("Start authorization flow call")
                 .method("POST")
-                .matchPath("/payments/" + UUID_REGEX + "/authorization-flow")
+                .pathFromProviderState(
+                        "/payments/${id}/authorization-flow",
+                        "/payments/48c890dc-8c03-428c-9a8b-2f383fd0ba38/authorization-flow")
                 .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
                 .body(startAuthorizationFlowRedirectResponseBody())
-                //  .body(readJsonFile("payments/200.start_authorization_flow.redirect.json"))
                 .toPact();
     }
 
@@ -125,7 +125,7 @@ public class PaymentsContractTests extends ContractTests {
 
     private PactDslJsonBody CreatePaymentMerchantAccountResponseBody() {
         return new PactDslJsonBody()
-                .stringMatcher("id", UUID_REGEX)
+                .stringType("id", "48c890dc-8c03-428c-9a8b-2f383fd0ba38")
                 .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                 .object("user")
                 .stringMatcher("id", UUID_REGEX);
