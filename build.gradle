@@ -1,13 +1,13 @@
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "6.5.2"
+    id "io.freefair.lombok" version "6.4.3"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '3.2.0'
     // to publish packages
     id 'maven-publish'
     // code linting
-    id "com.diffplug.spotless" version "6.4.2"
+    id "com.diffplug.spotless" version "6.5.2"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.0'
