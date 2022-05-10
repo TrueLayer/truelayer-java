@@ -36,7 +36,8 @@ public class PaymentsContractTests extends ContractTests {
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createPayment(PactDslWithProvider builder) {
 
-        return builder.uponReceiving("Create token call")
+        return builder.given("Auth Token state")
+                .uponReceiving("Create token call")
                 .method("POST")
                 .path("/connect/token")
                 .body(
@@ -56,6 +57,7 @@ public class PaymentsContractTests extends ContractTests {
                 .body(new PactDslJsonBody()
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .numberType("expires_in"))
+                .given("Create Payment state")
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
@@ -63,7 +65,7 @@ public class PaymentsContractTests extends ContractTests {
                 .willRespondWith()
                 .status(201)
                 .body(CreatePaymentMerchantAccountResponseBody())
-                //  .body(readJsonFile("payments/201.create_payment.merchant_account.json"))
+                .given("Authorize Payment state")
                 .uponReceiving("Start authorization flow call")
                 .method("POST")
                 .pathFromProviderState(
