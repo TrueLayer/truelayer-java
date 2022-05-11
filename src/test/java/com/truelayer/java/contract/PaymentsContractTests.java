@@ -129,7 +129,7 @@ public class PaymentsContractTests extends ContractTests {
         return new PactDslJsonBody()
                 .stringType("id", "48c890dc-8c03-428c-9a8b-2f383fd0ba38")
                 .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                .object("user")
+                .object("User")
                 .stringMatcher("id", UUID_REGEX);
     }
 
