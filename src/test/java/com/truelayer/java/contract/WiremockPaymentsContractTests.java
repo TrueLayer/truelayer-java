@@ -57,7 +57,7 @@ public class WiremockPaymentsContractTests extends WiremockContractTests {
         // 1. Create a payment with preselected provider
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currency(CurrencyCode.GBP)
+                .currencyCode(CurrencyCode.GBP)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.userSelected()
                                 .filter(ProviderFilter.builder()

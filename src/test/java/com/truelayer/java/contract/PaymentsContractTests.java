@@ -95,7 +95,7 @@ public class PaymentsContractTests extends ContractTests {
     private CreatePaymentRequest getCreatePaymentRequest() {
         return CreatePaymentRequest.builder()
                 .amountInMinor(50)
-                .currency(CurrencyCode.GBP)
+                .currencyCode(CurrencyCode.GBP)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.userSelected()
                                 .filter(ProviderFilter.builder()
@@ -129,7 +129,7 @@ public class PaymentsContractTests extends ContractTests {
         return new PactDslJsonBody()
                 .stringType("id", "48c890dc-8c03-428c-9a8b-2f383fd0ba38")
                 .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                .object("User")
+                .object("user")
                 .stringMatcher("id", UUID_REGEX);
     }
 
