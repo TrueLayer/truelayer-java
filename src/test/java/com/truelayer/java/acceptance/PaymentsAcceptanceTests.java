@@ -160,7 +160,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currencyCode(merchantAccount.getCurrency())
+                .currency(merchantAccount.getCurrency())
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(Beneficiary.merchantAccount()

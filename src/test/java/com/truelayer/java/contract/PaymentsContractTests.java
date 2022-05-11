@@ -95,7 +95,7 @@ public class PaymentsContractTests extends ContractTests {
     private CreatePaymentRequest getCreatePaymentRequest() {
         return CreatePaymentRequest.builder()
                 .amountInMinor(50)
-                .currencyCode(CurrencyCode.GBP)
+                .currency(CurrencyCode.GBP)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.userSelected()
                                 .filter(ProviderFilter.builder()

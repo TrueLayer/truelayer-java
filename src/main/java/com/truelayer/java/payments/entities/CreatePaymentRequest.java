@@ -14,7 +14,7 @@ import lombok.ToString;
 public class CreatePaymentRequest {
     private int amountInMinor;
 
-    private CurrencyCode currencyCode;
+    private CurrencyCode currency;
 
     private PaymentMethod paymentMethod;
 
