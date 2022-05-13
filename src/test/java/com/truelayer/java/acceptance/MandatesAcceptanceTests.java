@@ -16,6 +16,7 @@ import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
+import com.truelayer.java.mandates.entities.mandate.ProviderSelection;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
@@ -26,7 +27,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
-@Disabled
+//@Disabled
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
@@ -156,10 +157,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     private CreateMandateRequest createMandateRequest() {
         return CreateMandateRequest.builder()
                 .mandate(Mandate.vrpSweepingMandate()
-                        .providerFilter(ProviderFilter.builder()
+                        .providerSelection(ProviderSelection.builder()
+                                .providerId("ob-natwest-vrp-sandbox")
+                                .build())
+                        /*.providerFilter(ProviderFilter.builder()
                                 .countries(Collections.singletonList(CountryCode.GB))
                                 .releaseChannel(ReleaseChannel.PRIVATE_BETA)
-                                .build())
+                                .build())*/
                         .beneficiary(Beneficiary.externalAccount()
                                 .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                         .accountNumber("10003957")

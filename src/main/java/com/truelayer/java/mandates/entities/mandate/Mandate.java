@@ -1,10 +1,7 @@
 package com.truelayer.java.mandates.entities.mandate;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @ToString
 @EqualsAndHashCode

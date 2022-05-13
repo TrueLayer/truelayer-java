@@ -13,7 +13,10 @@ public class VRPSweepingMandate extends Mandate {
 
     private final Type type = SWEEPING;
 
-    ProviderFilter providerFilter;
+    //todo: cleanup
+    //ProviderFilter providerFilter;
 
-    Beneficiary beneficiary;
+    private ProviderSelection providerSelection;
+
+    private Beneficiary beneficiary;
 }
