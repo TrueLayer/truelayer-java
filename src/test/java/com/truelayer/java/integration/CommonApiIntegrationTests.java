@@ -24,7 +24,7 @@ public class CommonApiIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/payments-provider-return"))
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =

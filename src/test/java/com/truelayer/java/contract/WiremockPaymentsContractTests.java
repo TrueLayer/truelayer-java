@@ -91,7 +91,7 @@ public class WiremockPaymentsContractTests extends WiremockContractTests {
                 .withProviderSelection()
                 .build();
 
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
