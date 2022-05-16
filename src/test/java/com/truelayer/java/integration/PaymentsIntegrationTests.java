@@ -10,7 +10,6 @@ import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
-import com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.SneakyThrows;
@@ -170,10 +169,10 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
     @SneakyThrows
     @ParameterizedTest(name = "and get a response of type {0}")
-    @ValueSource(strings = {"PROVIDER_SELECTION", "REDIRECT", "WAIT"})
+    @ValueSource(strings = {"authorizing.provider_selection", "authorizing.redirect", "authorizing.wait", "failed"})
     @DisplayName("It should start an authorization flow")
-    public void shouldStartAnAuthorizationFlow(AuthorizationFlowAction.Type flowType) {
-        String jsonResponseFile = "payments/200.start_authorization_flow." + flowType.getType() + ".json";
+    public void shouldStartAnAuthorizationFlow(String status) {
+        String jsonResponseFile = "payments/200.start_authorization_flow." + status + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -190,16 +189,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
 
-        ApiResponse<StartAuthorizationFlowResponse> response = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.payments()
                 .startAuthorizationFlow(A_PAYMENT_ID, request)
                 .get();
 
         assertNotError(response);
-        StartAuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, StartAuthorizationFlowResponse.class);
-        assertEquals(
-                flowType,
-                response.getData().getAuthorizationFlow().getActions().getNext().getType());
+        PaymentAuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -207,7 +203,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @ParameterizedTest(name = "and get a response of type {0}")
     @ValueSource(strings = {"AUTHORIZING", "FAILED"})
     @DisplayName("It should submit a provider selection")
-    public void shouldSubmitProviderSelection(SubmitProviderSelectionResponse.Status status) {
+    public void shouldSubmitProviderSelection(Status status) {
         String jsonResponseFile = "payments/200.submit_provider_selection." + status.getStatus() + ".json";
         RequestStub.New()
                 .method("post")
@@ -225,13 +221,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().build();
-        ApiResponse<SubmitProviderSelectionResponse> response = tlClient.payments()
+        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.payments()
                 .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
                 .get();
 
         assertNotError(response);
-        SubmitProviderSelectionResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, SubmitProviderSelectionResponse.class);
+        PaymentAuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }

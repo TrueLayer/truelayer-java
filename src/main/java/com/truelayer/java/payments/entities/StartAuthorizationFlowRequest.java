@@ -27,6 +27,8 @@ public class StartAuthorizationFlowRequest {
     @EqualsAndHashCode
     public static class Redirect {
         URI returnUri;
+
+        URI directReturnUri;
     }
 
     public static StartAuthorizationFlowRequestBuilder builder() {

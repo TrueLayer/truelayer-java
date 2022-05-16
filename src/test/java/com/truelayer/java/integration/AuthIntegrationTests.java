@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -61,7 +62,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .getOauthToken(Collections.singletonList("payments"))
                 .get();
 
-        TestUtils.assertNotError(response);
+        assertNotError(response);
         AccessToken expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
         assertEquals(expected, response.getData());
     }

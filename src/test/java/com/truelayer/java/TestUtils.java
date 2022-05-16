@@ -16,10 +16,15 @@ import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.UUID;
 import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
 
 public class TestUtils {
+
+    private static final OkHttpClient HTTP_CLIENT_INSTANCE =
+            new OkHttpClient.Builder().connectTimeout(Duration.ofSeconds(15)).build();
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
     public static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
@@ -46,6 +51,8 @@ public class TestUtils {
     public static Environment getTestEnvironment(URI endpointUrl) {
         return Environment.custom(endpointUrl, endpointUrl, endpointUrl);
     }
+
+    private TestUtils() {}
 
     @SneakyThrows
     public static SigningOptions getSigningOptions() {
@@ -98,6 +105,7 @@ public class TestUtils {
         private String method;
         private UrlPattern path;
         private int status;
+        private Integer delayMilliseconds;
         private String responseBodyFile;
 
         private RequestStub() {}
@@ -136,6 +144,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub delayMs(int delayMilliseconds) {
+            this.delayMilliseconds = delayMilliseconds;
+            return this;
+        }
+
         public StubMapping build() {
             MappingBuilder request = request(method.toUpperCase(), path)
                     .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
@@ -153,11 +166,19 @@ public class TestUtils {
                     .withHeader(TL_CORRELATION_ID, UUID.randomUUID().toString())
                     .withStatus(status);
 
+            if (isNotEmpty(delayMilliseconds)) {
+                response.withFixedDelay(delayMilliseconds);
+            }
+
             if (!isEmpty(responseBodyFile)) {
                 response.withBodyFile(responseBodyFile);
             }
 
             return stubFor(request.willReturn(response));
         }
+    }
+
+    public static OkHttpClient getHttpClientInstance() {
+        return HTTP_CLIENT_INSTANCE;
     }
 }

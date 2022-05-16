@@ -1,9 +1,12 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
+import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.RetrofitFactory;
@@ -24,10 +27,13 @@ import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Builder class for TrueLayerClient instances.
@@ -36,6 +42,23 @@ public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
 
     private SigningOptions signingOptions;
+
+    /**
+     * Optional timeout configuration that defines a time limit for a complete HTTP call.
+     * This includes resolving DNS, connecting, writing the request body, server processing, as well as
+     * reading the response body. If not set, the internal HTTP client configuration are used.
+     */
+    private Duration timeout;
+
+    /**
+     * Optional configuration for internal connection pool.
+     */
+    private ConnectionPoolOptions connectionPoolOptions;
+
+    /**
+     * Optional execution service to be used by the internal HTTP client.
+     */
+    private ExecutorService requestExecutor;
 
     // By default, production is used
     private Environment environment = Environment.live();
@@ -73,6 +96,38 @@ public class TrueLayerClientBuilder {
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = signingOptions;
+        return this;
+    }
+
+    /**
+     * Utility to set a call timeout for the client.
+     * @param timeout Optional timeout configuration that defines a time limit for a complete HTTP call.
+     * This includes resolving DNS, connecting, writing the request body, server processing, as well as
+     * reading the response body. If not set, the internal HTTP client configuration are used.
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withTimeout(Duration timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    /**
+     * Sets a connection pool for the internal HTTP client
+     * @param connectionPoolOptions optional connection pool to be used
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withConnectionPool(ConnectionPoolOptions connectionPoolOptions) {
+        this.connectionPoolOptions = connectionPoolOptions;
+        return this;
+    }
+
+    /**
+     * Sets a custom HTTP request dispatcher for the internal HTTP client
+     * @param requestExecutor an executor service responsible for handling the HTTP requests
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withRequestExecutor(ExecutorService requestExecutor) {
+        this.requestExecutor = requestExecutor;
         return this;
     }
 
@@ -133,12 +188,28 @@ public class TrueLayerClientBuilder {
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        if (ObjectUtils.isEmpty(clientCredentials)) {
+        if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
         VersionInfo versionInfo = new VersionInfoLoader().load();
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+        if (isNotEmpty(timeout)) {
+            clientBuilder.callTimeout(timeout);
+        }
+
+        if (isNotEmpty(connectionPoolOptions)) {
+            KeepAliveDuration keepAliveDuration = connectionPoolOptions.getKeepAliveDuration();
+            clientBuilder.connectionPool(new ConnectionPool(
+                    connectionPoolOptions.getMaxIdleConnections(),
+                    keepAliveDuration.getDuration(),
+                    keepAliveDuration.getTimeUnit()));
+        }
+
+        if (isNotEmpty(requestExecutor)) {
+            clientBuilder.dispatcher(new Dispatcher(requestExecutor));
+        }
 
         // Setup logging if required
         getLogMessageConsumer()
@@ -158,9 +229,14 @@ public class TrueLayerClientBuilder {
         IHostedPaymentPageLinkBuilder hppLinkBuilder =
                 HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
 
+        // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
+        // endpoint
+        ICommonApi commonApiHandler = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
+                .create(ICommonApi.class);
+
         if (isEmpty(signingOptions)) {
-            // return TL client with just authentication and HPP utils enabled
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder);
+            // return TL client with just authentication, HPP and common utils enabled
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonApiHandler);
         }
 
         // By using .newBuilder() we share internal OkHttpClient resources
@@ -195,6 +271,7 @@ public class TrueLayerClientBuilder {
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
 
-        return new TrueLayerClient(authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder);
+        return new TrueLayerClient(
+                authenticationHandler, paymentsHandler, merchantAccountsHandler, hppLinkBuilder, commonApiHandler);
     }
 }
