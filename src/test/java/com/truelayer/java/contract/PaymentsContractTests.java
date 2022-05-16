@@ -27,6 +27,7 @@ public class PaymentsContractTests extends ContractTests {
     // Matchers
     public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
     public static final String JWT_TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
+    public static final String PAYMENT_STATUS_REGEX = "^(authorization_required|authorizing|authorized|executed|settled|failed)$";
 
     // Samples
     public static final String A_JWT_TOKEN =
@@ -135,7 +136,7 @@ public class PaymentsContractTests extends ContractTests {
 
     private PactDslJsonBody startAuthorizationFlowRedirectResponseBody() {
         return new PactDslJsonBody()
-                .stringType("status", "authorizing")
+                .stringMatcher("status", PAYMENT_STATUS_REGEX, "authorizing")
                 .object("authorization_flow")
                 .object("actions")
                 .object("next")
