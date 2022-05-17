@@ -63,13 +63,14 @@ public class PaymentsContractTests extends ContractTests {
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
-                //  .headerFromProviderState("Authorization","access_token","Bearer" + A_JWT_TOKEN)
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION,"access_token","Bearer " + A_JWT_TOKEN)
                 .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
                 .body(CreatePaymentMerchantAccountResponseBody())
                 .given("Authorize Payment state")
                 .uponReceiving("Start authorization flow call")
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION,"access_token","Bearer " + A_JWT_TOKEN)
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
