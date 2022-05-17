@@ -68,12 +68,15 @@ public class TestUtils {
     }
 
     public static ApiResponse<AccessToken> buildAccessToken() {
-        AccessToken accessToken = new AccessToken(
+        return ApiResponse.<AccessToken>builder().data(buildAccessTokenPlain()).build();
+    }
+
+    public static AccessToken buildAccessTokenPlain() {
+        return new AccessToken(
                 UUID.randomUUID().toString(),
                 3600,
                 UUID.randomUUID().toString(),
                 UUID.randomUUID().toString());
-        return ApiResponse.<AccessToken>builder().data(accessToken).build();
     }
 
     /**

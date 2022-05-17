@@ -2,6 +2,7 @@ package com.truelayer.java.contract;
 
 import au.com.dius.pact.consumer.dsl.FormPostBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -19,6 +20,9 @@ import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilte
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +41,14 @@ public class PaymentsContractTests extends ContractTests {
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createPayment(PactDslWithProvider builder) {
+        PactDslResponse pactContract;
+        pactContract = this.testAuthToken(builder);
+        pactContract = this.testCreatePayment(pactContract);
+        pactContract = this.testStartAuthFlow(pactContract);
+        return pactContract.toPact();
+    }
 
+    private PactDslResponse testAuthToken(PactDslWithProvider builder) {
         return builder.given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
@@ -58,19 +69,35 @@ public class PaymentsContractTests extends ContractTests {
                 .status(200)
                 .body(new PactDslJsonBody()
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                        .numberType("expires_in"))
-                .given("Create Payment state")
+                        .numberType("expires_in"));
+    }
+
+    @SneakyThrows
+    private PactDslResponse testCreatePayment(PactDslResponse pactContract) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID.randomUUID().toString());
+        return pactContract.given("Create Payment state")
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION,"access_token","Bearer " + A_JWT_TOKEN)
+                .headers(headers)
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + TestUtils.buildAccessTokenPlain().getAccessToken())
                 .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
-                .body(CreatePaymentMerchantAccountResponseBody())
-                .given("Authorize Payment state")
+                .body(CreatePaymentMerchantAccountResponseBody());
+    }
+
+    @SneakyThrows
+    private PactDslResponse testStartAuthFlow(PactDslResponse pactContract) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID.randomUUID().toString());
+        return pactContract.given("Authorize Payment state")
                 .uponReceiving("Start authorization flow call")
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION,"access_token","Bearer " + A_JWT_TOKEN)
+                .headers(headers)
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + TestUtils.buildAccessTokenPlain())
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
@@ -78,8 +105,7 @@ public class PaymentsContractTests extends ContractTests {
                 .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
-                .body(startAuthorizationFlowRedirectResponseBody())
-                .toPact();
+                .body(startAuthorizationFlowRedirectResponseBody());
     }
 
     @SneakyThrows
@@ -87,8 +113,9 @@ public class PaymentsContractTests extends ContractTests {
     @PactTestFor(pactMethod = "createPayment")
     public void shouldCreatePayment() {
         // 1. Create a payment with preselected provider
+        CreatePaymentRequest createPaymentRequest = getCreatePaymentRequest();
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
-                tlClient.payments().createPayment(getCreatePaymentRequest()).get();
+                tlClient.payments().createPayment(createPaymentRequest).get();
 
         // 2. Start the auth flow
         tlClient.payments()
