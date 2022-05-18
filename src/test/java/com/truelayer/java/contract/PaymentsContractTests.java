@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -40,21 +41,17 @@ public class PaymentsContractTests extends ContractTests {
     public static final String A_JWT_TOKEN =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
-    public static final String merchantAccountId = "a-merchant-id";
+    public static final String merchantAccountId = "B7DAEA71-592E-486B-9C00-7132D1FD7AD1";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
         String returnUri = "http://localhost:8080/callback";
-
         Map<String, Object> createPaymentParams = new HashMap<>();
-        createPaymentParams.put("merchant_account_id", "a-merchant");
-
+        createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
         createPaymentParams.put("return_uri", returnUri);
-
         return builder
-
                 .given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
@@ -77,7 +74,6 @@ public class PaymentsContractTests extends ContractTests {
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .stringType("scopes")
                         .numberType("expires_in"))
-
                 .given("Create Payment state", createPaymentParams)
                 .uponReceiving("Create payment call")
                 .method("POST")
@@ -91,7 +87,6 @@ public class PaymentsContractTests extends ContractTests {
                         .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .object("user")
                         .stringMatcher("id", UUID_REGEX))
-
                 .given("Authorize Payment state", authorizePaymentParams)
                 .uponReceiving("Start authorization flow call")
                 .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
