@@ -48,7 +48,7 @@ public class PaymentsContractTests extends ContractTests {
         Map<String, Object> createPaymentParams = new HashMap<>();
         createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
-        createPaymentParams.put("return_uri", returnUri);
+        authorizePaymentParams.put("return_uri", returnUri);
         return builder.given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
