@@ -83,13 +83,16 @@ public class PaymentsContractTests extends ContractTests {
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
                         String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
+
 //                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()), "application/json")
+
                 .body(new PactDslJsonBody()
                         .object("provider_selection")
                         .closeObject()
                         .object("redirect")
-                        .valueFromProviderState("return_uri", "return_uri", "http://localhost:8080/callback")
-                        .closeObject())
+                            .valueFromProviderState("return_uri", "return_uri", "http://localhost:8080/callback")
+                        .closeObject()
+                        .asBody())
                 .willRespondWith()
                 .status(200)
                 .body(new PactDslJsonBody()
