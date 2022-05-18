@@ -1,8 +1,9 @@
 package com.truelayer.java.contract;
 
+import static com.truelayer.java.TestUtils.assertNotError;
+
 import au.com.dius.pact.consumer.dsl.FormPostBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
-import au.com.dius.pact.consumer.dsl.PactDslResponse;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -20,10 +21,8 @@ import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilte
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import java.net.URI;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class PaymentsContractTests extends ContractTests {
@@ -37,18 +36,11 @@ public class PaymentsContractTests extends ContractTests {
     // Samples
     public static final String A_JWT_TOKEN =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+    public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
-    RequestResponsePact createPayment(PactDslWithProvider builder) {
-        PactDslResponse pactContract;
-        pactContract = this.testAuthToken(builder);
-        pactContract = this.testCreatePayment(pactContract);
-        pactContract = this.testStartAuthFlow(pactContract);
-        return pactContract.toPact();
-    }
-
-    private PactDslResponse testAuthToken(PactDslWithProvider builder) {
+    RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
         return builder.given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
@@ -69,61 +61,70 @@ public class PaymentsContractTests extends ContractTests {
                 .status(200)
                 .body(new PactDslJsonBody()
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                        .numberType("expires_in"));
-    }
-
-    @SneakyThrows
-    private PactDslResponse testCreatePayment(PactDslResponse pactContract) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID.randomUUID().toString());
-        return pactContract.given("Create Payment state")
+                        .stringType("scopes")
+                        .numberType("expires_in"))
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
-                .headers(headers)
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + TestUtils.buildAccessTokenPlain().getAccessToken())
-                .body(Utils.getObjectMapper().writeValueAsString(getCreatePaymentRequest()), "application/json")
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
+                .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
-                .body(CreatePaymentMerchantAccountResponseBody());
-    }
-
-    @SneakyThrows
-    private PactDslResponse testStartAuthFlow(PactDslResponse pactContract) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID.randomUUID().toString());
-        return pactContract.given("Authorize Payment state")
+                .body(new PactDslJsonBody()
+                        .stringType("id", A_PAYMENT_ID)
+                        .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
+                        .object("user")
+                        .stringMatcher("id", UUID_REGEX))
                 .uponReceiving("Start authorization flow call")
-                .headers(headers)
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + TestUtils.buildAccessTokenPlain())
+                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
-                        "/payments/48c890dc-8c03-428c-9a8b-2f383fd0ba38/authorization-flow")
-                .body(Utils.getObjectMapper().writeValueAsString(getStartAuthFlowRequest()), "application/json")
+                        String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
+                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
-                .body(startAuthorizationFlowRedirectResponseBody());
+                .body(new PactDslJsonBody()
+                        .stringMatcher("status", PAYMENT_STATUS_REGEX, "authorizing")
+                        .object("authorization_flow")
+                        .object("actions")
+                        .object("next")
+                        .stringType("type", "redirect")
+                        .matchUrl("uri", "https://a-redirect-uri.com")
+                        .object("metadata")
+                        .stringType("type", "provider")
+                        .stringType("provider_id", "ob-bank-name")
+                        .stringType("display_name", "Bank Name")
+                        .matchUrl(
+                                "icon_uri",
+                                "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
+                        .matchUrl(
+                                "logo_uri",
+                                "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
+                        .stringType("bg_color", "#000000")
+                        .stringType("country_code", "GB"))
+                .toPact();
     }
 
     @SneakyThrows
     @Test
-    @PactTestFor(pactMethod = "createPayment")
-    public void shouldCreatePayment() {
+    @DisplayName("It should create and authorize a payment")
+    @PactTestFor(pactMethod = "createAndAuthorizePayment")
+    public void shouldCreateAndAuthorizePayment() {
         // 1. Create a payment with preselected provider
-        CreatePaymentRequest createPaymentRequest = getCreatePaymentRequest();
+        CreatePaymentRequest createPaymentRequest = buildCreatePaymentRequest();
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(createPaymentRequest).get();
+        assertNotError(createPaymentResponse);
 
         // 2. Start the auth flow
-        tlClient.payments()
-                .startAuthorizationFlow(createPaymentResponse.getData().getId(), getStartAuthFlowRequest())
+        ApiResponse<PaymentAuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest())
                 .get();
+        assertNotError(authorizationFlowResponse);
     }
 
-    private CreatePaymentRequest getCreatePaymentRequest() {
+    private CreatePaymentRequest buildCreatePaymentRequest() {
         return CreatePaymentRequest.builder()
                 .amountInMinor(50)
                 .currency(CurrencyCode.GBP)
@@ -147,38 +148,12 @@ public class PaymentsContractTests extends ContractTests {
                 .build();
     }
 
-    private StartAuthorizationFlowRequest getStartAuthFlowRequest() {
+    private StartAuthorizationFlowRequest buildStartAuthFlowRequest() {
         return StartAuthorizationFlowRequest.builder()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create("http://localhost:8080/callback"))
                         .build())
                 .withProviderSelection()
                 .build();
-    }
-
-    private PactDslJsonBody CreatePaymentMerchantAccountResponseBody() {
-        return new PactDslJsonBody()
-                .stringType("id", "48c890dc-8c03-428c-9a8b-2f383fd0ba38")
-                .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                .object("user")
-                .stringMatcher("id", UUID_REGEX);
-    }
-
-    private PactDslJsonBody startAuthorizationFlowRedirectResponseBody() {
-        return new PactDslJsonBody()
-                .stringMatcher("status", PAYMENT_STATUS_REGEX, "authorizing")
-                .object("authorization_flow")
-                .object("actions")
-                .object("next")
-                .stringType("type", "redirect")
-                .matchUrl("uri", "https://a-redirect-uri.com")
-                .object("metadata")
-                .stringType("type", "provider")
-                .stringType("provider_id", "ob-bank-name")
-                .stringType("display_name", "Bank Name")
-                .matchUrl("icon_uri", "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
-                .matchUrl("logo_uri", "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
-                .stringType("bg_color", "#000000")
-                .stringType("country_code", "GB");
     }
 }
