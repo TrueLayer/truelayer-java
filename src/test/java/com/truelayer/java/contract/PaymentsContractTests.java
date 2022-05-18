@@ -21,6 +21,9 @@ import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilte
 import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,11 +40,22 @@ public class PaymentsContractTests extends ContractTests {
     public static final String A_JWT_TOKEN =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
+    public static final String merchantAccountId = "a-merchant-id";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
-        return builder.given("Auth Token state")
+        String returnUri = "http://localhost:8080/callback";
+
+        Map<String, Object> createPaymentParams = new HashMap<>();
+        createPaymentParams.put("merchant_account_id", "a-merchant");
+
+        Map<String, Object> authorizePaymentParams = new HashMap<>();
+        createPaymentParams.put("return_uri", returnUri);
+
+        return builder
+
+                .given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
                 .path("/connect/token")
@@ -63,7 +77,8 @@ public class PaymentsContractTests extends ContractTests {
                         .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .stringType("scopes")
                         .numberType("expires_in"))
-                .given("Create Payment state")
+
+                .given("Create Payment state", createPaymentParams)
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
@@ -76,23 +91,15 @@ public class PaymentsContractTests extends ContractTests {
                         .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .object("user")
                         .stringMatcher("id", UUID_REGEX))
-                .given("Authorize Payment state")
+
+                .given("Authorize Payment state", authorizePaymentParams)
                 .uponReceiving("Start authorization flow call")
                 .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
                         String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
-
-//                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()), "application/json")
-
-                .body(new PactDslJsonBody()
-                        .object("provider_selection")
-                        .closeObject()
-                        .object("redirect")
-                            .valueFromProviderState("return_uri", "return_uri", "http://localhost:8080/callback")
-                        .closeObject()
-                        .asBody())
+                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest(returnUri)), "application/json")
                 .willRespondWith()
                 .status(200)
                 .body(new PactDslJsonBody()
@@ -129,8 +136,9 @@ public class PaymentsContractTests extends ContractTests {
         assertNotError(createPaymentResponse);
 
         // 2. Start the auth flow
+        String returnUri = "http://localhost:8080/callback";
         ApiResponse<PaymentAuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
-                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest())
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest(returnUri))
                 .get();
         assertNotError(authorizationFlowResponse);
     }
@@ -149,7 +157,7 @@ public class PaymentsContractTests extends ContractTests {
                                         .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
-                                .merchantAccountId("a-merchant-id")
+                                .merchantAccountId(merchantAccountId)
                                 .build())
                         .build())
                 .user(User.builder()
@@ -159,10 +167,10 @@ public class PaymentsContractTests extends ContractTests {
                 .build();
     }
 
-    private StartAuthorizationFlowRequest buildStartAuthFlowRequest() {
+    private StartAuthorizationFlowRequest buildStartAuthFlowRequest(String returnUri) {
         return StartAuthorizationFlowRequest.builder()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create("http://localhost:8080/callback"))
+                        .returnUri(URI.create(returnUri))
                         .build())
                 .withProviderSelection()
                 .build();
