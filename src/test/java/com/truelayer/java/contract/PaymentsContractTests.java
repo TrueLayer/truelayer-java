@@ -99,22 +99,26 @@ public class PaymentsContractTests extends ContractTests {
                 .body(new PactDslJsonBody()
                         .stringMatcher("status", PAYMENT_STATUS_REGEX, "authorizing")
                         .object("authorization_flow")
-                        .object("actions")
-                        .object("next")
-                        .stringType("type", "redirect")
-                        .matchUrl("uri", "https://a-redirect-uri.com")
-                        .object("metadata")
-                        .stringType("type", "provider")
-                        .stringType("provider_id", "ob-bank-name")
-                        .stringType("display_name", "Bank Name")
-                        .matchUrl(
-                                "icon_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
-                        .matchUrl(
-                                "logo_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
-                        .stringType("bg_color", "#000000")
-                        .stringType("country_code", "GB"))
+                            .object("actions")
+                                .object("next")
+                                    .stringType("type", "provider_selection")
+                                    .array("providers")
+                                        .object()
+                                            .stringType("id", "ob-bank-name")
+                                            .stringType("display_name", "Bank Name")
+                                            .matchUrl(
+                                                    "icon_uri",
+                                                    "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
+                                            .matchUrl(
+                                                    "logo_uri",
+                                                    "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
+                                            .stringType("bg_color", "#000000")
+                                            .stringType("country_code", "GB")
+                                        .closeObject()
+                                    .closeArray()
+                                .closeObject()
+                            .closeObject()
+                        .closeObject())
                 .toPact();
     }
 
