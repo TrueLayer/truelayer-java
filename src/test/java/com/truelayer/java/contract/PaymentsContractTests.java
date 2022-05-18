@@ -23,8 +23,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,8 +49,7 @@ public class PaymentsContractTests extends ContractTests {
         createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
         createPaymentParams.put("return_uri", returnUri);
-        return builder
-                .given("Auth Token state")
+        return builder.given("Auth Token state")
                 .uponReceiving("Create token call")
                 .method("POST")
                 .path("/connect/token")
@@ -94,7 +91,9 @@ public class PaymentsContractTests extends ContractTests {
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
                         String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
-                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest(returnUri)), "application/json")
+                .body(
+                        Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest(returnUri)),
+                        "application/json")
                 .willRespondWith()
                 .status(200)
                 .body(new PactDslJsonBody()
