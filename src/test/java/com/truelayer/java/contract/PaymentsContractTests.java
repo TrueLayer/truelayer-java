@@ -36,11 +36,11 @@ public class PaymentsContractTests extends ContractTests {
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
     public static final String merchantAccountId = "B7DAEA71-592E-486B-9C00-7132D1FD7AD1";
+    public static final String returnUri = "http://localhost:8080/callback";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
-        String returnUri = "http://localhost:8080/callback";
         Map<String, Object> createPaymentParams = new HashMap<>();
         createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
@@ -65,7 +65,7 @@ public class PaymentsContractTests extends ContractTests {
                         "/payments/${payment_id}/authorization-flow",
                         String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
                 .body(
-                        Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest(returnUri)),
+                        Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()),
                         "application/json")
                 .willRespondWith()
                 .status(200)
@@ -107,9 +107,8 @@ public class PaymentsContractTests extends ContractTests {
         assertNotError(createPaymentResponse);
 
         // 2. Start the auth flow
-        String returnUri = "http://localhost:8080/callback";
         ApiResponse<PaymentAuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
-                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest(returnUri))
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest())
                 .get();
         assertNotError(authorizationFlowResponse);
     }
@@ -138,7 +137,7 @@ public class PaymentsContractTests extends ContractTests {
                 .build();
     }
 
-    private StartAuthorizationFlowRequest buildStartAuthFlowRequest(String returnUri) {
+    private StartAuthorizationFlowRequest buildStartAuthFlowRequest() {
         return StartAuthorizationFlowRequest.builder()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create(returnUri))
