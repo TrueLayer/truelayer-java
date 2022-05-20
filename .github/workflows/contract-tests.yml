@@ -36,7 +36,7 @@ jobs:
         uses: promiseofcake/circleci-trigger-action@v.1.2.2
         with:
           # CircleCI project slug, ie. the repo name: promiseofcake/circleci-trigger-action
-          project-slug: gh/TrueLayer/payments-gateway
+          project-slug: TrueLayer/payments-gateway
           # CircleCI User Token used to authorize the workflow run
           user-token: ${{ secrets.circleci_token }}
           # Branch for the CircleCU contextual run.
