@@ -7,6 +7,8 @@ on:
         required: true
       pact_broker_token:
         required: true
+      circleci_token:
+        required: true
 
 jobs:
   contract-tests:
@@ -28,3 +30,16 @@ jobs:
           PACT_BROKER_URL: ${{ secrets.pact_broker_url }}
           PACT_BROKER_TOKEN: ${{ secrets.pact_broker_token }}
         run: ./gradlew pactPublish
+      - name: CircleCI Workflow API Trigger
+        # You may pin to the exact commit or the version.
+        # uses: promiseofcake/circleci-trigger-action@cfadd6953b3e62a877feea46dcb778f0fb69a30f
+        uses: promiseofcake/circleci-trigger-action@v.1.2.2
+        with:
+          # CircleCI project slug, ie. the repo name: promiseofcake/circleci-trigger-action
+          project-slug: gh/TrueLayer/payments-gateway
+          # CircleCI User Token used to authorize the workflow run
+          user-token: ${{ secrets.circleci_token }}
+          # Branch for the CircleCU contextual run.
+          branch: facu/pact-test
+          # Payload data (JSON) to send to the Workflow endpoint
+          payload: '{"contract_tests_run": true, "contract_tests_tag": "jsdk-68-pact"}'
