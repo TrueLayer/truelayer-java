@@ -2,15 +2,11 @@ package com.truelayer.java.contract;
 
 import static com.truelayer.java.TestUtils.assertNotError;
 
-import au.com.dius.pact.consumer.dsl.FormPostBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import com.truelayer.java.ClientCredentials;
-import com.truelayer.java.Constants;
-import com.truelayer.java.TestUtils;
 import com.truelayer.java.Utils;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
@@ -49,33 +45,12 @@ public class PaymentsContractTests extends ContractTests {
         createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
         authorizePaymentParams.put("return_uri", returnUri);
+
         return builder.given("Auth Token state")
-                .uponReceiving("Create token call")
-                .method("POST")
-                .path("/connect/token")
-                .body(
-                        new String(new FormPostBuilder()
-                                .stringMatcher(
-                                        "client_id",
-                                        TestUtils.getClientCredentials().clientId())
-                                .stringValue(
-                                        "client_secret",
-                                        TestUtils.getClientCredentials().clientSecret())
-                                .stringValue("grant_type", ClientCredentials.GRANT_TYPE)
-                                .stringValue("scopes", Constants.Scopes.PAYMENTS)
-                                .buildBody()),
-                        "application/x-www-form-urlencoded")
-                .willRespondWith()
-                .status(200)
-                .body(new PactDslJsonBody()
-                        .stringMatcher("access_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
-                        .stringType("scopes")
-                        .numberType("expires_in"))
                 .given("Create Payment state", createPaymentParams)
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
                 .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
@@ -86,7 +61,6 @@ public class PaymentsContractTests extends ContractTests {
                         .stringMatcher("id", UUID_REGEX))
                 .given("Authorize Payment state", authorizePaymentParams)
                 .uponReceiving("Start authorization flow call")
-                .headerFromProviderState(Constants.HeaderNames.AUTHORIZATION, "access_token", "Bearer " + A_JWT_TOKEN)
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
