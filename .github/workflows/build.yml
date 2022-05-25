@@ -31,7 +31,7 @@ jobs:
       - name: Get project version
         id: get_project_version
         run: |
-          PROJECT_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
           echo "::set-output name=project_version::$PROJECT_VERSION"
       - name: Semantic versioning check
         run: |
