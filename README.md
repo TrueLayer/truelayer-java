@@ -119,7 +119,7 @@ CompletableFuture<ApiResponse<CreatePaymentResponse>> paymentResponse = client
     .createPayment(paymentRequest);
 
 // wait for the response
-ApiResponse<CreatePaymentResponse> payment = paymentResponse.get())
+ApiResponse<CreatePaymentResponse> payment = paymentResponse.get();
 ```
 
 ### Build a link to our hosted createPaymentResponse page
