@@ -75,7 +75,7 @@ public class PaymentsContractTests extends ContractTests {
                         .stringType("type", "provider_selection")
                         .array("providers")
                         .object()
-                        .stringType("id", "ob-bank-name")
+                        .stringType("provider_id", "ob-bank-name")
                         .stringType("display_name", "Bank Name")
                         .matchUrl(
                                 "icon_uri",
@@ -85,7 +85,6 @@ public class PaymentsContractTests extends ContractTests {
                                 "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
                         .stringType("bg_color", "#000000")
                         .stringType("country_code", "GB")
-                        .closeObject()
                         .closeArray()
                         .closeObject()
                         .closeObject()
