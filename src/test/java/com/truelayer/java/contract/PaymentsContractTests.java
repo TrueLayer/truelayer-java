@@ -75,7 +75,7 @@ public class PaymentsContractTests extends ContractTests {
                         .stringType("type", "provider_selection")
                         .array("providers")
                         .object()
-                        .stringType("provider-id", "ob-bank-name")
+                        .stringType("id", "ob-bank-name")
                         .stringType("display_name", "Bank Name")
                         .matchUrl(
                                 "icon_uri",
