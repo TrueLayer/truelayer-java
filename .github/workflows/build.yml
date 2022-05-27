@@ -28,6 +28,11 @@ jobs:
           cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Fix Gradle options on Java < 9
+        if: ${{ matrix.java < 9 }}
+        run: |
+          # removes jvm args
+          sed -ie s/org\.gradle\.jvmargs/_ignored/ gradle.properties
       - name: Get project version
         id: get_project_version
         run: |
@@ -41,10 +46,9 @@ jobs:
               echo "Project version ${{steps.get_project_version.outputs.project_version}} is not valid"; exit 1;
           fi
       - name: Lint
-        if: ${{ matrix.java == 8 }}
         run: ./gradlew spotlessJavaCheck
       - name: Build
-        run: ./gradlew build -x test -x spotlessJavaCheck
+        run: ./gradlew build -x test
       - name: Unit tests
         run: ./gradlew unit-tests
       - name: Integration tests
