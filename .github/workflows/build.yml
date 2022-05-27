@@ -44,7 +44,7 @@ jobs:
         if: ${{ matrix.java == 8 }}
         run: ./gradlew spotlessJavaCheck
       - name: Build
-        run: ./gradlew build -x test
+        run: ./gradlew build -x test -x spotlessJavaCheck
       - name: Unit tests
         run: ./gradlew unit-tests
       - name: Integration tests
