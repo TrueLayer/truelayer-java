@@ -182,6 +182,9 @@ the builds will fail if not compliant.
 
 When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
 
+Due to an open issue with JDK16+, we had to specify some extra Jvm options in the [gradle.properties](gradle.properties) file.
+If you're building on JDK versions below 9, you'll have to remove/comment the `org.gradle.jvmargs` key in there.
+
 ## Contributing
 
 Contributions are always welcome!
