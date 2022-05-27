@@ -64,9 +64,7 @@ public class PaymentsContractTests extends ContractTests {
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
                         String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
-                .body(
-                        Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()),
-                        "application/json")
+                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()), "application/json")
                 .willRespondWith()
                 .status(200)
                 .body(new PactDslJsonBody()
