@@ -2,12 +2,15 @@ package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
+import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits;
@@ -16,7 +19,6 @@ import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
-import com.truelayer.java.mandates.entities.mandate.ProviderSelection;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
@@ -29,15 +31,74 @@ import org.junit.jupiter.api.*;
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
-    public static final String PROVIDER_ID = "ob-natwest-vrp-sandbox";
+    public static final String PROVIDER_ID = "ob-uki-mock-bank";
 
     @Test
-    @DisplayName("It should create a mandate")
+    @DisplayName("It should create a sweeping mandate with preselected provider")
     @SneakyThrows
-    public void itShouldCreateAMandate() {
+    public void itShouldCreateASweepingMandateWithPreselectedProvider() {
         // create mandate
-        ApiResponse<CreateMandateResponse> createMandateResponse =
-                tlClient.mandates().createMandate(createMandateRequest()).get();
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .get();
+
+        assertNotError(createMandateResponse);
+
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+    }
+
+    @Test
+    @DisplayName("It should create a commercial mandate with preselected provider")
+    @SneakyThrows
+    public void itShouldCreateACommercialMandateWithPreselectedProvider() {
+        // create mandate
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(COMMERCIAL, preselectedProvider))
+                .get();
+
+        assertNotError(createMandateResponse);
+
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+    }
+
+    @Test
+    @DisplayName("It should create a mandate with user_selected provider")
+    @SneakyThrows
+    public void itShouldCreateAMandateWithUserSelectedProvider() {
+        // create mandate
+        ProviderSelection userSelectedProvider =
+                ProviderSelection.userSelected().build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, userSelectedProvider))
+                .get();
 
         assertNotError(createMandateResponse);
 
@@ -81,8 +142,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void itShouldCreateAndGetAMandate() {
         // create mandate
-        ApiResponse<CreateMandateResponse> createMandateResponse =
-                tlClient.mandates().createMandate(createMandateRequest()).get();
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .get();
 
         assertNotError(createMandateResponse);
 
@@ -99,8 +163,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void itShouldCreateAndRevokeAMandate() {
         // create mandate
-        ApiResponse<CreateMandateResponse> createMandateResponse =
-                tlClient.mandates().createMandate(createMandateRequest()).get();
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .get();
 
         assertNotError(createMandateResponse);
 
@@ -121,8 +188,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void itShouldCreateAPaymentOnMandate() {
         // create mandate
-        ApiResponse<CreateMandateResponse> createMandateResponse =
-                tlClient.mandates().createMandate(createMandateRequest()).get();
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .get();
 
         assertNotError(createMandateResponse);
 
@@ -136,6 +206,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // create a payment on mandate
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
+                .currency(CurrencyCode.EUR) // todo: validate this with the team
                 .paymentMethod(PaymentMethod.mandate()
                         .mandateId(getMandateResponse.getData().getId())
                         .build())
@@ -149,19 +220,44 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // a payment
         // todo: improve this with a mock provider
         assertTrue(createPaymentResponse.isError()
-                && createPaymentResponse.getError().getTitle().equalsIgnoreCase("invalid state"));
+                && createPaymentResponse
+                        .getError()
+                        .getErrors()
+                        .toString()
+                        .contains("Mandate must be in Authorized state"));
     }
 
-    private CreateMandateRequest createMandateRequest() {
+    private CreateMandateRequest createMandateRequest(Mandate.Type type, ProviderSelection providerSelection) {
+        Mandate mandate = null;
+        if (type.equals(Mandate.Type.COMMERCIAL)) {
+            mandate = Mandate.vrpCommercialMandate()
+                    .providerSelection(providerSelection)
+                    .beneficiary(Beneficiary.externalAccount()
+                            .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
+                                    .accountNumber("10003957")
+                                    .sortCode("140662")
+                                    .build())
+                            .accountHolderName("Andrea Java SDK")
+                            .reference("a reference")
+                            .build())
+                    .build();
+        } else {
+            mandate = Mandate.vrpSweepingMandate()
+                    .providerSelection(providerSelection)
+                    .beneficiary(Beneficiary.externalAccount()
+                            .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
+                                    .accountNumber("10003957")
+                                    .sortCode("140662")
+                                    .build())
+                            .accountHolderName("Andrea Java SDK")
+                            .reference("a reference")
+                            .build())
+                    .build();
+        }
+
         return CreateMandateRequest.builder()
                 .mandate(Mandate.vrpSweepingMandate()
-                        .providerSelection(ProviderSelection.builder()
-                                .providerId("ob-natwest-vrp-sandbox")
-                                .build())
-                        /*.providerFilter(ProviderFilter.builder()
-                        .countries(Collections.singletonList(CountryCode.GB))
-                        .releaseChannel(ReleaseChannel.PRIVATE_BETA)
-                        .build())*/
+                        .providerSelection(providerSelection)
                         .beneficiary(Beneficiary.externalAccount()
                                 .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                         .accountNumber("10003957")

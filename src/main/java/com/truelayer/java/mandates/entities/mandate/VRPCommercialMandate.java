@@ -1,6 +1,6 @@
 package com.truelayer.java.mandates.entities.mandate;
 
-import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
+import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
@@ -9,9 +9,9 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class VRPSweepingMandate extends Mandate {
+public class VRPCommercialMandate extends Mandate {
 
-    private final Type type = SWEEPING;
+    private final Type type = COMMERCIAL;
 
     private ProviderSelection providerSelection;
 

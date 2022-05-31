@@ -11,10 +11,15 @@ public abstract class Mandate {
         return VRPSweepingMandate.builder();
     }
 
+    public static VRPCommercialMandate.VRPCommercialMandateBuilder vrpCommercialMandate() {
+        return VRPCommercialMandate.builder();
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {
-        SWEEPING("sweeping");
+        SWEEPING("sweeping"),
+        COMMERCIAL("commercial");
 
         @JsonValue
         private final String type;
