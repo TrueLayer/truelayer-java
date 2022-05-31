@@ -9,26 +9,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     name: Build and tests
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        java: [ 8, 11, 15, 17, 18 ]
+    runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 8
+      - uses: actions/checkout@v3
+      - name: Setup JDK ${{ matrix.java }}
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: ${{ matrix.java }}
           distribution: 'adopt'
           cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Fix Gradle options on Java < 9
+        if: ${{ matrix.java < 9 }}
+        run: |
+          # removes jvm args
+          sed -ie s/org\.gradle\.jvmargs/_ignored/ gradle.properties
       - name: Get project version
         id: get_project_version
         run: |
-          PROJECT_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
+          PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
           echo "::set-output name=project_version::$PROJECT_VERSION"
-      - name: Semver version check
+      - name: Semantic versioning check
         run: |
           if [[ "${{steps.get_project_version.outputs.project_version}}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
               echo "Project version ${{steps.get_project_version.outputs.project_version}} is valid"

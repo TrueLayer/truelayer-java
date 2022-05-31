@@ -101,6 +101,7 @@ public class TestUtils {
         private UrlPattern path;
         private int status;
         private String bodyFile;
+        private Integer delayMilliseconds;
 
         private RequestStub() {}
 
@@ -138,6 +139,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub delayMs(int delayMilliseconds) {
+            this.delayMilliseconds = delayMilliseconds;
+            return this;
+        }
+
         public StubMapping build() {
             MappingBuilder request = request(method.toUpperCase(), path)
                     .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
@@ -154,6 +160,10 @@ public class TestUtils {
             ResponseDefinitionBuilder response = aResponse()
                     .withHeader(TL_CORRELATION_ID, UUID.randomUUID().toString())
                     .withStatus(status);
+
+            if (isNotEmpty(delayMilliseconds)) {
+                response.withFixedDelay(delayMilliseconds);
+            }
 
             if (!isEmpty(bodyFile)) {
                 response.withBodyFile(bodyFile);
