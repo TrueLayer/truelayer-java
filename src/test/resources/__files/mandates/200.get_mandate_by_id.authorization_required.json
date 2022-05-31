@@ -18,12 +18,15 @@
     "valid_from": "2022-01-17T17:13:18.214924Z",
     "valid_to": "2022-01-27T17:13:18.214924Z",
     "maximum_individual_amount": 1,
-    "periodic_limits": [
-      {
-        "maximum_amount": 1,
-        "period_alignment": "consent",
-        "period_type": "day"
+    "periodic_limits": {
+      "day": {
+        "maximum_amount": 0,
+        "period_alignment": "consent"
+      },
+      "week": {
+        "maximum_amount": 0,
+        "period_alignment": "consent"
       }
-    ]
+    }
   }
 }

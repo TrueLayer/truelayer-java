@@ -1,17 +1,17 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
-import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.Constraints;
+import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits;
+import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
@@ -21,7 +21,6 @@ import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
-import java.util.Collections;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -160,9 +159,9 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                 .providerId("ob-natwest-vrp-sandbox")
                                 .build())
                         /*.providerFilter(ProviderFilter.builder()
-                                .countries(Collections.singletonList(CountryCode.GB))
-                                .releaseChannel(ReleaseChannel.PRIVATE_BETA)
-                                .build())*/
+                        .countries(Collections.singletonList(CountryCode.GB))
+                        .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                        .build())*/
                         .beneficiary(Beneficiary.externalAccount()
                                 .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                         .accountNumber("10003957")
@@ -179,11 +178,12 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .email("john@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
-                                .periodAlignment(CALENDAR)
-                                .periodType(MONTH)
-                                .maximumAmount(2000)
-                                .build()))
+                        .periodicLimits(PeriodicLimits.builder()
+                                .month(Limit.builder()
+                                        .maximumAmount(2000)
+                                        .periodAlignment(CALENDAR)
+                                        .build())
+                                .build())
                         .maximumIndividualAmount(1000)
                         .build())
                 .build();

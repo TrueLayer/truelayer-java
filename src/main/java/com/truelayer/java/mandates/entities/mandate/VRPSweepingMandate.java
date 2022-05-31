@@ -2,7 +2,6 @@ package com.truelayer.java.mandates.entities.mandate;
 
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
 
-import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,9 +11,6 @@ import lombok.Getter;
 public class VRPSweepingMandate extends Mandate {
 
     private final Type type = SWEEPING;
-
-    //todo: cleanup
-    //ProviderFilter providerFilter;
 
     private ProviderSelection providerSelection;
 

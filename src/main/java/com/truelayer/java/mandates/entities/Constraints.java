@@ -1,7 +1,6 @@
 package com.truelayer.java.mandates.entities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.List;
 import lombok.*;
 
 @Builder
@@ -16,41 +15,44 @@ public class Constraints {
 
     private Integer maximumIndividualAmount;
 
-    private List<PeriodicLimit> periodicLimits;
+    private PeriodicLimits periodicLimits;
 
     @Builder
     @Getter
     @EqualsAndHashCode
     @ToString
-    public static class PeriodicLimit {
-        private int maximumAmount;
+    public static class PeriodicLimits {
 
-        private PeriodAlignment periodAlignment;
+        private Limit day;
 
-        private PeriodType periodType;
+        private Limit week;
 
-        @RequiredArgsConstructor
+        private Limit fortnight;
+
+        private Limit month;
+
+        private Limit halfYear;
+
+        private Limit year;
+
+        @Builder
         @Getter
-        public enum PeriodAlignment {
-            CONSENT("consent"),
-            CALENDAR("calendar");
+        @EqualsAndHashCode
+        @ToString
+        public static class Limit {
+            private int maximumAmount;
 
-            @JsonValue
-            private final String value;
-        }
+            private PeriodAlignment periodAlignment;
 
-        @RequiredArgsConstructor
-        @Getter
-        public enum PeriodType {
-            DAY("day"),
-            WEEK("week"),
-            FORTNIGHT("fortnight"),
-            MONTH("month"),
-            HALF_YEAR("half_year"),
-            YEAR("year");
+            @RequiredArgsConstructor
+            @Getter
+            public enum PeriodAlignment {
+                CONSENT("consent"),
+                CALENDAR("calendar");
 
-            @JsonValue
-            private final String value;
+                @JsonValue
+                private final String value;
+            }
         }
     }
 }

@@ -1,10 +1,12 @@
-package com.truelayer.java.payments.entities.paymentmethod.provider;
+package com.truelayer.java.entities.providerselection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection.PreselectedProviderSelectionBuilder;
 import lombok.*;
 
 @JsonTypeInfo(
@@ -23,11 +25,11 @@ public abstract class ProviderSelection {
     protected Type type;
 
     public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder userSelected() {
-        return new UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder();
+        return UserSelectedProviderSelection.builder();
     }
 
-    public static PreselectedProviderSelection.PreselectedProviderSelectionBuilder preselected() {
-        return new PreselectedProviderSelection.PreselectedProviderSelectionBuilder();
+    public static PreselectedProviderSelectionBuilder preselected() {
+        return PreselectedProviderSelection.builder();
     }
 
     @JsonIgnore

@@ -1,6 +1,5 @@
 package com.truelayer.java.mandates.entities.mandate;
 
-
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,5 +14,5 @@ public class ProviderSelection {
 
     String providerId;
 
-    //todo:remitter
+    // todo:remitter
 }

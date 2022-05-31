@@ -8,7 +8,7 @@ import lombok.*;
 public abstract class Mandate {
 
     public static VRPSweepingMandate.VRPSweepingMandateBuilder vrpSweepingMandate() {
-        return new VRPSweepingMandate.VRPSweepingMandateBuilder();
+        return VRPSweepingMandate.builder();
     }
 
     @RequiredArgsConstructor
