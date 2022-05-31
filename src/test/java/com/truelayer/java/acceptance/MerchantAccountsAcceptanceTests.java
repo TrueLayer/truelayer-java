@@ -10,13 +10,12 @@ import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.MerchantAccountPayment;
 import com.truelayer.java.merchantaccounts.entities.transactions.Transaction;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 @DisplayName("Merchant accounts acceptance tests")
 public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
@@ -122,19 +121,16 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
         assertNotError(getPaymentSources);
     }
 
-    @Test
-    @DisplayName("It should return a list of mandates")
-    public void shouldReturnAListOfMandate() {}
-
     @SneakyThrows
     @Synchronized
     private ApiResponse<ListTransactionsResponse> getTransactions() {
+        ZonedDateTime from = ZonedDateTime.parse("2021-03-01T00:00:00Z");
         return tlClient.merchantAccounts()
                 .listTransactions(
                         getMerchantAccount().getId(),
                         ListTransactionsQuery.builder()
-                                .from(ZonedDateTime.parse("2021-03-01T00:00:00Z"))
-                                .to(ZonedDateTime.parse("2022-03-01T00:00:00Z"))
+                                .from(from)
+                                .to(from.plus(3, ChronoUnit.MONTHS))
                                 .build())
                 .get();
     }

@@ -8,6 +8,7 @@ import com.truelayer.java.merchantaccounts.entities.ListPaymentSourcesQuery;
 import com.truelayer.java.merchantaccounts.entities.ListTransactionsQuery;
 import com.truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,16 +46,17 @@ class MerchantAccountsHandlerTests {
         IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
         MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
         String fromStr = "2021-02-20T06:30:00Z";
-        String toStr = "2022-02-20T06:30:00Z";
+        ZonedDateTime to = ZonedDateTime.now(ZoneId.of("UTC"));
+
         ListTransactionsQuery query = ListTransactionsQuery.builder()
                 .from(ZonedDateTime.parse(fromStr))
-                .to(ZonedDateTime.parse(toStr))
+                .to(to)
                 .type(TransactionTypeQuery.PAYOUT)
                 .build();
 
         sut.listTransactions(A_MERCHANT_ACCOUNT_ID, query);
 
-        verify(merchantsApi, times(1)).listTransactions(A_MERCHANT_ACCOUNT_ID, fromStr, toStr, query.type());
+        verify(merchantsApi, times(1)).listTransactions(A_MERCHANT_ACCOUNT_ID, fromStr, to.toString(), query.type());
     }
 
     @Test

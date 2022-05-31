@@ -3,11 +3,13 @@ package com.truelayer.java.integration;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
@@ -53,7 +55,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 tlClient.mandates().createMandate(createMandateRequest).get();
 
         assertNotError(response);
-        CreateMandateResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreateMandateResponse.class);
+        CreateMandateResponse expected = deserializeJsonFileTo(jsonResponseFile, CreateMandateResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -79,7 +81,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<ListMandatesResponse> response =
                 tlClient.mandates().listMandates().get();
 
-        ListMandatesResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ListMandatesResponse.class);
+        ListMandatesResponse expected = deserializeJsonFileTo(jsonResponseFile, ListMandatesResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -106,7 +108,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<MandateDetail> response =
                 tlClient.mandates().getMandate(A_MANDATE_ID).get();
 
-        MandateDetail expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, MandateDetail.class);
+        MandateDetail expected = deserializeJsonFileTo(jsonResponseFile, MandateDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
@@ -138,8 +140,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .get();
 
         assertNotError(response);
-        AuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
+        AuthorizationFlowResponse expected = deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -170,8 +171,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .get();
 
         assertNotError(response);
-        AuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
+        AuthorizationFlowResponse expected = deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
@@ -199,7 +199,32 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertNotError(response);
     }
 
+    @SneakyThrows
     @Test
-    @DisplayName("It should return a list of mandates")
-    public void shouldReturnAListOfMandate() {}
+    @DisplayName("It should yield an idempotency key reuse error")
+    public void shouldYieldAnIdempotencyKeyReuseError() {
+        String jsonResponseFile = "mandates/422.create_mandate.idempotency_key_reuse.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/mandates"))
+                .withAuthorization()
+                .status(422)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        CreateMandateRequest createMandateRequest =
+                CreateMandateRequest.builder().build();
+
+        ApiResponse<CreateMandateResponse> response =
+                tlClient.mandates().createMandate(createMandateRequest).get();
+
+        assertTrue(response.isError());
+        assertEquals(response.getError(), deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class));
+    }
 }
