@@ -251,7 +251,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         "Authorization",
                         String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
                 .build();
-        Response paymentResponse = new OkHttpClient().newCall(request).execute();
+        Response paymentResponse = getHttpClientInstance().newCall(request).execute();
         assertTrue(paymentResponse.isSuccessful());
         String responseString = paymentResponse.body().string();
         assertNotNull(responseString);

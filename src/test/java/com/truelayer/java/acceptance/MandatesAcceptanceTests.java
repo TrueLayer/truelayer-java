@@ -4,6 +4,7 @@ import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.entities.CurrencyCode;
@@ -23,8 +24,13 @@ import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.SneakyThrows;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.junit.jupiter.api.*;
 
 @Tag("acceptance")
@@ -43,21 +49,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
                 .get();
-
         assertNotError(createMandateResponse);
 
         // start auth flow
-        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
-                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create(RETURN_URI))
-                        .build())
-                .build();
-
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
-                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
-                .get();
-
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
+                startAuthFlowForMandate(createMandateResponse.getData().getId());
         assertNotError(startAuthorizationFlowResponse);
     }
 
@@ -71,21 +67,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(COMMERCIAL, preselectedProvider))
                 .get();
-
         assertNotError(createMandateResponse);
 
         // start auth flow
-        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
-                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create(RETURN_URI))
-                        .build())
-                .build();
-
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
-                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
-                .get();
-
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
+                startAuthFlowForMandate(createMandateResponse.getData().getId());
         assertNotError(startAuthorizationFlowResponse);
     }
 
@@ -99,31 +85,19 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(SWEEPING, userSelectedProvider))
                 .get();
-
         assertNotError(createMandateResponse);
 
         // start auth flow
-        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
-                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create(RETURN_URI))
-                        .build())
-                .build();
-
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
-                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
-                .get();
-
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
+                startAuthFlowForMandate(createMandateResponse.getData().getId());
         assertNotError(startAuthorizationFlowResponse);
 
         // submit provider selection
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().providerId(PROVIDER_ID).build();
-
         ApiResponse<AuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.mandates()
                 .submitProviderSelection(createMandateResponse.getData().getId(), submitProviderSelectionRequest)
                 .get();
-
         assertNotError(submitProviderSelectionResponse);
     }
 
@@ -138,28 +112,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create and get a mandate by id")
-    @SneakyThrows
-    public void itShouldCreateAndGetAMandate() {
-        // create mandate
-        ProviderSelection preselectedProvider =
-                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
-        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
-                .get();
-
-        assertNotError(createMandateResponse);
-
-        // get mandate by id
-        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
-                .getMandate(createMandateResponse.getData().getId())
-                .get();
-
-        assertNotError(getMandateResponse);
-    }
-
-    @Test
-    @DisplayName("It should create and revoke a mandate and get an invalid state validation error")
+    @DisplayName("It should create and revoke a mandate")
     @SneakyThrows
     public void itShouldCreateAndRevokeAMandate() {
         // create mandate
@@ -168,19 +121,21 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
                 .get();
-
         assertNotError(createMandateResponse);
+
+        // we must authorize the mandate before revoking it
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
+                startAuthFlowForMandate(createMandateResponse.getData().getId());
+        assertNotError(startAuthorizationFlowResponse);
+
+        // authorize the created mandate without explicit user interaction
+        authorizeMandate(startAuthorizationFlowResponse.getData());
 
         // revoke mandate by id
         ApiResponse<Void> revokeMandateResponse = tlClient.mandates()
                 .revokeMandate(createMandateResponse.getData().getId())
                 .get();
-
-        // this is the best we can do as of now. there's no way of forcing an authorized state, which is the only that
-        // can transition to the revoked state.
-        // todo: improve this with a mock provider
-        assertTrue(revokeMandateResponse.isError()
-                && revokeMandateResponse.getError().getTitle().equalsIgnoreCase("invalid state"));
+        assertNotError(revokeMandateResponse);
     }
 
     @Test
@@ -193,8 +148,24 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
                 .get();
-
         assertNotError(createMandateResponse);
+
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // authorize the created mandate without explicit user interaction
+        authorizeMandate(startAuthorizationFlowResponse.getData());
 
         // get mandate by id
         ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
@@ -206,7 +177,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // create a payment on mandate
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
-                .currency(CurrencyCode.EUR) // todo: validate this with the team
+                .currency(getMandateResponse.getData().getCurrency())
                 .paymentMethod(PaymentMethod.mandate()
                         .mandateId(getMandateResponse.getData().getId())
                         .build())
@@ -215,16 +186,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(createPaymentRequest).get();
 
-        // this is the best we can do as of now. there's no way of forcing an authorized state, which is required for
-        // creating
-        // a payment
-        // todo: improve this with a mock provider
-        assertTrue(createPaymentResponse.isError()
-                && createPaymentResponse
-                        .getError()
-                        .getErrors()
-                        .toString()
-                        .contains("Mandate must be in Authorized state"));
+        assertNotError(createPaymentResponse);
     }
 
     private CreateMandateRequest createMandateRequest(Mandate.Type type, ProviderSelection providerSelection) {
@@ -283,5 +245,59 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .maximumIndividualAmount(1000)
                         .build())
                 .build();
+    }
+
+    @SneakyThrows
+    private ApiResponse<AuthorizationFlowResponse> startAuthFlowForMandate(String mandateId) {
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        return tlClient.mandates()
+                .startAuthorizationFlow(mandateId, startAuthorizationFlowRequest)
+                .get();
+    }
+
+    @SneakyThrows
+    private void authorizeMandate(AuthorizationFlowResponse startAuthorizationFlowResponse) {
+        // follow the redirect uri and parse its Location HTTP response header
+        URI redirectUri = startAuthorizationFlowResponse
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        Response redirectResponse = getHttpClientInstance()
+                .newCall(new Request.Builder().url(redirectUri.toURL()).get().build())
+                .execute();
+        assertTrue(redirectResponse.isRedirect());
+        String location = Objects.requireNonNull(redirectResponse.header("location"));
+        assertFalse(location.isEmpty());
+
+        // Parse the header returned and build the next provider parameters submission request
+        URI paymentsSpaRedirectUrl = URI.create(location);
+        boolean isQuery = paymentsSpaRedirectUrl.getQuery() != null
+                && paymentsSpaRedirectUrl.getQuery().isEmpty();
+        String rawParameters = isQuery ? paymentsSpaRedirectUrl.getQuery() : paymentsSpaRedirectUrl.getRawFragment();
+        assertTrue(
+                rawParameters.contains("state=mandate-"),
+                "query/fragment parameters do not contain expected mandate state");
+        String sanitizedParameters = rawParameters.replaceFirst("state=mandate-", "state=");
+        String jsonPayload = isQuery
+                ? "{\"query\": \"?" + sanitizedParameters + "\"}"
+                : "{\"fragment\": \"#" + sanitizedParameters + "\"}";
+
+        // Execute the SPA provider submission parameters request
+        Response submitProviderParamsResponse = getHttpClientInstance()
+                .newCall(new Request.Builder()
+                        .url(environment.getPaymentsApiUri().toString() + "/spa/payments-provider-return")
+                        .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), jsonPayload))
+                        .build())
+                .execute();
+        assertTrue(submitProviderParamsResponse.isSuccessful());
     }
 }

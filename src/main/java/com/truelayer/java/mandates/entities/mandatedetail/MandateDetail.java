@@ -3,6 +3,7 @@ package com.truelayer.java.mandates.entities.mandatedetail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.mandates.entities.Constraints;
@@ -21,7 +22,7 @@ import lombok.*;
 public abstract class MandateDetail {
     private String id;
 
-    private String currency;
+    private CurrencyCode currency;
 
     private Beneficiary beneficiary;
 
