@@ -130,7 +130,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                         getMerchantAccount().getId(),
                         ListTransactionsQuery.builder()
                                 .from(from)
-                                .to(from.plus(3, ChronoUnit.MONTHS))
+                                .to(from.plus(1, ChronoUnit.YEARS))
                                 .build())
                 .get();
     }
