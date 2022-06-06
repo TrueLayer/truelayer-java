@@ -265,7 +265,9 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     private void authorizeMandate(AuthorizationFlowResponse authorizationFlowResponse) {
         // first we check the state of the mandate returned by the gateway
-        assertTrue(authorizationFlowResponse.isAuthorizing(), "Mandate status is" + authorizationFlowResponse.getStatus().getStatus());
+        assertTrue(
+                authorizationFlowResponse.isAuthorizing(),
+                "Mandate status is" + authorizationFlowResponse.getStatus().getStatus());
 
         // follow the redirect uri and parse its Location HTTP response header
         URI redirectUri = authorizationFlowResponse
