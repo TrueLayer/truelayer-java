@@ -5,8 +5,8 @@ import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.ExternalAccount;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
-import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
 import com.truelayer.quarkusmvc.models.DonationResult;
 import com.truelayer.quarkusmvc.models.DonationRequest;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class DonationService implements IDonationService {
                 .amountInMinor(req.getAmount())
                 .currency(CurrencyCode.GBP)
                 .paymentMethod(BankTransfer.builder()
-                        .providerSelection(UserSelectedProviderSelection.builder().build())
+                        .providerSelection(ProviderSelection.userSelected().build())
                         .beneficiary(ExternalAccount.builder()
                                 .accountHolderName("A test donation account")
                                 .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()

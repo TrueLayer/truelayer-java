@@ -20,7 +20,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:1.1.0-recurring-payments-SNAPSHOT'
+    implementation 'com.truelayer:truelayer-java:2.0.0-recurring-payments-SNAPSHOT'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

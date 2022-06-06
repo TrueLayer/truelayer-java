@@ -2,13 +2,14 @@ package com.truelayer.quarkusmvc.services;
 
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.Constraints;
+import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.mandate.Constraints;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
@@ -22,12 +23,13 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.UUID;
 
-import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodAlignment.CALENDAR;
-import static com.truelayer.java.mandates.entities.mandate.Constraints.PeriodicLimit.PeriodType.MONTH;
+import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 
 @ApplicationScoped
 @RequiredArgsConstructor
 public class SubscriptionService implements ISubscriptionService{
+
+    public static final String PROVIDER_ID = "ob-uki-mock-bank";
 
     private final ITrueLayerClient trueLayerClient;
 
@@ -37,9 +39,8 @@ public class SubscriptionService implements ISubscriptionService{
         // create mandate
         var createMandateReq = CreateMandateRequest.builder()
                 .mandate(Mandate.vrpSweepingMandate()
-                        .providerFilter(ProviderFilter.builder()
-                                .countries(Collections.singletonList(CountryCode.GB))
-                                .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                        .providerSelection(ProviderSelection.preselected()
+                                .providerId(PROVIDER_ID)
                                 .build())
                         .beneficiary(Beneficiary.externalAccount()
                                 .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
@@ -57,11 +58,12 @@ public class SubscriptionService implements ISubscriptionService{
                         .email("john@truelayer.com")
                         .build())
                 .constraints(Constraints.builder()
-                        .periodicLimits(Collections.singletonList(Constraints.PeriodicLimit.builder()
-                                .periodAlignment(CALENDAR)
-                                .periodType(MONTH)
-                                .maximumAmount(2000)
-                                .build()))
+                        .periodicLimits(Constraints.PeriodicLimits.builder()
+                                .month(Limit.builder()
+                                        .maximumAmount(2000)
+                                        .periodAlignment(CALENDAR)
+                                        .build())
+                                .build())
                         .maximumIndividualAmount(1000)
                         .build())
                 .build();
@@ -79,7 +81,7 @@ public class SubscriptionService implements ISubscriptionService{
                         .build())
                 .build();
 
-        ApiResponse<StartAuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient.mandates()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient.mandates()
                 .startAuthorizationFlow(mandate.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
@@ -88,26 +90,7 @@ public class SubscriptionService implements ISubscriptionService{
                     startAuthorizationFlowResponse.getError()));
         }
 
-        var providerId = startAuthorizationFlowResponse.getData().getAuthorizationFlow()
-                .getActions().getNext().asProviderSelection().getProviders().stream()
-                .filter(provider -> provider.getProviderId().contains("sandbox"))
-                .findFirst()
-                .orElseThrow().getProviderId();
-
-        // submit provider selection
-        SubmitProviderSelectionRequest submitProviderSelectionRequest =
-                SubmitProviderSelectionRequest.builder().providerId(providerId).build();
-
-            ApiResponse<SubmitProviderSelectionResponse> submitProviderSelectionResponse = trueLayerClient.mandates()
-                .submitProviderSelection(mandate.getData().getId(), submitProviderSelectionRequest)
-                .get();
-
-        if(submitProviderSelectionResponse.isError()){
-            throw new RuntimeException(String.format("submit provider selection error: %s",
-                    submitProviderSelectionResponse.getError()));
-        }
-
-        return submitProviderSelectionResponse.getData().getAuthorizationFlow()
+        return startAuthorizationFlowResponse.getData().getAuthorizationFlow()
                 .getActions().getNext().asRedirect().getUri();
     }
 
