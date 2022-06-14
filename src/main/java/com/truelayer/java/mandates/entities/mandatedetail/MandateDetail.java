@@ -62,7 +62,7 @@ public abstract class MandateDetail {
         return (FailedMandateDetail) this;
     }
 
-    public RevokedMandateDetail asSucceededMandateDetail() {
+    public RevokedMandateDetail asRevokedMandateDetail() {
         if (!(this instanceof RevokedMandateDetail)) {
             throw new TrueLayerException(buildErrorMessage());
         }
