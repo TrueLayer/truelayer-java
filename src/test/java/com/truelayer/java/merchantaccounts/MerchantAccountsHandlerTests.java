@@ -10,6 +10,8 @@ import com.truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -56,7 +58,7 @@ class MerchantAccountsHandlerTests {
 
         sut.listTransactions(A_MERCHANT_ACCOUNT_ID, query);
 
-        verify(merchantsApi, times(1)).listTransactions(A_MERCHANT_ACCOUNT_ID, fromStr, to.toString(), query.type());
+        verify(merchantsApi, times(1)).listTransactions(A_MERCHANT_ACCOUNT_ID, fromStr, DateTimeFormatter.ISO_ZONED_DATE_TIME.format(to), query.type());
     }
 
     @Test
