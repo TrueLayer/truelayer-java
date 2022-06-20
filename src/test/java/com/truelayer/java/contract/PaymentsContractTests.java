@@ -46,13 +46,10 @@ public class PaymentsContractTests extends ContractTests {
         createPaymentParams.put("merchant_account_id", merchantAccountId);
         Map<String, Object> authorizePaymentParams = new HashMap<>();
         authorizePaymentParams.put("return_uri", returnUri);
-
         ObjectMapper oMapper = new ObjectMapper();
         CreatePaymentRequest obj = buildCreatePaymentRequest();
-        // object -> Map
         Map<String, Object> map = oMapper.convertValue(obj, Map.class);
-        System.out.println(map);
-        return builder.given("payment request", map)
+        return builder.given("Create Payment state", map)
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
