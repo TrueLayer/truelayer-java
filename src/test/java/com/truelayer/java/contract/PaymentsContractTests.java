@@ -7,6 +7,7 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.truelayer.java.Utils;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
@@ -46,7 +47,12 @@ public class PaymentsContractTests extends ContractTests {
         Map<String, Object> authorizePaymentParams = new HashMap<>();
         authorizePaymentParams.put("return_uri", returnUri);
 
-        return builder.given("Create Payment state", createPaymentParams)
+        ObjectMapper oMapper = new ObjectMapper();
+        CreatePaymentRequest obj = buildCreatePaymentRequest();
+        // object -> Map
+        Map<String, Object> map = oMapper.convertValue(obj, Map.class);
+        System.out.println(map);
+        return builder.given("payment request", map)
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
