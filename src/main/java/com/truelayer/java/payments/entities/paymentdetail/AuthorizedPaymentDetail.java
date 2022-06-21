@@ -1,6 +1,7 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
 import java.util.Optional;
 import lombok.*;
 

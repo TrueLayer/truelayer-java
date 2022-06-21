@@ -2,7 +2,7 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.Remitter;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -20,7 +20,7 @@ public class ExternalPayment extends Transaction {
 
     Transaction.Status status;
 
-    Date settledAt;
+    ZonedDateTime settledAt;
 
     Remitter remitter;
 }

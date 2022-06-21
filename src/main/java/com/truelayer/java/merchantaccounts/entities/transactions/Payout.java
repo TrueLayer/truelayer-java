@@ -3,7 +3,7 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,9 +24,9 @@ public class Payout extends Transaction {
 
     Transaction.Status status;
 
-    Date createdAt;
+    ZonedDateTime createdAt;
 
-    Date settledAt;
+    ZonedDateTime settledAt;
 
     Beneficiary beneficiary;
 
@@ -34,7 +34,7 @@ public class Payout extends Transaction {
 
     String payoutId;
 
-    public Optional<Date> getSettledAt() {
+    public Optional<ZonedDateTime> getSettledAt() {
         return Optional.ofNullable(settledAt);
     }
 

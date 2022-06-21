@@ -5,7 +5,8 @@ import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersReques
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
+import com.truelayer.java.mandates.IMandatesHandler;
+import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,7 +31,13 @@ public interface ITrueLayerClient {
      * Entrypoint for merchant accounts endpoints.
      * @return a utility to interact with merchant account endpoints.
      */
-    IMerchantAccountsApi merchantAccounts();
+    IMerchantAccountsHandler merchantAccounts();
+
+    /**
+     * Entrypoint for mandates endpoints
+     * @return a utility to interact with mandates endpoints.
+     */
+    IMandatesHandler mandates();
 
     /**
      * Entrypoint for Hosted Payment Page related services.

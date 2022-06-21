@@ -26,7 +26,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     @DisplayName("It should create and return a payment")
     @SneakyThrows
     public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        String jsonResponseFile = "payments/201.create_payment.merchant_account.json";
+        String jsonResponseFile = "payments/201.create_payment.json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -189,13 +189,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
 
-        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
                 .startAuthorizationFlow(A_PAYMENT_ID, request)
                 .get();
 
         assertNotError(response);
-        PaymentAuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
+        AuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(expected, response.getData());
     }
 
@@ -221,13 +221,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
                 SubmitProviderSelectionRequest.builder().build();
-        ApiResponse<PaymentAuthorizationFlowResponse> response = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
                 .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
                 .get();
 
         assertNotError(response);
-        PaymentAuthorizationFlowResponse expected =
-                TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentAuthorizationFlowResponse.class);
+        AuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }

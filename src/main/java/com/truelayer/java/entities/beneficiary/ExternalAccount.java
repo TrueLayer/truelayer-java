@@ -15,5 +15,9 @@ public class ExternalAccount extends Beneficiary {
 
     private AccountIdentifier accountIdentifier;
 
+    /**
+     * Reference for the payments.
+     * Ignored when creating a Recurring payment mandate
+     */
     private String reference;
 }

@@ -1,0 +1,10 @@
+{
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"wait"
+      }
+    }
+  },
+  "status":"authorizing"
+}

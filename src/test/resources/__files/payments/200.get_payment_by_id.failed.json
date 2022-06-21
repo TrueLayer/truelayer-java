@@ -39,5 +39,5 @@
   "status":"failed",
   "failed_at":"2022-01-17T17:13:18.214924Z",
   "failure_stage":"authorization_required",
-  "failure_reason":"authorization_failed"
+  "failure_reason":"failed"
 }

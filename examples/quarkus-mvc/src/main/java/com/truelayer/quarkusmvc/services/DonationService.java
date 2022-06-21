@@ -2,14 +2,13 @@ package com.truelayer.quarkusmvc.services;
 
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.accountidentifier.IbanAccountIdentifier;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.ExternalAccount;
-import com.truelayer.java.payments.entities.User;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
-import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
-import com.truelayer.quarkusmvc.models.DonationRequest;
 import com.truelayer.quarkusmvc.models.DonationResult;
+import com.truelayer.quarkusmvc.models.DonationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -47,7 +46,7 @@ public class DonationService implements IDonationService {
                 .amountInMinor(req.getAmount())
                 .currency(CurrencyCode.GBP)
                 .paymentMethod(BankTransfer.builder()
-                        .providerSelection(UserSelectedProviderSelection.builder().build())
+                        .providerSelection(ProviderSelection.userSelected().build())
                         .beneficiary(ExternalAccount.builder()
                                 .accountHolderName("A test donation account")
                                 .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
@@ -72,6 +71,6 @@ public class DonationService implements IDonationService {
         }
 
         return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId(), paymentResponse.getData().getResourceToken(),
-                URI.create("http://localhost:8080/callback"));
+                URI.create("http://localhost:8080/donations/callback"));
     }
 }
