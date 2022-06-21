@@ -6,6 +6,7 @@ com.truelayer.java.commonapi.entities
 com.truelayer.java.entities
 com.truelayer.java.entities.accountidentifier
 com.truelayer.java.entities.beneficiary
+com.truelayer.java.entities.providerselection
 com.truelayer.java.hpp
 com.truelayer.java.http
 com.truelayer.java.http.auth
@@ -15,6 +16,11 @@ com.truelayer.java.http.interceptors
 com.truelayer.java.http.interceptors.logging
 com.truelayer.java.http.mappers
 com.truelayer.java.http.mappers.entities
+com.truelayer.java.mandates
+com.truelayer.java.mandates.entities
+com.truelayer.java.mandates.entities.mandate
+com.truelayer.java.mandates.entities.mandatedetail
+com.truelayer.java.mandates.entities.providerselection
 com.truelayer.java.merchantaccounts
 com.truelayer.java.merchantaccounts.entities
 com.truelayer.java.merchantaccounts.entities.paymentsources
@@ -24,5 +30,5 @@ com.truelayer.java.payments
 com.truelayer.java.payments.entities
 com.truelayer.java.payments.entities.paymentdetail
 com.truelayer.java.payments.entities.paymentmethod
-com.truelayer.java.payments.entities.paymentmethod.provider
+com.truelayer.java.payments.entities.providerselection
 com.truelayer.java.versioninfo
