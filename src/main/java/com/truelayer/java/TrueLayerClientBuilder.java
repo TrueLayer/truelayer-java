@@ -1,14 +1,13 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
-import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.AccessTokenInvalidator;
 import com.truelayer.java.http.auth.AccessTokenManager;
@@ -16,12 +15,8 @@ import com.truelayer.java.http.auth.AccessTokenManager.AccessTokenManagerBuilder
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
-import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
-import com.truelayer.java.http.interceptors.UserAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
-import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
-import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.mandates.MandatesHandler;
@@ -29,15 +24,12 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
-import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 /**
@@ -193,7 +185,7 @@ public class TrueLayerClientBuilder {
      * @see TrueLayerClient
      */
     public TrueLayerClient build() {
-        if (isEmpty(clientCredentials)) {
+        /*        if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
 
@@ -222,9 +214,11 @@ public class TrueLayerClientBuilder {
                         new HttpLoggingInterceptor(logConsumer, new SensitiveHeaderGuard())));
 
         clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
-        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
+        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));*/
 
-        OkHttpClient authHttpClient = clientBuilder.build();
+        OkHttpClient authHttpClient = new OkHttpClientFactory(new VersionInfoLoader())
+                .buildAuthApiClient(
+                        clientCredentials, timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
