@@ -37,6 +37,7 @@ public class OkHttpClientFactory {
             ConnectionPoolOptions connectionPoolOptions,
             ExecutorService requestExecutor,
             Consumer<String> logMessageConsumer) {
+
         if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
         }
