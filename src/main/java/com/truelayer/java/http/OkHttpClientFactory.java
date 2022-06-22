@@ -61,7 +61,6 @@ public class OkHttpClientFactory {
 
         // Setup logging if required
         if (isNotEmpty(logMessageConsumer)) {
-            // todo: make sure we really want a net interceptor here
             clientBuilder.addNetworkInterceptor(
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
         }
