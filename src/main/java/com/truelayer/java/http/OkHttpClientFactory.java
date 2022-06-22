@@ -6,8 +6,15 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import com.truelayer.java.ClientCredentials;
 import com.truelayer.java.ConnectionPoolOptions;
 import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
+import com.truelayer.java.SigningOptions;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.http.auth.AccessTokenInvalidator;
+import com.truelayer.java.http.auth.AccessTokenManager;
+import com.truelayer.java.http.auth.cache.ICredentialsCache;
+import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import com.truelayer.java.http.interceptors.SignatureInterceptor;
 import com.truelayer.java.http.interceptors.UserAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
@@ -65,7 +72,33 @@ public class OkHttpClientFactory {
         return clientBuilder.build();
     }
 
-    public static OkHttpClient buildPaymentsApiClient() {
-        return null;
+    public OkHttpClient buildPaymentsApiClient(
+            OkHttpClient authApiHttpClient,
+            IAuthenticationHandler authenticationHandler,
+            SigningOptions signingOptions,
+            ICredentialsCache credentialsCache) {
+        // By using .newBuilder() we share internal OkHttpClient resources
+        // we just need to add the signature and authentication interceptor
+        // as all the others are inherited
+        OkHttpClient.Builder paymentsHttpClientBuilder =
+                authApiHttpClient.newBuilder().addInterceptor(new SignatureInterceptor(signingOptions));
+
+        AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
+                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
+
+        // setup credentials caching if required
+        if (isNotEmpty(credentialsCache)) {
+            AccessTokenManager accessTokenManager =
+                    accessTokenManagerBuilder.credentialsCache(credentialsCache).build();
+
+            paymentsHttpClientBuilder
+                    .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
+                    .authenticator(new AccessTokenInvalidator(accessTokenManager));
+        } else {
+            AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
+            paymentsHttpClientBuilder.addInterceptor(new AuthenticationInterceptor(accessTokenManager));
+        }
+
+        return paymentsHttpClientBuilder.build();
     }
 }
