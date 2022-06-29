@@ -1,5 +1,7 @@
 package com.truelayer.java.http;
 
+import static com.truelayer.java.TestUtils.getClientCredentials;
+import static com.truelayer.java.TestUtils.getTestEnvironment;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -7,11 +9,20 @@ import static org.mockito.Mockito.when;
 import com.truelayer.java.ConnectionPoolOptions;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.auth.AuthenticationHandler;
+import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.http.auth.AccessTokenInvalidator;
+import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
+import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
+import com.truelayer.java.http.interceptors.SignatureInterceptor;
 import com.truelayer.java.http.interceptors.UserAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
+
+import java.net.URI;
+import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +42,7 @@ class OkHttpClientFactoryTests {
 
         OkHttpClient authClient = getOkHttpClientFactory()
                 .buildAuthApiClient(
-                        TestUtils.getClientCredentials(),
+                        getClientCredentials(),
                         customTimeout,
                         ConnectionPoolOptions.builder().build(),
                         customExecutor,
@@ -53,12 +64,55 @@ class OkHttpClientFactoryTests {
     }
 
     @Test
-    @DisplayName("It should throw an exception if credentials are missing")
+    @DisplayName("It should build a Payments API client")
     public void shouldThrowCredentialsMissingException() {
-        Throwable thrown = assertThrows(TrueLayerException.class, () -> getOkHttpClientFactory()
-                .buildAuthApiClient(null, null, null, null, null));
+        OkHttpClient authClient = getOkHttpClientFactory()
+                .buildAuthApiClient(
+                        getClientCredentials(),
+                        null,
+                        null,
+                        null,
+                        null);
+        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
+                .clientCredentials(getClientCredentials())
+                .httpClient(RetrofitFactory.build(authClient, URI.create("http://localhost")))
+                .build();
 
-        assertEquals("client credentials must be set", thrown.getMessage());
+        OkHttpClient paymentClient = getOkHttpClientFactory()
+                .buildPaymentsApiClient(authClient, authenticationHandler,
+                        TestUtils.getSigningOptions(),
+                        new SimpleCredentialsCache(Clock.systemUTC()));
+
+        assertTrue(
+                paymentClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(SignatureInterceptor.class)),
+                "Signature interceptor not found");
+        assertTrue(
+                paymentClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(AuthenticationInterceptor.class)),
+                "Authentication interceptor not found");
+        assertNotNull(paymentClient.authenticator());
+    }
+
+    @Test
+    @DisplayName("It should throw an exception if signing options are missing")
+    public void shouldThrowSigningOptionsMissingException() {
+        OkHttpClient authClient = getOkHttpClientFactory()
+                .buildAuthApiClient(
+                        getClientCredentials(),
+                        null,
+                        null,
+                        null,
+                        null);
+
+        Throwable thrown = assertThrows(TrueLayerException.class, () -> getOkHttpClientFactory()
+                .buildPaymentsApiClient(
+                        authClient,
+                        null,
+                        null,
+                        null));
+
+        assertEquals("signing options must be set", thrown.getMessage());
     }
 
     private OkHttpClientFactory getOkHttpClientFactory() {
