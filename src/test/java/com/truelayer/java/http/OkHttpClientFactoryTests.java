@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import com.truelayer.java.ConnectionPoolOptions;
 import com.truelayer.java.TestUtils;
-import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
