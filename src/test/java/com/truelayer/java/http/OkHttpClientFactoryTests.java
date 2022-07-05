@@ -87,18 +87,6 @@ class OkHttpClientFactoryTests {
         assertNotNull(paymentClient.authenticator());
     }
 
-    @Test
-    @DisplayName("It should throw an exception if signing options are missing")
-    public void shouldThrowSigningOptionsMissingException() {
-        OkHttpClient authClient =
-                getOkHttpClientFactory().buildAuthApiClient(getClientCredentials(), null, null, null, null);
-
-        Throwable thrown = assertThrows(TrueLayerException.class, () -> getOkHttpClientFactory()
-                .buildPaymentsApiClient(authClient, null, null, null));
-
-        assertEquals("signing options must be set", thrown.getMessage());
-    }
-
     private OkHttpClientFactory getOkHttpClientFactory() {
         VersionInfo versionInfo = VersionInfo.builder()
                 .libraryName("truelayer-java")
