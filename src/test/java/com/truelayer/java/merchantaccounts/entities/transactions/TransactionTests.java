@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
-import java.util.Date;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
                 new PaymentSource(UUID.randomUUID().toString(), null, null, null),
                 UUID.randomUUID().toString());
 
@@ -36,7 +37,7 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
 
@@ -47,7 +48,12 @@ class TransactionTests {
     @DisplayName("It should throw an error when converting to MerchantAccountPayment")
     public void shouldNotConvertToSortCodeAccNumber() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, Transaction.Status.PENDING, new Date(), null);
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.PENDING,
+                ZonedDateTime.now(Clock.systemUTC()),
+                null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asMerchantAccountPayment);
 
@@ -58,7 +64,12 @@ class TransactionTests {
     @DisplayName("It should yield true if instance is of type ExternalPayment")
     public void shouldYieldTrueIfExternalPayment() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, Transaction.Status.PENDING, new Date(), null);
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.PENDING,
+                ZonedDateTime.now(Clock.systemUTC()),
+                null);
 
         assertTrue(sut.isExternalPayment());
     }
@@ -67,7 +78,12 @@ class TransactionTests {
     @DisplayName("It should convert to an instance of class ExternalPayment")
     public void shouldConvertToExternalPayment() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, Transaction.Status.PENDING, new Date(), null);
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.PENDING,
+                ZonedDateTime.now(Clock.systemUTC()),
+                null);
 
         assertDoesNotThrow(sut::asExternalPayment);
     }
@@ -80,7 +96,7 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
 
@@ -97,8 +113,8 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString());
@@ -114,8 +130,8 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString());
@@ -131,7 +147,7 @@ class TransactionTests {
                 CurrencyCode.GBP,
                 100,
                 Transaction.Status.PENDING,
-                new Date(),
+                ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
 

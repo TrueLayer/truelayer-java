@@ -23,8 +23,10 @@ import okhttp3.OkHttpClient;
 
 public class TestUtils {
 
-    private static final OkHttpClient HTTP_CLIENT_INSTANCE =
-            new OkHttpClient.Builder().connectTimeout(Duration.ofSeconds(15)).build();
+    private static final OkHttpClient HTTP_CLIENT_INSTANCE = new OkHttpClient.Builder()
+            .followRedirects(false)
+            .connectTimeout(Duration.ofSeconds(15))
+            .build();
 
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
     public static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";

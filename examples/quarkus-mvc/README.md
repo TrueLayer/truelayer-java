@@ -1,6 +1,7 @@
 # Quarkus MVC example project
 
-A simple MVC project based on [Quarkus](https://quarkus.io), that comes with a UI to send donations via TrueLayer Payments API.
+A simple MVC project based on [Quarkus](https://quarkus.io), that comes with a UI to send donations and setup payment mandates
+via TrueLayer Payments API.
 
 ![home](./home.png)
 
@@ -41,4 +42,4 @@ Alternatively, you can load the project in your favorite IDE and rely on IDE plu
 
 ## Testing the application
 
-Browse to http://localhost:8080/donate
+Browse to http://localhost:8080/donations or http://localhost:8080/subscriptions

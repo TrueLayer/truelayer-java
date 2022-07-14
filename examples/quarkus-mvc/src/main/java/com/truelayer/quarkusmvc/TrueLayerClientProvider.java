@@ -11,8 +11,6 @@ import java.nio.file.Path;
 
 public class TrueLayerClientProvider {
 
-    private static final Logger LOG = Logger.getLogger("TL SDK Custom logger");
-
     @ConfigProperty(name = "tl.client.id")
     String clientId;
 
@@ -25,12 +23,14 @@ public class TrueLayerClientProvider {
     @ConfigProperty(name = "tl.signing.private_key_location")
     String signingPrivateKeyLocation;
 
+    private static final Logger LOG = Logger.getLogger(TrueLayerClientProvider.class);
+
     @Singleton
     @SneakyThrows
     public ITrueLayerClient producer(){
 
         return TrueLayerClient.New()
-                .environment(Environment.sandbox())
+                .environment(Environment.development())
                 .clientCredentials(
                         ClientCredentials.builder()
                                 .clientId(clientId)

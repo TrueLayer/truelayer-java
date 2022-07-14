@@ -1,0 +1,35 @@
+{
+  "status": "revoked",
+  "id": "string",
+  "revocation_source": "a revocation source",
+  "currency": "GBP",
+  "beneficiary": {
+    "type": "merchant_account",
+    "id": "string",
+    "account_holder_name": "string"
+  },
+  "user": {
+    "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c",
+    "name": "Remi Terr",
+    "email": "remi.terr@aol.com",
+    "phone": "+44777777777"
+  },
+  "created_at": "2022-01-17T17:13:18.214924Z",
+  "authorized_at": "2022-01-17T17:13:18.214924Z",
+  "revoked_at": "2022-01-17T17:13:18.214924Z",
+  "constraints": {
+    "valid_from": "2022-01-17T17:13:18.214924Z",
+    "valid_to": "2023-01-17T17:13:18.214924Z",
+    "maximum_individual_amount": 1,
+    "periodic_limits": {
+      "day": {
+        "maximum_amount": 0,
+        "period_alignment": "consent"
+      },
+      "week": {
+        "maximum_amount": 0,
+        "period_alignment": "consent"
+      }
+    }
+  }
+}

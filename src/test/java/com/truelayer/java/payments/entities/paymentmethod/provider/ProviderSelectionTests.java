@@ -3,6 +3,9 @@ package com.truelayer.java.payments.entities.paymentmethod.provider;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
+import com.truelayer.java.entities.providerselection.UserSelectedProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
-import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
+import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -107,7 +107,7 @@ public class TrueLayerClientTests {
                 .signingOptions(getSigningOptions())
                 .build();
 
-        IMerchantAccountsApi merchantAccountsHandler = trueLayerClient.merchantAccounts();
+        IMerchantAccountsHandler merchantAccountsHandler = trueLayerClient.merchantAccounts();
 
         assertNotNull(merchantAccountsHandler);
     }

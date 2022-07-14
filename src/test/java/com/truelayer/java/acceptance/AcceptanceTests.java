@@ -14,14 +14,17 @@ import org.junit.jupiter.api.Tag;
 @Tag("acceptance")
 public abstract class AcceptanceTests {
 
+    protected static Environment environment;
+
     protected static TrueLayerClient tlClient;
 
     private MerchantAccount merchantAccount;
 
     @BeforeAll
     public static void setup() {
+        environment = Environment.sandbox();
         tlClient = TrueLayerClient.New()
-                .environment(Environment.sandbox())
+                .environment(environment)
                 .clientCredentials(ClientCredentials.builder()
                         .clientId(System.getenv("TL_CLIENT_ID"))
                         .clientSecret(System.getenv("TL_CLIENT_SECRET"))

@@ -45,7 +45,7 @@ public interface IMerchantAccountsApi {
      * @see <a href="https://docs.truelayer.com/reference/get_merchant-accounts-id-transactions"><i>Get Transactions</i> API reference</a>
      */
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
-    CompletableFuture<ApiResponse<GetTransactionsResponse>> getTransactions(
+    CompletableFuture<ApiResponse<ListTransactionsResponse>> listTransactions(
             @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,
@@ -83,6 +83,6 @@ public interface IMerchantAccountsApi {
     CompletableFuture<ApiResponse<Void>> disableSweeping(@Path("merchantAccountId") String merchantAccountId);
 
     @GET("/merchant-accounts/{merchantAccountId}/payment-sources")
-    CompletableFuture<ApiResponse<GetPaymentSourcesResponse>> getPaymentSources(
+    CompletableFuture<ApiResponse<ListPaymentSourcesResponse>> listPaymentSources(
             @Path("merchantAccountId") String merchantAccountId, @Query("user_id") String userId);
 }

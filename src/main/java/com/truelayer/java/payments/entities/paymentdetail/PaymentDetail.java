@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.payments.entities.User;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
@@ -30,7 +30,7 @@ public abstract class PaymentDetail {
 
     private PaymentMethod paymentMethod;
 
-    private Date createdAt;
+    private ZonedDateTime createdAt;
 
     public abstract Status getStatus();
 

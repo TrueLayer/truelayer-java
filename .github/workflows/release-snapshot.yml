@@ -8,13 +8,6 @@ on:
       - '**'
 
 jobs:
-  coverage:
-    name: Test coverage analysis
-    uses: ./.github/workflows/coverage.yml
-    with:
-      branch: ${{ github.head_ref }}
-    secrets:
-      coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
   build:
     name: Build and tests
     uses: ./.github/workflows/build.yml
@@ -41,10 +34,10 @@ jobs:
     needs: [build, acceptance-tests]
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 8
+      - name: Setup JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '18'
           distribution: 'adopt'
           cache: 'gradle'
       - name: Validate Gradle wrapper
@@ -53,7 +46,7 @@ jobs:
         run: |
           echo "project_version_snapshot=${{needs.build.outputs.project_version}}-${GITHUB_REF##*/}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
-      - name: Snaphost Semver version check
+      - name: Snapshot version check
         run: |
           SNAPSHOT_VERSION_REGEX="^([0-9]+)\.([0-9]+)\.([0-9]+)-${GITHUB_REF##*/}-SNAPSHOT$";
           if [[ "${{env.project_version_snapshot}}" =~ $SNAPSHOT_VERSION_REGEX ]]; then

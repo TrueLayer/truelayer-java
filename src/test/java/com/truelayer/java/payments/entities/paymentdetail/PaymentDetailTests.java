@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.truelayer.java.TrueLayerException;
-import java.util.Date;
+import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -92,7 +94,10 @@ class PaymentDetailTests {
     @DisplayName("It should yield true if instance is of type FailedPaymentDetail")
     public void shouldYieldTrueIfFailedPaymentDetail() {
         PaymentDetail sut = new FailedPaymentDetail(
-                new Date(), FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED, "failed for some reason", null);
+                ZonedDateTime.now(Clock.systemUTC()),
+                FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED,
+                "failed for some reason",
+                null);
 
         assertTrue(sut.isFailed());
     }
@@ -101,7 +106,10 @@ class PaymentDetailTests {
     @DisplayName("It should convert to an instance of class FailedPaymentDetail")
     public void shouldConvertToFailedPaymentDetail() {
         PaymentDetail sut = new FailedPaymentDetail(
-                new Date(), FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED, "failed for some reason", null);
+                ZonedDateTime.now(Clock.systemUTC()),
+                FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED,
+                "failed for some reason",
+                null);
 
         assertDoesNotThrow(sut::asFailed);
     }
@@ -119,7 +127,12 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should yield true if instance is of type SettledPaymentDetail")
     public void shouldYieldTrueIfSettledPaymentDetail() {
-        PaymentDetail sut = new SettledPaymentDetail(null, new Date(), new Date(), new Date(), null);
+        PaymentDetail sut = new SettledPaymentDetail(
+                null,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null);
 
         assertTrue(sut.isSettled());
     }
@@ -127,7 +140,12 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should convert to an instance of class SettledPaymentDetail")
     public void shouldConvertToSettledPaymentDetail() {
-        PaymentDetail sut = new SettledPaymentDetail(null, new Date(), new Date(), new Date(), null);
+        PaymentDetail sut = new SettledPaymentDetail(
+                null,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null);
 
         assertDoesNotThrow(sut::asSettled);
     }
@@ -145,7 +163,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should yield true if instance is of type ExecutedPaymentDetail")
     public void shouldYieldTrueIfExecutedPaymentDetail() {
-        PaymentDetail sut = new ExecutedPaymentDetail(null, new Date(), null);
+        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null);
 
         assertTrue(sut.isExecuted());
     }
@@ -153,7 +171,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should convert to an instance of class ExecutedPaymentDetail")
     public void shouldConvertToExecutedPaymentDetail() {
-        PaymentDetail sut = new ExecutedPaymentDetail(null, new Date(), null);
+        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null);
 
         assertDoesNotThrow(sut::asExecuted);
     }

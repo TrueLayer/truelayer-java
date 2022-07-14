@@ -6,19 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.Remitter;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
+import com.truelayer.java.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import com.truelayer.java.payments.entities.paymentmethod.provider.PreselectedProviderSelection;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
-import com.truelayer.java.payments.entities.paymentmethod.provider.UserSelectedProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import java.net.URI;
 import java.util.Collections;
 import lombok.SneakyThrows;
@@ -29,8 +30,8 @@ import org.junit.jupiter.api.*;
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
 
-    public static final String LOCALHOST_RETURN_URI = "http://localhost:3000/callback";
-    public static final String MOCK_PROVIDER_ID = "mock-payments-gb-redirect";
+    public static final String RETURN_URI = "http://localhost:3000/callback";
+    public static final String PROVIDER_ID = "mock-payments-gb-redirect";
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selected provider")
@@ -42,7 +43,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                        .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
+                        .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider);
@@ -66,7 +67,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
         PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(MOCK_PROVIDER_ID)
+                .providerId(PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea Di Lisio")
@@ -108,7 +109,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getHostedPaymentPageLink(
                         createPaymentResponse.getData().getId(),
                         createPaymentResponse.getData().getResourceToken(),
-                        URI.create(LOCALHOST_RETURN_URI));
+                        URI.create(RETURN_URI));
 
         assertCanBrowseLink(link);
     }
@@ -127,23 +128,21 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder()
-                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
-                        .build())
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
         assertNotError(startAuthorizationFlowResponse);
 
         // Submit the provider selection
-        ApiResponse<PaymentAuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
                 .submitProviderSelection(
                         createPaymentResponse.getData().getId(),
                         SubmitProviderSelectionRequest.builder()
-                                .providerId(MOCK_PROVIDER_ID)
+                                .providerId(PROVIDER_ID)
                                 .build())
                 .get();
 
@@ -156,7 +155,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithPreselectedProvider() {
         // create payment
         PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(MOCK_PROVIDER_ID)
+                .providerId(PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea Di Lisio")
@@ -175,12 +174,10 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .redirect(Redirect.builder()
-                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
-                        .build())
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
@@ -203,7 +200,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturn() {
         // create payment
         PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(MOCK_PROVIDER_ID)
+                .providerId(PROVIDER_ID)
                 .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea Di Lisio")
@@ -223,12 +220,12 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder()
-                        .returnUri(URI.create(LOCALHOST_RETURN_URI))
-                        .directReturnUri(URI.create(LOCALHOST_RETURN_URI))
+                        .returnUri(URI.create(RETURN_URI))
+                        .directReturnUri(URI.create(RETURN_URI))
                         .build())
                 .withProviderSelection()
                 .build();
-        ApiResponse<PaymentAuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
                 .get();
         assertNotError(startAuthorizationFlowResponse);
@@ -254,7 +251,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         "Authorization",
                         String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
                 .build();
-        Response paymentResponse = new OkHttpClient().newCall(request).execute();
+        Response paymentResponse = getHttpClientInstance().newCall(request).execute();
         assertTrue(paymentResponse.isSuccessful());
         String responseString = paymentResponse.body().string();
         assertNotNull(responseString);
@@ -296,7 +293,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .countries(Collections.singletonList(CountryCode.GB))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                        .providerIds(Collections.singletonList(MOCK_PROVIDER_ID))
+                        .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
         return buildPaymentRequestWithProviderSelection(userSelectionProvider);

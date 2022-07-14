@@ -119,7 +119,7 @@ CompletableFuture<ApiResponse<CreatePaymentResponse>> paymentResponse = client
     .createPayment(paymentRequest);
 
 // wait for the response
-ApiResponse<CreatePaymentResponse> payment = paymentResponse.get())
+ApiResponse<CreatePaymentResponse> payment = paymentResponse.get();
 ```
 
 ### Build a link to our hosted createPaymentResponse page
@@ -128,6 +128,16 @@ URI hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-
         "your-createPaymentResponse-token",
         URI.create("http://yourdomain.com"));
 ```
+
+## Local setup
+
+Any version of the JDK >= 8 supported by Gradle can build and run this package.
+Check the [Gradle compatibility matrix](https://docs.gradle.org/current/userguide/compatibility.html) for more info.
+
+To ensure compatibility, Gradle is configured to use the Java 8 toolchain by default.  
+Note that on M1 Macs, Gradle is unable to download this toolchain automatically and returns the following error:
+`Could not read 'https: //api.adoptopenidk.net/v3/binary/latest/8/ga/mac/aarch64/idk/hotspot/normal/adoptopenidk' as it does not exist.`.
+Manually install an aarch64 version of the JDK 1.8 to solve it, like the "Azul Zulu 1.8" for example.
 
 ## Building locally
 
@@ -193,6 +203,9 @@ Bear in mind that the above checks are enforced at CI time, thus
 the builds will fail if not compliant.
 
 When developing on IntelliJ you can optionally install this [Spotless IntelliJ Gradle plugin](https://github.com/ragurney/spotless-intellij-gradle) as well.
+
+Due to an open issue with JDK16+, we had to specify some extra Jvm options in the [gradle.properties](gradle.properties) file.
+If you're building on JDK versions below 9, you'll have to remove/comment the `org.gradle.jvmargs` key in there.
 
 ## Contributing
 
