@@ -38,7 +38,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -46,7 +46,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         CreateMandateRequest createMandateRequest =
                 CreateMandateRequest.builder().build();
@@ -68,14 +68,14 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/mandates"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<ListMandatesResponse> response =
@@ -95,14 +95,14 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathMatching("/mandates/" + A_MANDATE_ID))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<MandateDetail> response =
@@ -123,14 +123,14 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
                 .path(urlPathMatching("/mandates/" + A_MANDATE_ID + "/authorization-flow"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
@@ -154,14 +154,14 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         SubmitProviderSelectionRequest submitProviderSelectionRequest =
@@ -184,7 +184,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -208,14 +208,14 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/mandates"))
                 .withAuthorization()
                 .status(422)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         CreateMandateRequest createMandateRequest =
