@@ -31,7 +31,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(400)
-                .bodyFile("auth/400.invalid_client.json")
+                .withResponseBodyFile("auth/400.invalid_client.json")
                 .build();
 
         ApiResponse<AccessToken> response = tlClient.auth()
@@ -55,7 +55,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<AccessToken> response = tlClient.auth()

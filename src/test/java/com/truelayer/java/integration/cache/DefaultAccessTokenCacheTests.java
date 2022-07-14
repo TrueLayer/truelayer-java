@@ -12,6 +12,7 @@ import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
+@DisplayName("Access token cache integration tests")
 public class DefaultAccessTokenCacheTests extends IntegrationTests {
 
     @SneakyThrows
@@ -23,7 +24,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile(accessTokenJsonFile)
+                .withResponseBodyFile(accessTokenJsonFile)
                 .build();
         RequestStub.New()
                 .method("post")
@@ -31,7 +32,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.json")
+                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -54,7 +55,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -62,7 +63,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(401)
-                .bodyFile("payments/401.invalid_token.json")
+                .withResponseBodyFile("payments/401.invalid_token.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -83,7 +84,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile(accessTokenImmediateExpirationJsonFile)
+                .withResponseBodyFile(accessTokenImmediateExpirationJsonFile)
                 .build();
         RequestStub.New()
                 .method("post")
@@ -91,7 +92,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.json")
+                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
         AccessToken expectedImmediateExpirationToken =
                 deserializeJsonFileTo(accessTokenImmediateExpirationJsonFile, AccessToken.class);
@@ -104,7 +105,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile(accessTokenJsonFile)
+                .withResponseBodyFile(accessTokenJsonFile)
                 .build();
         tlClient.payments().createPayment(paymentRequest).get();
 

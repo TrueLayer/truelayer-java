@@ -1,0 +1,137 @@
+package com.truelayer.java.contract;
+
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.contract.Constant.*;
+
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
+import com.truelayer.java.Utils;
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.ProviderFilter;
+import com.truelayer.java.entities.User;
+import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
+import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+public class CreateAndAuthorizePaymentSuccess extends ContractTests {
+
+    @SneakyThrows
+    @Override
+    @Pact(consumer = CONSUMER_NAME, provider = PROVIDER_NAME)
+    public RequestResponsePact buildPact(PactDslWithProvider builder) {
+        Map<String, Object> createPaymentParams = new HashMap<>();
+        createPaymentParams.put("merchant_account_id", MERCHANT_ACCOUNT_ID);
+
+        Map<String, Object> authorizePaymentParams = new HashMap<>();
+        authorizePaymentParams.put("return_uri", RETURN_URI);
+
+        return builder.given("Create Payment state", createPaymentParams)
+                .uponReceiving("Create payment call")
+                .method("POST")
+                .path("/payments")
+                .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
+                .willRespondWith()
+                .status(201)
+                .body(new PactDslJsonBody()
+                        .stringType("id", A_PAYMENT_ID)
+                        .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
+                        .object("user")
+                        .stringMatcher("id", UUID_REGEX))
+                .given("Authorize Payment state", authorizePaymentParams)
+                .uponReceiving("Start authorization flow call")
+                .method("POST")
+                .pathFromProviderState(
+                        "/payments/${payment_id}/authorization-flow",
+                        String.format("/payments/%s/authorization-flow", A_PAYMENT_ID))
+                .body(Utils.getObjectMapper().writeValueAsString(buildStartAuthFlowRequest()), "application/json")
+                .willRespondWith()
+                .status(200)
+                .body(new PactDslJsonBody()
+                        .stringMatcher("status", PAYMENT_STATUS_REGEX, "authorizing")
+                        .object("authorization_flow")
+                        .object("actions")
+                        .object("next")
+                        .stringType("type", "provider_selection")
+                        .array("providers")
+                        .object()
+                        .stringType("id", "ob-bank-name")
+                        .stringType("display_name", "Bank Name")
+                        .matchUrl(
+                                "icon_uri",
+                                "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
+                        .matchUrl(
+                                "logo_uri",
+                                "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
+                        .stringType("bg_color", "#000000")
+                        .stringType("country_code", "GB")
+                        .closeArray()
+                        .closeObject()
+                        .closeObject()
+                        .closeObject())
+                .toPact();
+    }
+
+    @SneakyThrows
+    @Override
+    @DisplayName("It should create and authorize a payment")
+    @PactTestFor(providerName = PROVIDER_NAME)
+    @Test
+    public void test() {
+        // 1. Create a payment with preselected provider
+        CreatePaymentRequest createPaymentRequest = buildCreatePaymentRequest();
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(createPaymentRequest).get();
+        assertNotError(createPaymentResponse);
+
+        // 2. Start the auth flow
+        ApiResponse<AuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest())
+                .get();
+        assertNotError(authorizationFlowResponse);
+    }
+
+    private CreatePaymentRequest buildCreatePaymentRequest() {
+        return CreatePaymentRequest.builder()
+                .amountInMinor(50)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .providerSelection(ProviderSelection.userSelected()
+                                .filter(ProviderFilter.builder()
+                                        .countries(Collections.singletonList(CountryCode.GB))
+                                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                                        .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
+                                        .providerIds(Collections.singletonList("mock-payments-gb-redirect"))
+                                        .build())
+                                .build())
+                        .beneficiary(Beneficiary.merchantAccount()
+                                .merchantAccountId(MERCHANT_ACCOUNT_ID)
+                                .build())
+                        .build())
+                .user(User.builder()
+                        .name("Contract test user")
+                        .email("contract-test@truelayer.com")
+                        .build())
+                .build();
+    }
+
+    private StartAuthorizationFlowRequest buildStartAuthFlowRequest() {
+        return StartAuthorizationFlowRequest.builder()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+    }
+}

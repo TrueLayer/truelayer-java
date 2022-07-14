@@ -42,7 +42,7 @@ public class TimeoutIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .delayMs(1000)
                 .build();
 

@@ -9,8 +9,8 @@ import java.net.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
-@WireMockTest
 @Tag("integration")
+@WireMockTest
 public abstract class IntegrationTests {
     protected TrueLayerClient tlClient;
 

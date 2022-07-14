@@ -59,7 +59,7 @@ public class TestUtils {
     @SneakyThrows
     public static SigningOptions getSigningOptions() {
         return SigningOptions.builder()
-                .keyId("a-key-id")
+                .keyId("Certificate_keyId")
                 .privateKey(getPrivateKey())
                 .build();
     }
@@ -70,12 +70,13 @@ public class TestUtils {
     }
 
     public static ApiResponse<AccessToken> buildAccessToken() {
-        AccessToken accessToken = new AccessToken(
-                UUID.randomUUID().toString(),
-                3600,
-                UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
-        return ApiResponse.<AccessToken>builder().data(accessToken).build();
+        return ApiResponse.<AccessToken>builder()
+                .data(new AccessToken(
+                        UUID.randomUUID().toString(),
+                        3600,
+                        UUID.randomUUID().toString(),
+                        UUID.randomUUID().toString()))
+                .build();
     }
 
     /**
@@ -93,6 +94,11 @@ public class TestUtils {
         return getObjectMapper().readValue(Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonFile)), type);
     }
 
+    @SneakyThrows
+    public static String readJsonFile(String jsonFile) {
+        return new String(Files.readAllBytes(Paths.get(JSON_RESPONSES_LOCATION + jsonFile)));
+    }
+
     public static class RequestStub {
         private static final String LIBRARY_INFO = "truelayer-java\\/.+";
         private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
@@ -102,8 +108,8 @@ public class TestUtils {
         private String method;
         private UrlPattern path;
         private int status;
-        private String bodyFile;
         private Integer delayMilliseconds;
+        private String responseBodyFile;
 
         private RequestStub() {}
 
@@ -126,8 +132,8 @@ public class TestUtils {
             return this;
         }
 
-        public RequestStub bodyFile(String bodyFile) {
-            this.bodyFile = bodyFile;
+        public RequestStub withResponseBodyFile(String bodyFile) {
+            this.responseBodyFile = bodyFile;
             return this;
         }
 
@@ -167,8 +173,8 @@ public class TestUtils {
                 response.withFixedDelay(delayMilliseconds);
             }
 
-            if (!isEmpty(bodyFile)) {
-                response.withBodyFile(bodyFile);
+            if (!isEmpty(responseBodyFile)) {
+                response.withBodyFile(responseBodyFile);
             }
 
             return stubFor(request.willReturn(response));

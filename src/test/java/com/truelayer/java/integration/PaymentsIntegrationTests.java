@@ -31,7 +31,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -39,7 +39,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -60,7 +60,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -68,7 +68,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(401)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -90,14 +90,14 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathMatching("/payments/" + A_PAYMENT_ID))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<PaymentDetail> response =
@@ -118,7 +118,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -126,7 +126,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(404)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -147,7 +147,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -155,7 +155,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(400)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
@@ -177,14 +177,14 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
                 .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
         StartAuthorizationFlowRequest request =
                 StartAuthorizationFlowRequest.builder().build();
@@ -209,14 +209,14 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         SubmitProviderSelectionRequest submitProviderSelectionRequest =

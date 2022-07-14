@@ -31,14 +31,14 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/merchant-accounts"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<ListMerchantAccountsResponse> response =
@@ -58,14 +58,14 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<MerchantAccount> response = tlClient.merchantAccounts()
@@ -85,14 +85,14 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ListTransactionsQuery query = ListTransactionsQuery.builder()
@@ -118,14 +118,14 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/sweeping"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<SweepingSettings> response = tlClient.merchantAccounts()
@@ -145,7 +145,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("post")
@@ -174,7 +174,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("delete")
@@ -199,14 +199,14 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile("auth/200.access_token.json")
+                .withResponseBodyFile("auth/200.access_token.json")
                 .build();
         RequestStub.New()
                 .method("get")
                 .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/payment-sources"))
                 .withAuthorization()
                 .status(200)
-                .bodyFile(jsonResponseFile)
+                .withResponseBodyFile(jsonResponseFile)
                 .build();
 
         ListPaymentSourcesQuery query =

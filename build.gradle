@@ -15,6 +15,8 @@ plugins {
     id "signing"
     // nexus publishing
     id "io.github.gradle-nexus.publish-plugin"  version "1.1.0"
+    // contract testing, used to publish the Pact file to the broker
+    id 'au.com.dius.pact' version '4.1.7'
 }
 
 java {
@@ -50,7 +52,7 @@ repositories {
 
 test {
     useJUnitPlatform{
-        excludeTags "acceptance" // exclude acceptance tests from the default test task
+        excludeTags "acceptance", "contract" // exclude acceptance tests from the default test task
     }
 }
 
@@ -63,6 +65,7 @@ tasks.register('unit-tests', Test) {
     useJUnitPlatform{
         excludeTags "integration"
         excludeTags "acceptance"
+        excludeTags "contract"
     }
 }
 
@@ -79,6 +82,14 @@ tasks.register('acceptance-tests', Test) {
         includeTags "acceptance"
     }
     testLogging.showStandardStreams = true
+}
+
+tasks.register('contract-tests', Test) {
+    outputs.upToDateWhen { false }
+    testLogging.showStandardStreams = true
+    useJUnitPlatform{
+        includeTags "contract"
+    }
 }
 
 dependencies {
@@ -116,6 +127,12 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.33.2'
+
+    // Contract testing
+    //todo: remove
+    testImplementation group: 'com.atlassian.ta', name: 'wiremock-pact-generator', version: '2.4.3'
+    def pactJvmVersion = '4.1.35'
+    testImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: pactJvmVersion
 }
 
 jacocoTestReport {
@@ -200,5 +217,35 @@ nexusPublishing {
             username = System.getenv("SONATYPE_USERNAME")
             password = System.getenv("SONATYPE_PASSWORD")
         }
+    }
+}
+
+//todo: review effective usage
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+//todo: review effective usage
+def getGitBranch = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+pact {
+    publish {
+        pactDirectory = 'build/pacts'
+        pactBrokerUrl = System.getenv("PACT_BROKER_URL")
+        pactBrokerToken = System.getenv("PACT_BROKER_TOKEN")
+        tags = [getGitBranch()]
+        consumerVersion = getGitHash()
     }
 }

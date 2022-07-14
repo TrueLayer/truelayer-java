@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Simple test for a client built without credentials caching capabilities
  */
+@DisplayName("No access token cache integration tests")
 public class NoAccessTokenCacheTests extends IntegrationTests {
 
     // overrides the default implementation by not setting the cache for credentials
@@ -43,7 +44,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
-                .bodyFile(accessTokenJsonFile)
+                .withResponseBodyFile(accessTokenJsonFile)
                 .build();
         RequestStub.New()
                 .method("post")
@@ -51,7 +52,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.json")
+                .withResponseBodyFile("payments/201.create_payment.merchant_account.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 
