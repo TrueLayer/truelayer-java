@@ -7,6 +7,7 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
+import au.com.dius.pact.core.support.json.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.truelayer.java.Utils;
 import com.truelayer.java.entities.CurrencyCode;
@@ -36,20 +37,19 @@ public class PaymentsContractTests extends ContractTests {
     public static final String A_JWT_TOKEN =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
-    public static final String merchantAccountId = "B7DAEA71-592E-486B-9C00-7132D1FD7AD1";
-    public static final String returnUri = "http://localhost:8080/callback";
+    public static final String MERCHANT_ACCOUNT_ID = "B7DAEA71-592E-486B-9C00-7132D1FD7AD1";
+    public static final String RETURN_URI = "http://localhost:8080/callback";
 
     @SneakyThrows
     @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
     RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
         Map<String, Object> createPaymentParams = new HashMap<>();
-        createPaymentParams.put("merchant_account_id", merchantAccountId);
+        createPaymentParams.put("merchant_account_id", MERCHANT_ACCOUNT_ID);
+
         Map<String, Object> authorizePaymentParams = new HashMap<>();
-        authorizePaymentParams.put("return_uri", returnUri);
-        ObjectMapper oMapper = new ObjectMapper();
-        CreatePaymentRequest obj = buildCreatePaymentRequest();
-        Map<String, Object> map = oMapper.convertValue(obj, Map.class);
-        return builder.given("Create Payment state", map)
+        authorizePaymentParams.put("return_uri", RETURN_URI);
+
+        return builder.given("Create Payment state", createPaymentParams)
                 .uponReceiving("Create payment call")
                 .method("POST")
                 .path("/payments")
@@ -127,7 +127,7 @@ public class PaymentsContractTests extends ContractTests {
                                         .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
-                                .merchantAccountId(merchantAccountId)
+                                .merchantAccountId(MERCHANT_ACCOUNT_ID)
                                 .build())
                         .build())
                 .user(User.builder()
@@ -140,7 +140,7 @@ public class PaymentsContractTests extends ContractTests {
     private StartAuthorizationFlowRequest buildStartAuthFlowRequest() {
         return StartAuthorizationFlowRequest.builder()
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
-                        .returnUri(URI.create(returnUri))
+                        .returnUri(URI.create(RETURN_URI))
                         .build())
                 .withProviderSelection()
                 .build();
