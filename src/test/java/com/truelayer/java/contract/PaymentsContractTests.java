@@ -7,16 +7,15 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import au.com.dius.pact.core.support.json.JsonValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.truelayer.java.Utils;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.ProviderFilter;
+import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderFilter;
-import com.truelayer.java.payments.entities.paymentmethod.provider.ProviderSelection;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,7 +106,7 @@ public class PaymentsContractTests extends ContractTests {
         assertNotError(createPaymentResponse);
 
         // 2. Start the auth flow
-        ApiResponse<PaymentAuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
+        ApiResponse<AuthorizationFlowResponse> authorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), buildStartAuthFlowRequest())
                 .get();
         assertNotError(authorizationFlowResponse);
