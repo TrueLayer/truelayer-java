@@ -25,10 +25,12 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class PaymentsContractTests extends ContractTests {
+public class CreateAndAuthorizePaymentSuccess extends ContractTests {
+
     @SneakyThrows
-    @Pact(consumer = "JavaSDK", provider = "PaymentsV3")
-    RequestResponsePact createAndAuthorizePayment(PactDslWithProvider builder) {
+    @Override
+    @Pact(consumer = CONSUMER_NAME, provider = PROVIDER_NAME)
+    public RequestResponsePact buildPact(PactDslWithProvider builder) {
         Map<String, Object> createPaymentParams = new HashMap<>();
         createPaymentParams.put("merchant_account_id", MERCHANT_ACCOUNT_ID);
 
@@ -82,10 +84,11 @@ public class PaymentsContractTests extends ContractTests {
     }
 
     @SneakyThrows
-    @Test
+    @Override
     @DisplayName("It should create and authorize a payment")
-    @PactTestFor(pactMethod = "createAndAuthorizePayment")
-    public void shouldCreateAndAuthorizePayment() {
+    @PactTestFor(providerName = PROVIDER_NAME)
+    @Test
+    public void test() {
         // 1. Create a payment with preselected provider
         CreatePaymentRequest createPaymentRequest = buildCreatePaymentRequest();
         ApiResponse<CreatePaymentResponse> createPaymentResponse =

@@ -3,7 +3,9 @@ package com.truelayer.java.contract;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 import au.com.dius.pact.consumer.MockServer;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.core.model.RequestResponsePact;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.truelayer.java.Environment;
@@ -18,7 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Tag("contract")
 @WireMockTest
 @ExtendWith(PactConsumerTestExt.class)
-public class ContractTests {
+public abstract class ContractTests {
+
     protected TrueLayerClient tlClient;
 
     @BeforeEach
@@ -45,4 +48,8 @@ public class ContractTests {
                 .withCredentialsCaching()
                 .build();
     }
+
+    public abstract RequestResponsePact buildPact(PactDslWithProvider builder);
+
+    public abstract void test();
 }

@@ -1,6 +1,10 @@
 package com.truelayer.java.contract;
 
 public final class Constant {
+
+    public static final String CONSUMER_NAME = "JavaSDK";
+    public static final String PROVIDER_NAME = "PaymentsV3";
+
     // Matchers
     public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
     public static final String JWT_TOKEN_REGEX = "[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*.[a-zA-Z0-9_-]*";
