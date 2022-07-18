@@ -1,27 +1,17 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
-import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
-import com.truelayer.java.http.auth.AccessTokenInvalidator;
-import com.truelayer.java.http.auth.AccessTokenManager;
-import com.truelayer.java.http.auth.AccessTokenManager.AccessTokenManagerBuilder;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
-import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
-import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
-import com.truelayer.java.http.interceptors.SignatureInterceptor;
-import com.truelayer.java.http.interceptors.UserAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
-import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
-import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.mandates.MandatesHandler;
@@ -29,15 +19,11 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
-import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 /**
@@ -73,14 +59,6 @@ public class TrueLayerClientBuilder {
     private ICredentialsCache credentialsCache;
 
     TrueLayerClientBuilder() {}
-
-    private Optional<Consumer<String>> getLogMessageConsumer() {
-        return Optional.ofNullable(logMessageConsumer);
-    }
-
-    private Optional<ICredentialsCache> getCredentialsCache() {
-        return Optional.ofNullable(credentialsCache);
-    }
 
     /**
      * Utility to set the client credentials required for Oauth2 protected endpoints.
@@ -197,34 +175,10 @@ public class TrueLayerClientBuilder {
             throw new TrueLayerException("client credentials must be set");
         }
 
-        VersionInfo versionInfo = new VersionInfoLoader().load();
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new VersionInfoLoader());
 
-        if (isNotEmpty(timeout)) {
-            clientBuilder.callTimeout(timeout);
-        }
-
-        if (isNotEmpty(connectionPoolOptions)) {
-            KeepAliveDuration keepAliveDuration = connectionPoolOptions.getKeepAliveDuration();
-            clientBuilder.connectionPool(new ConnectionPool(
-                    connectionPoolOptions.getMaxIdleConnections(),
-                    keepAliveDuration.getDuration(),
-                    keepAliveDuration.getTimeUnit()));
-        }
-
-        if (isNotEmpty(requestExecutor)) {
-            clientBuilder.dispatcher(new Dispatcher(requestExecutor));
-        }
-
-        // Setup logging if required
-        getLogMessageConsumer()
-                .ifPresent(logConsumer -> clientBuilder.addNetworkInterceptor(
-                        new HttpLoggingInterceptor(logConsumer, new SensitiveHeaderGuard())));
-
-        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
-        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfo));
-
-        OkHttpClient authHttpClient = clientBuilder.build();
+        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(
+                clientCredentials, timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
@@ -239,35 +193,14 @@ public class TrueLayerClientBuilder {
         ICommonApi commonApiHandler = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
                 .create(ICommonApi.class);
 
+        // As per our RFC, if signing options is not configured we create a client which is able to interact
+        // with the Authentication API only
         if (isEmpty(signingOptions)) {
-            // return TL client with just authentication, HPP and common utils enabled
             return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonApiHandler);
         }
 
-        // By using .newBuilder() we share internal OkHttpClient resources
-        // we just need to add the signature and authentication interceptor
-        // as all the others are inherited
-        OkHttpClient.Builder paymentsHttpClientBuilder =
-                authHttpClient.newBuilder().addInterceptor(new SignatureInterceptor(signingOptions));
-
-        AccessTokenManagerBuilder accessTokenManagerBuilder =
-                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
-
-        // setup credentials caching if required
-        if (getCredentialsCache().isPresent()) {
-            AccessTokenManager accessTokenManager = accessTokenManagerBuilder
-                    .credentialsCache(getCredentialsCache().get())
-                    .build();
-
-            paymentsHttpClientBuilder
-                    .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
-                    .authenticator(new AccessTokenInvalidator(accessTokenManager));
-        } else {
-            AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
-            paymentsHttpClientBuilder.addInterceptor(new AuthenticationInterceptor(accessTokenManager));
-        }
-
-        OkHttpClient paymentsHttpClient = paymentsHttpClientBuilder.build();
+        OkHttpClient paymentsHttpClient = httpClientFactory.buildPaymentsApiClient(
+                authHttpClient, authenticationHandler, signingOptions, credentialsCache);
 
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
