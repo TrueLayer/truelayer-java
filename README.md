@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/build.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.truelayer/truelayer-java/badge.svg?style=flat)](https://search.maven.org/artifact/com.truelayer/truelayer-java)
+[![javadoc](https://javadoc.io/badge2/com.truelayer/truelayer-java/javadoc.svg)](https://javadoc.io/doc/com.truelayer/truelayer-java)
 [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
 
@@ -61,7 +62,7 @@ There can be multiple artifacts available for a given snapshot. Gradle will auto
 
 ## Documentation
 
-Check out the [API documentation](https://docs.truelayer.com) and [Java library documentation](https://truelayer.github.io/truelayer-java).
+Check out the [API documentation](https://docs.truelayer.com) and [Java library documentation](https://javadoc.io/doc/com.truelayer/truelayer-java/latest/index.html).
 
 ## Usage
 
