@@ -53,13 +53,6 @@ jobs:
         with:
           tag_name: ${{ steps.create_tag.outputs.new_tag }}
           generate_release_notes: true
-      - name: Generate javadoc
-        run: ./gradlew javadoc
-      - name: Deploy javadoc
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/docs/javadoc
       - name: Publish to Sonatype and Maven Central
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
         env:
