@@ -17,4 +17,7 @@ public final class Constant {
     public static final String A_PAYMENT_ID = "48c890dc-8c03-428c-9a8b-2f383fd0ba38";
     public static final String MERCHANT_ACCOUNT_ID = "B7DAEA71-592E-486B-9C00-7132D1FD7AD1";
     public static final String RETURN_URI = "http://localhost:8080/callback";
+
+    public static final String PROVIDER_ID_GB = "mock-payments-gb-redirect";
+
 }

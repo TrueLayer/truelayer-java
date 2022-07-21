@@ -28,8 +28,8 @@ public class CreatePaymentInvalidRequest extends ContractTests {
     @Pact(consumer = CONSUMER_NAME, provider = PROVIDER_NAME)
     @Override
     public RequestResponsePact buildPact(PactDslWithProvider builder) {
-        return builder.given("a state")
-                .uponReceiving("Create payment call")
+        return builder.given("Create Payment")
+                .uponReceiving("Create Payment")
                 .method("POST")
                 .path("/payments")
                 .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
