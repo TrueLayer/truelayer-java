@@ -1,5 +1,9 @@
 package com.truelayer.java.contract;
 
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.contract.Constant.*;
+import static com.truelayer.java.contract.ContractsUtils.buildCreatePaymentRequest;
+
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -9,16 +13,11 @@ import com.truelayer.java.Utils;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import com.truelayer.java.payments.entities.CreatePaymentResponse;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.truelayer.java.TestUtils.assertNotError;
-import static com.truelayer.java.contract.Constant.*;
-import static com.truelayer.java.contract.ContractsUtils.buildCreatePaymentRequest;
 
 public class CreatePaymentSuccessTests extends ContractTests {
 
@@ -54,5 +53,4 @@ public class CreatePaymentSuccessTests extends ContractTests {
                 tlClient.payments().createPayment(createPaymentRequest).get();
         assertNotError(createPaymentResponse);
     }
-
 }

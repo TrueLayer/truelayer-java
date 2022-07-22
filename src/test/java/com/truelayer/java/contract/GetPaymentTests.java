@@ -1,29 +1,5 @@
 package com.truelayer.java.contract;
 
-import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
-import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit5.PactTestFor;
-import au.com.dius.pact.core.model.RequestResponsePact;
-import au.com.dius.pact.core.model.annotations.Pact;
-import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
-import com.truelayer.java.payments.entities.paymentdetail.Status;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.truelayer.java.TestUtils.assertError;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.contract.Constant.*;
@@ -31,6 +7,19 @@ import static com.truelayer.java.contract.ContractsUtils.*;
 import static com.truelayer.java.entities.beneficiary.Beneficiary.Type.MERCHANT_ACCOUNT;
 import static com.truelayer.java.entities.providerselection.ProviderSelection.Type.USER_SELECTED;
 import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.BANK_TRANSFER;
+
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.annotations.Pact;
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.payments.entities.paymentdetail.Status;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class GetPaymentTests extends ContractTests {
     @SneakyThrows
@@ -44,8 +33,7 @@ public class GetPaymentTests extends ContractTests {
     private RequestResponsePact NotFound(PactDslWithProvider builder) {
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put("content-type", "application/problem+json;charset=utf-8");
-        return builder
-                .given("Get Payment - Not Found")
+        return builder.given("Get Payment - Not Found")
                 .uponReceiving("Get Payment - Not Found")
                 .method("GET")
                 .path(String.format("/payments/%s", ANOTHER_PAYMENT_ID))
@@ -64,8 +52,7 @@ public class GetPaymentTests extends ContractTests {
     private RequestResponsePact AuthorizationRequired(PactDslWithProvider builder) {
         Map<String, Object> user_selected_params = new HashMap<>();
         user_selected_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest()));
-        return builder
-                .given("Get Payment - Authorization Required", user_selected_params)
+        return builder.given("Get Payment - Authorization Required", user_selected_params)
                 .uponReceiving("Get Payment - Authorization Required")
                 .method("GET")
                 .pathFromProviderState("/payments/${payment_id}", String.format("/payments/%s", A_PAYMENT_ID))
@@ -101,4 +88,3 @@ public class GetPaymentTests extends ContractTests {
         assertError(tlClient.payments().getPayment(ANOTHER_PAYMENT_ID).get());
     }
 }
-

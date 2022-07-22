@@ -1,5 +1,10 @@
 package com.truelayer.java.contract;
 
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.contract.Constant.*;
+import static com.truelayer.java.contract.ContractsUtils.*;
+import static com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.REDIRECT;
+
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -8,17 +13,11 @@ import au.com.dius.pact.core.model.annotations.Pact;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.truelayer.java.TestUtils.assertNotError;
-import static com.truelayer.java.contract.Constant.*;
-import static com.truelayer.java.contract.ContractsUtils.*;
-import static com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.REDIRECT;
 
 public class ProviderSelectionTests extends ContractTests {
 
@@ -45,9 +44,11 @@ public class ProviderSelectionTests extends ContractTests {
         Map<String, Object> provider_selection_params = new HashMap<>();
         provider_selection_params.put("return_uri", RETURN_URI);
         provider_selection_params.put("provider_id", PROVIDER_ID_GB);
-        provider_selection_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest(com.truelayer.java.entities.providerselection.ProviderSelection.Type.USER_SELECTED)));
-        return builder
-                .given("Submit Provider", provider_selection_params)
+        provider_selection_params.put(
+                "create_payment_request",
+                SerializeContractBody(buildCreatePaymentRequest(
+                        com.truelayer.java.entities.providerselection.ProviderSelection.Type.USER_SELECTED)));
+        return builder.given("Submit Provider", provider_selection_params)
                 .uponReceiving("Submit Provider")
                 .method("POST")
                 .pathFromProviderState(

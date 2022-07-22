@@ -16,11 +16,9 @@ import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

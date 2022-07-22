@@ -1,5 +1,8 @@
 package com.truelayer.java.contract;
 
+import static com.truelayer.java.Utils.getObjectMapper;
+import static com.truelayer.java.contract.Constant.*;
+
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
@@ -7,13 +10,9 @@ import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
-import lombok.SneakyThrows;
-
 import java.net.URI;
 import java.util.Collections;
-
-import static com.truelayer.java.Utils.getObjectMapper;
-import static com.truelayer.java.contract.Constant.*;
+import lombok.SneakyThrows;
 
 public class ContractsUtils {
 
@@ -40,7 +39,7 @@ public class ContractsUtils {
                 .build();
     }
 
-    private static ProviderSelection buildProviderSelection(ProviderSelection.Type providerSelectionType){
+    private static ProviderSelection buildProviderSelection(ProviderSelection.Type providerSelectionType) {
         switch (providerSelectionType) {
             case USER_SELECTED:
                 return ProviderSelection.userSelected()
@@ -80,5 +79,4 @@ public class ContractsUtils {
     public static String SerializeContractBody(Object body) {
         return getObjectMapper().writeValueAsString(body);
     }
-
 }

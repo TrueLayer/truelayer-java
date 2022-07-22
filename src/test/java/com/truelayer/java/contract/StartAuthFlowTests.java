@@ -1,5 +1,9 @@
 package com.truelayer.java.contract;
 
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.contract.Constant.*;
+import static com.truelayer.java.contract.ContractsUtils.*;
+
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -10,16 +14,11 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.truelayer.java.TestUtils.assertNotError;
-import static com.truelayer.java.contract.Constant.*;
-import static com.truelayer.java.contract.ContractsUtils.*;
 
 public class StartAuthFlowTests extends ContractTests {
 
@@ -34,9 +33,10 @@ public class StartAuthFlowTests extends ContractTests {
     private RequestResponsePact UserSelected(PactDslWithProvider builder) {
         Map<String, Object> user_selected_params = new HashMap<>();
         user_selected_params.put("return_uri", RETURN_URI);
-        user_selected_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.USER_SELECTED)));
-       return builder
-                .given("Start Auth Flow - provider_selection", user_selected_params)
+        user_selected_params.put(
+                "create_payment_request",
+                SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.USER_SELECTED)));
+        return builder.given("Start Auth Flow - provider_selection", user_selected_params)
                 .uponReceiving("Start Auth Flow - provider_selection")
                 .method("POST")
                 .pathFromProviderState(
@@ -55,14 +55,10 @@ public class StartAuthFlowTests extends ContractTests {
                         .object()
                         .stringValue("id", PROVIDER_ID_GB)
                         .stringType("display_name", "Bank Name")
-                        .matchUrl(
-                                "icon_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/")
-                        .matchUrl(
-                                "logo_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/")
-                        .stringMatcher("bg_color", RGB_REGEX,"#000000")
-                        .stringMatcher("country_code", COUNTRY_CODE_REGEX,"GB")
+                        .matchUrl("icon_uri", "https://truelayer-provider-assets.s3.amazonaws.com/")
+                        .matchUrl("logo_uri", "https://truelayer-provider-assets.s3.amazonaws.com/")
+                        .stringMatcher("bg_color", RGB_REGEX, "#000000")
+                        .stringMatcher("country_code", COUNTRY_CODE_REGEX, "GB")
                         .closeArray()
                         .closeObject()
                         .closeObject()
@@ -73,9 +69,10 @@ public class StartAuthFlowTests extends ContractTests {
     private void Preselected(PactDslWithProvider builder) {
         Map<String, Object> preselected_params = new HashMap<>();
         preselected_params.put("return_uri", RETURN_URI);
-        preselected_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.PRESELECTED)));
-        builder
-                .given("Start Auth Flow - redirect", preselected_params)
+        preselected_params.put(
+                "create_payment_request",
+                SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.PRESELECTED)));
+        builder.given("Start Auth Flow - redirect", preselected_params)
                 .uponReceiving("Start Auth Flow - redirect")
                 .method("POST")
                 .pathFromProviderState(
@@ -93,7 +90,8 @@ public class StartAuthFlowTests extends ContractTests {
                         .stringMatcher("uri", URI_REGEX, RETURN_URI)
                         .closeObject()
                         .closeObject()
-                        .closeObject()).toPact();
+                        .closeObject())
+                .toPact();
     }
 
     @SneakyThrows
