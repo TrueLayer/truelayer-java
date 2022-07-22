@@ -14,7 +14,6 @@ import java.net.URI;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 /**
  * Simple test for a client built without credentials caching capabilities
@@ -36,7 +35,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
     }
 
     @SneakyThrows
-//TODO    @Test
+    // TODO    @Test
     @DisplayName("It should use a a fresh token when creating multiple payments")
     public void itShouldUseACachedToken() {
         String accessTokenJsonFile = "auth/200.access_token.json";

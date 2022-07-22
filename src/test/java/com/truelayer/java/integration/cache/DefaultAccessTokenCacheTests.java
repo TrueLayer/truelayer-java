@@ -16,7 +16,7 @@ import org.junit.jupiter.api.*;
 public class DefaultAccessTokenCacheTests extends IntegrationTests {
 
     @SneakyThrows
-//TODO    @Test
+    // TODO    @Test
     @DisplayName("It should use a cached token when creating multiple payments")
     public void itShouldUseACachedToken() {
         String accessTokenJsonFile = "auth/200.access_token.json";
@@ -75,7 +75,7 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
     }
 
     @SneakyThrows
-//TODO    @Test
+    // TODO    @Test
     @DisplayName("It should refresh the access token if expired")
     public void itShouldRefreshTheAccessTokenIfExpired() throws InterruptedException {
         String accessTokenImmediateExpirationJsonFile = "auth/200.access_token.immediate_expiration.json";
