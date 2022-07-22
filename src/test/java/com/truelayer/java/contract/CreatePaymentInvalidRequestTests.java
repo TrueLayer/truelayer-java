@@ -1,7 +1,9 @@
 package com.truelayer.java.contract;
 
 import static com.truelayer.java.contract.Constant.*;
+import static com.truelayer.java.contract.ContractsUtils.buildCreatePaymentRequest;
 
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -12,22 +14,26 @@ import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+
 import java.util.Collections;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class CreatePaymentInvalidRequest extends ContractTests {
+public class CreatePaymentInvalidRequestTests extends ContractTests {
 
     @SneakyThrows
     @Pact(consumer = CONSUMER_NAME, provider = PROVIDER_NAME)
     @Override
     public RequestResponsePact buildPact(PactDslWithProvider builder) {
+        Map<String, String> responseHeaders = new HashMap<>();
+        responseHeaders.put("content-type", "application/problem+json;charset=utf-8");
         return builder.given("Create Payment")
                 .uponReceiving("Create Payment")
                 .method("POST")
@@ -35,14 +41,15 @@ public class CreatePaymentInvalidRequest extends ContractTests {
                 .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(400)
-                .body(
-                        Utils.getObjectMapper()
-                                .writeValueAsString(ProblemDetails.builder()
-                                        .status(400)
-                                        .title("Invalid parameters")
-                                        .traceId(UUID.randomUUID().toString())
-                                        .build()),
-                        "application/json")
+                .headers(responseHeaders)
+                .body(new PactDslJsonBody()
+                        .stringValue("type", "https://docs.truelayer.com/docs/error-types#invalid-parameters")
+                        .stringValue("title", "Invalid Parameters")
+                        .numberValue("status", 400)
+                        .stringType("trace_id", "53967d20065852ee6b4a7a8aed932311")
+                        .stringType("detail")
+                        .object("errors")
+                        .closeObject())
                 .toPact();
     }
 

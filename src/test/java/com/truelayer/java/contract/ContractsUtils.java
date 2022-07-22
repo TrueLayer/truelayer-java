@@ -16,6 +16,11 @@ import static com.truelayer.java.Utils.getObjectMapper;
 import static com.truelayer.java.contract.Constant.*;
 
 public class ContractsUtils {
+
+    public static CreatePaymentRequest buildCreatePaymentRequest() {
+        return buildCreatePaymentRequest(ProviderSelection.Type.USER_SELECTED);
+    }
+
     public static CreatePaymentRequest buildCreatePaymentRequest(ProviderSelection.Type providerSelectionType) {
 
         ProviderSelection providerSelection = buildProviderSelection(providerSelectionType);

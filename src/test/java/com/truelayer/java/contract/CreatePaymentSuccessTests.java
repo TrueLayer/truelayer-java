@@ -6,7 +6,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.truelayer.java.Utils;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import com.truelayer.java.payments.entities.CreatePaymentResponse;
@@ -21,7 +20,7 @@ import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.contract.Constant.*;
 import static com.truelayer.java.contract.ContractsUtils.buildCreatePaymentRequest;
 
-public class CreateAndAuthorizePaymentSuccess extends ContractTests {
+public class CreatePaymentSuccessTests extends ContractTests {
 
     @SneakyThrows
     @Override
@@ -33,14 +32,14 @@ public class CreateAndAuthorizePaymentSuccess extends ContractTests {
                 .uponReceiving("Create Payment")
                 .method("POST")
                 .path("/payments")
-                .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest(ProviderSelection.Type.PRESELECTED)), "application/json")
+                .body(Utils.getObjectMapper().writeValueAsString(buildCreatePaymentRequest()), "application/json")
                 .willRespondWith()
                 .status(201)
                 .body(new PactDslJsonBody()
-                        .stringMatcher("id", UUID_REGEX, A_PAYMENT_ID)
+                        .uuid("id", A_PAYMENT_ID)
                         .stringMatcher("resource_token", JWT_TOKEN_REGEX, A_JWT_TOKEN)
                         .object("user")
-                        .stringMatcher("id", UUID_REGEX))
+                        .uuid("id"))
                 .toPact();
     }
 
@@ -50,7 +49,7 @@ public class CreateAndAuthorizePaymentSuccess extends ContractTests {
     @PactTestFor(providerName = PROVIDER_NAME)
     @Test
     public void test() {
-        CreatePaymentRequest createPaymentRequest = buildCreatePaymentRequest(ProviderSelection.Type.PRESELECTED);
+        CreatePaymentRequest createPaymentRequest = buildCreatePaymentRequest();
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(createPaymentRequest).get();
         assertNotError(createPaymentResponse);

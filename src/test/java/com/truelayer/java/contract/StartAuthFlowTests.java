@@ -21,7 +21,7 @@ import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.contract.Constant.*;
 import static com.truelayer.java.contract.ContractsUtils.*;
 
-public class StartAuthFlow extends ContractTests {
+public class StartAuthFlowTests extends ContractTests {
 
     @SneakyThrows
     @Override
@@ -36,8 +36,8 @@ public class StartAuthFlow extends ContractTests {
         user_selected_params.put("return_uri", RETURN_URI);
         user_selected_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.USER_SELECTED)));
        return builder
-                .given("Start Auth Flow - user_selected", user_selected_params)
-                .uponReceiving("Start Auth Flow - user_selected")
+                .given("Start Auth Flow - provider_selection", user_selected_params)
+                .uponReceiving("Start Auth Flow - provider_selection")
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
@@ -57,12 +57,12 @@ public class StartAuthFlow extends ContractTests {
                         .stringType("display_name", "Bank Name")
                         .matchUrl(
                                 "icon_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg")
+                                "https://truelayer-provider-assets.s3.amazonaws.com/")
                         .matchUrl(
                                 "logo_uri",
-                                "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg")
-                        .stringType("bg_color", "#000000")
-                        .stringType("country_code", "GB")
+                                "https://truelayer-provider-assets.s3.amazonaws.com/")
+                        .stringMatcher("bg_color", RGB_REGEX,"#000000")
+                        .stringMatcher("country_code", COUNTRY_CODE_REGEX,"GB")
                         .closeArray()
                         .closeObject()
                         .closeObject()
@@ -75,8 +75,8 @@ public class StartAuthFlow extends ContractTests {
         preselected_params.put("return_uri", RETURN_URI);
         preselected_params.put("create_payment_request", SerializeContractBody(buildCreatePaymentRequest(ProviderSelection.Type.PRESELECTED)));
         builder
-                .given("Start Auth Flow - preselected", preselected_params)
-                .uponReceiving("Start Auth Flow - preselected")
+                .given("Start Auth Flow - redirect", preselected_params)
+                .uponReceiving("Start Auth Flow - redirect")
                 .method("POST")
                 .pathFromProviderState(
                         "/payments/${payment_id}/authorization-flow",
@@ -90,7 +90,7 @@ public class StartAuthFlow extends ContractTests {
                         .object("actions")
                         .object("next")
                         .stringValue("type", AuthorizationFlowAction.Type.REDIRECT.getType())
-                        .stringType("uri", RETURN_URI)
+                        .stringMatcher("uri", URI_REGEX, RETURN_URI)
                         .closeObject()
                         .closeObject()
                         .closeObject()).toPact();

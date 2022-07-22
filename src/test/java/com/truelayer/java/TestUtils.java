@@ -5,6 +5,7 @@ import static com.truelayer.java.Constants.HeaderNames.*;
 import static com.truelayer.java.Utils.getObjectMapper;
 import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -87,6 +88,16 @@ public class TestUtils {
      */
     public static <T> void assertNotError(ApiResponse<T> apiResponse) {
         assertFalse(apiResponse.isError(), String.format("request failed with error: %s", apiResponse.getError()));
+    }
+
+    /**
+     * Utility to assert that an API response is an error.
+     * It prints a meaningful message otherwise
+     *
+     * @param apiResponse the api response to check
+     */
+    public static <T> void assertError(ApiResponse<T> apiResponse) {
+        assertTrue(apiResponse.isError(), String.format("request succeeded with response"));
     }
 
     @SneakyThrows

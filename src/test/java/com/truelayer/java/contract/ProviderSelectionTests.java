@@ -7,7 +7,6 @@ import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
-import com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +18,9 @@ import java.util.Map;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.contract.Constant.*;
 import static com.truelayer.java.contract.ContractsUtils.*;
+import static com.truelayer.java.payments.entities.paymentdetail.AuthorizationFlowAction.Type.REDIRECT;
 
-public class ProviderSelection extends ContractTests {
+public class ProviderSelectionTests extends ContractTests {
 
     @SneakyThrows
     @Override
@@ -61,8 +61,8 @@ public class ProviderSelection extends ContractTests {
                         .object("authorization_flow")
                         .object("actions")
                         .object("next")
-                        .stringValue("type", AuthorizationFlowAction.Type.REDIRECT.getType())
-                        .stringType("uri", RETURN_URI)
+                        .stringValue("type", REDIRECT.getType())
+                        .stringMatcher("uri", URI_REGEX, RETURN_URI)
                         .closeObject()
                         .closeObject()
                         .closeObject())
