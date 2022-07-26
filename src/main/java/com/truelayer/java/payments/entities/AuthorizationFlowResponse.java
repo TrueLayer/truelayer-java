@@ -51,6 +51,18 @@ public abstract class AuthorizationFlowResponse {
         return (AuthorizationFlowAuthorizationFailed) this;
     }
 
+    // @deprecated
+    // Only `Authorizating` responses have `AuthorizationFlow`.
+    // Use `asAuthorizing().getAuthorizationFlow()` instead.
+    @Deprecated
+    @JsonIgnore
+    public AuthorizationFlow getAuthorizationFlow() {
+        if (!isAuthorizing()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return asAuthorizing().getAuthorizationFlow();
+    }
+
     private String buildErrorMessage() {
         return String.format("Response is of type %s.", this.getClass().getSimpleName());
     }

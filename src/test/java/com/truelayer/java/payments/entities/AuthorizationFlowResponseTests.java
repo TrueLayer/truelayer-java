@@ -51,6 +51,20 @@ class AuthorizationFlowResponseTests {
     }
 
     @Test
+    @DisplayName("It should get AuthorizationFlow for retro-compatibility")
+    public void shouldConvertToAuthorizationFailed2() {
+        AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizing(new AuthorizationFlow());
+        AuthorizationFlowResponse sut2 = new AuthorizationFlowAuthorizationFailed("some stage", "some reason");
+
+        assertDoesNotThrow(sut.asAuthorizing()::getAuthorizationFlow);
+        assertDoesNotThrow(sut::getAuthorizationFlow);
+        assertEquals(sut.getAuthorizationFlow(), sut.asAuthorizing().getAuthorizationFlow());
+
+        assertThrows(TrueLayerException.class, sut2::getAuthorizationFlow);
+        assertThrows(TrueLayerException.class, sut2.asAuthorizationFailed()::getAuthorizationFlow);
+    }
+
+    @Test
     @DisplayName("It should throw an error when converting to PaymentAuthorizationFlowAuthorizationFailed")
     public void shouldNotConvertToAuthorizationFailed() {
         AuthorizationFlowResponse sut = new AuthorizationFlowAuthorizing(new AuthorizationFlow());
