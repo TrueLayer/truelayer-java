@@ -18,12 +18,14 @@ import lombok.ToString;
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizing.class, name = "authorizing"),
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizationFailed.class, name = "failed")
 })
-@Getter
 @ToString
 @EqualsAndHashCode
 public abstract class AuthorizationFlowResponse {
 
+    @Getter
     protected Status status;
+
+    protected AuthorizationFlow authorizationFlow;
 
     @JsonIgnore
     public boolean isAuthorizing() {
@@ -51,16 +53,13 @@ public abstract class AuthorizationFlowResponse {
         return (AuthorizationFlowAuthorizationFailed) this;
     }
 
-    // @deprecated
-    // Only `Authorizating` responses have `AuthorizationFlow`.
-    // Use `asAuthorizing().getAuthorizationFlow()` instead.
-    @Deprecated
+    /**
+     * @deprecated Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}. Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     */
     @JsonIgnore
+    @Deprecated
     public AuthorizationFlow getAuthorizationFlow() {
-        if (!isAuthorizing()) {
-            throw new TrueLayerException(buildErrorMessage());
-        }
-        return asAuthorizing().getAuthorizationFlow();
+        return authorizationFlow;
     }
 
     private String buildErrorMessage() {
