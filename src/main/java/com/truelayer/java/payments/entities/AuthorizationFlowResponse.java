@@ -54,9 +54,8 @@ public abstract class AuthorizationFlowResponse {
     }
 
     /**
-     * @deprecated Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}. Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}. Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
      */
-    @JsonIgnore
     @Deprecated
     public AuthorizationFlow getAuthorizationFlow() {
         return authorizationFlow;
