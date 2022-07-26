@@ -186,6 +186,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // assert that the link returned is good to be browsed
         URI bankPage = startAuthorizationFlowResponse
                 .getData()
+                .asAuthorizing()
                 .getAuthorizationFlow()
                 .getActions()
                 .getNext()
@@ -233,6 +234,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // Call the mock payment api response to trigger the executed state on the payment just created
         URI redirectUri = startAuthorizationFlowResponse
                 .getData()
+                .asAuthorizing()
                 .getAuthorizationFlow()
                 .getActions()
                 .getNext()

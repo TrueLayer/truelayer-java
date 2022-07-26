@@ -271,6 +271,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // follow the redirect uri and parse its Location HTTP response header
         URI redirectUri = authorizationFlowResponse
+                .asAuthorizing()
                 .getAuthorizationFlow()
                 .getActions()
                 .getNext()

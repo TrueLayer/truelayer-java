@@ -25,8 +25,6 @@ public abstract class AuthorizationFlowResponse {
 
     protected Status status;
 
-    AuthorizationFlow authorizationFlow;
-
     @JsonIgnore
     public boolean isAuthorizing() {
         return this instanceof AuthorizationFlowAuthorizing;

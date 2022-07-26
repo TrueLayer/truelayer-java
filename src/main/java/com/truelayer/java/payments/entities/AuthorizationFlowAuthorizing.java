@@ -7,5 +7,8 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class AuthorizationFlowAuthorizing extends AuthorizationFlowResponse {
+
+    AuthorizationFlow authorizationFlow;
+
     Status status = Status.AUTHORIZING;
 }
