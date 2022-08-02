@@ -16,7 +16,7 @@ This sample project leverages [Quarkus configuration framework](https://quarkus.
 credentials and signing options required to initialise the TrueLayer client.
 
 In this sample application the client is configured for TrueLayer Sandbox environment. Make sure that you're
-using a proper set of Sandbox credentials or switch to your desired environment in [`TrueLayerClientProvider.java`](./src/main/java/com/truelayer/quarkusmvc/TrueLayerClientProvider.java#L33) class
+using a proper set of Sandbox credentials or switch to your desired environment in [`TrueLayerClientProvider.java`](./src/main/java/com/truelayer/quarkusmvc/TrueLayerClientProvider.java#L33) class.
 
 The easiest way to setup the project with your credentials is to fill the [application.properties](./src/main/resources/application.properties) file or
 set the following environment variables: 
