@@ -7,6 +7,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationRequiredPaymentDetail.class)
@@ -31,6 +32,8 @@ public abstract class PaymentDetail {
     private PaymentMethod paymentMethod;
 
     private ZonedDateTime createdAt;
+
+    private Map<String, String> metadata;
 
     public abstract Status getStatus();
 
