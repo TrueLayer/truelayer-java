@@ -3,6 +3,7 @@ package com.truelayer.java.payments.entities;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public class CreatePaymentRequest {
     private PaymentMethod paymentMethod;
 
     private User user;
+
+    private Map<String, String> metadata;
 }

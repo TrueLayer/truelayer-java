@@ -47,5 +47,8 @@
         "return_uri":"http://localhost"
       }
     }
+  },
+  "metadata": {
+    "a_custom_key": "a-value"
   }
 }

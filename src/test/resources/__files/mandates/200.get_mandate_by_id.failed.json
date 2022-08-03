@@ -31,5 +31,8 @@
         "period_alignment": "consent"
       }
     }
+  },
+  "metadata": {
+    "a_custom_key": "a-value"
   }
 }
