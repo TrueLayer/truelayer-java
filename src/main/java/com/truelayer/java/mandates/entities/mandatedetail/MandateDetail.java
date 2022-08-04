@@ -6,6 +6,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.mandates.entities.Constraints;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -34,6 +35,8 @@ public abstract class MandateDetail {
     private Constraints constraints;
 
     private Map<String, String> metadata;
+
+    private ProviderSelection providerSelection;
 
     public abstract Status getStatus();
 
