@@ -286,6 +286,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .name("Andrea Di Lisio")
                         .email("andrea@truelayer.com")
                         .build())
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
                 .build();
     }
 

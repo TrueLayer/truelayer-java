@@ -27,7 +27,9 @@
             "ob-exclude-this-bank"
           ]
         }
-      }
+      },
+      "provider_id": "a-provider-id",
+      "scheme_id": "faster_payments_service"
     },
     "beneficiary":{
       "type":"merchant_account",
@@ -47,5 +49,8 @@
     ],
     "account_holder_name":"John Doe"
   },
-  "executed_at":"2022-01-17T17:13:18.214924Z"
+  "executed_at":"2022-01-17T17:13:18.214924Z",
+  "metadata": {
+    "a_custom_key": "a-value"
+  }
 }

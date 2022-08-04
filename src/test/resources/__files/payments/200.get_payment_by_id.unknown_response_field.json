@@ -59,5 +59,8 @@
         "status":"not_supported"
       }
     }
+  },
+  "metadata": {
+    "a_custom_key": "a-value"
   }
 }

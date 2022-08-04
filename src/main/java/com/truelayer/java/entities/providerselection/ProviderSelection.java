@@ -22,6 +22,7 @@ import lombok.*;
 @EqualsAndHashCode
 @Getter
 public abstract class ProviderSelection {
+
     protected Type type;
 
     public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder userSelected() {

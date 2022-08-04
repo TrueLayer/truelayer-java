@@ -29,6 +29,8 @@
         }
       }
     },
+    "provider_id": "a-provider-id",
+    "scheme_id": "faster_payments_service",
     "beneficiary":{
       "type":"merchant_account",
       "merchant_account_id":"e83c4c20-b2ad-4b73-8a32-***",
@@ -46,5 +48,8 @@
         "status":"not_supported"
       }
     }
+  },
+  "metadata": {
+    "a_custom_key": "a-value"
   }
 }

@@ -15,6 +15,9 @@ To run the project it is enough to have Java 11 installed with  with `JAVA_HOME`
 This sample project leverages [Quarkus configuration framework](https://quarkus.io/guides/config) to specify the client 
 credentials and signing options required to initialise the TrueLayer client.
 
+In this sample application the client is configured for TrueLayer Sandbox environment. Make sure that you're
+using a proper set of Sandbox credentials or switch to your desired environment in [`TrueLayerClientProvider.java`](./src/main/java/com/truelayer/quarkusmvc/TrueLayerClientProvider.java#L33) class.
+
 The easiest way to setup the project with your credentials is to fill the [application.properties](./src/main/resources/application.properties) file or
 set the following environment variables: 
 - `TL_CLIENT_ID`
@@ -27,8 +30,7 @@ return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId()
                 URI.create("<redirect_url>"));
 ```
 
-If you're using a non final release of the Java library, please refer to [this 
-documentation](https://github.com/TrueLayer/truelayer-java#unstable-releases) to be able to declare the library as dependency of this project
+Make sure to whitelist the `<redirect_url>` value in your TrueLayer console.
 
 ## Running the application
 

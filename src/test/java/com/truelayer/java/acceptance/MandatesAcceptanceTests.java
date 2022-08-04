@@ -24,6 +24,7 @@ import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.SneakyThrows;
@@ -200,7 +201,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                     .sortCode("140662")
                                     .build())
                             .accountHolderName("Andrea Java SDK")
-                            .reference("a reference")
                             .build())
                     .build();
         } else {
@@ -212,7 +212,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                     .sortCode("140662")
                                     .build())
                             .accountHolderName("Andrea Java SDK")
-                            .reference("a reference")
                             .build())
                     .build();
         }
@@ -244,6 +243,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .maximumIndividualAmount(1000)
                         .build())
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
                 .build();
     }
 

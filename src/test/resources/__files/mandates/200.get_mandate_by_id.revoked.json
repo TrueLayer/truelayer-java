@@ -8,6 +8,17 @@
     "id": "string",
     "account_holder_name": "string"
   },
+  "provider_selection":{
+    "type":"preselected",
+    "provider_id": "a-provider-id",
+    "remitter": {
+      "account_holder_name": "Andrea Di Lisio",
+      "account_identifier": {
+        "type":"iban",
+        "iban":"GB53CLRB04066200002723"
+      }
+    }
+  },
   "user": {
     "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c",
     "name": "Remi Terr",
@@ -31,5 +42,8 @@
         "period_alignment": "consent"
       }
     }
+  },
+  "metadata": {
+    "a_custom_key": "a-value"
   }
 }

@@ -3,6 +3,7 @@ package com.truelayer.java.mandates.entities;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
+import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,11 +15,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class CreateMandateRequest {
 
-    Mandate mandate;
+    private Mandate mandate;
 
-    CurrencyCode currency;
+    private CurrencyCode currency;
 
-    User user;
+    private User user;
 
-    Constraints constraints;
+    private Constraints constraints;
+
+    private Map<String, String> metadata;
 }
