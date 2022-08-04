@@ -24,6 +24,27 @@
     "id": "string",
     "account_holder_name": "string"
   },
+  "provider_selection":{
+    "type":"user_selected",
+    "filter":{
+      "countries":[
+        "GB"
+      ],
+      "release_channel":"general_availability",
+      "customer_segments":[
+        "retail"
+      ],
+      "provider_ids":[
+        "mock-payments-gb-redirect"
+      ],
+      "excludes":{
+        "provider_ids":[
+          "ob-exclude-this-bank"
+        ]
+      }
+    },
+    "provider_id": "a-provider-id"
+  },
   "user": {
     "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c",
     "name": "Remi Terr",
