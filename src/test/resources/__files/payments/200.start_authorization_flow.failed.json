@@ -1,11 +1,4 @@
 {
-  "authorization_flow":{
-    "actions":{
-      "next":{
-        "type":"wait"
-      }
-    }
-  },
   "status":"failed",
   "failure_stage":"authorization_required",
   "failure_reason":"provider_rejected"
