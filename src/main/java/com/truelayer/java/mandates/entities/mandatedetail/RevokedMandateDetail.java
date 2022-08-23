@@ -18,4 +18,6 @@ public class RevokedMandateDetail extends MandateDetail {
     ZonedDateTime revokedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
+
+    Remitter remitter;
 }

@@ -14,4 +14,6 @@ public class AuthorizedMandateDetail extends MandateDetail {
     ZonedDateTime authorizedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
+
+    Remitter remitter;
 }
