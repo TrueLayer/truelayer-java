@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates.entities.mandatedetail;
 
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
+import com.truelayer.java.entities.Remitter;
 import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -18,4 +19,6 @@ public class RevokedMandateDetail extends MandateDetail {
     ZonedDateTime revokedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
+
+    Remitter remitter;
 }
