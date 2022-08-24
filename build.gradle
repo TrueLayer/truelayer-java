@@ -92,7 +92,7 @@ dependencies {
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
     // TL signing library
-    implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.2'
+    implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.3'
 
     // Serialization
     def jacksonVersion = '2.13.2'
