@@ -3,6 +3,7 @@ package com.truelayer.java.mandates;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
 import com.truelayer.java.mandates.entities.ListMandatesQuery;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
@@ -51,5 +52,11 @@ public class MandatesHandler implements IMandatesHandler {
     @Override
     public CompletableFuture<ApiResponse<Void>> revokeMandate(String mandateId) {
         return mandatesApi.revokeMandate(mandateId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
+            String mandateId, String amount_in_minor, String currency) {
+        return mandatesApi.getConfirmationOfFunds(mandateId, amount_in_minor, currency);
     }
 }

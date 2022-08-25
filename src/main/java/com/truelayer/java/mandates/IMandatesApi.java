@@ -3,6 +3,7 @@ package com.truelayer.java.mandates;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -78,4 +79,18 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/revoke")
     CompletableFuture<ApiResponse<Void>> revokeMandate(@Path("id") String mandateId);
+
+    /**
+     * Revoke mandate
+     * @param mandateId the id of the mandate
+     * @param amount_in_minor the amount to be confirmed present in the bank account
+     * @param currency the currency of the mandate
+     * @return a boolean representing funds availability and the time this was checked
+     * @see <a href="https://docs.truelayer.com/reference/confirm-mandate-funds"><i>Funds Confirmation</i> API reference</a>
+     */
+    @GET("/mandates/{id}/funds?amount_in_minor={amount_in_minor}&currency={currency}")
+    CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
+            @Path("id") String mandateId,
+            @Path("amount_in_minor") String amount_in_minor,
+            @Path("currency") String currency);
 }
