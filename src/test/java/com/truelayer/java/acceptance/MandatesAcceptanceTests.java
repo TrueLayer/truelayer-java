@@ -4,8 +4,7 @@ import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
@@ -151,6 +150,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(getConfirmationOfFundsResponseApiResponse);
+        assertEquals(true, getConfirmationOfFundsResponseApiResponse.getData().getConfirmed());
     }
 
     @Test
