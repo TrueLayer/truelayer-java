@@ -145,6 +145,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         assertNotError(getMandateResponse);
 
+        // finally make a confirmation of funds request for 1 penny
         ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse = tlClient.mandates()
                 .getConfirmationOfFunds(getMandateResponse.getData().getId(), "1", "GBP")
                 .get();
