@@ -129,8 +129,9 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
 
-        ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse =
-                tlClient.mandates().getConfirmationOfFunds(createMandateResponse.getData().getId(), "1", "GBP").get();
+        ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse = tlClient.mandates()
+                .getConfirmationOfFunds(createMandateResponse.getData().getId(), "1", "GBP")
+                .get();
 
         assertNotError(getConfirmationOfFundsResponseApiResponse);
     }
