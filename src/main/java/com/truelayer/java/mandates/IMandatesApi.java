@@ -81,7 +81,7 @@ public interface IMandatesApi {
     CompletableFuture<ApiResponse<Void>> revokeMandate(@Path("id") String mandateId);
 
     /**
-     * Revoke mandate
+     * Get Confirmation Of Funds
      * @param mandateId the id of the mandate
      * @param amount_in_minor the amount to be confirmed present in the bank account
      * @param currency the currency of the mandate
