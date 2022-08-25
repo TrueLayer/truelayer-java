@@ -91,6 +91,6 @@ public interface IMandatesApi {
     @GET("/mandates/{id}/funds?amount_in_minor={amount_in_minor}&currency={currency}")
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
             @Path("id") String mandateId,
-            @Path("amount_in_minor") String amount_in_minor,
-            @Path("currency") String currency);
+            @Query("amount_in_minor") String amount_in_minor,
+            @Query("currency") String currency);
 }
