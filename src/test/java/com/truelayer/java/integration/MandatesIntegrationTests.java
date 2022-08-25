@@ -220,8 +220,9 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<GetConfirmationOfFundsResponse> response =
-                tlClient.mandates().getConfirmationOfFunds(A_MANDATE_ID, "1", "gbp").get();
+        ApiResponse<GetConfirmationOfFundsResponse> response = tlClient.mandates()
+                .getConfirmationOfFunds(A_MANDATE_ID, "1", "gbp")
+                .get();
 
         GetConfirmationOfFundsResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, GetConfirmationOfFundsResponse.class);
