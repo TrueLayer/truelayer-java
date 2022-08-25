@@ -12,6 +12,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.CreateMandateResponse;
+import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
 import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
@@ -197,6 +198,36 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 tlClient.mandates().revokeMandate(A_MANDATE_ID).get();
 
         assertNotError(response);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get funds")
+    public void shouldGetFundsConfirmation() {
+        String jsonResponseFile = "mandates/200.get_confirmation_of_funds.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/funds"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<GetConfirmationOfFundsResponse> response =
+                tlClient.mandates().getConfirmationOfFunds(A_MANDATE_ID, "1", "gbp").get();
+
+        GetConfirmationOfFundsResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, GetConfirmationOfFundsResponse.class);
+
+        assertNotError(response);
+        assertEquals(expected.getConfirmed(), response.getData().getConfirmed());
     }
 
     @SneakyThrows
