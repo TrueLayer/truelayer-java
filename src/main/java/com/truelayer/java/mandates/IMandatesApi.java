@@ -88,7 +88,7 @@ public interface IMandatesApi {
      * @return a boolean representing funds availability and the time this was checked
      * @see <a href="https://docs.truelayer.com/reference/confirm-mandate-funds"><i>Funds Confirmation</i> API reference</a>
      */
-    @GET("/mandates/{id}/funds?amount_in_minor={amount_in_minor}&currency={currency}")
+    @GET("/mandates/{id}/funds?")
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
             @Path("id") String mandateId,
             @Query("amount_in_minor") String amount_in_minor,

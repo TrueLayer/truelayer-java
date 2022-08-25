@@ -121,16 +121,32 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .get();
         assertNotError(createMandateResponse);
 
-        // we must authorize the mandate before revoking it
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
-                startAuthFlowForMandate(createMandateResponse.getData().getId());
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
         assertNotError(startAuthorizationFlowResponse);
 
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
 
+        // get mandate by id
+        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
+                .getMandate(createMandateResponse.getData().getId())
+                .get();
+
+        assertNotError(getMandateResponse);
+
         ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse = tlClient.mandates()
-                .getConfirmationOfFunds(createMandateResponse.getData().getId(), "1", "GBP")
+                .getConfirmationOfFunds(getMandateResponse.getData().getId(), "1", "GBP")
                 .get();
 
         assertNotError(getConfirmationOfFundsResponseApiResponse);
