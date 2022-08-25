@@ -13,12 +13,9 @@ import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.mandates.entities.Constraints;
+import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit;
-import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.ListMandatesResponse;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
@@ -110,6 +107,32 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 tlClient.mandates().listMandates().get();
 
         assertNotError(listMandatesResponse);
+    }
+
+    @Test
+    @DisplayName("It should get confirm funds")
+    @SneakyThrows
+    public void itShouldGetFunds() {
+        // create mandate
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .get();
+        assertNotError(createMandateResponse);
+
+        // we must authorize the mandate before revoking it
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
+                startAuthFlowForMandate(createMandateResponse.getData().getId());
+        assertNotError(startAuthorizationFlowResponse);
+
+        // authorize the created mandate without explicit user interaction
+        authorizeMandate(startAuthorizationFlowResponse.getData());
+
+        ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse =
+                tlClient.mandates().getConfirmationOfFunds(createMandateResponse.getData().getId(), "1", "GBP").get();
+
+        assertNotError(getConfirmationOfFundsResponseApiResponse);
     }
 
     @Test
