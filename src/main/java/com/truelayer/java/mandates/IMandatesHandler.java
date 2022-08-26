@@ -1,16 +1,12 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.ListMandatesQuery;
-import com.truelayer.java.mandates.entities.ListMandatesResponse;
+import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import java.util.concurrent.CompletableFuture;
-import retrofit2.http.*;
 
 /**
  * Provides /mandates API integration without the burden of Retrofit's annotation
@@ -32,4 +28,7 @@ public interface IMandatesHandler {
     CompletableFuture<ApiResponse<MandateDetail>> getMandate(String mandateId);
 
     CompletableFuture<ApiResponse<Void>> revokeMandate(String mandateId);
+
+    CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
+            String mandateId, String amount, String currency);
 }

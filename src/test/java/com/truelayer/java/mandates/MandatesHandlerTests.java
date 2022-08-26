@@ -16,6 +16,8 @@ class MandatesHandlerTests {
     private static final String A_CURSOR = "a-cursor";
     private static final String A_USER_ID = "a-user-id";
     private static final int A_LIMIT = 15;
+    private static final String AN_AMOUNT_IN_MINOR = "10";
+    private static final String A_CURRENCY = "GBP";
 
     @Test
     @DisplayName("It should call the create mandate endpoint")
@@ -102,5 +104,16 @@ class MandatesHandlerTests {
         sut.revokeMandate(A_MANDATE_ID);
 
         verify(mandatesApi, times(1)).revokeMandate(A_MANDATE_ID);
+    }
+
+    @Test
+    @DisplayName("It should call the CoF endpoint")
+    public void shouldCallCOFEndpoint() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+
+        sut.getConfirmationOfFunds(A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
+
+        verify(mandatesApi, times(1)).getConfirmationOfFunds(A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
     }
 }

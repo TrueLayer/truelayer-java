@@ -18,7 +18,7 @@ to propose new features.
 
 ## Submit changes
 
-In order to submit changes to the TrueLayer Java project the follwoing steps are required: 
+In order to submit changes to the TrueLayer Java project the following steps are required: 
 
 1. Fork the repo and create your branch from `main`.
 2. Make sure to add proper tests in case of code changes. 
