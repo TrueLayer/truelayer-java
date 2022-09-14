@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.entities.Address;
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.entities.User;
@@ -21,6 +22,7 @@ import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.SneakyThrows;
@@ -287,6 +289,14 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .user(User.builder()
                         .name("Andrea Di Lisio")
                         .email("andrea@truelayer.com")
+                        .dateOfBirth(LocalDate.now())
+                        .address(Address.builder()
+                                .addressLine1("1 Hardwick Street")
+                                .city("London")
+                                .state("Greater London")
+                                .zip("EC1R 4RB")
+                                .countryCode("GB")
+                                .build())
                         .build())
                 .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
                 .build();
