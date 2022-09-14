@@ -11,4 +11,6 @@ public class MerchantAccount extends Beneficiary {
     private String merchantAccountId;
 
     private String accountHolderName;
+
+    private String reference;
 }

@@ -22,6 +22,7 @@ import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import java.net.URI;
 import java.util.Collections;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
@@ -280,6 +281,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .providerSelection(providerSelection)
                         .beneficiary(Beneficiary.merchantAccount()
                                 .merchantAccountId(merchantAccount.getId())
+                                .reference(UUID.randomUUID().toString())
                                 .build())
                         .build())
                 .user(User.builder()
