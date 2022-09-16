@@ -115,7 +115,7 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
-    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.33.2'
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.34.0'
 }
 
 jacocoTestReport {
