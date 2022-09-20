@@ -1,15 +1,12 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "6.2.0"
+    id "io.freefair.lombok" version "6.5.1"
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
-    maven{
-        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-    }
 }
 
 dependencies {
@@ -20,7 +17,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:2.0.0-recurring-payments-SNAPSHOT'
+    implementation 'com.truelayer:truelayer-java:2.2.2'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
