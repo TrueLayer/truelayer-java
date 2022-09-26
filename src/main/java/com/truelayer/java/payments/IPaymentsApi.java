@@ -55,4 +55,26 @@ public interface IPaymentsApi {
     @POST("/payments/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             @Path("id") String paymentId, @Body SubmitProviderSelectionRequest request);
+
+    /**
+     * Submit consent collected from the PSU for a given payment resource.
+     * @param paymentId the payment identifier
+     * @param request a submit consent request payload
+     * @return the response of the <i>Submit Consent</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/submit-consent"><i>Submit Consent</i> API reference</a>
+     */
+    @POST("/payments/{id}/authorization-flow/actions/consent")
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
+            @Path("id") String paymentId, @Body SubmitConsentRequest request);
+
+    /**
+     * Submit form inputs collected from the PSU for a given payment resource.
+     * @param paymentId the payment identifier
+     * @param request a submit form request payload
+     * @return the response of the <i>Submit Form</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/submit-form"><i>Submit Form</i> API reference</a>
+     */
+    @POST("/payments/{id}/authorization-flow/actions/form")
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(
+            @Path("id") String paymentId, @Body SubmitFormRequest request);
 }
