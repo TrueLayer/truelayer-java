@@ -80,7 +80,7 @@ public abstract class Input {
     public static class DisplayText {
         String key;
 
-        @JsonAlias("default")
-        String default_value;
+        @JsonProperty("default")
+        String defaultValue;
     }
 }
