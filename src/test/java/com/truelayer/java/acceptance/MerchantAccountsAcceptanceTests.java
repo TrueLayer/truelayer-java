@@ -34,7 +34,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should get the a merchant accounts by id")
     public void itShouldGetAMerchantAccountById() {
         ApiResponse<MerchantAccount> getMerchantAccountByIdResponse = tlClient.merchantAccounts()
-                .getMerchantAccountById(getMerchantAccount().getId())
+                .getMerchantAccountById(getMerchantAccount(CurrencyCode.GBP).getId())
                 .get();
 
         assertNotError(getMerchantAccountByIdResponse);
@@ -58,12 +58,12 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .currency(CurrencyCode.GBP)
                 .build();
         ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
-                .updateSweeping(getMerchantAccount().getId(), updateSweepingRequest)
+                .updateSweeping(getMerchantAccount(CurrencyCode.GBP).getId(), updateSweepingRequest)
                 .get();
         assertNotError(updateSweepingResponse);
 
         ApiResponse<SweepingSettings> getSweepingSettingsResponse = tlClient.merchantAccounts()
-                .getSweepingSettings(getMerchantAccount().getId())
+                .getSweepingSettings(getMerchantAccount(CurrencyCode.GBP).getId())
                 .get();
 
         assertNotError(getSweepingSettingsResponse);
@@ -79,7 +79,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                 .currency(CurrencyCode.GBP)
                 .build();
         ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
-                .updateSweeping(getMerchantAccount().getId(), updateSweepingRequest)
+                .updateSweeping(getMerchantAccount(CurrencyCode.GBP).getId(), updateSweepingRequest)
                 .get();
 
         assertNotError(updateSweepingResponse);
@@ -90,7 +90,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should disable sweeping for the given merchant account")
     public void itShouldDisableSweeping() {
         ApiResponse<Void> disableSweepingResponse = tlClient.merchantAccounts()
-                .disableSweeping(getMerchantAccount().getId())
+                .disableSweeping(getMerchantAccount(CurrencyCode.GBP).getId())
                 .get();
 
         assertNotError(disableSweepingResponse);
@@ -110,7 +110,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
 
         ApiResponse<ListPaymentSourcesResponse> getPaymentSources = tlClient.merchantAccounts()
                 .listPaymentSources(
-                        getMerchantAccount().getId(),
+                        getMerchantAccount(CurrencyCode.GBP).getId(),
                         ListPaymentSourcesQuery.builder()
                                 .userId(merchantAccountPayment
                                         .getPaymentSource()
@@ -127,7 +127,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
         ZonedDateTime from = ZonedDateTime.parse("2021-03-01T00:00:00Z");
         return tlClient.merchantAccounts()
                 .listTransactions(
-                        getMerchantAccount().getId(),
+                        getMerchantAccount(CurrencyCode.GBP).getId(),
                         ListTransactionsQuery.builder()
                                 .from(from)
                                 .to(from.plus(1, ChronoUnit.YEARS))

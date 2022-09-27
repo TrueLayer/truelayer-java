@@ -1,15 +1,19 @@
 package com.truelayer.java.acceptance;
 
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-
-import com.truelayer.java.*;
+import com.truelayer.java.ClientCredentials;
+import com.truelayer.java.Environment;
+import com.truelayer.java.SigningOptions;
+import com.truelayer.java.TrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
-import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag("acceptance")
 public abstract class AcceptanceTests {
@@ -18,7 +22,7 @@ public abstract class AcceptanceTests {
 
     protected static TrueLayerClient tlClient;
 
-    private MerchantAccount merchantAccount;
+    private final Map<CurrencyCode, MerchantAccount> merchantAccounts = new HashMap<>();
 
     @BeforeAll
     public static void setup() {
@@ -43,15 +47,17 @@ public abstract class AcceptanceTests {
      */
     @SneakyThrows
     @Synchronized
-    protected MerchantAccount getMerchantAccount() {
-        if (isNotEmpty(merchantAccount)) {
-            return merchantAccount;
+    protected MerchantAccount getMerchantAccount(CurrencyCode currencyCode) {
+        if (merchantAccounts.containsKey(currencyCode)) {
+            return merchantAccounts.get(currencyCode);
         }
 
-        merchantAccount = tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
-                .filter(m -> m.getCurrency().equals(CurrencyCode.GBP))
+        MerchantAccount merchantAccount = tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
+                .filter(m -> m.getCurrency().equals(currencyCode))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("test merchant account not found"));
+
+        merchantAccounts.put(currencyCode, merchantAccount);
 
         return merchantAccount;
     }

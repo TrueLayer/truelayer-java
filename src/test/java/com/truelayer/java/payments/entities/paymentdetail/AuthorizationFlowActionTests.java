@@ -38,6 +38,64 @@ class AuthorizationFlowActionTests {
     }
 
     @Test
+    @DisplayName("It should yield true if instance is of type Consent")
+    public void shouldYieldTrueIfConsent() {
+        AuthorizationFlowAction sut = new Consent(null);
+
+        assertTrue(sut.isConsent());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class Consent")
+    public void shouldConvertToConsent() {
+        AuthorizationFlowAction sut = new Consent(null);
+
+        assertDoesNotThrow(sut::asConsent);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to Consent")
+    public void shouldNotConvertToConsent() {
+        AuthorizationFlowAction sut = new WaitForOutcome();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asConsent);
+
+        assertEquals(
+                String.format(
+                        "Authorization flow is of type %s.", sut.getClass().getSimpleName()),
+                thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type Form")
+    public void shouldYieldTrueIfForm() {
+        AuthorizationFlowAction sut = new Form(null);
+
+        assertTrue(sut.isForm());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class Form")
+    public void shouldConvertToForm() {
+        AuthorizationFlowAction sut = new Form(null);
+
+        assertDoesNotThrow(sut::asForm);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to Form")
+    public void shouldNotConvertToForm() {
+        AuthorizationFlowAction sut = new WaitForOutcome();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asForm);
+
+        assertEquals(
+                String.format(
+                        "Authorization flow is of type %s.", sut.getClass().getSimpleName()),
+                thrown.getMessage());
+    }
+
+    @Test
     @DisplayName("It should yield true if instance is of type WaitForOutcome")
     public void shouldYieldTrueIfWaitForOutcome() {
         AuthorizationFlowAction sut = new WaitForOutcome();
