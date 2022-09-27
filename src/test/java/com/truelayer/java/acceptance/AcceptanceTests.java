@@ -6,14 +6,13 @@ import com.truelayer.java.SigningOptions;
 import com.truelayer.java.TrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Tag("acceptance")
 public abstract class AcceptanceTests {
@@ -52,10 +51,11 @@ public abstract class AcceptanceTests {
             return merchantAccounts.get(currencyCode);
         }
 
-        MerchantAccount merchantAccount = tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
-                .filter(m -> m.getCurrency().equals(currencyCode))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("test merchant account not found"));
+        MerchantAccount merchantAccount =
+                tlClient.merchantAccounts().listMerchantAccounts().get().getData().getItems().stream()
+                        .filter(m -> m.getCurrency().equals(currencyCode))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("test merchant account not found"));
 
         merchantAccounts.put(currencyCode, merchantAccount);
 

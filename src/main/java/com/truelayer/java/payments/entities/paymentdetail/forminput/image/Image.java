@@ -12,8 +12,8 @@ import lombok.ToString;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Base64.class, name = "base64"),
-        @JsonSubTypes.Type(value = Uri.class, name = "uri"),
+    @JsonSubTypes.Type(value = Base64.class, name = "base64"),
+    @JsonSubTypes.Type(value = Uri.class, name = "uri"),
 })
 @EqualsAndHashCode
 @ToString
@@ -48,8 +48,7 @@ public abstract class Image {
     }
 
     private String buildErrorMessage() {
-        return String.format(
-                "Image is of type %s.", this.getClass().getSimpleName());
+        return String.format("Image is of type %s.", this.getClass().getSimpleName());
     }
 
     @RequiredArgsConstructor

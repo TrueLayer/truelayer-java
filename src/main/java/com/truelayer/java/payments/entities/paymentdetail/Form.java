@@ -1,10 +1,9 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-
-import java.util.List;
 
 @Value
 @EqualsAndHashCode(callSuper = false)

@@ -2,15 +2,13 @@ package com.truelayer.java.payments.entities.paymentdetail.forminput;
 
 import com.fasterxml.jackson.annotation.*;
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.payments.entities.paymentdetail.AuthorizedPaymentDetail;
-import com.truelayer.java.payments.entities.paymentdetail.Consent;
 import lombok.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Text.class, name = "text"),
-        @JsonSubTypes.Type(value = TextWithImage.class, name = "text_with_image"),
-        @JsonSubTypes.Type(value = Select.class, name = "select"),
+    @JsonSubTypes.Type(value = Text.class, name = "text"),
+    @JsonSubTypes.Type(value = TextWithImage.class, name = "text_with_image"),
+    @JsonSubTypes.Type(value = Select.class, name = "select"),
 })
 @EqualsAndHashCode
 @ToString
@@ -63,8 +61,7 @@ public abstract class Input {
     }
 
     private String buildErrorMessage() {
-        return String.format(
-                "Input is of type %s.", this.getClass().getSimpleName());
+        return String.format("Input is of type %s.", this.getClass().getSimpleName());
     }
 
     @RequiredArgsConstructor

@@ -20,11 +20,9 @@ import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
-
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
@@ -51,8 +49,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider,
-                CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(userSelectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -83,8 +81,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider,
-                CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -184,10 +182,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .withProviderSelection()
                 .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .form(StartAuthorizationFlowRequest.Form.builder()
-                        .inputTypes(Arrays.asList(
-                                Input.Type.TEXT,
-                                Input.Type.TEXT_WITH_IMAGE,
-                                Input.Type.SELECT))
+                        .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE, Input.Type.SELECT))
                         .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
@@ -252,9 +247,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         assertNotError(submitForm3Response);
 
-        assertTrue(submitForm3Response.getData().asAuthorizing().getAuthorizationFlow().getActions().getNext()
+        assertTrue(submitForm3Response
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
                 .isWaitForOutcome());
-
     }
 
     @SneakyThrows
@@ -273,8 +272,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider,
-                CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -320,8 +319,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider,
-                CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -380,8 +379,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
-    private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection,
-                                                                          CurrencyCode currencyCode) {
+    private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
+            ProviderSelection providerSelection, CurrencyCode currencyCode) {
         MerchantAccount merchantAccount = getMerchantAccount(currencyCode);
 
         return CreatePaymentRequest.builder()

@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-import java.net.URI;
-
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class Consent extends AuthorizationFlowAction {

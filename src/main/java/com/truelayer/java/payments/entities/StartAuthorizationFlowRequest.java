@@ -1,13 +1,12 @@
 package com.truelayer.java.payments.entities;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
-import lombok.*;
-
 import java.net.URI;
 import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -87,10 +86,7 @@ public class StartAuthorizationFlowRequest {
 
         public StartAuthorizationFlowRequest build() {
             return new StartAuthorizationFlowRequest(
-                    withProviderSelection ? new ProviderSelection() : null,
-                    redirect,
-                    consent,
-                    form);
+                    withProviderSelection ? new ProviderSelection() : null, redirect, consent, form);
         }
     }
 }
