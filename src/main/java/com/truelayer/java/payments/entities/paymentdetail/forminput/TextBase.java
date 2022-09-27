@@ -2,18 +2,17 @@ package com.truelayer.java.payments.entities.paymentdetail.forminput;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Getter
 public abstract class TextBase extends Input {
 
     Format format;
     boolean sensitive;
-    int min_length;
-    int max_length;
+    int minLength;
+    int maxLength;
     List<Regex> regexes;
 
     @RequiredArgsConstructor
