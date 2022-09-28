@@ -1,0 +1,11 @@
+{
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"consent",
+        "subsequent_action_hint": "redirect"
+      }
+    }
+  },
+  "status":"authorizing"
+}

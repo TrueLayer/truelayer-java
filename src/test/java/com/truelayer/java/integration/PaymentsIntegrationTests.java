@@ -169,7 +169,15 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
     @SneakyThrows
     @ParameterizedTest(name = "and get a response of type {0}")
-    @ValueSource(strings = {"authorizing.provider_selection", "authorizing.redirect", "authorizing.wait", "failed"})
+    @ValueSource(
+            strings = {
+                "authorizing.provider_selection",
+                "authorizing.redirect",
+                "authorizing.consent",
+                "authorizing.form",
+                "authorizing.wait",
+                "failed"
+            })
     @DisplayName("It should start an authorization flow")
     public void shouldStartAnAuthorizationFlow(String status) {
         String jsonResponseFile = "payments/200.start_authorization_flow." + status + ".json";

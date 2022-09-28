@@ -1,8 +1,5 @@
 package com.truelayer.java.payments.entities;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import java.net.URI;
 import java.util.List;
@@ -24,7 +21,6 @@ public class StartAuthorizationFlowRequest {
 
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_ABSENT) // override global behaviour: this has to be always present if initialized
     public static class ProviderSelection {}
 
     @Builder
@@ -40,7 +36,6 @@ public class StartAuthorizationFlowRequest {
     @Builder
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_ABSENT) // override global behaviour: this has to be always present if initialized
     public static class Consent {}
 
     @Builder
