@@ -7,6 +7,7 @@ import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.*;
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
-    public static final String PROVIDER_ID = "ob-uki-mock-bank";
+    public static final String PROVIDER_ID = "ob-uki-mock-bank-sbox";
 
     @Test
     @DisplayName("It should create a sweeping mandate with preselected provider")
@@ -77,8 +78,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void itShouldCreateAMandateWithUserSelectedProvider() {
         // create mandate
-        ProviderSelection userSelectedProvider =
-                ProviderSelection.userSelected().build();
+        ProviderSelection userSelectedProvider = ProviderSelection.userSelected()
+                .filter(ProviderFilter.builder()
+                        .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                        .build())
+                .build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
                 .createMandate(createMandateRequest(SWEEPING, userSelectedProvider))
                 .get();

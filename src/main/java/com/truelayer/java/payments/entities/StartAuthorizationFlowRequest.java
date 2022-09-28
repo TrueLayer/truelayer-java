@@ -1,9 +1,8 @@
 package com.truelayer.java.payments.entities;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.*;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import java.net.URI;
+import java.util.List;
 import lombok.*;
 
 @Getter
@@ -16,9 +15,12 @@ public class StartAuthorizationFlowRequest {
 
     private final Redirect redirect;
 
+    private final Consent consent;
+
+    private final Form form;
+
     @ToString
     @EqualsAndHashCode
-    @JsonInclude(Include.NON_ABSENT) // override global behaviour: this has to be always present if initialized
     public static class ProviderSelection {}
 
     @Builder
@@ -31,6 +33,19 @@ public class StartAuthorizationFlowRequest {
         URI directReturnUri;
     }
 
+    @Builder
+    @ToString
+    @EqualsAndHashCode
+    public static class Consent {}
+
+    @Builder
+    @Getter
+    @ToString
+    @EqualsAndHashCode
+    public static class Form {
+        List<Input.Type> inputTypes;
+    }
+
     public static StartAuthorizationFlowRequestBuilder builder() {
         return new StartAuthorizationFlowRequestBuilder();
     }
@@ -39,6 +54,10 @@ public class StartAuthorizationFlowRequest {
         private boolean withProviderSelection;
 
         private Redirect redirect;
+
+        private Consent consent;
+
+        private Form form;
 
         public StartAuthorizationFlowRequestBuilder withProviderSelection() {
             this.withProviderSelection = true;
@@ -50,8 +69,19 @@ public class StartAuthorizationFlowRequest {
             return this;
         }
 
+        public StartAuthorizationFlowRequestBuilder consent(Consent consent) {
+            this.consent = consent;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder form(Form form) {
+            this.form = form;
+            return this;
+        }
+
         public StartAuthorizationFlowRequest build() {
-            return new StartAuthorizationFlowRequest(withProviderSelection ? new ProviderSelection() : null, redirect);
+            return new StartAuthorizationFlowRequest(
+                    withProviderSelection ? new ProviderSelection() : null, redirect, consent, form);
         }
     }
 }

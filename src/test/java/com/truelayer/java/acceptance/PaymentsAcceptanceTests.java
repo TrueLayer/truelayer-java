@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
-import com.truelayer.java.entities.ProviderFilter;
-import com.truelayer.java.entities.Remitter;
-import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
@@ -19,12 +17,12 @@ import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
+import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
@@ -35,6 +33,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
     public static final String PROVIDER_ID = "mock-payments-gb-redirect";
+
+    public static final String PROVIDER_ID_EMBEDDED = "mock-payments-de-embedded";
 
     @Test
     @DisplayName("It should create and get by id a payment with user_selected provider")
@@ -49,7 +49,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(userSelectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -80,7 +81,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -100,7 +102,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentAndOpenItInHPP() {
         // create payment
-        CreatePaymentRequest paymentRequest = buildPaymentRequest();
+        CreatePaymentRequest paymentRequest = buildPaymentRequest(CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -119,10 +121,10 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should complete an authorization flow for a payment")
-    public void shouldCompleteAnAuthorizationFlowForAPayment() {
+    @DisplayName("It should complete a redirect authorization flow for a payment")
+    public void shouldCompleteARedirectAuthorizationFlowForAPayment() {
         // create payment
-        CreatePaymentRequest paymentRequest = buildPaymentRequest();
+        CreatePaymentRequest paymentRequest = buildPaymentRequest(CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -133,6 +135,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
+                .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
@@ -150,6 +153,107 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(submitProviderSelectionResponse);
+
+        // Submit consent
+        ApiResponse<AuthorizationFlowResponse> submitConsentResponse = tlClient.payments()
+                .submitConsent(
+                        createPaymentResponse.getData().getId(),
+                        SubmitConsentRequest.builder().build())
+                .get();
+
+        assertNotError(submitConsentResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should complete an embedded authorization flow for a payment")
+    public void shouldCompleteAnEmbeddedAuthorizationFlowForAPayment() {
+        // create payment
+        CreatePaymentRequest paymentRequest = buildPaymentRequest(CurrencyCode.EUR);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
+                .withProviderSelection()
+                .consent(StartAuthorizationFlowRequest.Consent.builder().build())
+                .form(StartAuthorizationFlowRequest.Form.builder()
+                        .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE, Input.Type.SELECT))
+                        .build())
+                .build();
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // Submit the provider selection
+        ApiResponse<AuthorizationFlowResponse> submitProviderSelectionResponse = tlClient.payments()
+                .submitProviderSelection(
+                        createPaymentResponse.getData().getId(),
+                        SubmitProviderSelectionRequest.builder()
+                                .providerId(PROVIDER_ID_EMBEDDED)
+                                .build())
+                .get();
+
+        assertNotError(submitProviderSelectionResponse);
+
+        // Submit consent
+        ApiResponse<AuthorizationFlowResponse> submitConsentResponse = tlClient.payments()
+                .submitConsent(
+                        createPaymentResponse.getData().getId(),
+                        SubmitConsentRequest.builder().build())
+                .get();
+
+        assertNotError(submitConsentResponse);
+
+        // Submit form 1
+        Map<String, String> inputsStep1 = new HashMap<>();
+        inputsStep1.put("remitter-name", "Andrea Di Lisio");
+        inputsStep1.put("remitter-iban", "DE09500105171333647892");
+        inputsStep1.put("psu-id", "test_username");
+        inputsStep1.put("psu-password", "test_password");
+        ApiResponse<AuthorizationFlowResponse> submitForm1Response = tlClient.payments()
+                .submitForm(
+                        createPaymentResponse.getData().getId(),
+                        SubmitFormRequest.builder().inputs(inputsStep1).build())
+                .get();
+
+        assertNotError(submitForm1Response);
+
+        // Submit form 2
+        Map<String, String> inputsStep2 = new HashMap<>();
+        inputsStep2.put("embedded-auth-flow-sca-select", "Sms");
+        ApiResponse<AuthorizationFlowResponse> submitForm2Response = tlClient.payments()
+                .submitForm(
+                        createPaymentResponse.getData().getId(),
+                        SubmitFormRequest.builder().inputs(inputsStep2).build())
+                .get();
+
+        assertNotError(submitForm2Response);
+
+        // Submit form 3
+        Map<String, String> inputsStep3 = new HashMap<>();
+        inputsStep3.put("embedded-auth-flow-sms-input", "test_executed");
+        ApiResponse<AuthorizationFlowResponse> submitForm3Response = tlClient.payments()
+                .submitForm(
+                        createPaymentResponse.getData().getId(),
+                        SubmitFormRequest.builder().inputs(inputsStep3).build())
+                .get();
+
+        assertNotError(submitForm3Response);
+
+        assertTrue(submitForm3Response
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .isWaitForOutcome());
     }
 
     @SneakyThrows
@@ -168,7 +272,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -214,7 +319,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .build())
                 .build();
-        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(preselectionProvider);
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -273,12 +379,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
-    private CreatePaymentRequest buildPaymentRequestWithProviderSelection(ProviderSelection providerSelection) {
-        MerchantAccount merchantAccount = getMerchantAccount();
+    private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
+            ProviderSelection providerSelection, CurrencyCode currencyCode) {
+        MerchantAccount merchantAccount = getMerchantAccount(currencyCode);
 
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
-                .currency(merchantAccount.getCurrency())
+                .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(Beneficiary.merchantAccount()
@@ -302,16 +409,16 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .build();
     }
 
-    private CreatePaymentRequest buildPaymentRequest() {
+    private CreatePaymentRequest buildPaymentRequest(CurrencyCode currencyCode) {
         UserSelectedProviderSelection userSelectionProvider = UserSelectedProviderSelection.builder()
                 .filter(ProviderFilter.builder()
-                        .countries(Collections.singletonList(CountryCode.GB))
+                        .countries(Arrays.asList(CountryCode.GB, CountryCode.DE))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
-                        .providerIds(Collections.singletonList(PROVIDER_ID))
+                        .providerIds(Arrays.asList(PROVIDER_ID, PROVIDER_ID_EMBEDDED))
                         .build())
                 .build();
-        return buildPaymentRequestWithProviderSelection(userSelectionProvider);
+        return buildPaymentRequestWithProviderSelection(userSelectionProvider, currencyCode);
     }
 
     @SneakyThrows

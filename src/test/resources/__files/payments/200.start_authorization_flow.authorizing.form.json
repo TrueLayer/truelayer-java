@@ -1,0 +1,89 @@
+{
+  "authorization_flow": {
+    "actions": {
+      "next": {
+        "type": "form",
+        "inputs": [
+          {
+            "type": "text",
+            "id": "text_input_1",
+            "mandatory": true,
+            "display_text": {
+              "key": "text_input_1.display_text",
+              "default": "Text input 1"
+            },
+            "description": "some description",
+            "format": "alphanumerical",
+            "sensitive": true,
+            "min_length": 5,
+            "max_length": 10,
+            "regexes": [
+              {
+                "regex": ".*",
+                "message": {
+                  "key": "text_input_1.regex",
+                  "default": "Regex 1"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text_with_image",
+            "id": "text_with_image_input_1",
+            "mandatory": true,
+            "display_text": {
+              "key": "text_with_image_input_1.display_text",
+              "default": "Text with image input 1"
+            },
+            "description": "some description",
+            "format": "alphanumerical",
+            "sensitive": true,
+            "min_length": 5,
+            "max_length": 10,
+            "regexes": [
+              {
+                "regex": ".*",
+                "message": {
+                  "key": "text_with_image_input_1.regex",
+                  "default": "Regex 1"
+                }
+              }
+            ],
+            "image": {
+              "type": "base_64",
+              "data": "image_data",
+              "media_type": "media_type"
+            }
+          },
+          {
+            "type": "select",
+            "id": "select_input_1",
+            "mandatory": true,
+            "display_text": {
+              "key": "select_input_1.display_text",
+              "default": "Select input 1"
+            },
+            "description": "some description",
+            "options": [
+              {
+                "id": "option_1",
+                "display_text": {
+                  "key": "select_input_1.option_1",
+                  "default": "Option 1"
+                }
+              },
+              {
+                "id": "option_2",
+                "display_text": {
+                  "key": "select_input_2.option_2",
+                  "default": "Option 2"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "status": "authorizing"
+}

@@ -33,6 +33,16 @@ public abstract class AuthorizationFlowAction {
     }
 
     @JsonIgnore
+    public boolean isConsent() {
+        return this instanceof Consent;
+    }
+
+    @JsonIgnore
+    public boolean isForm() {
+        return this instanceof Form;
+    }
+
+    @JsonIgnore
     public boolean isWaitForOutcome() {
         return this instanceof WaitForOutcome;
     }
@@ -47,6 +57,20 @@ public abstract class AuthorizationFlowAction {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (ProviderSelection) this;
+    }
+
+    public Consent asConsent() {
+        if (!isConsent()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (Consent) this;
+    }
+
+    public Form asForm() {
+        if (!isForm()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (Form) this;
     }
 
     public WaitForOutcome asWaitForOutcome() {
@@ -72,6 +96,8 @@ public abstract class AuthorizationFlowAction {
     @Getter
     public enum Type {
         PROVIDER_SELECTION("provider_selection"),
+        CONSENT("consent"),
+        FORM("form"),
         REDIRECT("redirect"),
         WAIT("wait");
 
