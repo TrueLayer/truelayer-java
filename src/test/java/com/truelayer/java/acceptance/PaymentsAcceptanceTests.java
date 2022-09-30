@@ -56,6 +56,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // get it by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
@@ -88,6 +89,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // get it by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
@@ -108,6 +110,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // open it in HPP
         URI link = tlClient.hpp()
@@ -130,6 +133,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
@@ -175,6 +179,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
@@ -279,6 +284,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
@@ -326,6 +332,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.payments().createPayment(paymentRequest).get();
 
         assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
