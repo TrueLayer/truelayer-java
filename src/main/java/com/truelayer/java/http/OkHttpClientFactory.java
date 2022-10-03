@@ -77,6 +77,8 @@ public class OkHttpClientFactory {
             IAuthenticationHandler authenticationHandler,
             SigningOptions signingOptions,
             ICredentialsCache credentialsCache) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
@@ -100,5 +102,11 @@ public class OkHttpClientFactory {
         }
 
         return paymentsHttpClientBuilder.build();
+    }
+
+    public OkHttpClient buildPaymentsProvidersApiClient(OkHttpClient authApiHttpClient) {
+        OkHttpClient.Builder paymentsProvidersHttpClientBuilder = authApiHttpClient.newBuilder();
+
+        return paymentsProvidersHttpClientBuilder.build();
     }
 }

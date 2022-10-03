@@ -8,6 +8,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.paymentsproviders.IPaymentsProvidersApi;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -26,6 +27,12 @@ public interface ITrueLayerClient {
      * @return a utility to interact with payments endpoints.
      */
     IPaymentsApi payments();
+
+    /**
+     * Entrypoint for payments providers endpoints.
+     * @return a utility to interact with payments providers endpoints.
+     */
+    IPaymentsProvidersApi paymentsProviders();
 
     /**
      * Entrypoint for merchant accounts endpoints.

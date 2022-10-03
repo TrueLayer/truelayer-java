@@ -1,0 +1,25 @@
+{
+  "id": "ob-hsbc",
+  "display_name": "HSBC",
+  "icon_uri": "https://truelayer-provider-assets.s3.amazonaws.com/global/icons/hsbc.svg",
+  "logo_uri": "https://truelayer-provider-assets.s3.amazonaws.com/global/logos/hsbc.svg",
+  "bg_color": "#515358",
+  "country_code": "GB",
+  "capabilities": {
+    "payments": {
+      "bank_transfer": {
+        "release_channel": "general_availability",
+        "schemes": [
+          {
+            "id": "faster_payments_service"
+          }
+        ]
+      }
+    },
+    "mandates": {
+      "vrp_sweeping": {
+        "release_channel": "general_availability"
+      }
+    }
+  }
+}

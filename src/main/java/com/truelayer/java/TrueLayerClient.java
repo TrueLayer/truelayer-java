@@ -9,6 +9,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.paymentsproviders.IPaymentsProvidersApi;
 import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.ObjectUtils;
 public class TrueLayerClient implements ITrueLayerClient {
     private IAuthenticationHandler authenticationHandler;
     private IPaymentsApi paymentsHandler;
+    private IPaymentsProvidersApi paymentsProvidersHandler;
     private IMerchantAccountsHandler merchantAccountsHandler;
     private IMandatesHandler mandatesHandler;
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
@@ -62,6 +64,17 @@ public class TrueLayerClient implements ITrueLayerClient {
             throw buildInitializationException("payments");
         }
         return paymentsHandler;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPaymentsProvidersApi paymentsProviders() {
+        if (ObjectUtils.isEmpty(paymentsProvidersHandler)) {
+            throw buildInitializationException("payments providers");
+        }
+        return paymentsProvidersHandler;
     }
 
     /**
