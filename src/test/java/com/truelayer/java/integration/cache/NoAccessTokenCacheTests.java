@@ -51,7 +51,7 @@ public class NoAccessTokenCacheTests extends IntegrationTests {
                 .withAuthorization()
                 .withSignature()
                 .status(201)
-                .bodyFile("payments/201.create_payment.json")
+                .bodyFile("payments/201.create_payment.authorization_required.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
 

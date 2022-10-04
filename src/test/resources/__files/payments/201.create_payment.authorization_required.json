@@ -1,0 +1,8 @@
+{
+  "id":"40d65bb9-642d-48e7-a743-***",
+  "user":{
+    "id":"332d7a9a-aaaa-4ae4-9d2f-***"
+  },
+  "resource_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.***",
+  "status": "authorization_required"
+}

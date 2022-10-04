@@ -22,11 +22,12 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
     public static final String A_PAYMENT_ID = "a-payment-id";
 
-    @Test
     @DisplayName("It should create and return a payment")
+    @ParameterizedTest(name = "of a payment with create response status {0}")
+    @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZED", "FAILED"})
     @SneakyThrows
-    public void shouldCreateAndReturnAPaymentMerchantAccount() {
-        String jsonResponseFile = "payments/201.create_payment.json";
+    public void shouldCreateAndReturnAPaymentMerchantAccount(Status expectedStatus) {
+        String jsonResponseFile = "payments/201.create_payment." + expectedStatus.getStatus() + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -48,6 +49,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
         assertNotError(response);
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
+        assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
 
