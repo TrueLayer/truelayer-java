@@ -178,8 +178,10 @@ public class TrueLayerClientBuilder {
 
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new VersionInfoLoader());
 
-        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(
-                clientCredentials, timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+        OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
+                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+
+        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
@@ -206,10 +208,8 @@ public class TrueLayerClientBuilder {
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
-        OkHttpClient paymentsProvidersHttpClient = httpClientFactory.buildPaymentsProvidersApiClient(authHttpClient);
-
         IPaymentsProvidersApi paymentsProvidersHandler = RetrofitFactory.build(
-                        paymentsProvidersHttpClient, environment.getPaymentsApiUri())
+                        baseHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsProvidersApi.class);
 
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(

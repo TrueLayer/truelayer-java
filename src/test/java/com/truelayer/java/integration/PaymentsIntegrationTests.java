@@ -38,6 +38,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
                 .withSignature()
+                .withIdempotencyKey()
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -67,6 +68,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
                 .withSignature()
+                .withIdempotencyKey()
                 .status(401)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -125,6 +127,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
                 .withSignature()
+                .withIdempotencyKey()
                 .status(404)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -154,6 +157,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/payments"))
                 .withAuthorization()
                 .withSignature()
+                .withIdempotencyKey()
                 .status(400)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -191,6 +195,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -223,6 +228,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();

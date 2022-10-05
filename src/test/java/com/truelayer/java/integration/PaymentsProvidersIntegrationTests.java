@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 public class PaymentsProvidersIntegrationTests extends IntegrationTests {
 
     @Test
-    @DisplayName("It should create and return a payment")
+    @DisplayName("It should return a payments provider")
     @SneakyThrows
-    public void shouldCreateAndReturnAPaymentMerchantAccount() {
+    public void shouldReturnAPaymentsProvider() {
         String jsonResponseFile = "payments_providers/200.get_payments_provider.json";
         RequestStub.New()
                 .method("get")

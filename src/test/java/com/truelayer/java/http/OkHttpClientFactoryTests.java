@@ -30,24 +30,48 @@ import org.junit.jupiter.api.Test;
 class OkHttpClientFactoryTests {
 
     @Test
+    @DisplayName("It should build a Base API client")
+    public void shouldCreateABaseAuthApiClient() {
+        Duration customTimeout = Duration.ofSeconds(2);
+        ExecutorService customExecutor = Executors.newCachedThreadPool();
+        Consumer<String> customLogMessageConsumer = System.out::println;
+
+        OkHttpClient baseApiClient = getOkHttpClientFactory()
+                .buildBaseApiClient(
+                        customTimeout,
+                        ConnectionPoolOptions.builder().build(),
+                        customExecutor,
+                        customLogMessageConsumer);
+
+        assertNotNull(baseApiClient);
+        assertTrue(
+                baseApiClient.interceptors().stream().anyMatch(i -> i.getClass().equals(UserAgentInterceptor.class)),
+                "User agent interceptor not found");
+        assertTrue(
+                baseApiClient.networkInterceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(HttpLoggingInterceptor.class)),
+                "Logging interceptor not found");
+        assertEquals(customExecutor, baseApiClient.dispatcher().executorService(), "Custom executor not found");
+        assertEquals(customTimeout.toMillis(), baseApiClient.callTimeoutMillis(), "Unexpected call timeout configured");
+    }
+
+    @Test
     @DisplayName("It should build an Auth API client")
     public void shouldCreateAnAuthApiClient() {
         Duration customTimeout = Duration.ofSeconds(2);
         ExecutorService customExecutor = Executors.newCachedThreadPool();
         Consumer<String> customLogMessageConsumer = System.out::println;
 
-        OkHttpClient authClient = getOkHttpClientFactory()
-                .buildAuthApiClient(
-                        getClientCredentials(),
+        OkHttpClient baseApiClient = getOkHttpClientFactory()
+                .buildBaseApiClient(
                         customTimeout,
                         ConnectionPoolOptions.builder().build(),
                         customExecutor,
                         customLogMessageConsumer);
 
+        OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseApiClient, getClientCredentials());
+
         assertNotNull(authClient);
-        assertTrue(
-                authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
-                "Idempotency interceptor not found");
         assertTrue(
                 authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(UserAgentInterceptor.class)),
                 "User agent interceptor not found");
@@ -62,8 +86,9 @@ class OkHttpClientFactoryTests {
     @Test
     @DisplayName("It should build a Payments API client")
     public void shouldThrowCredentialsMissingException() {
-        OkHttpClient authClient =
-                getOkHttpClientFactory().buildAuthApiClient(getClientCredentials(), null, null, null, null);
+        OkHttpClient baseHttpClient = getOkHttpClientFactory().buildBaseApiClient(null, null, null, null);
+        OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseHttpClient, getClientCredentials());
+
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(getClientCredentials())
                 .httpClient(RetrofitFactory.build(authClient, URI.create("http://localhost")))
@@ -76,6 +101,9 @@ class OkHttpClientFactoryTests {
                         TestUtils.getSigningOptions(),
                         new SimpleCredentialsCache(Clock.systemUTC()));
 
+        assertTrue(
+                paymentClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
+                "Idempotency interceptor not found");
         assertTrue(
                 paymentClient.interceptors().stream().anyMatch(i -> i.getClass().equals(SignatureInterceptor.class)),
                 "Signature interceptor not found");

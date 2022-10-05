@@ -99,6 +99,7 @@ public class TestUtils {
 
         private boolean withSignature;
         private boolean withAuthorization;
+        private boolean withIdempotencyKey;
         private String method;
         private UrlPattern path;
         private int status;
@@ -136,6 +137,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub withIdempotencyKey() {
+            this.withIdempotencyKey = true;
+            return this;
+        }
+
         public RequestStub withSignature() {
             this.withSignature = true;
             return this;
@@ -147,9 +153,7 @@ public class TestUtils {
         }
 
         public StubMapping build() {
-            MappingBuilder request = request(method.toUpperCase(), path)
-                    .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN))
-                    .withHeader(USER_AGENT, matching(LIBRARY_INFO));
+            MappingBuilder request = request(method.toUpperCase(), path).withHeader(USER_AGENT, matching(LIBRARY_INFO));
 
             if (withSignature) {
                 request.withHeader(TL_SIGNATURE, matching(".*"));
@@ -157,6 +161,10 @@ public class TestUtils {
 
             if (withAuthorization) {
                 request.withHeader(AUTHORIZATION, matching(".*"));
+            }
+
+            if (withIdempotencyKey) {
+                request.withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN));
             }
 
             ResponseDefinitionBuilder response = aResponse()

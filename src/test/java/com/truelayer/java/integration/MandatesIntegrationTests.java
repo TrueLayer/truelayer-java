@@ -46,6 +46,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/mandates"))
                 .withAuthorization()
                 .withSignature()
+                .withIdempotencyKey()
                 .status(201)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -130,6 +131,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathMatching("/mandates/" + A_MANDATE_ID + "/authorization-flow"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -161,6 +163,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/authorization-flow/actions/provider-selection"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -191,6 +194,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/revoke"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(204)
                 .build();
 
@@ -246,6 +250,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .method("post")
                 .path(urlPathEqualTo("/mandates"))
                 .withAuthorization()
+                .withIdempotencyKey()
                 .status(422)
                 .bodyFile(jsonResponseFile)
                 .build();
