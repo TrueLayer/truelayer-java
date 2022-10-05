@@ -19,7 +19,8 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
-import com.truelayer.java.paymentsproviders.IPaymentsProvidersApi;
+import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
+import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -208,9 +209,10 @@ public class TrueLayerClientBuilder {
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
-        IPaymentsProvidersApi paymentsProvidersHandler = RetrofitFactory.build(
-                        baseHttpClient, environment.getPaymentsApiUri())
-                .create(IPaymentsProvidersApi.class);
+        IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
+                .clientCredentials(clientCredentials)
+                .httpClient(RetrofitFactory.build(baseHttpClient, environment.getPaymentsApiUri()))
+                .build();
 
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())

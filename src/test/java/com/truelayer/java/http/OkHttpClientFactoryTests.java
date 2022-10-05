@@ -102,7 +102,8 @@ class OkHttpClientFactoryTests {
                         new SimpleCredentialsCache(Clock.systemUTC()));
 
         assertTrue(
-                paymentClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
+                paymentClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
                 "Idempotency interceptor not found");
         assertTrue(
                 paymentClient.interceptors().stream().anyMatch(i -> i.getClass().equals(SignatureInterceptor.class)),

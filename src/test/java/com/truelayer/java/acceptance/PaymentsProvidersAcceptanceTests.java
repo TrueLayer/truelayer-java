@@ -19,9 +19,8 @@ public class PaymentsProvidersAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should get by id a payments provider")
     @SneakyThrows
     public void shouldCreateAPaymentWithUserSelectionProvider() {
-        ApiResponse<PaymentsProvider> getPaymentsProviderResponse = tlClient.paymentsProviders()
-                .getProvider(PROVIDER_ID, "client-id")
-                .get();
+        ApiResponse<PaymentsProvider> getPaymentsProviderResponse =
+                tlClient.paymentsProviders().getProvider(PROVIDER_ID).get();
 
         assertNotError(getPaymentsProviderResponse);
         assertEquals(getPaymentsProviderResponse.getData().getId(), PROVIDER_ID);
