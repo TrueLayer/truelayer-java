@@ -20,16 +20,17 @@ public class PaymentsProvidersIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldReturnAPaymentsProvider() {
         String jsonResponseFile = "payments_providers/200.get_payments_provider.json";
+        String providerId = "ob-barclays";
         String clientId = TestUtils.getClientCredentials().clientId();
         RequestStub.New()
                 .method("get")
-                .path(urlEqualTo("/payments-providers/ob-barclays?client_id=" + clientId))
+                .path(urlEqualTo("/payments-providers/" + providerId + "?client_id=" + clientId))
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
 
         ApiResponse<PaymentsProvider> response =
-                tlClient.paymentsProviders().getProvider("ob-barclays").get();
+                tlClient.paymentsProviders().getProvider(providerId).get();
 
         assertNotError(response);
         PaymentsProvider expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentsProvider.class);
