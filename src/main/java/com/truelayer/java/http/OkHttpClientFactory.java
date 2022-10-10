@@ -31,16 +31,11 @@ import okhttp3.OkHttpClient;
 public class OkHttpClientFactory {
     VersionInfoLoader versionInfoLoader;
 
-    public OkHttpClient buildAuthApiClient(
-            ClientCredentials clientCredentials,
+    public OkHttpClient buildBaseApiClient(
             Duration timeout,
             ConnectionPoolOptions connectionPoolOptions,
             ExecutorService requestExecutor,
             Consumer<String> logMessageConsumer) {
-
-        if (isEmpty(clientCredentials)) {
-            throw new TrueLayerException("client credentials must be set");
-        }
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
@@ -66,8 +61,20 @@ public class OkHttpClientFactory {
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
         }
 
-        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfoLoader.load()));
+
+        return clientBuilder.build();
+    }
+
+    public OkHttpClient buildAuthApiClient(OkHttpClient baseHttpClient, ClientCredentials clientCredentials) {
+
+        if (isEmpty(clientCredentials)) {
+            throw new TrueLayerException("client credentials must be set");
+        }
+
+        OkHttpClient.Builder clientBuilder = baseHttpClient.newBuilder();
+
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
 
         return clientBuilder.build();
     }
@@ -80,8 +87,9 @@ public class OkHttpClientFactory {
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
-        OkHttpClient.Builder paymentsHttpClientBuilder =
-                authApiHttpClient.newBuilder().addInterceptor(new SignatureInterceptor(signingOptions));
+        OkHttpClient.Builder paymentsHttpClientBuilder = authApiHttpClient.newBuilder();
+
+        paymentsHttpClientBuilder.addInterceptor(new SignatureInterceptor(signingOptions));
 
         AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
                 AccessTokenManager.builder().authenticationHandler(authenticationHandler);

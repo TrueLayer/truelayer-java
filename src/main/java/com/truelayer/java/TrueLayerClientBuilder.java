@@ -19,6 +19,8 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
+import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -177,8 +179,10 @@ public class TrueLayerClientBuilder {
 
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new VersionInfoLoader());
 
-        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(
-                clientCredentials, timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+        OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
+                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+
+        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
@@ -205,6 +209,11 @@ public class TrueLayerClientBuilder {
         IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
 
+        IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
+                .clientCredentials(clientCredentials)
+                .httpClient(RetrofitFactory.build(baseHttpClient, environment.getPaymentsApiUri()))
+                .build();
+
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
@@ -217,6 +226,7 @@ public class TrueLayerClientBuilder {
         return new TrueLayerClient(
                 authenticationHandler,
                 paymentsHandler,
+                paymentsProvidersHandler,
                 merchantAccountsHandler,
                 mandatesHandler,
                 hppLinkBuilder,
