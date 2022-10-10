@@ -73,6 +73,9 @@ class OkHttpClientFactoryTests {
 
         assertNotNull(authClient);
         assertTrue(
+                authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
+                "Idempotency interceptor not found");
+        assertTrue(
                 authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(UserAgentInterceptor.class)),
                 "User agent interceptor not found");
         assertTrue(

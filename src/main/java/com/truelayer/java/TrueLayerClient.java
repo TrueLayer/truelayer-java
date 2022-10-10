@@ -71,9 +71,6 @@ public class TrueLayerClient implements ITrueLayerClient {
      */
     @Override
     public IPaymentsProvidersHandler paymentsProviders() {
-        if (ObjectUtils.isEmpty(paymentsProvidersHandler)) {
-            throw buildInitializationException("payments providers");
-        }
         return paymentsProvidersHandler;
     }
 

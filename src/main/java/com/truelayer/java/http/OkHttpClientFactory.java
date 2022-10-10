@@ -74,6 +74,8 @@ public class OkHttpClientFactory {
 
         OkHttpClient.Builder clientBuilder = baseHttpClient.newBuilder();
 
+        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+
         return clientBuilder.build();
     }
 
@@ -87,7 +89,6 @@ public class OkHttpClientFactory {
         // as all the others are inherited
         OkHttpClient.Builder paymentsHttpClientBuilder = authApiHttpClient.newBuilder();
 
-        paymentsHttpClientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
         paymentsHttpClientBuilder.addInterceptor(new SignatureInterceptor(signingOptions));
 
         AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
