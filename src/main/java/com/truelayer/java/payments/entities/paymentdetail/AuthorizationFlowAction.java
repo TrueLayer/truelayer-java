@@ -17,6 +17,8 @@ import lombok.ToString;
         defaultImpl = ProviderSelection.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ProviderSelection.class, name = "provider_selection"),
+    @JsonSubTypes.Type(value = Consent.class, name = "consent"),
+    @JsonSubTypes.Type(value = Form.class, name = "form"),
     @JsonSubTypes.Type(value = WaitForOutcome.class, name = "wait"),
     @JsonSubTypes.Type(value = Redirect.class, name = "redirect")
 })
