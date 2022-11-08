@@ -10,5 +10,5 @@ import lombok.Value;
 public class Form extends AuthorizationFlowAction {
     Type type = Type.FORM;
 
-    List<Input.Type> inputs;
+    List<Input> inputs;
 }
