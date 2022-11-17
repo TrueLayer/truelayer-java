@@ -226,6 +226,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .currency(getMandateResponse.getData().getCurrency())
                 .paymentMethod(PaymentMethod.mandate()
                         .mandateId(getMandateResponse.getData().getId())
+                        .reference("a-custom-reference")
                         .build())
                 .build();
 
