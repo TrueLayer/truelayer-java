@@ -28,7 +28,8 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should throw an error when converting to BankTransfer")
     public void shouldNotConvertToBankTransfer() {
-        PaymentMethod sut = new Mandate(UUID.randomUUID().toString());
+        PaymentMethod sut =
+                Mandate.builder().mandateId(UUID.randomUUID().toString()).build();
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asBankTransfer);
 
@@ -39,7 +40,8 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should yield true if instance is of type Mandate")
     public void shouldYieldTrueIfMandate() {
-        PaymentMethod sut = new Mandate(UUID.randomUUID().toString());
+        PaymentMethod sut =
+                Mandate.builder().mandateId(UUID.randomUUID().toString()).build();
 
         assertTrue(sut.isMandate());
     }
@@ -47,7 +49,8 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should convert to an instance of class Mandate")
     public void shouldConvertToMandate() {
-        PaymentMethod sut = new Mandate(UUID.randomUUID().toString());
+        PaymentMethod sut =
+                Mandate.builder().mandateId(UUID.randomUUID().toString()).build();
 
         assertDoesNotThrow(sut::asMandate);
     }
