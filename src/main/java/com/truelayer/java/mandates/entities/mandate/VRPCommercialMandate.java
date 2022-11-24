@@ -16,4 +16,6 @@ public class VRPCommercialMandate extends Mandate {
     private ProviderSelection providerSelection;
 
     private Beneficiary beneficiary;
+
+    private String reference;
 }

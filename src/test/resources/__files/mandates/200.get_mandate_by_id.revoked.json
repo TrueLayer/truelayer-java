@@ -19,6 +19,7 @@
       }
     }
   },
+  "reference": "a-mandate-ref",
   "user": {
     "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c",
     "name": "Remi Terr",

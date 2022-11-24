@@ -16,4 +16,6 @@ public class VRPSweepingMandate extends Mandate {
     private ProviderSelection providerSelection;
 
     private Beneficiary beneficiary;
+
+    private String reference;
 }

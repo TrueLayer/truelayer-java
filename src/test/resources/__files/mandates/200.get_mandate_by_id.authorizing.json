@@ -24,6 +24,7 @@
     "id": "string",
     "account_holder_name": "string"
   },
+  "reference": "a-mandate-ref",
   "provider_selection":{
     "type":"user_selected",
     "filter":{

@@ -241,6 +241,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
                     .providerSelection(providerSelection)
+                    .reference("a-mandate-reference")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -252,6 +253,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         } else {
             mandate = Mandate.vrpSweepingMandate()
                     .providerSelection(providerSelection)
+                    .reference("a-mandate-reference")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")

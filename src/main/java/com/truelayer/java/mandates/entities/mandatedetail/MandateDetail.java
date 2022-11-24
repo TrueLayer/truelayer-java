@@ -28,6 +28,8 @@ public abstract class MandateDetail {
 
     private Beneficiary beneficiary;
 
+    private String reference;
+
     private User user;
 
     private ZonedDateTime createdAt;
