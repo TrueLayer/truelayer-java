@@ -14,12 +14,4 @@ public class ExternalAccount extends Beneficiary {
     private String accountHolderName;
 
     private AccountIdentifier accountIdentifier;
-
-    /**
-     * Deprecated since 2.7.0. See the <code>reference</code> field in Mandate's root object instead.
-     * @see com.truelayer.java.mandates.entities.mandate.VRPSweepingMandate
-     * @see com.truelayer.java.mandates.entities.mandate.VRPCommercialMandate
-     */
-    @Deprecated
-    private String reference;
 }
