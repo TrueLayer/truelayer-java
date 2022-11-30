@@ -241,7 +241,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-mandate-reference")
+                    .reference("a-commercial-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -253,7 +253,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         } else {
             mandate = Mandate.vrpSweepingMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-mandate-reference")
+                    .reference("a-sweeping-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -265,16 +265,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         }
 
         return CreateMandateRequest.builder()
-                .mandate(Mandate.vrpSweepingMandate()
-                        .providerSelection(providerSelection)
-                        .beneficiary(Beneficiary.externalAccount()
-                                .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
-                                        .accountNumber("10003957")
-                                        .sortCode("140662")
-                                        .build())
-                                .accountHolderName("Andrea Java SDK")
-                                .build())
-                        .build())
+                .mandate(mandate)
                 .currency(CurrencyCode.GBP)
                 .user(User.builder()
                         .id(UUID.randomUUID().toString())
