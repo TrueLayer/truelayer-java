@@ -13,6 +13,7 @@
         },
         "account_holder_name": "Andrea Java SDK"
       },
+      "reference": "a-mandate-ref",
       "user": {
         "id": "d48f7938-5433-4921-a543-18fa4f6ed519"
       },
@@ -47,6 +48,7 @@
         },
         "account_holder_name": "Andrea Java SDK"
       },
+      "reference": "a-mandate-ref",
       "user": {
         "id": "2b6ac3bf-e492-4d63-85b3-a78955116e09"
       },

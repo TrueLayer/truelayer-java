@@ -1,4 +1,4 @@
-package com.truelayer.java.entities.beneficiary;
+package com.truelayer.java.payments.entities.beneficiary;
 
 import lombok.Builder;
 import lombok.Getter;

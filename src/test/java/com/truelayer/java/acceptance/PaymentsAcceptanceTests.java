@@ -9,13 +9,13 @@ import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRespon
 import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
-import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
+import com.truelayer.java.payments.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;

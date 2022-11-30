@@ -4,26 +4,29 @@ import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
-import com.truelayer.java.entities.beneficiary.Beneficiary;
 import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit;
+import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
+import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -38,7 +41,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     public static final String PROVIDER_ID = "ob-uki-mock-bank-sbox";
 
     @Test
-    @DisplayName("It should create a sweeping mandate with preselected provider")
+    @DisplayName("It should create a VRP sweeping mandate with preselected provider")
     @SneakyThrows
     public void itShouldCreateASweepingMandateWithPreselectedProvider() {
         // create mandate
@@ -56,7 +59,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
-    @DisplayName("It should create a commercial mandate with preselected provider")
+    @Disabled("The provider ob-uki-mock-bank-sbox does not support commercial VRP yet")
+    @DisplayName("It should create a VRP commercial mandate with preselected provider")
     @SneakyThrows
     public void itShouldCreateACommercialMandateWithPreselectedProvider() {
         // create mandate
@@ -140,17 +144,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
-
-        // get mandate by id
-        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
-                .getMandate(createMandateResponse.getData().getId())
-                .get();
-
-        assertNotError(getMandateResponse);
+        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // finally make a confirmation of funds request for 1 penny
         ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse = tlClient.mandates()
-                .getConfirmationOfFunds(getMandateResponse.getData().getId(), "1", "GBP")
+                .getConfirmationOfFunds(createMandateResponse.getData().getId(), "1", "GBP")
                 .get();
 
         assertNotError(getConfirmationOfFundsResponseApiResponse);
@@ -176,6 +174,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
+        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // revoke mandate by id
         ApiResponse<Void> revokeMandateResponse = tlClient.mandates()
@@ -212,6 +211,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
+        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // get mandate by id
         ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
@@ -241,6 +241,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
                     .providerSelection(providerSelection)
+                    .reference("a-commercial-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -252,6 +253,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         } else {
             mandate = Mandate.vrpSweepingMandate()
                     .providerSelection(providerSelection)
+                    .reference("a-sweeping-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -263,17 +265,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         }
 
         return CreateMandateRequest.builder()
-                .mandate(Mandate.vrpSweepingMandate()
-                        .providerSelection(providerSelection)
-                        .beneficiary(Beneficiary.externalAccount()
-                                .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
-                                        .accountNumber("10003957")
-                                        .sortCode("140662")
-                                        .build())
-                                .accountHolderName("Andrea Java SDK")
-                                .reference("a reference")
-                                .build())
-                        .build())
+                .mandate(mandate)
                 .currency(CurrencyCode.GBP)
                 .user(User.builder()
                         .id(UUID.randomUUID().toString())
@@ -351,5 +343,18 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .build())
                 .execute();
         assertTrue(submitProviderParamsResponse.isSuccessful());
+    }
+
+    private void waitForMandateToBeAuthorized(String mandateId) {
+        await().with()
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> {
+                    // get mandate by id
+                    ApiResponse<MandateDetail> getMandateResponse =
+                            tlClient.mandates().getMandate(mandateId).get();
+                    assertNotError(getMandateResponse);
+                    return getMandateResponse.getData().getStatus().equals(Status.AUTHORIZED);
+                });
     }
 }
