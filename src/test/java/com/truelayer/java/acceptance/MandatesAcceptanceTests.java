@@ -273,7 +273,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                         .sortCode("140662")
                                         .build())
                                 .accountHolderName("Andrea Java SDK")
-                                .reference("a reference")
                                 .build())
                         .build())
                 .currency(CurrencyCode.GBP)
