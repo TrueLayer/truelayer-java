@@ -1,6 +1,6 @@
-package com.truelayer.java.entities.beneficiary;
+package com.truelayer.java.payments.entities.beneficiary;
 
-import static com.truelayer.java.entities.beneficiary.Beneficiary.Type.EXTERNAL_ACCOUNT;
+import static com.truelayer.java.payments.entities.beneficiary.Beneficiary.Type.EXTERNAL_ACCOUNT;
 
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import lombok.Builder;
