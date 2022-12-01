@@ -17,7 +17,7 @@ public class UserAgentInterceptor implements Interceptor {
         Request request = chain.request();
         Request newRequest = request.newBuilder()
                 .header(
-                        Constants.HeaderNames.USER_AGENT,
+                        Constants.HeaderNames.TL_AGENT,
                         String.format("%s/%s", versionInfo.libraryName(), versionInfo.libraryVersion()))
                 .build();
         return chain.proceed(newRequest);

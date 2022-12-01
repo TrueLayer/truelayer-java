@@ -28,6 +28,6 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
 
         verifyThat(request -> assertEquals(
                 String.format("%s/%s", TestUtils.LIBRARY_NAME, TestUtils.LIBRARY_VERSION),
-                request.header(Constants.HeaderNames.USER_AGENT)));
+                request.header(Constants.HeaderNames.TL_AGENT)));
     }
 }
