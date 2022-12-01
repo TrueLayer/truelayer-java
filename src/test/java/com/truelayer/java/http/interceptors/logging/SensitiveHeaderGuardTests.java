@@ -19,7 +19,7 @@ class SensitiveHeaderGuardTests {
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put(Constants.HeaderNames.AUTHORIZATION, "Bearer a-very-sensitive-header");
         headersMap.put(Constants.HeaderNames.COOKIE, "a-cookie");
-        headersMap.put(Constants.HeaderNames.USER_AGENT, "a-user-agent");
+        headersMap.put(Constants.HeaderNames.TL_AGENT, "a-user-agent");
         Headers headers = Headers.of(headersMap);
 
         List<Header> sanitizedHeaders = sut.getSanitizedHeaders(headers);

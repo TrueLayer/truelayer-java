@@ -153,7 +153,7 @@ public class TestUtils {
         }
 
         public StubMapping build() {
-            MappingBuilder request = request(method.toUpperCase(), path).withHeader(USER_AGENT, matching(LIBRARY_INFO));
+            MappingBuilder request = request(method.toUpperCase(), path).withHeader(TL_AGENT, matching(LIBRARY_INFO));
 
             if (withSignature) {
                 request.withHeader(TL_SIGNATURE, matching(".*"));
