@@ -4,7 +4,6 @@ import static com.truelayer.java.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.truelayer.java.Utils;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.entities.*;

@@ -12,7 +12,7 @@ public class UserSelectedProviderSelection extends ProviderSelection {
 
     private ProviderFilter filter;
 
-    protected String providerId;
+    private String providerId;
 
-    protected SchemeId schemeId;
+    private SchemeId schemeId;
 }
