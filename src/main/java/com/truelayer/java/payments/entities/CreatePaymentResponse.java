@@ -20,8 +20,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Getter
 public abstract class CreatePaymentResponse {
-    @Getter
-    protected Status status;
+    @JsonIgnore
+    public abstract Status getStatus();
 
     String id;
 

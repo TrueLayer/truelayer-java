@@ -8,11 +8,7 @@ import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        use = JsonTypeInfo.Id.NAME,
-        property = "status",
-        defaultImpl = AuthorizationFlowAuthorizing.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationFlowAuthorizing.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizing.class, name = "authorizing"),
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizationFailed.class, name = "failed")
