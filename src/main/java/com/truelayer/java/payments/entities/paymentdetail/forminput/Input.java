@@ -14,7 +14,9 @@ import lombok.*;
 @ToString
 @Getter
 public abstract class Input {
-    protected Type type;
+
+    @JsonIgnore
+    public abstract Type getType();
 
     String id;
     boolean mandatory;

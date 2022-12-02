@@ -19,7 +19,8 @@ import lombok.ToString;
 @ToString
 @Getter
 public abstract class Image {
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     @JsonIgnore
     public boolean isBase64() {
