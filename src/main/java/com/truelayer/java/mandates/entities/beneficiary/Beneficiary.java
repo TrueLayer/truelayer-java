@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         use = JsonTypeInfo.Id.NAME,
         property = "type",
         defaultImpl = MerchantAccount.class)
@@ -26,7 +25,8 @@ import lombok.ToString;
 @Getter
 public abstract class Beneficiary {
 
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     @JsonIgnore
     public boolean isMerchantAccount() {
