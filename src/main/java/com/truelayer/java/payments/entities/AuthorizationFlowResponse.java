@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
 @JsonTypeInfo(
@@ -22,8 +21,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class AuthorizationFlowResponse {
 
-    @Getter
-    protected Status status;
+    @JsonIgnore
+    public abstract Status getStatus();
 
     protected AuthorizationFlow authorizationFlow;
 
