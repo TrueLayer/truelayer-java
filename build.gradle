@@ -95,7 +95,7 @@ dependencies {
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.4'
 
     // Serialization
-    def jacksonVersion = '2.13.4'
+    def jacksonVersion = '2.14.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
@@ -103,7 +103,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
 
     // Logging
-    def tinyLogVersion = '2.4.1'
+    def tinyLogVersion = '2.5.0'
     implementation group: 'org.tinylog', name: 'tinylog-api', version: tinyLogVersion
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
@@ -111,7 +111,7 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.1'
 
     // Mocking libraries
-    def mockitoVersion = '4.3.1'
+    def mockitoVersion = '4.8.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
