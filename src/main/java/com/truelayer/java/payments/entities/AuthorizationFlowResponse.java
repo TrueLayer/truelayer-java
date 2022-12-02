@@ -20,6 +20,10 @@ public abstract class AuthorizationFlowResponse {
     @JsonIgnore
     public abstract Status getStatus();
 
+    /**
+     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
+     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     */
     @Deprecated
     protected AuthorizationFlow authorizationFlow;
 
@@ -50,7 +54,8 @@ public abstract class AuthorizationFlowResponse {
     }
 
     /**
-     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}. Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
+     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
      */
     @Deprecated
     public AuthorizationFlow getAuthorizationFlow() {
