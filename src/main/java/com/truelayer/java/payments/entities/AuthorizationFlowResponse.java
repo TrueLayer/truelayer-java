@@ -20,6 +20,7 @@ public abstract class AuthorizationFlowResponse {
     @JsonIgnore
     public abstract Status getStatus();
 
+    @Deprecated
     protected AuthorizationFlow authorizationFlow;
 
     @JsonIgnore
