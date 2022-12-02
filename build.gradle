@@ -118,7 +118,7 @@ dependencies {
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.35.0'
 
     // Wait test utility
-    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
 }
 
 jacocoTestReport {
