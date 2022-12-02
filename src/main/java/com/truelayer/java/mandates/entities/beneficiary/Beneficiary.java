@@ -10,10 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        defaultImpl = MerchantAccount.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = MerchantAccount.class)
 @JsonSubTypes({
     // this is instructing Jackson to deserialize into a MerchantAccount or ExternalAccount type
     // based on the value coming in the beneficiary JSON object with key "type"
