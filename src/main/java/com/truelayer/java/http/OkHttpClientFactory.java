@@ -15,7 +15,7 @@ import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
-import com.truelayer.java.http.interceptors.UserAgentInterceptor;
+import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
@@ -61,7 +61,7 @@ public class OkHttpClientFactory {
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
         }
 
-        clientBuilder.addInterceptor(new UserAgentInterceptor(versionInfoLoader.load()));
+        clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(versionInfoLoader.load()));
 
         return clientBuilder.build();
     }

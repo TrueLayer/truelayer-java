@@ -10,11 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        defaultImpl = ProviderSelection.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ProviderSelection.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ProviderSelection.class, name = "provider_selection"),
     @JsonSubTypes.Type(value = Consent.class, name = "consent"),
@@ -27,7 +23,8 @@ import lombok.ToString;
 @Getter
 public abstract class AuthorizationFlowAction {
 
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     @JsonIgnore
     public boolean isProviderSelection() {

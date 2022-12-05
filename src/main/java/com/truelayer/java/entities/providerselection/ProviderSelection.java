@@ -9,11 +9,7 @@ import com.truelayer.java.payments.entities.providerselection.PreselectedProvide
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection.PreselectedProviderSelectionBuilder;
 import lombok.*;
 
-@JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        use = JsonTypeInfo.Id.NAME,
-        property = "type",
-        defaultImpl = UserSelectedProviderSelection.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = UserSelectedProviderSelection.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = UserSelectedProviderSelection.class, name = "user_selected"),
     @JsonSubTypes.Type(value = PreselectedProviderSelection.class, name = "preselected")
@@ -23,7 +19,8 @@ import lombok.*;
 @Getter
 public abstract class ProviderSelection {
 
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     public static UserSelectedProviderSelection.UserSelectedProviderSelectionBuilder userSelected() {
         return UserSelectedProviderSelection.builder();

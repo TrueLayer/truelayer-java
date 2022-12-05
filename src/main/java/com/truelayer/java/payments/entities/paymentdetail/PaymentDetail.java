@@ -35,6 +35,7 @@ public abstract class PaymentDetail {
 
     private Map<String, String> metadata;
 
+    @JsonIgnore
     public abstract Status getStatus();
 
     @JsonIgnore

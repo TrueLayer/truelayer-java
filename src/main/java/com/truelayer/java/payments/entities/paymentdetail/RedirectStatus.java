@@ -20,7 +20,8 @@ import lombok.ToString;
 @Getter
 public abstract class RedirectStatus {
 
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     @JsonIgnore
     public boolean isSupported() {

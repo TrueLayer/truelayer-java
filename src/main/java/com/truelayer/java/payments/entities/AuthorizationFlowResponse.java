@@ -6,14 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 
-@JsonTypeInfo(
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        use = JsonTypeInfo.Id.NAME,
-        property = "status",
-        defaultImpl = AuthorizationFlowAuthorizing.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = AuthorizationFlowAuthorizing.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizing.class, name = "authorizing"),
     @JsonSubTypes.Type(value = AuthorizationFlowAuthorizationFailed.class, name = "failed")
@@ -22,9 +17,14 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class AuthorizationFlowResponse {
 
-    @Getter
-    protected Status status;
+    @JsonIgnore
+    public abstract Status getStatus();
 
+    /**
+     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
+     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     */
+    @Deprecated
     protected AuthorizationFlow authorizationFlow;
 
     @JsonIgnore
@@ -54,7 +54,8 @@ public abstract class AuthorizationFlowResponse {
     }
 
     /**
-     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}. Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
+     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
+     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
      */
     @Deprecated
     public AuthorizationFlow getAuthorizationFlow() {

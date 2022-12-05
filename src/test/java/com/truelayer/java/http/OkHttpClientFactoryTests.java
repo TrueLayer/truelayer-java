@@ -13,7 +13,7 @@ import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
-import com.truelayer.java.http.interceptors.UserAgentInterceptor;
+import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.versioninfo.VersionInfo;
 import com.truelayer.java.versioninfo.VersionInfoLoader;
@@ -45,7 +45,8 @@ class OkHttpClientFactoryTests {
 
         assertNotNull(baseApiClient);
         assertTrue(
-                baseApiClient.interceptors().stream().anyMatch(i -> i.getClass().equals(UserAgentInterceptor.class)),
+                baseApiClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
                 "User agent interceptor not found");
         assertTrue(
                 baseApiClient.networkInterceptors().stream()
@@ -76,7 +77,7 @@ class OkHttpClientFactoryTests {
                 authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
                 "Idempotency interceptor not found");
         assertTrue(
-                authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(UserAgentInterceptor.class)),
+                authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
                 "User agent interceptor not found");
         assertTrue(
                 authClient.networkInterceptors().stream()

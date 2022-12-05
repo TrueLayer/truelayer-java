@@ -13,11 +13,11 @@ public class PreselectedProviderSelection extends ProviderSelection {
 
     private Remitter remitter;
 
-    protected String providerId;
+    private String providerId;
 
     /**
      * The id of the scheme to make the payment over. Will be populated when the provider selection has been submitted.
      * Only used in single payments.
      */
-    protected SchemeId schemeId;
+    private SchemeId schemeId;
 }

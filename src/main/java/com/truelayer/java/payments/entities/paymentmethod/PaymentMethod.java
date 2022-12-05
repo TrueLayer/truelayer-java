@@ -21,7 +21,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class PaymentMethod {
 
-    protected Type type;
+    @JsonIgnore
+    public abstract Type getType();
 
     @JsonIgnore
     public BankTransfer asBankTransfer() {
