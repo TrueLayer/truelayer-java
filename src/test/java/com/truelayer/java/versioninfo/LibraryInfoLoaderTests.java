@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class VersionInfoLoaderTests {
+class LibraryInfoLoaderTests {
 
     @Test
     @DisplayName("It should load version info from resources abd build a version info object")
     public void itShouldBuildALiveConfiguration() {
-        VersionInfoLoader sut = new VersionInfoLoader();
+        LibraryInfoLoader sut = new LibraryInfoLoader();
 
         VersionInfo versionInfo = sut.load();
 

@@ -18,7 +18,7 @@ import com.truelayer.java.http.interceptors.SignatureInterceptor;
 import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
-import com.truelayer.java.versioninfo.VersionInfoLoader;
+import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ import okhttp3.OkHttpClient;
 
 @Value
 public class OkHttpClientFactory {
-    VersionInfoLoader versionInfoLoader;
+    LibraryInfoLoader libraryInfoLoader;
 
     public OkHttpClient buildBaseApiClient(
             Duration timeout,
@@ -61,7 +61,7 @@ public class OkHttpClientFactory {
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
         }
 
-        clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(versionInfoLoader.load()));
+        clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(libraryInfoLoader.load()));
 
         return clientBuilder.build();
     }

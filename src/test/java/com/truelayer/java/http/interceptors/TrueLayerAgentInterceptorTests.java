@@ -26,8 +26,11 @@ class TrueLayerAgentInterceptorTests extends BaseInterceptorTests {
     public void shouldAddUserAgentHeader() {
         intercept();
 
+        String javaVersionIdentifier =
+                String.format("(Java/%s)", TestUtils.getVersionInfo().javaVersion());
+
         verifyThat(request -> assertEquals(
-                String.format("%s/%s", TestUtils.LIBRARY_NAME, TestUtils.LIBRARY_VERSION),
+                String.format("%s/%s %s", TestUtils.LIBRARY_NAME, TestUtils.LIBRARY_VERSION, javaVersionIdentifier),
                 request.header(Constants.HeaderNames.TL_AGENT)));
     }
 }
