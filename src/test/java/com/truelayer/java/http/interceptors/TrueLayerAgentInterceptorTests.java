@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class UserAgentInterceptorTests extends BaseInterceptorTests {
+class TrueLayerAgentInterceptorTests extends BaseInterceptorTests {
 
     @Override
     protected Interceptor getInterceptor() {
