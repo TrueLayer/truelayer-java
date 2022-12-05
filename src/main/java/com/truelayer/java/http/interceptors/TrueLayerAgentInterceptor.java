@@ -9,7 +9,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 @RequiredArgsConstructor
-public class UserAgentInterceptor implements Interceptor {
+public class TrueLayerAgentInterceptor implements Interceptor {
     private final VersionInfo versionInfo;
 
     @Override

@@ -13,7 +13,7 @@ class UserAgentInterceptorTests extends BaseInterceptorTests {
 
     @Override
     protected Interceptor getInterceptor() {
-        return new UserAgentInterceptor(TestUtils.getVersionInfo());
+        return new TrueLayerAgentInterceptor(TestUtils.getVersionInfo());
     }
 
     @BeforeEach
