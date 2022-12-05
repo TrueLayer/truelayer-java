@@ -11,15 +11,15 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * This component leverages a gradle build steps that prepares a truelayer-java.version.properties
  * file in project's resources directory.
  */
-public class VersionInfoLoader {
+public class LibraryInfoLoader {
     private static final String CONFIG_FILE_PREXIF = "truelayer-java";
 
     public VersionInfo load() {
-        PropertiesConfiguration versionProps = getVersionInfoPropertiesFile();
+        PropertiesConfiguration libraryVersionProps = getVersionInfoPropertiesFile();
 
         return VersionInfo.builder()
-                .libraryName(versionProps.getString(Constants.VersionInfo.NAME))
-                .libraryVersion(versionProps.getString(Constants.VersionInfo.VERSION))
+                .libraryName(libraryVersionProps.getString(Constants.VersionInfo.NAME))
+                .libraryVersion(libraryVersionProps.getString(Constants.VersionInfo.VERSION))
                 .build();
     }
 

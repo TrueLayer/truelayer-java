@@ -21,7 +21,7 @@ import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
-import com.truelayer.java.versioninfo.VersionInfoLoader;
+import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -177,7 +177,7 @@ public class TrueLayerClientBuilder {
             throw new TrueLayerException("client credentials must be set");
         }
 
-        OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new VersionInfoLoader());
+        OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
 
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
                 timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);

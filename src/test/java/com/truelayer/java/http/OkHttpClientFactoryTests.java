@@ -15,8 +15,8 @@ import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
 import com.truelayer.java.http.interceptors.SignatureInterceptor;
 import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
+import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import com.truelayer.java.versioninfo.VersionInfo;
-import com.truelayer.java.versioninfo.VersionInfoLoader;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
@@ -124,9 +124,9 @@ class OkHttpClientFactoryTests {
                 .libraryName("truelayer-java")
                 .libraryVersion("1.0.0")
                 .build();
-        VersionInfoLoader versionInfoLoader = mock(VersionInfoLoader.class);
-        when(versionInfoLoader.load()).thenReturn(versionInfo);
+        LibraryInfoLoader libraryInfoLoader = mock(LibraryInfoLoader.class);
+        when(libraryInfoLoader.load()).thenReturn(versionInfo);
 
-        return new OkHttpClientFactory(versionInfoLoader);
+        return new OkHttpClientFactory(libraryInfoLoader);
     }
 }
