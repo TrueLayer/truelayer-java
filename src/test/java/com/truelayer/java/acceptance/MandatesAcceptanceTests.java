@@ -156,6 +156,73 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
+    @DisplayName("It should get mandate constraints")
+    @SneakyThrows
+    public void itShouldGetConstraints() {
+        // create mandate
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        CreateMandateRequest createMandateRequest = createMandateRequest(SWEEPING, preselectedProvider);
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest).get();
+        assertNotError(createMandateResponse);
+
+        // save the params to be used later
+        Integer paymentAmount = 1;
+        Integer calculatedRemainingPerMonth = createMandateRequest
+                        .getConstraints()
+                        .getPeriodicLimits()
+                        .getMonth()
+                        .getMaximumAmount()
+                - paymentAmount;
+
+        PeriodicLimitDetail periodicLimitDetail = PeriodicLimitDetail.builder()
+                .endDate("")
+                .startDate("")
+                .maximumIndividualAmount(paymentAmount)
+                .periodAlignment(createMandateRequest
+                        .getConstraints()
+                        .getPeriodicLimits()
+                        .toString())
+                .build();
+
+        PeriodicLimit periodicLimit =
+                PeriodicLimit.builder().month(periodicLimitDetail).build();
+
+        GetConstraintsResponse constraintsExpectedResponse = GetConstraintsResponse.builder()
+                .validFrom(createMandateRequest.getConstraints().getValidFrom())
+                .validTo(createMandateRequest.getConstraints().getValidTo())
+                .periodicLimits(periodicLimit)
+                .build();
+
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // authorize the created mandate without explicit user interaction
+        authorizeMandate(startAuthorizationFlowResponse.getData());
+        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+
+        // finally make a confirmation of funds request for 1 penny
+        ApiResponse<GetConstraintsResponse> getConstraintsResponseApiResponse = tlClient.mandates()
+                .getMandateConstraints(createMandateResponse.getData().getId())
+                .get();
+
+        assertNotError(getConstraintsResponseApiResponse);
+        assertEquals(constraintsExpectedResponse, getConstraintsResponseApiResponse.getData());
+    }
+
+    @Test
     @DisplayName("It should create and revoke a mandate")
     @SneakyThrows
     public void itShouldCreateAndRevokeAMandate() {
