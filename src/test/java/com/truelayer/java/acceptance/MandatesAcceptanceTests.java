@@ -1,6 +1,7 @@
 package com.truelayer.java.acceptance;
 
-import static com.truelayer.java.TestUtils.*;
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.TestUtils.getHttpClientInstance;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
@@ -32,7 +33,10 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("acceptance")
 public class MandatesAcceptanceTests extends AcceptanceTests {
@@ -156,6 +160,44 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
+    @DisplayName("It should get mandate constraints")
+    @SneakyThrows
+    public void itShouldGetConstraints() {
+        // create mandate
+        ProviderSelection preselectedProvider =
+                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
+        CreateMandateRequest createMandateRequest = createMandateRequest(SWEEPING, preselectedProvider);
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest).get();
+        assertNotError(createMandateResponse);
+
+        // start auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .withProviderSelection()
+                .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .build())
+                .build();
+
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.mandates()
+                .startAuthorizationFlow(createMandateResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // authorize the created mandate without explicit user interaction
+        authorizeMandate(startAuthorizationFlowResponse.getData());
+        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+
+        // finally make a Get constraints request
+        ApiResponse<GetConstraintsResponse> getConstraintsResponseApiResponse = tlClient.mandates()
+                .getMandateConstraints(createMandateResponse.getData().getId())
+                .get();
+
+        assertNotError(getConstraintsResponseApiResponse);
+    }
+
+    @Test
     @DisplayName("It should create and revoke a mandate")
     @SneakyThrows
     public void itShouldCreateAndRevokeAMandate() {
@@ -241,7 +283,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-commercial-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -253,7 +294,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         } else {
             mandate = Mandate.vrpSweepingMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-sweeping-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")

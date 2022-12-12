@@ -10,10 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
-import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
-import com.truelayer.java.mandates.entities.ListMandatesResponse;
+import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -233,6 +230,35 @@ public class MandatesIntegrationTests extends IntegrationTests {
 
         assertNotError(response);
         assertEquals(expected.getConfirmed(), response.getData().getConfirmed());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get constraints")
+    public void shouldGetConstraints() {
+        String jsonResponseFile = "mandates/200.get_constraints.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/mandates/" + A_MANDATE_ID + "/constraints"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<GetConstraintsResponse> response =
+                tlClient.mandates().getMandateConstraints(A_MANDATE_ID).get();
+
+        GetConstraintsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetConstraintsResponse.class);
+
+        assertNotError(response);
+        assertEquals(expected, response.getData());
     }
 
     @SneakyThrows

@@ -1,11 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
-import com.truelayer.java.mandates.entities.ListMandatesQuery;
-import com.truelayer.java.mandates.entities.ListMandatesResponse;
+import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
@@ -58,5 +54,10 @@ public class MandatesHandler implements IMandatesHandler {
     public CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
             String mandateId, String amount_in_minor, String currency) {
         return mandatesApi.getConfirmationOfFunds(mandateId, amount_in_minor, currency);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(String mandateId) {
+        return mandatesApi.getMandateConstraints(mandateId);
     }
 }

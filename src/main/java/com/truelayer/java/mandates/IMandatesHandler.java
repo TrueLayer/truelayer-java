@@ -31,4 +31,6 @@ public interface IMandatesHandler {
 
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
             String mandateId, String amount, String currency);
+
+    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(String mandateId);
 }
