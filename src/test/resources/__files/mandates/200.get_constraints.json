@@ -1,0 +1,21 @@
+{
+  "valid_from": "2022-12-13T10:55:06.296Z",
+  "valid_to": "2025-01-01T00:00:00Z",
+  "maximum_individual_amount": 100,
+  "periodic_limits": {
+    "day": {
+      "start_date": "2022-12-13",
+      "end_date": "2022-12-14",
+      "current_amount": 0,
+      "maximum_available_amount": 100,
+      "period_alignment": "calendar"
+    },
+    "month": {
+      "start_date": "2022-12-01",
+      "end_date": "2023-01-01",
+      "current_amount": 0,
+      "maximum_available_amount": 612,
+      "period_alignment": "calendar"
+    }
+  }
+}
