@@ -12,6 +12,9 @@ public class UserSelectedProviderSelection extends ProviderSelection {
 
     private ProviderFilter filter;
 
+    /**
+     * Provider id field only available in responses, once the provider has been submitted
+     */
     private String providerId;
 
     private SchemeId schemeId;
