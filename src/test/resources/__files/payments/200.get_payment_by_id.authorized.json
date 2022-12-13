@@ -11,6 +11,10 @@
     "type":"bank_transfer",
     "provider_selection":{
       "type":"user_selected",
+      "scheme_selection": {
+        "type": "instant_only",
+        "allow_remitter_fee": true
+      },
       "filter":{
         "countries":[
           "GB"

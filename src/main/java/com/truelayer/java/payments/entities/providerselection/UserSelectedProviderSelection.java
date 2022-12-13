@@ -2,6 +2,7 @@ package com.truelayer.java.payments.entities.providerselection;
 
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.payments.entities.SchemeId;
+import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,4 +19,6 @@ public class UserSelectedProviderSelection extends ProviderSelection {
     private String providerId;
 
     private SchemeId schemeId;
+
+    private SchemeSelection schemeSelection;
 }

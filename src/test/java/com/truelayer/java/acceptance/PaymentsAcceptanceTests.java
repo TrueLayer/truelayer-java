@@ -20,6 +20,7 @@ import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
+import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
@@ -48,6 +49,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
                         .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
+                .schemeSelection(
+                        SchemeSelection.instantOnly().allowRemitterFee(true).build())
                 .build();
         CreatePaymentRequest paymentRequest =
                 buildPaymentRequestWithProviderSelection(userSelectionProvider, CurrencyCode.GBP);
