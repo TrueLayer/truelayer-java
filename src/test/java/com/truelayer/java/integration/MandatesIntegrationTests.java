@@ -252,12 +252,10 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<GetConstraintsResponse> response = tlClient.mandates()
-                .getMandateConstraints(A_MANDATE_ID)
-                .get();
+        ApiResponse<GetConstraintsResponse> response =
+                tlClient.mandates().getMandateConstraints(A_MANDATE_ID).get();
 
-        GetConstraintsResponse expected =
-                deserializeJsonFileTo(jsonResponseFile, GetConstraintsResponse.class);
+        GetConstraintsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetConstraintsResponse.class);
 
         assertNotError(response);
         assertEquals(expected, response.getData());
