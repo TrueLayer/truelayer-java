@@ -16,7 +16,7 @@ public class PeriodicLimitDetail {
 
     Integer currentAmount;
 
-    Integer maximumIndividualAmount;
+    Integer maximumAvailableAmount;
 
     String periodAlignment;
 }

@@ -1,7 +1,7 @@
 package com.truelayer.java.acceptance;
 
-import static com.truelayer.java.TestUtils.*;
-import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
+import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.TestUtils.getHttpClientInstance;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING;
 import static org.awaitility.Awaitility.await;
@@ -21,6 +21,7 @@ import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.net.URI;
 import java.util.Collections;
@@ -32,7 +33,10 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("acceptance")
 public class MandatesAcceptanceTests extends AcceptanceTests {
@@ -48,7 +52,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -67,7 +71,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(COMMERCIAL, preselectedProvider))
+                .createMandate(createMandateRequest(COMMERCIAL, preselectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -88,7 +92,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .build())
                 .build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, userSelectedProvider))
+                .createMandate(createMandateRequest(SWEEPING, userSelectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -124,7 +128,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -162,7 +166,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
-        CreateMandateRequest createMandateRequest = createMandateRequest(SWEEPING, preselectedProvider);
+        CreateMandateRequest createMandateRequest =
+                createMandateRequest(SWEEPING, preselectedProvider, Limit.PeriodAlignment.CONSENT);
         ApiResponse<CreateMandateResponse> createMandateResponse =
                 tlClient.mandates().createMandate(createMandateRequest).get();
         assertNotError(createMandateResponse);
@@ -177,9 +182,12 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 - paymentAmount;
 
         PeriodicLimitDetail periodicLimitDetail = PeriodicLimitDetail.builder()
-                .endDate("")
-                .startDate("")
-                .maximumIndividualAmount(paymentAmount)
+                .maximumAvailableAmount(createMandateRequest
+                        .getConstraints()
+                        .getPeriodicLimits()
+                        .getMonth()
+                        .getMaximumAmount())
+                .currentAmount(paymentAmount)
                 .periodAlignment(createMandateRequest
                         .getConstraints()
                         .getPeriodicLimits()
@@ -192,6 +200,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         GetConstraintsResponse constraintsExpectedResponse = GetConstraintsResponse.builder()
                 .validFrom(createMandateRequest.getConstraints().getValidFrom())
                 .validTo(createMandateRequest.getConstraints().getValidTo())
+                .maximumIndividualAmount(createMandateRequest.getConstraints().getMaximumIndividualAmount())
                 .periodicLimits(periodicLimit)
                 .build();
 
@@ -213,13 +222,56 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         authorizeMandate(startAuthorizationFlowResponse.getData());
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
-        // finally make a confirmation of funds request for 1 penny
+        // get mandate by id
+        ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
+                .getMandate(createMandateResponse.getData().getId())
+                .get();
+        // create a payment on mandate
+        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(paymentAmount)
+                .currency(getMandateResponse.getData().getCurrency())
+                .paymentMethod(PaymentMethod.mandate()
+                        .mandateId(getMandateResponse.getData().getId())
+                        .reference("a-custom-reference")
+                        .build())
+                .build();
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(createPaymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+
+        waitForPaymentToBeExecuted(createPaymentResponse.getData().getId());
+
+        // finally make a Get constraints request
         ApiResponse<GetConstraintsResponse> getConstraintsResponseApiResponse = tlClient.mandates()
                 .getMandateConstraints(createMandateResponse.getData().getId())
                 .get();
 
         assertNotError(getConstraintsResponseApiResponse);
-        assertEquals(constraintsExpectedResponse, getConstraintsResponseApiResponse.getData());
+        assertEquals(
+                constraintsExpectedResponse.getMaximumIndividualAmount(),
+                getConstraintsResponseApiResponse.getData().getMaximumIndividualAmount());
+        assertEquals(
+                constraintsExpectedResponse.getValidTo(),
+                getConstraintsResponseApiResponse.getData().getValidTo());
+        assertEquals(
+                constraintsExpectedResponse.getValidFrom(),
+                getConstraintsResponseApiResponse.getData().getValidFrom());
+        assertEquals(
+                constraintsExpectedResponse.getPeriodicLimits().getMonth().getCurrentAmount(),
+                getConstraintsResponseApiResponse
+                        .getData()
+                        .getPeriodicLimits()
+                        .getMonth()
+                        .getCurrentAmount());
+        assertEquals(
+                constraintsExpectedResponse.getPeriodicLimits().getMonth().getMaximumAvailableAmount(),
+                getConstraintsResponseApiResponse
+                        .getData()
+                        .getPeriodicLimits()
+                        .getMonth()
+                        .getMaximumAvailableAmount());
     }
 
     @Test
@@ -230,7 +282,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -258,7 +310,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(SWEEPING, preselectedProvider, Limit.PeriodAlignment.CALENDAR))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -303,12 +355,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(createPaymentResponse);
     }
 
-    private CreateMandateRequest createMandateRequest(Mandate.Type type, ProviderSelection providerSelection) {
+    private CreateMandateRequest createMandateRequest(
+            Mandate.Type type, ProviderSelection providerSelection, Limit.PeriodAlignment periodAlignment) {
         Mandate mandate = null;
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-commercial-ref")
+                    //                    .reference("a-commercial-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -320,7 +373,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         } else {
             mandate = Mandate.vrpSweepingMandate()
                     .providerSelection(providerSelection)
-                    .reference("a-sweeping-ref")
+                    //                    .reference("a-sweeping-ref")
                     .beneficiary(Beneficiary.externalAccount()
                             .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
                                     .accountNumber("10003957")
@@ -343,7 +396,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         .periodicLimits(PeriodicLimits.builder()
                                 .month(Limit.builder()
                                         .maximumAmount(2000)
-                                        .periodAlignment(CALENDAR)
+                                        .periodAlignment(periodAlignment)
                                         .build())
                                 .build())
                         .maximumIndividualAmount(1000)
@@ -422,6 +475,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                             tlClient.mandates().getMandate(mandateId).get();
                     assertNotError(getMandateResponse);
                     return getMandateResponse.getData().getStatus().equals(Status.AUTHORIZED);
+                });
+    }
+
+    private void waitForPaymentToBeExecuted(String paymentId) {
+        await().with()
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(15, TimeUnit.SECONDS)
+                .until(() -> {
+                    // get payment by id
+                    ApiResponse<PaymentDetail> getPaymentResponse =
+                            tlClient.payments().getPayment(paymentId).get();
+                    assertNotError(getPaymentResponse);
+                    return getPaymentResponse
+                            .getData()
+                            .getStatus()
+                            .equals(com.truelayer.java.payments.entities.paymentdetail.Status.EXECUTED);
                 });
     }
 }
