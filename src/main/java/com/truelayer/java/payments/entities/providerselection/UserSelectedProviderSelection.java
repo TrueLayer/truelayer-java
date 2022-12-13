@@ -1,4 +1,4 @@
-package com.truelayer.java.entities.providerselection;
+package com.truelayer.java.payments.entities.providerselection;
 
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.payments.entities.SchemeId;

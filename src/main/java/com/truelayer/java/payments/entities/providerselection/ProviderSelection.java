@@ -1,11 +1,10 @@
-package com.truelayer.java.entities.providerselection;
+package com.truelayer.java.payments.entities.providerselection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection.PreselectedProviderSelectionBuilder;
 import lombok.*;
 
