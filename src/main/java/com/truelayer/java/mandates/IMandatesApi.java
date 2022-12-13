@@ -1,10 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.mandates.entities.CreateMandateRequest;
-import com.truelayer.java.mandates.entities.CreateMandateResponse;
-import com.truelayer.java.mandates.entities.GetConfirmationOfFundsResponse;
-import com.truelayer.java.mandates.entities.ListMandatesResponse;
+import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
@@ -93,4 +90,13 @@ public interface IMandatesApi {
             @Path("id") String mandateId,
             @Query("amount_in_minor") String amount_in_minor,
             @Query("currency") String currency);
+
+    /**
+     * Get Mandate Constraints
+     * @param mandateId the id of the mandate
+     * @return the current status of the mandate constraints
+     * @see <a href="https://docs.truelayer.com/reference/get-constraints"><i>Get Mandate Constraints</i> API reference</a>
+     */
+    @GET("/mandates/{id}/constraints")
+    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(@Path("id") String mandateId);
 }

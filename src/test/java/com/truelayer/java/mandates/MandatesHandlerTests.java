@@ -116,4 +116,15 @@ class MandatesHandlerTests {
 
         verify(mandatesApi, times(1)).getConfirmationOfFunds(A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
     }
+
+    @Test
+    @DisplayName("It should call the Constraints endpoint")
+    public void shouldCallConstraintsEndpoint() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+
+        sut.getMandateConstraints(A_MANDATE_ID);
+
+        verify(mandatesApi, times(1)).getMandateConstraints(A_MANDATE_ID);
+    }
 }
