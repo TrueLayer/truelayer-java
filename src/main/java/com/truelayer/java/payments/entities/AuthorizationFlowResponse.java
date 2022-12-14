@@ -20,13 +20,6 @@ public abstract class AuthorizationFlowResponse {
     @JsonIgnore
     public abstract Status getStatus();
 
-    /**
-     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
-     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
-     */
-    @Deprecated
-    protected AuthorizationFlow authorizationFlow;
-
     @JsonIgnore
     public boolean isAuthorizing() {
         return this instanceof AuthorizationFlowAuthorizing;
@@ -51,15 +44,6 @@ public abstract class AuthorizationFlowResponse {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (AuthorizationFlowAuthorizationFailed) this;
-    }
-
-    /**
-     * Deprecated: Only {@link AuthorizationFlowAuthorizing Authorizing} responses have {@link AuthorizationFlow}.
-     * Use {@link #asAuthorizing()}.{@link AuthorizationFlowAuthorizing#getAuthorizationFlow() getAuthorizationFlow()} instead.
-     */
-    @Deprecated
-    public AuthorizationFlow getAuthorizationFlow() {
-        return authorizationFlow;
     }
 
     private String buildErrorMessage() {
