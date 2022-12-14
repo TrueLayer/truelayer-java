@@ -87,7 +87,7 @@ TrueLayerClient client = TrueLayerClient.New()
         .build();
 ```
 
-More details about our HTTP logs can be found [here](https://github.com/TrueLayer/truelayer-java/wiki/HTTP-logging).
+More details about our logs can be found [ong our wiki](https://github.com/TrueLayer/truelayer-java/wiki/Logging).
 
 ### Create a payment
 ```java
