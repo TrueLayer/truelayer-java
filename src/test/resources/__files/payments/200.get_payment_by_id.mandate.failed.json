@@ -1,0 +1,26 @@
+{
+  "id": "db066d87-123c-46e8-9e82-a8b9e5b3b2a4",
+  "amount_in_minor": 10,
+  "currency": "GBP",
+  "user": {
+    "id": "86bc1930-1cf4-4762-b3a6-7d889f7af70a",
+    "name": "Andrea",
+    "email": "andrea@truelayer.com",
+    "phone": "+39122334"
+  },
+  "payment_method": {
+    "type": "mandate",
+    "mandate_id": "2ba07462-9a6e-40d4-9f02-ce02f51cc2b3",
+    "reference": "6GN7FP607DQSL54C0E",
+    "retry": {
+      "type": "smart",
+      "for": "90d",
+      "ensure_minimum_balance_in_minor": 2500
+    }
+  },
+  "status": "failed",
+  "created_at": "2022-12-14T16:14:40.723135Z",
+  "failed_at":"2022-01-17T17:13:18.214924Z",
+  "failure_stage":"authorization_required",
+  "failure_reason":"failed"
+}

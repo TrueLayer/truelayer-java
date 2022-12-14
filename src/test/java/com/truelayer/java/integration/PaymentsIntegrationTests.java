@@ -3,6 +3,9 @@ package com.truelayer.java.integration;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.payments.entities.paymentdetail.Status.*;
+import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.BANK_TRANSFER;
+import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.MANDATE;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
@@ -12,9 +15,13 @@ import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("Payments integration tests")
@@ -85,11 +92,16 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     }
 
     @DisplayName("It should get the payment details")
-    @ParameterizedTest(name = "of a payment with status {0}")
-    @ValueSource(strings = {"AUTHORIZATION_REQUIRED", "AUTHORIZING", "AUTHORIZED", "EXECUTED", "SETTLED", "FAILED"})
+    @ParameterizedTest(name = "of a payment of type {0} with status {1}")
+    @MethodSource("provideShouldReturnAPaymentDetailTestParameters")
     @SneakyThrows
-    public void shouldReturnAPaymentDetail(Status expectedStatus) {
-        String jsonResponseFile = "payments/200.get_payment_by_id." + expectedStatus.getStatus() + ".json";
+    public void shouldReturnAPaymentDetail(PaymentMethod.Type paymentMethodType, Status expectedStatus) {
+        String jsonResponseFile = new StringBuilder("payments/200.get_payment_by_id.")
+                .append(paymentMethodType.getType().toLowerCase())
+                .append(".")
+                .append(expectedStatus.getStatus())
+                .append(".json")
+                .toString();
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -246,5 +258,17 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
         assertEquals(expected, response.getData());
+    }
+
+    private static Stream<Arguments> provideShouldReturnAPaymentDetailTestParameters() {
+        return Stream.of(
+                Arguments.of(BANK_TRANSFER, AUTHORIZATION_REQUIRED),
+                Arguments.of(BANK_TRANSFER, AUTHORIZING),
+                Arguments.of(BANK_TRANSFER, AUTHORIZED),
+                Arguments.of(BANK_TRANSFER, EXECUTED),
+                Arguments.of(BANK_TRANSFER, SETTLED),
+                Arguments.of(BANK_TRANSFER, FAILED),
+                Arguments.of(MANDATE, EXECUTED),
+                Arguments.of(MANDATE, FAILED));
     }
 }

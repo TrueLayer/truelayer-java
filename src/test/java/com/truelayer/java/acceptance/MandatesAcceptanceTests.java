@@ -23,6 +23,7 @@ import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
+import com.truelayer.java.payments.entities.retry.Retry;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
@@ -269,6 +270,14 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .paymentMethod(PaymentMethod.mandate()
                         .mandateId(getMandateResponse.getData().getId())
                         .reference("a-custom-reference")
+                        .retry(Retry.smart()
+                                .ensureMinimumBalanceInMinor(100
+                                        + getMandateResponse
+                                                .getData()
+                                                .getConstraints()
+                                                .getMaximumIndividualAmount())
+                                .forDuration("90d")
+                                .build())
                         .build())
                 .build();
 
