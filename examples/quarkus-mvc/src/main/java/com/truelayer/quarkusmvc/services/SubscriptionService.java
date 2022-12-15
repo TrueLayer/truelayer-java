@@ -4,15 +4,15 @@ import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
-import com.truelayer.java.entities.beneficiary.Beneficiary;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
+import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,6 @@ public class SubscriptionService implements ISubscriptionService{
                                         .sortCode("140662")
                                         .build())
                                 .accountHolderName("Andrea Java SDK")
-                                .reference("a reference")
                                 .build())
                         .build())
                 .currency(CurrencyCode.GBP)
@@ -90,7 +89,14 @@ public class SubscriptionService implements ISubscriptionService{
                     startAuthorizationFlowResponse.getError()));
         }
 
-        return startAuthorizationFlowResponse.getData().getAuthorizationFlow()
+        if(startAuthorizationFlowResponse.getData().isAuthorizationFailed()){
+            throw new RuntimeException(String.format("start auth flow failed: %s",
+                    startAuthorizationFlowResponse.getData().asAuthorizationFailed().getFailureReason()));
+        }
+
+        return startAuthorizationFlowResponse.getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
                 .getActions().getNext().asRedirect().getUri();
     }
 

@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "6.5.1"
+    id "io.freefair.lombok" version "6.6"
 }
 
 repositories {
@@ -17,7 +17,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:2.2.2'
+    implementation 'com.truelayer:truelayer-java:4.0.0'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
