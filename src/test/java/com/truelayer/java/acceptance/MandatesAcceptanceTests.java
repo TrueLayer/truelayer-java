@@ -12,7 +12,6 @@ import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.Constraints.PeriodicLimits;
@@ -23,20 +22,27 @@ import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
+import com.truelayer.java.payments.entities.retry.Retry;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("acceptance")
 public class MandatesAcceptanceTests extends AcceptanceTests {
@@ -225,10 +231,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(revokeMandateResponse);
     }
 
-    @Test
     @DisplayName("It should create a payment on mandate")
+    @ParameterizedTest(name = "with retry {0}")
+    @MethodSource("provideItShouldCreateAPaymentOnMandateTestParameters")
     @SneakyThrows
-    public void itShouldCreateAPaymentOnMandate() {
+    public void itShouldCreateAPaymentOnMandate(Retry retry) {
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
@@ -262,14 +269,28 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         assertNotError(getMandateResponse);
 
+        com.truelayer.java.payments.entities.paymentmethod.Mandate.MandateBuilder mandateBuilder =
+                PaymentMethod.mandate()
+                        .mandateId(getMandateResponse.getData().getId())
+                        .reference("a-custom-reference")
+                        .retry(Retry.smart()
+                                .ensureMinimumBalanceInMinor(100
+                                        + getMandateResponse
+                                                .getData()
+                                                .getConstraints()
+                                                .getMaximumIndividualAmount())
+                                .forDuration("90d")
+                                .build());
+
+        if (ObjectUtils.isNotEmpty(retry)) {
+            mandateBuilder.retry(retry);
+        }
+
         // create a payment on mandate
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
                 .currency(getMandateResponse.getData().getCurrency())
-                .paymentMethod(PaymentMethod.mandate()
-                        .mandateId(getMandateResponse.getData().getId())
-                        .reference("a-custom-reference")
-                        .build())
+                .paymentMethod(mandateBuilder.build())
                 .build();
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
@@ -396,5 +417,15 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                     assertNotError(getMandateResponse);
                     return getMandateResponse.getData().getStatus().equals(Status.AUTHORIZED);
                 });
+    }
+
+    public static Stream<Arguments> provideItShouldCreateAPaymentOnMandateTestParameters() {
+        return Stream.of(
+                null,
+                Arguments.of(Retry.standard().forDuration("30m").build()),
+                Arguments.of(Retry.smart()
+                        .forDuration("90d")
+                        .ensureMinimumBalanceInMinor(100)
+                        .build()));
     }
 }

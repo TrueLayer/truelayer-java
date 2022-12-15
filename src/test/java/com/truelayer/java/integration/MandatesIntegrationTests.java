@@ -116,8 +116,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
     @ParameterizedTest(name = "and get a response of type {0}")
     @ValueSource(strings = {"provider_selection", "redirect", "wait"})
     @DisplayName("It should start an authorization flow")
-    public void shouldStartAnAuthorizationFlow(String status) {
-        String jsonResponseFile = "mandates/200.start_authorization_flow.authorizing." + status + ".json";
+    public void shouldStartAnAuthorizationFlow(String action) {
+        String jsonResponseFile = "mandates/200.start_authorization_flow.authorizing." + action + ".json";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))

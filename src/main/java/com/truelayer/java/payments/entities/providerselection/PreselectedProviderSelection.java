@@ -1,7 +1,6 @@
 package com.truelayer.java.payments.entities.providerselection;
 
 import com.truelayer.java.entities.Remitter;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.SchemeId;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +15,9 @@ public class PreselectedProviderSelection extends ProviderSelection {
     private String providerId;
 
     /**
-     * The id of the scheme to make the payment over. Will be populated when the provider selection has been submitted.
-     * Only used in single payments.
+     * The id of the scheme to make the payment over. In responses, it will be populated when the provider selection has been submitted.
      */
     private SchemeId schemeId;
+
+    private String dataAccessToken;
 }

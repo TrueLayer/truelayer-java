@@ -1,7 +1,7 @@
 package com.truelayer.java.mandates.entities.providerselection;
 
 import com.truelayer.java.entities.Remitter;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import lombok.Builder;
 import lombok.Getter;
 

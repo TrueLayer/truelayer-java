@@ -9,8 +9,6 @@ import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRespon
 import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
-import com.truelayer.java.entities.providerselection.ProviderSelection;
-import com.truelayer.java.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
@@ -20,6 +18,9 @@ import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
+import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
@@ -48,6 +49,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
                         .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
+                .schemeSelection(
+                        SchemeSelection.instantOnly().allowRemitterFee(true).build())
                 .build();
         CreatePaymentRequest paymentRequest =
                 buildPaymentRequestWithProviderSelection(userSelectionProvider, CurrencyCode.GBP);
