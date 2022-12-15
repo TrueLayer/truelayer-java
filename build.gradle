@@ -90,6 +90,8 @@ dependencies {
     def retrofitVersion = '2.9.0'
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
+    // We inject Okhttp4 as transitive dependency to solve the vulnerabilities which are part of retrofit 2.9.0
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
 
     // TL signing library
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.4'
