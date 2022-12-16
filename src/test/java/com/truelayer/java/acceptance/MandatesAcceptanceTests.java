@@ -48,7 +48,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
-    public static final String PROVIDER_ID = "ob-uki-mock-bank-dev";
+    public static final String PROVIDER_ID = "ob-uki-mock-bank-sbox";
 
     @Test
     @DisplayName("It should create a VRP sweeping mandate with preselected provider")
