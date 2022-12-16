@@ -272,15 +272,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         com.truelayer.java.payments.entities.paymentmethod.Mandate.MandateBuilder mandateBuilder =
                 PaymentMethod.mandate()
                         .mandateId(getMandateResponse.getData().getId())
-                        .reference("a-custom-reference")
-                        .retry(Retry.smart()
-                                .ensureMinimumBalanceInMinor(100
-                                        + getMandateResponse
-                                                .getData()
-                                                .getConstraints()
-                                                .getMaximumIndividualAmount())
-                                .forDuration("90d")
-                                .build());
+                        .reference("a-custom-reference");
 
         if (ObjectUtils.isNotEmpty(retry)) {
             mandateBuilder.retry(retry);
