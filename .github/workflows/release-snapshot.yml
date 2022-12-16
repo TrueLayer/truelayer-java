@@ -40,7 +40,7 @@ jobs:
           distribution: 'adopt'
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+        uses: gradle/wrapper-validation-action@v1
       - name: Create Snapshot version
         run: |
           echo "project_version_snapshot=${{needs.build.outputs.project_version}}-${GITHUB_REF##*/}-SNAPSHOT" >> $GITHUB_ENV
