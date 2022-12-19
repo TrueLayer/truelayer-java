@@ -29,6 +29,12 @@ import okhttp3.OkHttpClient;
 
 @Value
 public class OkHttpClientFactory {
+
+    // This default read timeout takes into account our public API ingress timeout of 30s and adds
+    // some extra delay to let very unlucky requests to still go through and/or proper server timeout errors to be
+    // properly propagated in the worst case.
+    public static final Duration DEFAULT_TL_CLIENT_READ_TIMEOUT = Duration.ofSeconds(32);
+
     LibraryInfoLoader libraryInfoLoader;
 
     public OkHttpClient buildBaseApiClient(
@@ -40,7 +46,16 @@ public class OkHttpClientFactory {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         if (isNotEmpty(timeout)) {
+            // If the user sets a custom timeout, we set it to be the call timeout AND we set to 0 the default connect,
+            // read
+            // and write timeout values (0 means no timeout).
+            clientBuilder.connectTimeout(Duration.ZERO);
+            clientBuilder.readTimeout(Duration.ZERO);
+            clientBuilder.writeTimeout(Duration.ZERO);
             clientBuilder.callTimeout(timeout);
+        } else {
+            // we just set the default read timeout to line up with our public API ingress timeout.
+            clientBuilder.readTimeout(DEFAULT_TL_CLIENT_READ_TIMEOUT);
         }
 
         if (isNotEmpty(connectionPoolOptions)) {
