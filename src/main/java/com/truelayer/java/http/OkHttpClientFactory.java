@@ -30,10 +30,10 @@ import okhttp3.OkHttpClient;
 @Value
 public class OkHttpClientFactory {
 
-    // This default read timeout takes into account our public API ingress timeout of 30s and adds
+    // This default read timeout takes into account our public API ingress timeout of 29s and adds
     // some extra delay to let very unlucky requests to still go through and/or proper server timeout errors to be
     // properly propagated in the worst case.
-    public static final Duration DEFAULT_TL_CLIENT_READ_TIMEOUT = Duration.ofSeconds(32);
+    public static final Duration DEFAULT_TL_CLIENT_READ_TIMEOUT = Duration.ofSeconds(30);
 
     LibraryInfoLoader libraryInfoLoader;
 
