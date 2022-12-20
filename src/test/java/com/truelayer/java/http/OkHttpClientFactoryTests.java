@@ -29,9 +29,46 @@ import org.junit.jupiter.api.Test;
 
 class OkHttpClientFactoryTests {
 
+    private static final Duration DEFAULT_OK_HTTP_CLIENT_CONNECT_WRITE_READ_TIMEOUT = Duration.ofSeconds(10);
+
     @Test
     @DisplayName("It should build a Base API client")
     public void shouldCreateABaseAuthApiClient() {
+        ExecutorService customExecutor = Executors.newCachedThreadPool();
+        Consumer<String> customLogMessageConsumer = System.out::println;
+
+        OkHttpClient baseApiClient = getOkHttpClientFactory()
+                .buildBaseApiClient(
+                        null, ConnectionPoolOptions.builder().build(), customExecutor, customLogMessageConsumer);
+
+        assertNotNull(baseApiClient);
+        assertTrue(
+                baseApiClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
+                "User agent interceptor not found");
+        assertTrue(
+                baseApiClient.networkInterceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(HttpLoggingInterceptor.class)),
+                "Logging interceptor not found");
+        assertEquals(customExecutor, baseApiClient.dispatcher().executorService(), "Custom executor not found");
+        assertEquals(
+                DEFAULT_OK_HTTP_CLIENT_CONNECT_WRITE_READ_TIMEOUT.toMillis(),
+                baseApiClient.connectTimeoutMillis(),
+                "Unexpected connect timeout configured");
+        assertEquals(
+                OkHttpClientFactory.DEFAULT_TL_CLIENT_READ_TIMEOUT.toMillis(),
+                baseApiClient.readTimeoutMillis(),
+                "Unexpected read timeout configured");
+        assertEquals(
+                DEFAULT_OK_HTTP_CLIENT_CONNECT_WRITE_READ_TIMEOUT.toMillis(),
+                baseApiClient.writeTimeoutMillis(),
+                "Unexpected write timeout configured");
+        assertEquals(0, baseApiClient.callTimeoutMillis(), "Unexpected call timeout configured");
+    }
+
+    @Test
+    @DisplayName("It should build a Base API client with custom call timeout")
+    public void shouldCreateABaseAuthApiClientWithCustomCallTimeout() {
         Duration customTimeout = Duration.ofSeconds(2);
         ExecutorService customExecutor = Executors.newCachedThreadPool();
         Consumer<String> customLogMessageConsumer = System.out::println;
@@ -44,15 +81,9 @@ class OkHttpClientFactoryTests {
                         customLogMessageConsumer);
 
         assertNotNull(baseApiClient);
-        assertTrue(
-                baseApiClient.interceptors().stream()
-                        .anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
-                "User agent interceptor not found");
-        assertTrue(
-                baseApiClient.networkInterceptors().stream()
-                        .anyMatch(i -> i.getClass().equals(HttpLoggingInterceptor.class)),
-                "Logging interceptor not found");
-        assertEquals(customExecutor, baseApiClient.dispatcher().executorService(), "Custom executor not found");
+        assertEquals(0, baseApiClient.connectTimeoutMillis(), "Unexpected connect timeout configured");
+        assertEquals(0, baseApiClient.readTimeoutMillis(), "Unexpected read timeout configured");
+        assertEquals(0, baseApiClient.writeTimeoutMillis(), "Unexpected write timeout configured");
         assertEquals(customTimeout.toMillis(), baseApiClient.callTimeoutMillis(), "Unexpected call timeout configured");
     }
 
