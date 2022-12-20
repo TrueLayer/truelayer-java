@@ -1,13 +1,13 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
+import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
@@ -24,10 +24,14 @@ import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
@@ -37,14 +41,23 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     public static final String PROVIDER_ID_EMBEDDED = "mock-payments-de-embedded";
 
-    @Test
+    private static Stream<Arguments> provideCurrencyScenarios() {
+        return Stream.of(
+                Arguments.of(CurrencyCode.GBP, CountryCode.GB),
+                Arguments.of(CurrencyCode.EUR, CountryCode.FR),
+                Arguments.of(CurrencyCode.PLN, CountryCode.PL),
+                Arguments.of(CurrencyCode.NOK, CountryCode.NO));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCurrencyScenarios")
     @DisplayName("It should create and get by id a payment with user_selected provider")
     @SneakyThrows
-    public void shouldCreateAPaymentWithUserSelectionProvider() {
+    public void shouldCreateAPaymentWithUserSelectionProvider(CurrencyCode currency, CountryCode country) {
         // create payment
         UserSelectedProviderSelection userSelectionProvider = ProviderSelection.userSelected()
                 .filter(ProviderFilter.builder()
-                        .countries(Collections.singletonList(CountryCode.GB))
+                        .countries(Collections.singletonList(country))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
                         .providerIds(Collections.singletonList(PROVIDER_ID))
@@ -52,8 +65,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .schemeSelection(
                         SchemeSelection.instantOnly().allowRemitterFee(true).build())
                 .build();
-        CreatePaymentRequest paymentRequest =
-                buildPaymentRequestWithProviderSelection(userSelectionProvider, CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider, currency);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -67,6 +79,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(getPaymentByIdResponse);
+        assertEquals(getPaymentByIdResponse.getData().getPaymentMethod(), paymentRequest.getPaymentMethod());
     }
 
     @Test
@@ -389,19 +402,45 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
+    private Beneficiary buildBeneficiary(CurrencyCode currencyCode) {
+        switch (currencyCode) {
+            case GBP:
+            case EUR:
+                MerchantAccount account = getMerchantAccount(currencyCode);
+                return Beneficiary.merchantAccount()
+                        .merchantAccountId(account.getId())
+                        .reference(UUID.randomUUID().toString())
+                        .build();
+            case PLN:
+                return Beneficiary.externalAccount()
+                        .accountHolderName("Ben Eficiary")
+                        .accountIdentifier(AccountIdentifier.nrb()
+                                .nrb("12345678901234567890123456")
+                                .build())
+                        .reference("some reference")
+                        .build();
+            case NOK:
+                return Beneficiary.externalAccount()
+                        .accountHolderName("Ben Eficiary")
+                        .accountIdentifier(AccountIdentifier.bban()
+                                .bban("DE09500105171333647892")
+                                .build())
+                        .reference("some reference")
+                        .build();
+            default:
+                throw new RuntimeException("currency not supported");
+        }
+    }
+
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection, CurrencyCode currencyCode) {
-        MerchantAccount merchantAccount = getMerchantAccount(currencyCode);
-
         return CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
-                        .beneficiary(Beneficiary.merchantAccount()
-                                .merchantAccountId(merchantAccount.getId())
-                                .reference(UUID.randomUUID().toString())
-                                .build())
+                        .beneficiary(buildBeneficiary(currencyCode))
                         .build())
                 .user(User.builder()
                         .name("Andrea Di Lisio")
@@ -422,7 +461,23 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     private CreatePaymentRequest buildPaymentRequest(CurrencyCode currencyCode) {
         UserSelectedProviderSelection userSelectionProvider = UserSelectedProviderSelection.builder()
                 .filter(ProviderFilter.builder()
-                        .countries(Arrays.asList(CountryCode.GB, CountryCode.DE))
+                        .countries(Arrays.asList(
+                                CountryCode.AT,
+                                CountryCode.BE,
+                                CountryCode.DE,
+                                CountryCode.DK,
+                                CountryCode.ES,
+                                CountryCode.FI,
+                                CountryCode.FR,
+                                CountryCode.GB,
+                                CountryCode.IE,
+                                CountryCode.IT,
+                                CountryCode.LT,
+                                CountryCode.NL,
+                                CountryCode.NO,
+                                CountryCode.PL,
+                                CountryCode.PT,
+                                CountryCode.RO))
                         .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
                         .providerIds(Arrays.asList(PROVIDER_ID, PROVIDER_ID_EMBEDDED))
