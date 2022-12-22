@@ -1,8 +1,20 @@
 package com.truelayer.java.payments.entities;
 
 public enum CountryCode {
-    GB,
-    FR,
+    AT,
+    BE,
     DE,
-    IE
+    DK,
+    ES,
+    FI,
+    FR,
+    GB,
+    IE,
+    IT,
+    LT,
+    NL,
+    NO,
+    PL,
+    PT,
+    RO,
 }
