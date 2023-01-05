@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.User;
+import com.truelayer.java.commonapi.entities.UserResponse;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
@@ -30,7 +30,7 @@ public abstract class MandateDetail {
 
     private String reference;
 
-    private User user;
+    private UserResponse user;
 
     private ZonedDateTime createdAt;
 

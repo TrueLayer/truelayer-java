@@ -3,9 +3,7 @@
   "amount_in_minor":101,
   "currency":"GBP",
   "user":{
-    "id":"ac459f9f-37df-4cd7-ada5-***",
-    "name":"Andrea Di Lisio",
-    "email":"andrea@truelayer.com"
+    "id":"ac459f9f-37df-4cd7-ada5-***"
   },
   "payment_method":{
     "type":"bank_transfer",
