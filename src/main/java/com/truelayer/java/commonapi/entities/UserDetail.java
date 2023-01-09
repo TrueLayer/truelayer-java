@@ -7,6 +7,6 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class UserResponse {
+public class UserDetail {
     private String id;
 }
