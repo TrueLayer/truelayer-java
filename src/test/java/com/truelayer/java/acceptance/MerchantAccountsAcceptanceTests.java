@@ -44,7 +44,9 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     @Test
     @DisplayName("It should get the list of transactions for a given merchant account")
     public void itShouldGetTheListOfTransactions() {
-        assertNotError(getTransactions());
+        ApiResponse<ListTransactionsResponse> transactionList = getTransactions();
+
+        assertNotError(transactionList);
     }
 
     @SneakyThrows
@@ -114,7 +116,7 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
                         ListPaymentSourcesQuery.builder()
                                 .userId(merchantAccountPayment
                                         .getPaymentSource()
-                                        .getUserId())
+                                        .getId())
                                 .build())
                 .get();
 

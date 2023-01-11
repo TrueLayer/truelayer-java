@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
     @JsonSubTypes.Type(value = MerchantAccountPayment.class, name = "merchant_account_payment"),
     @JsonSubTypes.Type(value = ExternalPayment.class, name = "external_payment"),
     @JsonSubTypes.Type(value = Payout.class, name = "payout"),
+    // TODO: we need a new Refund subtype
 })
 @Getter
 public abstract class Transaction {
@@ -33,6 +34,7 @@ public abstract class Transaction {
     @RequiredArgsConstructor
     @Getter
     public enum Status {
+        EXECUTED("executed"),
         SETTLED("settled"),
         PENDING("pending");
 
