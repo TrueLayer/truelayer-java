@@ -133,6 +133,37 @@
       },
       "context_code":"withdrawal",
       "payout_id":"string"
+    },
+    {
+      "type":"refund",
+      "id":"a-transaction-id",
+      "currency":"GBP",
+      "amount_in_minor":1,
+      "status":"executed",
+      "created_at":"2022-02-10T15:47:17.403Z",
+      "executed_at":"2022-02-10T15:47:17.403Z",
+      "beneficiary":{
+        "type":"payment_source",
+        "payment_source_id": "an-id",
+        "account_holder_name":"john smith",
+        "reference": "a-ref",
+        "account_identifiers":[
+          {
+            "type":"sort_code_account_number",
+            "sort_code":"040662",
+            "account_number":"00002723"
+          },
+          {
+            "type":"iban",
+            "iban":"GB53CLRB04066200002723"
+          }
+        ],
+        "context_code": "internal",
+        "payout_id": "an-id"
+      },
+      "context_code":"withdrawal",
+      "refund_id":"an-id",
+      "payment_id":"another-id"
     }
   ]
 }

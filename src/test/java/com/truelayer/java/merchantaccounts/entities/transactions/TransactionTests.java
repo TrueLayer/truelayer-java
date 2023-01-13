@@ -136,4 +136,56 @@ class TransactionTests {
 
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type Refund")
+    public void shouldYieldTrueIfRefund() {
+        Transaction sut = new Refund(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.EXECUTED,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                Payout.ContextCode.INTERNAL,
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+
+        assertTrue(sut.isRefund());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class Refund")
+    public void shouldConvertToRefund() {
+        Transaction sut = new Refund(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.EXECUTED,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                Payout.ContextCode.INTERNAL,
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+
+        assertDoesNotThrow(sut::asRefund);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to Refund")
+    public void shouldNotConvertToRefund() {
+        Transaction sut = new MerchantAccountPayment(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                UUID.randomUUID().toString());
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asRefund);
+
+        assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
 }
