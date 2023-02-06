@@ -4,18 +4,7 @@
   "currency":"GBP",
 
   "user":{
-    "id":"ac459f9f-37df-4cd7-ada5-***",
-    "name":"Andrea Di Lisio",
-    "email":"andrea@truelayer.com",
-    "date_of_birth": "1990-01-31",
-    "address": {
-      "address_line1": "1 Hardwick Street",
-      "address_line2": "3rd Floor",
-      "city": "London",
-      "state": "Greater London",
-      "zip": "EC1R 4RB",
-      "country_code": "GB"
-    }
+    "id":"ac459f9f-37df-4cd7-ada5-***"
   },
   "payment_method":{
     "type":"bank_transfer",

@@ -16,7 +16,7 @@ public class MerchantAccountPayment extends Transaction {
 
     int amountInMinor;
 
-    Transaction.Status status;
+    Transaction.Status status = Status.SETTLED;
 
     ZonedDateTime settledAt;
 

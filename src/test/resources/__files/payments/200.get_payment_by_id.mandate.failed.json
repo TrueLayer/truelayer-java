@@ -3,10 +3,7 @@
   "amount_in_minor": 10,
   "currency": "GBP",
   "user": {
-    "id": "86bc1930-1cf4-4762-b3a6-7d889f7af70a",
-    "name": "Andrea",
-    "email": "andrea@truelayer.com",
-    "phone": "+39122334"
+    "id": "86bc1930-1cf4-4762-b3a6-7d889f7af70a"
   },
   "payment_method": {
     "type": "mandate",

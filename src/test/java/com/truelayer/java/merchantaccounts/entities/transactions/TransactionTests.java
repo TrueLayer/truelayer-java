@@ -20,9 +20,8 @@ class TransactionTests {
                 UUID.randomUUID().toString(),
                 CurrencyCode.GBP,
                 100,
-                Transaction.Status.PENDING,
                 ZonedDateTime.now(Clock.systemUTC()),
-                new PaymentSource(UUID.randomUUID().toString(), null, null, null),
+                new PaymentSource(UUID.randomUUID().toString(), null, null),
                 UUID.randomUUID().toString());
 
         assertTrue(sut.isMerchantAccountPayment());
@@ -36,7 +35,6 @@ class TransactionTests {
                 UUID.randomUUID().toString(),
                 CurrencyCode.GBP,
                 100,
-                Transaction.Status.PENDING,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
@@ -48,12 +46,7 @@ class TransactionTests {
     @DisplayName("It should throw an error when converting to MerchantAccountPayment")
     public void shouldNotConvertToSortCodeAccNumber() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(),
-                CurrencyCode.GBP,
-                100,
-                Transaction.Status.PENDING,
-                ZonedDateTime.now(Clock.systemUTC()),
-                null);
+                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, ZonedDateTime.now(Clock.systemUTC()), null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asMerchantAccountPayment);
 
@@ -64,12 +57,7 @@ class TransactionTests {
     @DisplayName("It should yield true if instance is of type ExternalPayment")
     public void shouldYieldTrueIfExternalPayment() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(),
-                CurrencyCode.GBP,
-                100,
-                Transaction.Status.PENDING,
-                ZonedDateTime.now(Clock.systemUTC()),
-                null);
+                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, ZonedDateTime.now(Clock.systemUTC()), null);
 
         assertTrue(sut.isExternalPayment());
     }
@@ -78,12 +66,7 @@ class TransactionTests {
     @DisplayName("It should convert to an instance of class ExternalPayment")
     public void shouldConvertToExternalPayment() {
         Transaction sut = new ExternalPayment(
-                UUID.randomUUID().toString(),
-                CurrencyCode.GBP,
-                100,
-                Transaction.Status.PENDING,
-                ZonedDateTime.now(Clock.systemUTC()),
-                null);
+                UUID.randomUUID().toString(), CurrencyCode.GBP, 100, ZonedDateTime.now(Clock.systemUTC()), null);
 
         assertDoesNotThrow(sut::asExternalPayment);
     }
@@ -95,7 +78,6 @@ class TransactionTests {
                 UUID.randomUUID().toString(),
                 CurrencyCode.GBP,
                 100,
-                Transaction.Status.PENDING,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
@@ -146,12 +128,63 @@ class TransactionTests {
                 UUID.randomUUID().toString(),
                 CurrencyCode.GBP,
                 100,
-                Transaction.Status.PENDING,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 UUID.randomUUID().toString());
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asPayout);
+
+        assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type Refund")
+    public void shouldYieldTrueIfRefund() {
+        Transaction sut = new Refund(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.EXECUTED,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                Payout.ContextCode.INTERNAL,
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+
+        assertTrue(sut.isRefund());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class Refund")
+    public void shouldConvertToRefund() {
+        Transaction sut = new Refund(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                Transaction.Status.EXECUTED,
+                ZonedDateTime.now(Clock.systemUTC()),
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                Payout.ContextCode.INTERNAL,
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
+
+        assertDoesNotThrow(sut::asRefund);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to Refund")
+    public void shouldNotConvertToRefund() {
+        Transaction sut = new MerchantAccountPayment(
+                UUID.randomUUID().toString(),
+                CurrencyCode.GBP,
+                100,
+                ZonedDateTime.now(Clock.systemUTC()),
+                null,
+                UUID.randomUUID().toString());
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asRefund);
 
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }

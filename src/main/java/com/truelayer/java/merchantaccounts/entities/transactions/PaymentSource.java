@@ -11,6 +11,4 @@ public class PaymentSource {
     List<AccountIdentifier> accountIdentifiers;
 
     String accountHolderName;
-
-    String userId;
 }

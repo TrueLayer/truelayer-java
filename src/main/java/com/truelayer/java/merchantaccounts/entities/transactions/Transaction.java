@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
     @JsonSubTypes.Type(value = MerchantAccountPayment.class, name = "merchant_account_payment"),
     @JsonSubTypes.Type(value = ExternalPayment.class, name = "external_payment"),
     @JsonSubTypes.Type(value = Payout.class, name = "payout"),
+    @JsonSubTypes.Type(value = Refund.class, name = "refund"),
 })
 @Getter
 public abstract class Transaction {
@@ -24,7 +25,8 @@ public abstract class Transaction {
     public enum Type {
         MERCHANT_ACCOUNT_PAYMENT("merchant_account_payment"),
         EXTERNAL_PAYMENT("external_payment"),
-        PAYOUT("payout");
+        PAYOUT("payout"),
+        REFUND("refund");
 
         @JsonValue
         private final String type;
@@ -33,6 +35,7 @@ public abstract class Transaction {
     @RequiredArgsConstructor
     @Getter
     public enum Status {
+        EXECUTED("executed"),
         SETTLED("settled"),
         PENDING("pending");
 
@@ -53,6 +56,11 @@ public abstract class Transaction {
     @JsonIgnore
     public boolean isPayout() {
         return this instanceof Payout;
+    }
+
+    @JsonIgnore
+    public boolean isRefund() {
+        return this instanceof Refund;
     }
 
     @JsonIgnore
@@ -77,6 +85,14 @@ public abstract class Transaction {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (Payout) this;
+    }
+
+    @JsonIgnore
+    public Refund asRefund() {
+        if (!isRefund()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (Refund) this;
     }
 
     private String buildErrorMessage() {
