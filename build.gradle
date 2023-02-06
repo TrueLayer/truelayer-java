@@ -109,7 +109,7 @@ dependencies {
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
     // JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.2'
 
     // Mocking libraries
     def mockitoVersion = '4.8.0'
