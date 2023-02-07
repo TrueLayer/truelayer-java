@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        java: [ 8, 11, 15, 17, 18, 19 ]
+        java: [ 11, 15, 17, 18, 19 ]
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
@@ -28,11 +28,6 @@ jobs:
           cache: 'gradle'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Fix Gradle options on Java < 9
-        if: ${{ matrix.java < 9 }}
-        run: |
-          # removes jvm args
-          sed -ie s/org\.gradle\.jvmargs/_ignored/ gradle.properties
       - name: Get project version
         id: get_project_version
         run: |

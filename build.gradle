@@ -22,6 +22,7 @@ java {
         languageVersion = JavaLanguageVersion.of(8)
     }
 }
+
 spotless {
     java {
         palantirJavaFormat()
