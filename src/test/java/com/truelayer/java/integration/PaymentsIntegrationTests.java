@@ -1,7 +1,6 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.payments.entities.paymentdetail.Status.*;
 import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.BANK_TRANSFER;
@@ -110,7 +109,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("get")
-                .path(urlPathMatching("/payments/" + A_PAYMENT_ID))
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID))
                 .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
@@ -207,7 +206,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .build();
         RequestStub.New()
                 .method("post")
-                .path(urlPathMatching("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
                 .withAuthorization()
                 .withIdempotencyKey()
                 .status(200)
@@ -218,6 +217,40 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
         ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
                 .startAuthorizationFlow(A_PAYMENT_ID, request)
+                .get();
+
+        assertNotError(response);
+        AuthorizationFlowResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should start an authorization flow with custom X-Forwarded-For HTTP header")
+    public void shouldStartAnAuthorizationFlowWithXForwardedForHeader() {
+        String jsonResponseFile = "payments/200.start_authorization_flow.authorizing.wait.json";
+        String endUserIpAddress = "11.1.2.3";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
+                .withAuthorization()
+                .withIdempotencyKey()
+                .withXForwardedForHeader(endUserIpAddress)
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
+                .startAuthorizationFlow(A_PAYMENT_ID, request, endUserIpAddress)
                 .get();
 
         assertNotError(response);
