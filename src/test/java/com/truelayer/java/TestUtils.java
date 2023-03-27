@@ -105,6 +105,7 @@ public class TestUtils {
         private int status;
         private String bodyFile;
         private Integer delayMilliseconds;
+        private String xForwardedForHeader;
 
         private RequestStub() {}
 
@@ -147,6 +148,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub withXForwardedForHeader(String ipAddress) {
+            this.xForwardedForHeader = ipAddress;
+            return this;
+        }
+
         public RequestStub delayMs(int delayMilliseconds) {
             this.delayMilliseconds = delayMilliseconds;
             return this;
@@ -165,6 +171,10 @@ public class TestUtils {
 
             if (withIdempotencyKey) {
                 request.withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN));
+            }
+
+            if (!isEmpty(xForwardedForHeader)) {
+                request.withHeader(X_FORWARDED_FOR, equalTo(xForwardedForHeader));
             }
 
             ResponseDefinitionBuilder response = aResponse()

@@ -1,13 +1,12 @@
 package com.truelayer.java.payments;
 
+import static com.truelayer.java.Constants.HeaderNames.X_FORWARDED_FOR;
+
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import java.util.concurrent.CompletableFuture;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
 /**
  * Exposes all the payments related capabilities of the library.
@@ -44,6 +43,21 @@ public interface IPaymentsApi {
     @POST("/payments/{id}/authorization-flow")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             @Path("id") String paymentId, @Body StartAuthorizationFlowRequest request);
+
+    /**
+     * Starts an authorization flow for a given payment resource,
+     * including the <code>X-Forwarded-For</code> HTTP header field to record the end-user IP address.
+     * @param paymentId the payment identifier
+     * @param request a start authorization flow request payload
+     * @param xForwardedFor the end-user IP address
+     * @return the response of the <i>Start Authorization Flow</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/start-payment-authorization-flow"><i>Start Authorization Flow</i> API reference</a>
+     */
+    @POST("/payments/{id}/authorization-flow")
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
+            @Path("id") String paymentId,
+            @Body StartAuthorizationFlowRequest request,
+            @Header(X_FORWARDED_FOR) String xForwardedFor);
 
     /**
      * Submit the provider selection for a given payment resource.
