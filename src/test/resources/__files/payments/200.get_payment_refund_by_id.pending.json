@@ -1,0 +1,11 @@
+{
+  "id":"38c76ba95-322f-46a9-b754-***",
+  "amount_in_minor": 100,
+  "currency": "GBP",
+  "reference": "a payment reference",
+  "status": "pending",
+  "created_at":"2022-01-17T17:13:18.214924Z",
+  "metadata": {
+    "a_custom_key": "a-value"
+  }
+}
