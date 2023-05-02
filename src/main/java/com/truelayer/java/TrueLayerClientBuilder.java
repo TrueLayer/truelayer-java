@@ -60,6 +60,8 @@ public class TrueLayerClientBuilder {
 
     private ICredentialsCache credentialsCache;
 
+    private ProxyConfigurations proxyConfigurations;
+
     TrueLayerClientBuilder() {}
 
     /**
@@ -167,6 +169,11 @@ public class TrueLayerClientBuilder {
         return this;
     }
 
+    public TrueLayerClientBuilder withProxyConfiguration(ProxyConfigurations proxyConfigurations) {
+        this.proxyConfigurations = proxyConfigurations;
+        return this;
+    }
+
     /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
@@ -180,7 +187,7 @@ public class TrueLayerClientBuilder {
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
 
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
-                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer, proxyConfigurations);
 
         OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
 

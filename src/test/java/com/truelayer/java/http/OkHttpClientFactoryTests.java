@@ -1,11 +1,13 @@
 package com.truelayer.java.http;
 
+import static com.truelayer.java.Constants.HeaderNames.PROXY_AUTHORIZATION;
 import static com.truelayer.java.TestUtils.getClientCredentials;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.truelayer.java.ConnectionPoolOptions;
+import com.truelayer.java.ProxyConfigurations;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
@@ -17,13 +19,15 @@ import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import com.truelayer.java.versioninfo.VersionInfo;
+import java.net.Proxy;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import okhttp3.OkHttpClient;
+import lombok.SneakyThrows;
+import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +43,7 @@ class OkHttpClientFactoryTests {
 
         OkHttpClient baseApiClient = getOkHttpClientFactory()
                 .buildBaseApiClient(
-                        null, ConnectionPoolOptions.builder().build(), customExecutor, customLogMessageConsumer);
+                        null, ConnectionPoolOptions.builder().build(), customExecutor, customLogMessageConsumer, null);
 
         assertNotNull(baseApiClient);
         assertTrue(
@@ -78,13 +82,63 @@ class OkHttpClientFactoryTests {
                         customTimeout,
                         ConnectionPoolOptions.builder().build(),
                         customExecutor,
-                        customLogMessageConsumer);
+                        customLogMessageConsumer,
+                        null);
 
         assertNotNull(baseApiClient);
         assertEquals(0, baseApiClient.connectTimeoutMillis(), "Unexpected connect timeout configured");
         assertEquals(0, baseApiClient.readTimeoutMillis(), "Unexpected read timeout configured");
         assertEquals(0, baseApiClient.writeTimeoutMillis(), "Unexpected write timeout configured");
         assertEquals(customTimeout.toMillis(), baseApiClient.callTimeoutMillis(), "Unexpected call timeout configured");
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should build a Base API client with custom proxy configuration")
+    public void shouldCreateABaseAuthApiClientWithCustomProxyConfig() {
+        ProxyConfigurations customProxyConfig = ProxyConfigurations.builder()
+                .hostname("127.0.0.1")
+                .port(9999)
+                .credentials(ProxyConfigurations.Credentials.builder()
+                        .username("john")
+                        .password("doe")
+                        .build())
+                .build();
+
+        OkHttpClient baseApiClient = getOkHttpClientFactory()
+                .buildBaseApiClient(null, ConnectionPoolOptions.builder().build(), null, null, customProxyConfig);
+
+        assertNotNull(baseApiClient);
+        Proxy configuredProxy = baseApiClient.proxy();
+        assertNotNull(configuredProxy, "proxy not configured");
+        assertEquals(Proxy.Type.HTTP, configuredProxy.type(), "unexpected proxy type configured");
+        assertTrue(
+                configuredProxy
+                        .address()
+                        .toString()
+                        .endsWith(customProxyConfig.hostname() + ":" + customProxyConfig.port()),
+                "unexpected proxy address found");
+        Authenticator proxyAuthenticator = baseApiClient.proxyAuthenticator();
+        assertNotNull(proxyAuthenticator, "proxy authenticator not configured");
+        Request testRequest = proxyAuthenticator.authenticate(
+                null,
+                new Response.Builder()
+                        .protocol(Protocol.HTTP_2)
+                        .code(200)
+                        .message("A response")
+                        .request(new Request.Builder()
+                                .url("https://localhost/test")
+                                .get()
+                                .build())
+                        .build());
+        assertNotNull(testRequest, "invalid request generated");
+        String expectedProxyAuthHeader = Credentials.basic(
+                customProxyConfig.credentials().username(),
+                customProxyConfig.credentials().password());
+        assertEquals(
+                expectedProxyAuthHeader,
+                testRequest.header(PROXY_AUTHORIZATION),
+                "unexpected Proxy-Authentication header found");
     }
 
     @Test
@@ -99,7 +153,8 @@ class OkHttpClientFactoryTests {
                         customTimeout,
                         ConnectionPoolOptions.builder().build(),
                         customExecutor,
-                        customLogMessageConsumer);
+                        customLogMessageConsumer,
+                        null);
 
         OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseApiClient, getClientCredentials());
 
@@ -121,7 +176,7 @@ class OkHttpClientFactoryTests {
     @Test
     @DisplayName("It should build a Payments API client")
     public void shouldThrowCredentialsMissingException() {
-        OkHttpClient baseHttpClient = getOkHttpClientFactory().buildBaseApiClient(null, null, null, null);
+        OkHttpClient baseHttpClient = getOkHttpClientFactory().buildBaseApiClient(null, null, null, null, null);
         OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseHttpClient, getClientCredentials());
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()

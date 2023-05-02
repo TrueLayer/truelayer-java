@@ -1,7 +1,6 @@
 package com.truelayer.java;
 
-import static com.truelayer.java.TestUtils.getClientCredentials;
-import static com.truelayer.java.TestUtils.getSigningOptions;
+import static com.truelayer.java.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
