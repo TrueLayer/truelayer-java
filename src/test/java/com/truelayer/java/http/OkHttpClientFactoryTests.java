@@ -94,8 +94,33 @@ class OkHttpClientFactoryTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should build a Base API client with custom proxy configuration")
-    public void shouldCreateABaseAuthApiClientWithCustomProxyConfig() {
+    @DisplayName("It should build a Base API client with custom unauthenticated proxy configuration")
+    public void shouldCreateABaseAuthApiClientWithCustomProxyConfigNoAuthentication() {
+        ProxyConfigurations customProxyConfig =
+                ProxyConfigurations.builder().hostname("127.0.0.1").port(9999).build();
+
+        OkHttpClient baseApiClient = getOkHttpClientFactory()
+                .buildBaseApiClient(null, ConnectionPoolOptions.builder().build(), null, null, customProxyConfig);
+
+        assertNotNull(baseApiClient);
+        Proxy configuredProxy = baseApiClient.proxy();
+        assertNotNull(configuredProxy, "proxy not configured");
+        assertEquals(Proxy.Type.HTTP, configuredProxy.type(), "unexpected proxy type configured");
+        assertTrue(
+                configuredProxy
+                        .address()
+                        .toString()
+                        .endsWith(customProxyConfig.hostname() + ":" + customProxyConfig.port()),
+                "unexpected proxy address found");
+        Authenticator proxyAuthenticator = baseApiClient.proxyAuthenticator();
+        // make sure the authenticator is the default used by OkHttp.
+        assertInstanceOf(Authenticator.NONE.getClass(), proxyAuthenticator);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should build a Base API client with custom proxy configuration with authentication")
+    public void shouldCreateABaseAuthApiClientWithCustomProxyConfigWithAuthentication() {
         ProxyConfigurations customProxyConfig = ProxyConfigurations.builder()
                 .hostname("127.0.0.1")
                 .port(9999)
