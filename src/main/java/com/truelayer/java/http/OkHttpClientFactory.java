@@ -39,7 +39,7 @@ public class OkHttpClientFactory {
             ConnectionPoolOptions connectionPoolOptions,
             ExecutorService requestExecutor,
             Consumer<String> logMessageConsumer,
-            ProxyConfigurations proxyConfigurations) {
+            ProxyConfiguration proxyConfiguration) {
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
@@ -74,16 +74,16 @@ public class OkHttpClientFactory {
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
         }
 
-        if (isNotEmpty(proxyConfigurations)) {
+        if (isNotEmpty(proxyConfiguration)) {
             clientBuilder.proxy(new Proxy(
                     Proxy.Type.HTTP,
-                    new InetSocketAddress(proxyConfigurations.hostname(), proxyConfigurations.port())));
+                    new InetSocketAddress(proxyConfiguration.hostname(), proxyConfiguration.port())));
 
-            if (isNotEmpty(proxyConfigurations.credentials())) {
+            if (isNotEmpty(proxyConfiguration.credentials())) {
                 clientBuilder.proxyAuthenticator((route, response) -> {
                     String credentials = Credentials.basic(
-                            proxyConfigurations.credentials().username(),
-                            proxyConfigurations.credentials().password());
+                            proxyConfiguration.credentials().username(),
+                            proxyConfiguration.credentials().password());
 
                     return response.request()
                             .newBuilder()

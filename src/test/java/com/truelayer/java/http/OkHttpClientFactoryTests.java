@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.truelayer.java.ConnectionPoolOptions;
-import com.truelayer.java.ProxyConfigurations;
+import com.truelayer.java.ProxyConfiguration;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
@@ -96,8 +96,8 @@ class OkHttpClientFactoryTests {
     @Test
     @DisplayName("It should build a Base API client with custom unauthenticated proxy configuration")
     public void shouldCreateABaseAuthApiClientWithCustomProxyConfigNoAuthentication() {
-        ProxyConfigurations customProxyConfig =
-                ProxyConfigurations.builder().hostname("127.0.0.1").port(9999).build();
+        ProxyConfiguration customProxyConfig =
+                ProxyConfiguration.builder().hostname("127.0.0.1").port(9999).build();
 
         OkHttpClient baseApiClient = getOkHttpClientFactory()
                 .buildBaseApiClient(null, ConnectionPoolOptions.builder().build(), null, null, customProxyConfig);
@@ -121,10 +121,10 @@ class OkHttpClientFactoryTests {
     @Test
     @DisplayName("It should build a Base API client with custom proxy configuration with authentication")
     public void shouldCreateABaseAuthApiClientWithCustomProxyConfigWithAuthentication() {
-        ProxyConfigurations customProxyConfig = ProxyConfigurations.builder()
+        ProxyConfiguration customProxyConfig = ProxyConfiguration.builder()
                 .hostname("127.0.0.1")
                 .port(9999)
-                .credentials(ProxyConfigurations.Credentials.builder()
+                .credentials(ProxyConfiguration.Credentials.builder()
                         .username("john")
                         .password("doe")
                         .build())

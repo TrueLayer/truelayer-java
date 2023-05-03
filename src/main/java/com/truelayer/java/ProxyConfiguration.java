@@ -6,17 +6,29 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/**
+ * Class that represent a custom proxy configuration
+ */
 @Builder
 @Getter
 @EqualsAndHashCode
 @ToString
 @Accessors(fluent = true)
-public class ProxyConfigurations {
+public class ProxyConfiguration {
 
+    /**
+     * Hostname of the proxy
+     */
     String hostname;
 
+    /**
+     * Port of the proxy
+     */
     int port;
 
+    /**
+     * Optional credentials for authenticating proxy requests
+     */
     Credentials credentials;
 
     @Builder
