@@ -5,6 +5,7 @@ import static com.truelayer.java.Constants.HeaderNames.X_FORWARDED_FOR;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
+import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
@@ -91,4 +92,34 @@ public interface IPaymentsApi {
     @POST("/payments/{id}/authorization-flow/actions/form")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(
             @Path("id") String paymentId, @Body SubmitFormRequest request);
+
+    /**
+     * Refund a merchant account payment.
+     * @param paymentId the payment identifier
+     * @param request a create refund request payload
+     * @return the response of the <i>Create Payment Refund</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/create-payment-refund"><i>Create Payment Refund</i> API reference</a>
+     */
+    @POST("/payments/{id}/refunds")
+    CompletableFuture<ApiResponse<CreatePaymentRefundResponse>> createPaymentRefund(
+            @Path("id") String paymentId, @Body CreatePaymentRefundRequest request);
+
+    /**
+     * Returns all refunds of a payment.
+     * @param paymentId the payment identifier
+     * @return the response of the <i>Get Payment Refunds</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/get-payment-refunds"><i>Get Payment Refunds</i> API reference</a>
+     */
+    @GET("/payments/{id}/refunds")
+    CompletableFuture<ApiResponse<ListPaymentRefundsResponse>> listPaymentRefunds(@Path("id") String paymentId);
+
+    /**
+     * Returns refund details.
+     * @param paymentId the payment identifier
+     * @return the response of the <i>Get Payment Refund</i> operation
+     * @see <a href="https://docs.truelayer.com/reference/get-payment-refund"><i>Get Payment Refund</i> API reference</a>
+     */
+    @GET("/payments/{paymentId}/refunds/{refundId}")
+    CompletableFuture<ApiResponse<PaymentRefund>> getPaymentRefundById(
+            @Path("paymentId") String paymentId, @Path("refundId") String refundId);
 }
