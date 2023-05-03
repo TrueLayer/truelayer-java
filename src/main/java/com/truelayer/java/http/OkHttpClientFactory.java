@@ -76,8 +76,7 @@ public class OkHttpClientFactory {
 
         if (isNotEmpty(proxyConfiguration)) {
             clientBuilder.proxy(new Proxy(
-                    Proxy.Type.HTTP,
-                    new InetSocketAddress(proxyConfiguration.hostname(), proxyConfiguration.port())));
+                    Proxy.Type.HTTP, new InetSocketAddress(proxyConfiguration.hostname(), proxyConfiguration.port())));
 
             if (isNotEmpty(proxyConfiguration.credentials())) {
                 clientBuilder.proxyAuthenticator((route, response) -> {
