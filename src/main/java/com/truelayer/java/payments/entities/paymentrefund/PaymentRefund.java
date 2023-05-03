@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.entities.CurrencyCode;
 import java.time.ZonedDateTime;
 import java.util.Map;
-
-import com.truelayer.java.entities.CurrencyCode;
 import lombok.Getter;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = PendingPaymentRefund.class)
