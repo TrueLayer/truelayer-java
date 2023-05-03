@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import java.time.ZonedDateTime;
 import java.util.Map;
+
+import com.truelayer.java.entities.CurrencyCode;
 import lombok.Getter;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = PendingPaymentRefund.class)
@@ -19,7 +21,7 @@ import lombok.Getter;
 public abstract class PaymentRefund {
     private String id;
     private int amountInMinor;
-    private String currency;
+    private CurrencyCode currency;
     private String reference;
     private Map<String, String> metadata;
     private ZonedDateTime createdAt;
