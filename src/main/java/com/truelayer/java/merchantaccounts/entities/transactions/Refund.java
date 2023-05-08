@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.CurrencyCode;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import com.truelayer.java.entities.beneficiary.PaymentSource;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -27,7 +29,7 @@ public class Refund extends Transaction {
 
     ZonedDateTime executedAt;
 
-    com.truelayer.java.merchantaccounts.entities.transactions.beneficiary.PaymentSource beneficiary;
+    PaymentSource beneficiary;
 
     Payout.ContextCode contextCode;
 

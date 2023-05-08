@@ -3,7 +3,7 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.merchantaccounts.entities.transactions.beneficiary.Beneficiary;
+import com.truelayer.java.entities.beneficiary.Beneficiary;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;

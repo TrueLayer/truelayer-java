@@ -1,32 +1,24 @@
-package com.truelayer.java.merchantaccounts.entities.transactions.beneficiary;
+package com.truelayer.java.payouts.entities.beneficiary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.TrueLayerException;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 /**
- * A transaction item specific DTO for payouts beneficiaries. Unlike the shared
- * {@link com.truelayer.java.payments.entities.beneficiary.Beneficiary Beneficiary} type, this abstract class is
- * subclassed by concrete variants that represent one of <code>external_account</code>, <code>business_account</code> or
- * <code>payment_source</code>.
+ * A Payouts specific DTO for beneficiaries used in create payouts requests only.
+ * This is deliberately different from the more generic {@link com.truelayer.java.entities.beneficiary.Beneficiary Beneficiary} class.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ExternalAccount.class)
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
-    @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account"),
-    @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source")
+        @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
+        @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source"),
+        @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account")
 })
-@ToString
-@EqualsAndHashCode
-@Getter
 public abstract class Beneficiary {
-
     @JsonIgnore
     public abstract Type getType();
 
@@ -46,27 +38,36 @@ public abstract class Beneficiary {
     }
 
     @JsonIgnore
-    public BusinessAccount asBusinessAccount() {
-        if (!isBusinessAccount()) {
+    public ExternalAccount asExternalAccount(){
+        if(!isExternalAccount())
             throw new TrueLayerException(buildErrorMessage());
-        }
-        return (BusinessAccount) this;
-    }
-
-    @JsonIgnore
-    public ExternalAccount asExternalAccount() {
-        if (!isExternalAccount()) {
-            throw new TrueLayerException(buildErrorMessage());
-        }
         return (ExternalAccount) this;
     }
 
     @JsonIgnore
-    public PaymentSource asPaymentSource() {
-        if (!isPaymentSource()) {
+    public PaymentSource asPaymentSource(){
+        if(!isPaymentSource())
             throw new TrueLayerException(buildErrorMessage());
-        }
         return (PaymentSource) this;
+    }
+
+    public static ExternalAccount.ExternalAccountBuilder externalAccount() {
+        return new ExternalAccount.ExternalAccountBuilder();
+    }
+
+    public static PaymentSource.PaymentSourceBuilder paymentSource() {
+        return new PaymentSource.PaymentSourceBuilder();
+    }
+
+    public static BusinessAccount.BusinessAccountBuilder businessAccount() {
+        return new BusinessAccount.BusinessAccountBuilder();
+    }
+
+    @JsonIgnore
+    public BusinessAccount asBusinessAccount(){
+        if(!isBusinessAccount())
+            throw new TrueLayerException(buildErrorMessage());
+        return (BusinessAccount) this;
     }
 
     private String buildErrorMessage() {
@@ -79,7 +80,6 @@ public abstract class Beneficiary {
         EXTERNAL_ACCOUNT("external_account"),
         PAYMENT_SOURCE("payment_source"),
         BUSINESS_ACCOUNT("business_account");
-
         @JsonValue
         private final String type;
     }
