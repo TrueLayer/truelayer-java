@@ -95,4 +95,18 @@ class TrueLayerClientBuilderTests {
                 "mandates handler not initialized. Make sure you specified the required signing options while initializing the library",
                 thrown.getMessage());
     }
+
+    @Test
+    @DisplayName(
+            "It should throw an initialization error when invoking the payouts handler and signing options are missing")
+    public void itShouldThrowIfPayoutsHandlerIsInvokedWithoutSigningOptions() {
+        ITrueLayerClient trueLayerClient =
+                TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, trueLayerClient::payouts);
+
+        assertEquals(
+                "payouts handler not initialized. Make sure you specified the required signing options while initializing the library",
+                thrown.getMessage());
+    }
 }
