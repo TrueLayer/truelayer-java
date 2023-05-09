@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
-import org.awaitility.core.ConditionTimeoutException;
+import org.awaitility.core.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -398,12 +398,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
         assertNotError(submitPaymentReturnParametersResponse);
 
-        try {
-            waitForPaymentToBeSettled(paymentId);
-        } catch (ConditionTimeoutException exception) {
-            Logger.warn("Wating for payment to be settled timed out, skipping test as refund cannot be created");
-            return;
-        }
+        waitForPaymentToBeSettled(paymentId);
 
         // Create full payment refund
         CreatePaymentRefundRequest createPaymentRefundRequest = CreatePaymentRefundRequest.builder()
@@ -581,6 +576,16 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     private void waitForPaymentToBeSettled(String paymentId) {
         await().with()
+                .conditionEvaluationListener(new ConditionEvaluationListener() {
+                    @Override
+                    public void conditionEvaluated(EvaluatedCondition condition) {}
+
+                    @Override
+                    public void onTimeout(TimeoutEvent timeoutEvent) {
+                        Logger.warn(
+                                "Payment is taking too much time to settle, status polling timed out. Refunds test cannot be evaluated without a settled payment");
+                    }
+                })
                 .pollInterval(1, TimeUnit.SECONDS)
                 .atMost(15, TimeUnit.SECONDS)
                 .until(() -> {
