@@ -1,13 +1,12 @@
 package com.truelayer.java.payouts.entities;
 
-import com.truelayer.java.TrueLayerException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
+import com.truelayer.java.TrueLayerException;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class PayoutTests {
 
@@ -34,8 +33,7 @@ public class PayoutTests {
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asPendingPayout);
 
-        assertEquals(
-                String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
     @Test
@@ -61,8 +59,7 @@ public class PayoutTests {
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizedPayout);
 
-        assertEquals(
-                String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
     @Test
@@ -88,8 +85,7 @@ public class PayoutTests {
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asExecutedPayout);
 
-        assertEquals(
-                String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 
     @Test
@@ -115,7 +111,6 @@ public class PayoutTests {
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asFailedPayout);
 
-        assertEquals(
-                String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
 }

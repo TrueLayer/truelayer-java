@@ -1,14 +1,13 @@
 package com.truelayer.java.payouts.entities.beneficiary;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.Address;
 import com.truelayer.java.payouts.entities.accountidentifier.IbanAccountIdentifier;
+import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BeneficiaryTests {
 

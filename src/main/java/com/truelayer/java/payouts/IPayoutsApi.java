@@ -4,12 +4,11 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payouts.entities.CreatePayoutRequest;
 import com.truelayer.java.payouts.entities.CreatePayoutResponse;
 import com.truelayer.java.payouts.entities.Payout;
+import java.util.concurrent.CompletableFuture;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-
-import java.util.concurrent.CompletableFuture;
 
 public interface IPayoutsApi {
 

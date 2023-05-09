@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ExternalAccount.class)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
-        @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source"),
-        @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account")
+    @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
+    @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source"),
+    @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account")
 })
 public abstract class Beneficiary {
     @JsonIgnore
@@ -38,16 +38,14 @@ public abstract class Beneficiary {
     }
 
     @JsonIgnore
-    public ExternalAccount asExternalAccount(){
-        if(!isExternalAccount())
-            throw new TrueLayerException(buildErrorMessage());
+    public ExternalAccount asExternalAccount() {
+        if (!isExternalAccount()) throw new TrueLayerException(buildErrorMessage());
         return (ExternalAccount) this;
     }
 
     @JsonIgnore
-    public PaymentSource asPaymentSource(){
-        if(!isPaymentSource())
-            throw new TrueLayerException(buildErrorMessage());
+    public PaymentSource asPaymentSource() {
+        if (!isPaymentSource()) throw new TrueLayerException(buildErrorMessage());
         return (PaymentSource) this;
     }
 
@@ -64,9 +62,8 @@ public abstract class Beneficiary {
     }
 
     @JsonIgnore
-    public BusinessAccount asBusinessAccount(){
-        if(!isBusinessAccount())
-            throw new TrueLayerException(buildErrorMessage());
+    public BusinessAccount asBusinessAccount() {
+        if (!isBusinessAccount()) throw new TrueLayerException(buildErrorMessage());
         return (BusinessAccount) this;
     }
 
@@ -80,6 +77,7 @@ public abstract class Beneficiary {
         EXTERNAL_ACCOUNT("external_account"),
         PAYMENT_SOURCE("payment_source"),
         BUSINESS_ACCOUNT("business_account");
+
         @JsonValue
         private final String type;
     }

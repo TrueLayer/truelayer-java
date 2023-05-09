@@ -2,10 +2,9 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.beneficiary.PaymentSource;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-
-import com.truelayer.java.entities.beneficiary.PaymentSource;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 

@@ -1,12 +1,12 @@
 package com.truelayer.java.payouts.entities.accountidentifier;
 
+import static com.truelayer.java.Utils.getObjectMapper;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.truelayer.java.TrueLayerException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static com.truelayer.java.Utils.getObjectMapper;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AccountIdentifierTests {
 

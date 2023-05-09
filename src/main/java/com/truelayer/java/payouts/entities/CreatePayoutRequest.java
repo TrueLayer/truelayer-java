@@ -2,12 +2,11 @@ package com.truelayer.java.payouts.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.payouts.entities.beneficiary.Beneficiary;
+import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Map;
 
 @Builder
 @Getter
@@ -19,5 +18,4 @@ public class CreatePayoutRequest {
     private CurrencyCode currency;
     private Beneficiary beneficiary;
     private Map<String, String> metadata;
-
 }

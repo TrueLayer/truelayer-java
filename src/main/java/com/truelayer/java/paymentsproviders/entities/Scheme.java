@@ -1,6 +1,6 @@
 package com.truelayer.java.paymentsproviders.entities;
 
-import com.truelayer.java.entities.SchemeId;
+import com.truelayer.java.payments.entities.SchemeId;
 import lombok.Value;
 
 @Value

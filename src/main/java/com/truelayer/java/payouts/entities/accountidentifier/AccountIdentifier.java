@@ -69,4 +69,13 @@ public abstract class AccountIdentifier {
         @JsonValue
         private final String type;
     }
+
+    public static SortCodeAccountNumberAccountIdentifier.SortCodeAccountNumberAccountIdentifierBuilder
+            sortCodeAccountNumber() {
+        return new SortCodeAccountNumberAccountIdentifier.SortCodeAccountNumberAccountIdentifierBuilder();
+    }
+
+    public static IbanAccountIdentifier.IbanAccountIdentifierBuilder iban() {
+        return new IbanAccountIdentifier.IbanAccountIdentifierBuilder();
+    }
 }

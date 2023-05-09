@@ -23,6 +23,6 @@
     "a-custom-key": "a-value"
   },
   "scheme_id": "faster_payments_service",
-  "status": "pending",
+  "status": "authorized",
   "created_at":"2022-01-17T17:13:18.214924Z"
 }

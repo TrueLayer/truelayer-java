@@ -6,20 +6,18 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.SchemeId;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import java.time.ZonedDateTime;
+import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.time.ZonedDateTime;
-import java.util.Map;
-
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = PendingPayout.class)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = PendingPayout.class, name = "pending"),
-        @JsonSubTypes.Type(value = AuthorizedPayout.class, name = "authorized"),
-        @JsonSubTypes.Type(value = ExecutedPayout.class, name = "executed"),
-        @JsonSubTypes.Type(value = FailedPayout.class, name = "failed")
+    @JsonSubTypes.Type(value = PendingPayout.class, name = "pending"),
+    @JsonSubTypes.Type(value = AuthorizedPayout.class, name = "authorized"),
+    @JsonSubTypes.Type(value = ExecutedPayout.class, name = "executed"),
+    @JsonSubTypes.Type(value = FailedPayout.class, name = "failed")
 })
 @Getter
 public abstract class Payout {
@@ -36,42 +34,46 @@ public abstract class Payout {
     public abstract Status getStatus();
 
     @JsonIgnore
-    public boolean isPending() { return this instanceof PendingPayout; }
+    public boolean isPending() {
+        return this instanceof PendingPayout;
+    }
 
     @JsonIgnore
-    public boolean isAuthorized() { return this instanceof AuthorizedPayout; }
+    public boolean isAuthorized() {
+        return this instanceof AuthorizedPayout;
+    }
 
     @JsonIgnore
-    public boolean isExecuted() { return this instanceof ExecutedPayout; }
+    public boolean isExecuted() {
+        return this instanceof ExecutedPayout;
+    }
 
     @JsonIgnore
-    public boolean isFailed() { return this instanceof FailedPayout; }
+    public boolean isFailed() {
+        return this instanceof FailedPayout;
+    }
 
     @JsonIgnore
     public PendingPayout asPendingPayout() {
-        if(!isPending())
-            throw new TrueLayerException(buildErrorMessage());
+        if (!isPending()) throw new TrueLayerException(buildErrorMessage());
         return (PendingPayout) this;
     }
 
     @JsonIgnore
     public AuthorizedPayout asAuthorizedPayout() {
-        if(!isAuthorized())
-            throw new TrueLayerException(buildErrorMessage());
+        if (!isAuthorized()) throw new TrueLayerException(buildErrorMessage());
         return (AuthorizedPayout) this;
     }
 
     @JsonIgnore
     public ExecutedPayout asExecutedPayout() {
-        if(!isExecuted())
-            throw new TrueLayerException(buildErrorMessage());
+        if (!isExecuted()) throw new TrueLayerException(buildErrorMessage());
         return (ExecutedPayout) this;
     }
 
     @JsonIgnore
     public FailedPayout asFailedPayout() {
-        if(!isFailed())
-            throw new TrueLayerException(buildErrorMessage());
+        if (!isFailed()) throw new TrueLayerException(buildErrorMessage());
         return (FailedPayout) this;
     }
 

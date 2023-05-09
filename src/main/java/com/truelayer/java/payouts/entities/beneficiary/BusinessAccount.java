@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class BusinessAccount extends Beneficiary{
+public class BusinessAccount extends Beneficiary {
     private final Type type = Type.BUSINESS_ACCOUNT;
     private String reference;
 }

@@ -3,10 +3,6 @@ package com.truelayer.java.entities.beneficiary;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
-import com.truelayer.java.entities.beneficiary.Beneficiary;
-import com.truelayer.java.entities.beneficiary.BusinessAccount;
-import com.truelayer.java.entities.beneficiary.ExternalAccount;
-import com.truelayer.java.entities.beneficiary.PaymentSource;
 import com.truelayer.java.merchantaccounts.entities.transactions.accountidentifier.IbanAccountIdentifier;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
