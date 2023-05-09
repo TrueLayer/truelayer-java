@@ -398,13 +398,12 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
         assertNotError(submitPaymentReturnParametersResponse);
 
-        try{
+        try {
             waitForPaymentToBeSettled(paymentId);
         } catch (ConditionTimeoutException exception) {
             Logger.warn("Wating for payment to be settled timed out, skipping test as refund cannot be created");
             return;
         }
-
 
         // Create full payment refund
         CreatePaymentRefundRequest createPaymentRefundRequest = CreatePaymentRefundRequest.builder()
