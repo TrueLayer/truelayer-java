@@ -2,6 +2,7 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.beneficiary.PaymentSource;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
@@ -27,7 +28,7 @@ public class Refund extends Transaction {
 
     ZonedDateTime executedAt;
 
-    com.truelayer.java.merchantaccounts.entities.transactions.beneficiary.PaymentSource beneficiary;
+    PaymentSource beneficiary;
 
     Payout.ContextCode contextCode;
 
