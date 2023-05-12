@@ -124,7 +124,7 @@ dependencies {
 
     // Transitive dependencies constraints
     constraints {
-        implementation('com.squareup.okhttp3:okhttp:4.10.0') {
+        implementation('com.squareup.okhttp3:okhttp:4.11.0') {
             because 'version 3.14.9 used by com.squareup.retrofit2:retrofit:2.9.0 has known vulnerabilities'
         }
     }
