@@ -9,6 +9,7 @@ import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
+import com.truelayer.java.payouts.IPayoutsApi;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -45,6 +46,12 @@ public interface ITrueLayerClient {
      * @return a utility to interact with mandates endpoints.
      */
     IMandatesHandler mandates();
+
+    /**
+     * Entrypoint for payouts endpoints.
+     * @return a utility to interact with payouts endpoints.
+     */
+    IPayoutsApi payouts();
 
     /**
      * Entrypoint for Hosted Payment Page related services.

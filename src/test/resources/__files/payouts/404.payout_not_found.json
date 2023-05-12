@@ -1,0 +1,7 @@
+{
+  "type":"https://docs.truelayer.com/docs/error-types#not-found",
+  "title":"Not Found",
+  "status":404,
+  "detail":"Payout could not be found.",
+  "trace_id":"567ac6d280b9ec***"
+}

@@ -85,7 +85,7 @@ tasks.register('acceptance-tests', Test) {
 dependencies {
     // Utilities
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
-    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.8.0'
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.9.0'
 
 
     // HTTP client
@@ -124,11 +124,8 @@ dependencies {
 
     // Transitive dependencies constraints
     constraints {
-        implementation('com.squareup.okhttp3:okhttp:4.10.0') {
+        implementation('com.squareup.okhttp3:okhttp:4.11.0') {
             because 'version 3.14.9 used by com.squareup.retrofit2:retrofit:2.9.0 has known vulnerabilities'
-        }
-        implementation('org.apache.commons:commons-text:1.10.0') {
-            because 'version 1.9 used by org.apache.commons:commons-configuration2:2.8.0 has known vulnerabilities'
         }
     }
 }

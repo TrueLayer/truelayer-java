@@ -1,6 +1,6 @@
-package com.truelayer.java.merchantaccounts.entities.transactions.beneficiary;
+package com.truelayer.java.entities.beneficiary;
 
-import static com.truelayer.java.merchantaccounts.entities.transactions.beneficiary.Beneficiary.Type.PAYMENT_SOURCE;
+import static com.truelayer.java.entities.beneficiary.Beneficiary.Type.BUSINESS_ACCOUNT;
 
 import com.truelayer.java.merchantaccounts.entities.transactions.accountidentifier.AccountIdentifier;
 import java.util.List;
@@ -9,12 +9,8 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class PaymentSource extends Beneficiary {
-    private final Type type = PAYMENT_SOURCE;
-
-    private String paymentSourceId;
-
-    private String userId;
+public class BusinessAccount extends Beneficiary {
+    private final Type type = BUSINESS_ACCOUNT;
 
     private String reference;
 
