@@ -15,6 +15,7 @@ import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -27,6 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class PaymentsIntegrationTests extends IntegrationTests {
 
     public static final String A_PAYMENT_ID = "a-payment-id";
+    public static final String A_PAYMENT_REFUND_ID = "a-payment-refund-id";
 
     @DisplayName("It should create and return a payment")
     @ParameterizedTest(name = "of a payment with create response status {0}")
@@ -290,6 +292,98 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         AuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
+        assertEquals(expected, response.getData());
+    }
+
+    @Test
+    @DisplayName("It should create a payment refund")
+    @SneakyThrows
+    public void shouldCreateAPaymentRefund() {
+        String jsonResponseFile = "payments/202.create_payment_refund.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/refunds"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(202)
+                .bodyFile(jsonResponseFile)
+                .build();
+        CreatePaymentRefundRequest createPaymentRefundRequest =
+                CreatePaymentRefundRequest.builder().build();
+
+        ApiResponse<CreatePaymentRefundResponse> response = tlClient.payments()
+                .createPaymentRefund(A_PAYMENT_ID, createPaymentRefundRequest)
+                .get();
+
+        assertNotError(response);
+        CreatePaymentRefundResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentRefundResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @Test
+    @DisplayName("It should return a payment refunds list")
+    @SneakyThrows
+    public void shouldReturnAPaymentRefundsList() {
+        String jsonResponseFile = "payments/200.list_payment_refunds.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/refunds"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<ListPaymentRefundsResponse> response =
+                tlClient.payments().listPaymentRefunds(A_PAYMENT_ID).get();
+
+        assertNotError(response);
+        ListPaymentRefundsResponse expected =
+                TestUtils.deserializeJsonFileTo(jsonResponseFile, ListPaymentRefundsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @DisplayName("It should get payment refund details")
+    @ParameterizedTest(name = "of a payment refund with status {0}")
+    @ValueSource(strings = {"PENDING", "AUTHORIZED", "EXECUTED", "FAILED"})
+    @SneakyThrows
+    public void shouldReturnPaymentRefundDetails(
+            com.truelayer.java.payments.entities.paymentrefund.Status expectedStatus) {
+        String jsonResponseFile = "payments/200.get_payment_refund_by_id." + expectedStatus.getStatus() + ".json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/refunds/" + A_PAYMENT_REFUND_ID))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<PaymentRefund> response = tlClient.payments()
+                .getPaymentRefundById(A_PAYMENT_ID, A_PAYMENT_REFUND_ID)
+                .get();
+
+        assertNotError(response);
+        PaymentRefund expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentRefund.class);
+        assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
     }
 

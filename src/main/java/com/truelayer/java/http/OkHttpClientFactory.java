@@ -3,11 +3,8 @@ package com.truelayer.java.http;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
-import com.truelayer.java.ClientCredentials;
-import com.truelayer.java.ConnectionPoolOptions;
+import com.truelayer.java.*;
 import com.truelayer.java.ConnectionPoolOptions.KeepAliveDuration;
-import com.truelayer.java.SigningOptions;
-import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.http.auth.AccessTokenInvalidator;
 import com.truelayer.java.http.auth.AccessTokenManager;
@@ -19,13 +16,13 @@ import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import lombok.Value;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 
 @Value
 public class OkHttpClientFactory {
@@ -41,7 +38,8 @@ public class OkHttpClientFactory {
             Duration timeout,
             ConnectionPoolOptions connectionPoolOptions,
             ExecutorService requestExecutor,
-            Consumer<String> logMessageConsumer) {
+            Consumer<String> logMessageConsumer,
+            ProxyConfiguration proxyConfiguration) {
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
@@ -74,6 +72,24 @@ public class OkHttpClientFactory {
         if (isNotEmpty(logMessageConsumer)) {
             clientBuilder.addNetworkInterceptor(
                     new HttpLoggingInterceptor(logMessageConsumer, new SensitiveHeaderGuard()));
+        }
+
+        if (isNotEmpty(proxyConfiguration)) {
+            clientBuilder.proxy(new Proxy(
+                    Proxy.Type.HTTP, new InetSocketAddress(proxyConfiguration.hostname(), proxyConfiguration.port())));
+
+            if (isNotEmpty(proxyConfiguration.credentials())) {
+                clientBuilder.proxyAuthenticator((route, response) -> {
+                    String credentials = Credentials.basic(
+                            proxyConfiguration.credentials().username(),
+                            proxyConfiguration.credentials().password());
+
+                    return response.request()
+                            .newBuilder()
+                            .header("Proxy-Authorization", credentials)
+                            .build();
+                });
+            }
         }
 
         clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(libraryInfoLoader.load()));

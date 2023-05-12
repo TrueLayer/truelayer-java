@@ -21,6 +21,7 @@ import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
+import com.truelayer.java.payouts.IPayoutsApi;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -59,6 +60,8 @@ public class TrueLayerClientBuilder {
     private Consumer<String> logMessageConsumer;
 
     private ICredentialsCache credentialsCache;
+
+    private ProxyConfiguration proxyConfiguration;
 
     TrueLayerClientBuilder() {}
 
@@ -168,6 +171,16 @@ public class TrueLayerClientBuilder {
     }
 
     /**
+     * Utility to configure a custom proxy, optionally including an authentication.
+     * @param proxyConfiguration the configuration describing the custom proxy
+     * @return the instance of the client builder used
+     */
+    public TrueLayerClientBuilder withProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+        this.proxyConfiguration = proxyConfiguration;
+        return this;
+    }
+
+    /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
      * @see TrueLayerClient
@@ -180,7 +193,7 @@ public class TrueLayerClientBuilder {
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
 
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
-                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer, proxyConfiguration);
 
         OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
 
@@ -223,12 +236,16 @@ public class TrueLayerClientBuilder {
                 .create(IMandatesApi.class);
         IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
 
+        IPayoutsApi payoutsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IPayoutsApi.class);
+
         return new TrueLayerClient(
                 authenticationHandler,
                 paymentsHandler,
                 paymentsProvidersHandler,
                 merchantAccountsHandler,
                 mandatesHandler,
+                payoutsHandler,
                 hppLinkBuilder,
                 commonApiHandler);
     }

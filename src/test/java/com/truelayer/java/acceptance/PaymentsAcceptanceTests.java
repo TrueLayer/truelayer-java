@@ -1,6 +1,7 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.*;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
@@ -15,8 +16,10 @@ import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
 import com.truelayer.java.payments.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
+import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
@@ -24,14 +27,17 @@ import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
+import org.awaitility.core.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.tinylog.Logger;
 
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
@@ -87,19 +93,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
         // create payment
-        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(PROVIDER_ID)
-                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
-                .remitter(Remitter.builder()
-                        .accountHolderName("Andrea Di Lisio")
-                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
-                                .accountNumber("12345678")
-                                .sortCode("123456")
-                                .build())
-                        .build())
-                .build();
         CreatePaymentRequest paymentRequest =
-                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -282,19 +277,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should complete an authorization flow for a payment with a preselected provider")
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithPreselectedProvider() {
         // create payment
-        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(PROVIDER_ID)
-                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
-                .remitter(Remitter.builder()
-                        .accountHolderName("Andrea Di Lisio")
-                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
-                                .accountNumber("12345678")
-                                .sortCode("123456")
-                                .build())
-                        .build())
-                .build();
         CreatePaymentRequest paymentRequest =
-                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -330,19 +314,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should complete an authorization flow for a payment with provider return")
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturn() {
         // create payment
-        PreselectedProviderSelection preselectionProvider = ProviderSelection.preselected()
-                .providerId(PROVIDER_ID)
-                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
-                .remitter(Remitter.builder()
-                        .accountHolderName("Andrea Di Lisio")
-                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
-                                .accountNumber("12345678")
-                                .sortCode("123456")
-                                .build())
-                        .build())
-                .build();
         CreatePaymentRequest paymentRequest =
-                buildPaymentRequestWithProviderSelection(preselectionProvider, CurrencyCode.GBP);
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -364,28 +337,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertNotError(startAuthorizationFlowResponse);
 
         // Call the mock payment api response to trigger the executed state on the payment just created
-        URI redirectUri = startAuthorizationFlowResponse
-                .getData()
-                .asAuthorizing()
-                .getAuthorizationFlow()
-                .getActions()
-                .getNext()
-                .asRedirect()
-                .getUri();
-        assertNotNull(redirectUri);
-        String protocol = redirectUri.getScheme();
-        String host = redirectUri.getHost();
-        String paymentId = redirectUri.getPath().replaceFirst("/login/", "");
-        RequestBody body =
-                RequestBody.create(MediaType.get("application/json"), "{\"action\":\"Execute\", \"redirect\": false}");
-        Request request = new Request.Builder()
-                .url(String.format("%s://%s/api/single-immediate-payments/%s/action", protocol, host, paymentId))
-                .post(body)
-                .addHeader(
-                        "Authorization",
-                        String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
-                .build();
-        Response paymentResponse = getHttpClientInstance().newCall(request).execute();
+        Response paymentResponse = callMockProviderRedirectUrl(startAuthorizationFlowResponse.getData());
         assertTrue(paymentResponse.isSuccessful());
         String responseString = paymentResponse.body().string();
         assertNotNull(responseString);
@@ -399,6 +351,135 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
                 tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
         assertNotError(submitPaymentReturnParametersResponse);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should create a payment refund and get refund details")
+    public void shouldCreateAPaymentRefundAndGetRefundDetails() {
+        // create payment
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        String paymentId = createPaymentResponse.getData().getId();
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .directReturnUri(URI.create(RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(paymentId, startAuthorizationFlowRequest)
+                .get();
+        assertNotError(startAuthorizationFlowResponse);
+
+        // Call the mock payment api response to trigger the executed state on the payment just created
+        Response paymentResponse = callMockProviderRedirectUrl(startAuthorizationFlowResponse.getData());
+        assertTrue(paymentResponse.isSuccessful());
+        String responseString = paymentResponse.body().string();
+        assertNotNull(responseString);
+
+        // Grab the provider return query and fragment from the mock payment api response
+        URI responseUrl = URI.create(responseString);
+        SubmitPaymentReturnParametersRequest submitProviderReturn = SubmitPaymentReturnParametersRequest.builder()
+                .query(responseUrl.getQuery())
+                .fragment(responseUrl.getFragment())
+                .build();
+        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
+                tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
+        assertNotError(submitPaymentReturnParametersResponse);
+
+        waitForPaymentToBeSettled(paymentId);
+
+        // Create full payment refund
+        CreatePaymentRefundRequest createPaymentRefundRequest = CreatePaymentRefundRequest.builder()
+                .amountInMinor(paymentRequest.getAmountInMinor())
+                .reference("Payment refund request")
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
+                .build();
+        ApiResponse<CreatePaymentRefundResponse> createPaymentRefundResponseApiResponse = tlClient.payments()
+                .createPaymentRefund(paymentId, createPaymentRefundRequest)
+                .get();
+
+        assertNotError(createPaymentRefundResponseApiResponse);
+
+        String refundId = createPaymentRefundResponseApiResponse.getData().getId();
+
+        // Get list of refunds
+        ApiResponse<ListPaymentRefundsResponse> listPaymentRefundsResponseApiResponse =
+                tlClient.payments().listPaymentRefunds(paymentId).get();
+
+        assertNotError(listPaymentRefundsResponseApiResponse);
+        assertEquals(
+                1, listPaymentRefundsResponseApiResponse.getData().getItems().size());
+        assertEquals(
+                refundId,
+                listPaymentRefundsResponseApiResponse
+                        .getData()
+                        .getItems()
+                        .get(0)
+                        .getId());
+
+        // Get refund details
+        ApiResponse<PaymentRefund> paymentRefundApiResponse =
+                tlClient.payments().getPaymentRefundById(paymentId, refundId).get();
+
+        assertNotError(paymentRefundApiResponse);
+        assertEquals(refundId, paymentRefundApiResponse.getData().getId());
+        assertEquals(
+                createPaymentRefundRequest.getAmountInMinor(),
+                paymentRefundApiResponse.getData().getAmountInMinor());
+        assertEquals(
+                createPaymentRefundRequest.getMetadata(),
+                paymentRefundApiResponse.getData().getMetadata());
+    }
+
+    @SneakyThrows
+    private Response callMockProviderRedirectUrl(AuthorizationFlowResponse startAuthorizationFlowResponse) {
+        URI redirectUri = startAuthorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        assertNotNull(redirectUri);
+        String protocol = redirectUri.getScheme();
+        String host = redirectUri.getHost();
+        String bankPaymentId = redirectUri.getPath().replaceFirst("/login/", "");
+        RequestBody body =
+                RequestBody.create(MediaType.get("application/json"), "{\"action\":\"Execute\", \"redirect\": false}");
+        Request request = new Request.Builder()
+                .url(String.format("%s://%s/api/single-immediate-payments/%s/action", protocol, host, bankPaymentId))
+                .post(body)
+                .addHeader(
+                        "Authorization",
+                        String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
+                .build();
+        return getHttpClientInstance().newCall(request).execute();
+    }
+
+    private PreselectedProviderSelection buildPreselectedProviderSelection() {
+        return ProviderSelection.preselected()
+                .providerId(PROVIDER_ID)
+                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                .remitter(Remitter.builder()
+                        .accountHolderName("Andrea Di Lisio")
+                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
+                                .accountNumber("12345678")
+                                .sortCode("123456")
+                                .build())
+                        .build())
+                .build();
     }
 
     @SneakyThrows
@@ -491,5 +572,28 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         Request hppRequest = new Request.Builder().url(link.toURL()).build();
         Response hppResponse = getHttpClientInstance().newCall(hppRequest).execute();
         assertTrue(hppResponse.isSuccessful());
+    }
+
+    private void waitForPaymentToBeSettled(String paymentId) {
+        await().with()
+                .conditionEvaluationListener(new ConditionEvaluationListener() {
+                    @Override
+                    public void conditionEvaluated(EvaluatedCondition condition) {}
+
+                    @Override
+                    public void onTimeout(TimeoutEvent timeoutEvent) {
+                        Logger.warn(
+                                "Payment is taking too much time to settle, status polling timed out. Refunds test cannot be evaluated without a settled payment");
+                    }
+                })
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(15, TimeUnit.SECONDS)
+                .until(() -> {
+                    // get payment by id
+                    ApiResponse<PaymentDetail> getPaymentResponse =
+                            tlClient.payments().getPayment(paymentId).get();
+                    assertNotError(getPaymentResponse);
+                    return getPaymentResponse.getData().getStatus().equals(Status.SETTLED);
+                });
     }
 }
