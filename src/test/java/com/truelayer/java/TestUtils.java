@@ -18,16 +18,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 
 public class TestUtils {
-
+    public static final Pattern UUID_REGEX_PATTERN =
+            Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
     private static final OkHttpClient HTTP_CLIENT_INSTANCE = new OkHttpClient.Builder()
             .followRedirects(false)
             .connectTimeout(Duration.ofSeconds(15))
             .build();
-
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
     public static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
@@ -95,8 +96,6 @@ public class TestUtils {
 
     public static class RequestStub {
         private static final String LIBRARY_INFO = "truelayer-java\\/.+";
-        private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
-
         private boolean withSignature;
         private boolean withAuthorization;
         private boolean withIdempotencyKey;
@@ -170,7 +169,7 @@ public class TestUtils {
             }
 
             if (withIdempotencyKey) {
-                request.withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN));
+                request.withHeader(IDEMPOTENCY_KEY, matching(".*"));
             }
 
             if (!isEmpty(xForwardedForHeader)) {

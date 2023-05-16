@@ -2,6 +2,7 @@ package com.truelayer.java.payments;
 
 import static com.truelayer.java.Constants.HeaderNames.X_FORWARDED_FOR;
 
+import com.truelayer.java.entities.IdempotencyKey;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -24,6 +25,10 @@ public interface IPaymentsApi {
      */
     @POST("/payments")
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(@Body CreatePaymentRequest request);
+
+    @POST("/payments")
+    CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(
+            @Tag IdempotencyKey idempotencyKey, @Body CreatePaymentRequest request);
 
     /**
      * Gets a payment resource by id.
