@@ -9,10 +9,10 @@ import okhttp3.Interceptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class IdempotencyKeyInterceptorTests extends BaseInterceptorTests {
+class IdempotencyKeyGeneratorInterceptorTests extends BaseInterceptorTests {
     @Override
     protected Interceptor getInterceptor() {
-        return new IdempotencyKeyInterceptor();
+        return new IdempotencyKeyGeneratorInterceptor();
     }
 
     @Test

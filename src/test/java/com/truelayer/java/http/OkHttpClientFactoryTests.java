@@ -13,8 +13,8 @@ import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
-import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
-import com.truelayer.java.http.interceptors.SignatureInterceptor;
+import com.truelayer.java.http.interceptors.IdempotencyKeyGeneratorInterceptor;
+import com.truelayer.java.http.interceptors.SignatureGeneratorInterceptor;
 import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -185,7 +185,8 @@ class OkHttpClientFactoryTests {
 
         assertNotNull(authClient);
         assertTrue(
-                authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
+                authClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(IdempotencyKeyGeneratorInterceptor.class)),
                 "Idempotency interceptor not found");
         assertTrue(
                 authClient.interceptors().stream().anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
@@ -218,10 +219,11 @@ class OkHttpClientFactoryTests {
 
         assertTrue(
                 paymentClient.interceptors().stream()
-                        .anyMatch(i -> i.getClass().equals(IdempotencyKeyInterceptor.class)),
+                        .anyMatch(i -> i.getClass().equals(IdempotencyKeyGeneratorInterceptor.class)),
                 "Idempotency interceptor not found");
         assertTrue(
-                paymentClient.interceptors().stream().anyMatch(i -> i.getClass().equals(SignatureInterceptor.class)),
+                paymentClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(SignatureGeneratorInterceptor.class)),
                 "Signature interceptor not found");
         assertTrue(
                 paymentClient.interceptors().stream()

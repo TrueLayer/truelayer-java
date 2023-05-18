@@ -9,10 +9,8 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.http.auth.AccessTokenInvalidator;
 import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
-import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
-import com.truelayer.java.http.interceptors.IdempotencyKeyInterceptor;
-import com.truelayer.java.http.interceptors.SignatureInterceptor;
-import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
+import com.truelayer.java.http.interceptors.*;
+import com.truelayer.java.http.interceptors.customheaders.CustomHeadersInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -93,6 +91,7 @@ public class OkHttpClientFactory {
         }
 
         clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(libraryInfoLoader.load()));
+        clientBuilder.addInterceptor(new CustomHeadersInterceptor());
 
         return clientBuilder.build();
     }
@@ -105,7 +104,7 @@ public class OkHttpClientFactory {
 
         OkHttpClient.Builder clientBuilder = baseHttpClient.newBuilder();
 
-        clientBuilder.addInterceptor(new IdempotencyKeyInterceptor());
+        clientBuilder.addInterceptor(new IdempotencyKeyGeneratorInterceptor());
 
         return clientBuilder.build();
     }
@@ -120,7 +119,7 @@ public class OkHttpClientFactory {
         // as all the others are inherited
         OkHttpClient.Builder paymentsHttpClientBuilder = authApiHttpClient.newBuilder();
 
-        paymentsHttpClientBuilder.addInterceptor(new SignatureInterceptor(signingOptions));
+        paymentsHttpClientBuilder.addInterceptor(new SignatureGeneratorInterceptor(signingOptions));
 
         AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
                 AccessTokenManager.builder().authenticationHandler(authenticationHandler);

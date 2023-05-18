@@ -2,8 +2,8 @@ package com.truelayer.java.payments;
 
 import static com.truelayer.java.Constants.HeaderNames.X_FORWARDED_FOR;
 
-import com.truelayer.java.entities.IdempotencyKey;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
@@ -28,7 +28,7 @@ public interface IPaymentsApi {
 
     @POST("/payments")
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(
-            @Tag IdempotencyKey idempotencyKey, @Body CreatePaymentRequest request);
+            @Tag Headers headers, @Body CreatePaymentRequest request);
 
     /**
      * Gets a payment resource by id.
@@ -63,7 +63,7 @@ public interface IPaymentsApi {
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             @Path("id") String paymentId,
             @Body StartAuthorizationFlowRequest request,
-            @Header(X_FORWARDED_FOR) String xForwardedFor);
+            @Header(X_FORWARDED_FOR) String xForwardedFor); // TODO: check implications on this param
 
     /**
      * Submit the provider selection for a given payment resource.

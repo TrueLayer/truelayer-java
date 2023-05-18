@@ -1,17 +1,17 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.truelayer.java.Constants.HeaderNames.IDEMPOTENCY_KEY;
+import static com.truelayer.java.Constants.HeaderNames.*;
 
 import com.truelayer.java.TestUtils.RequestStub;
-import com.truelayer.java.entities.IdempotencyKey;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Idempotency key management integration tests")
-public class IdempotencyManagementTests extends IntegrationTests {
+@DisplayName("HTTP Headers management integration tests")
+public class HttpHeadersManagementTests extends IntegrationTests {
 
     private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
 
@@ -43,11 +43,23 @@ public class IdempotencyManagementTests extends IntegrationTests {
                 .bodyFile("auth/200.access_token.json")
                 .build();
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
-        IdempotencyKey customIdempotencyKey = new IdempotencyKey("custom-key");
+        String idempotencyKey = "custom-key";
+        String signature = "custom-signature";
+        String xFowardedFor = "custom-origin";
 
-        tlClient.payments().createPayment(customIdempotencyKey, paymentRequest).get();
+        tlClient.payments()
+                .createPayment(
+                        Headers.builder()
+                                .signature(signature)
+                                .idempotencyKey(idempotencyKey)
+                                .xForwardedFor(xFowardedFor)
+                                .build(),
+                        paymentRequest)
+                .get();
 
         verify(postRequestedFor(urlPathEqualTo("/payments"))
-                .withHeader(IDEMPOTENCY_KEY, equalTo(customIdempotencyKey.getValue())));
+                .withHeader(TL_SIGNATURE, equalTo(signature))
+                .withHeader(X_FORWARDED_FOR, equalTo(xFowardedFor))
+                .withHeader(IDEMPOTENCY_KEY, equalTo(idempotencyKey)));
     }
 }

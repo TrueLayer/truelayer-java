@@ -17,13 +17,13 @@ import okhttp3.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class SignatureInterceptorTests extends BaseInterceptorTests {
+class SignatureGeneratorInterceptorTests extends BaseInterceptorTests {
 
     private static final String A_PAYLOAD = "{\"foo\":\"bar\"}";
 
     @Override
     protected Interceptor getInterceptor() {
-        return new SignatureInterceptor(TestUtils.getSigningOptions());
+        return new SignatureGeneratorInterceptor(TestUtils.getSigningOptions());
     }
 
     @Test
