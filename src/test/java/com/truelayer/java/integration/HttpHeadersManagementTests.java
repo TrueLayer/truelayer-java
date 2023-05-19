@@ -2,6 +2,7 @@ package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.*;
+import static com.truelayer.java.TestUtils.UUID_REGEX_PATTERN;
 
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.Headers;
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.Test;
 // TODO: review these tests
 @DisplayName("HTTP Headers management integration tests")
 public class HttpHeadersManagementTests extends IntegrationTests {
-
-    private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
 
     @SneakyThrows
     @Test
@@ -30,7 +29,8 @@ public class HttpHeadersManagementTests extends IntegrationTests {
 
         tlClient.payments().createPayment(paymentRequest).get();
 
-        verify(postRequestedFor(urlPathEqualTo("/payments")).withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN)));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN.pattern())));
     }
 
     @SneakyThrows
