@@ -55,8 +55,7 @@ public class SignatureGeneratorInterceptor implements Interceptor {
     }
 
     private boolean isNonIdempotentHttpMethod(Request request) {
-        // TODO: test
-        return request.method().equalsIgnoreCase("post") || request.method().equalsIgnoreCase("patch");
+        return !request.method().equalsIgnoreCase("get");
     }
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
