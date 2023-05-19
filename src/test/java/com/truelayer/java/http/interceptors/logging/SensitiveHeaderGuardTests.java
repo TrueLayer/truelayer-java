@@ -1,11 +1,11 @@
 package com.truelayer.java.http.interceptors.logging;
 
 import com.truelayer.java.Constants;
-import com.truelayer.java.http.entities.Header;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import okhttp3.Headers;
+import okhttp3.internal.http2.Header;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ class SensitiveHeaderGuardTests {
         List<Header> sanitizedHeaders = sut.getSanitizedHeaders(headers);
 
         sanitizedHeaders.forEach(h -> {
-            if (sut.isSensitiveHeader(h.name())) {
-                Assertions.assertEquals(SensitiveHeaderGuard.SENSITIVE_HEADER_MASK, h.value());
+            if (sut.isSensitiveHeader(h.name.toString())) {
+                Assertions.assertEquals(SensitiveHeaderGuard.SENSITIVE_HEADER_MASK, h.value.toString());
             }
         });
     }

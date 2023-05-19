@@ -2,9 +2,9 @@ package com.truelayer.java.http.interceptors.logging;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
-import com.truelayer.java.http.entities.Header;
 import java.util.List;
 import lombok.Builder;
+import okhttp3.internal.http2.Header;
 
 @Builder
 public class HttpLogMessage {
