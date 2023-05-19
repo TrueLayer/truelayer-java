@@ -1,13 +1,13 @@
 package com.truelayer.java.http.interceptors.customheaders;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 class CustomHeadersConverterTests {
 
     @Test
-    public void shouldDoSomething(){
+    public void shouldDoSomething() {
         fail("todo");
     }
 }

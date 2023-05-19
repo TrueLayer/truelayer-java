@@ -18,7 +18,7 @@ class TrueLayerAgentInterceptorTests extends BaseInterceptorTests {
 
     @BeforeEach
     public void prepareTest() {
-        buildRequest();
+        arrangeRequest();
     }
 
     @Test

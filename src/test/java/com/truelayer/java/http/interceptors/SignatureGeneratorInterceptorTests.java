@@ -2,8 +2,6 @@ package com.truelayer.java.http.interceptors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
@@ -29,7 +27,7 @@ class SignatureGeneratorInterceptorTests extends BaseInterceptorTests {
     @Test
     @DisplayName("It should not add a Tl-Signature header on a GET request")
     public void shouldNotAddATlSignatureHeaderOnGet() {
-        prepare(new Request.Builder().url("http://localhost").get().build());
+        arrangeRequest(new Request.Builder().url("http://localhost").get().build());
 
         intercept();
 
@@ -40,7 +38,7 @@ class SignatureGeneratorInterceptorTests extends BaseInterceptorTests {
     @SneakyThrows
     @DisplayName("It should add a Tl-Signature header on a GET request")
     public void shouldAddATlSignatureHeaderOnPost() {
-        prepare(new Request.Builder()
+        arrangeRequest(new Request.Builder()
                 .url("http://localhost")
                 .header(Constants.HeaderNames.IDEMPOTENCY_KEY, UUID.randomUUID().toString())
                 .post(RequestBody.create(MediaType.get("application/json"), A_PAYLOAD.getBytes(StandardCharsets.UTF_8)))
@@ -50,10 +48,5 @@ class SignatureGeneratorInterceptorTests extends BaseInterceptorTests {
 
         verifyThat(request ->
                 assertFalse(request.header(Constants.HeaderNames.TL_SIGNATURE).isEmpty()));
-    }
-
-    private void prepare(Request request) {
-        chain = mock(Interceptor.Chain.class);
-        when(chain.request()).thenReturn(request);
     }
 }
