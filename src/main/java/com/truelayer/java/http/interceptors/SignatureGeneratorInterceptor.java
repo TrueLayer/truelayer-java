@@ -51,11 +51,7 @@ public class SignatureGeneratorInterceptor implements Interceptor {
     }
 
     private boolean needsSignatureGeneration(Request request) {
-        return isNonIdempotentHttpMethod(request) && isEmpty(request.header(TL_SIGNATURE));
-    }
-
-    private boolean isNonIdempotentHttpMethod(Request request) {
-        return !request.method().equalsIgnoreCase("get");
+        return !request.method().equalsIgnoreCase("get") && isEmpty(request.header(TL_SIGNATURE));
     }
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {
