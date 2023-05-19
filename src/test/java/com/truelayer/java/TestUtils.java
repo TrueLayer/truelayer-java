@@ -161,15 +161,15 @@ public class TestUtils {
             MappingBuilder request = request(method.toUpperCase(), path).withHeader(TL_AGENT, matching(LIBRARY_INFO));
 
             if (withSignature) {
-                request.withHeader(TL_SIGNATURE, matching(".*"));
+                request.withHeader(TL_SIGNATURE, matching(".+"));
             }
 
             if (withAuthorization) {
-                request.withHeader(AUTHORIZATION, matching(".*"));
+                request.withHeader(AUTHORIZATION, matching(".+"));
             }
 
             if (withIdempotencyKey) {
-                request.withHeader(IDEMPOTENCY_KEY, matching(".*"));
+                request.withHeader(IDEMPOTENCY_KEY, matching(".+"));
             }
 
             if (!isEmpty(xForwardedForHeader)) {

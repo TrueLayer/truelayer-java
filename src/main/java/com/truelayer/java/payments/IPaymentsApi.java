@@ -26,6 +26,7 @@ public interface IPaymentsApi {
     @POST("/payments")
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(@Body CreatePaymentRequest request);
 
+    // TODO: finalise and cover all methods
     @POST("/payments")
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(
             @Tag Headers headers, @Body CreatePaymentRequest request);

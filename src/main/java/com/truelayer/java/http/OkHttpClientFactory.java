@@ -91,7 +91,8 @@ public class OkHttpClientFactory {
         }
 
         clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(libraryInfoLoader.load()));
-        clientBuilder.addInterceptor(new CustomHeadersInterceptor());
+        clientBuilder.addInterceptor(
+                new CustomHeadersInterceptor()); // TODO: shall we move this into the payments client only ?
 
         return clientBuilder.build();
     }
