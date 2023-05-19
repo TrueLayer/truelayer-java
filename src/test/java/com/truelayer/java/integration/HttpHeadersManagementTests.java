@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+//TODO: review these tests
 @DisplayName("HTTP Headers management integration tests")
 public class HttpHeadersManagementTests extends IntegrationTests {
 

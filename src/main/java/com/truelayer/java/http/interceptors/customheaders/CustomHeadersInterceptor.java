@@ -8,6 +8,9 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Interceptor responsible for attaching any custom header to the actual request tags.
+ */
 public class CustomHeadersInterceptor implements Interceptor {
 
     @Override

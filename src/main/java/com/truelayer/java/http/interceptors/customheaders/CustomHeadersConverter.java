@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Internal utility class for Headers to Map conversions.
+ */
 class CustomHeadersConverter {
     static Map<String, String> toMap(Headers customHeaders) {
         Map<String, String> headersMap = new HashMap<>();
