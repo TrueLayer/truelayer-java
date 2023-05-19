@@ -1,7 +1,6 @@
 package com.truelayer.java.http.interceptors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
@@ -32,6 +31,12 @@ class SignatureGeneratorInterceptorTests extends BaseInterceptorTests {
         intercept();
 
         verifyThat(interceptedRequest -> assertNull(interceptedRequest.header(Constants.HeaderNames.TL_SIGNATURE)));
+    }
+
+    @Test
+    @DisplayName("It should not add a Tl-Signature header if already set")
+    public void shouldNotAddATlSignatureHeaderIfAlreadySet() {
+        fail("todo");
     }
 
     @Test
