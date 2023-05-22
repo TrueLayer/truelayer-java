@@ -7,7 +7,7 @@ plugins {
     // to publish packages
     id 'maven-publish'
     // code linting
-    id "com.diffplug.spotless" version "6.17.0"
+    id "com.diffplug.spotless" version "6.18.0"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
@@ -110,7 +110,7 @@ dependencies {
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
     // JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
 
     // Mocking libraries
     def mockitoVersion = '4.8.0'
