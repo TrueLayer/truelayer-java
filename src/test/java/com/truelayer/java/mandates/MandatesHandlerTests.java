@@ -1,8 +1,9 @@
 package com.truelayer.java.mandates;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static com.truelayer.java.TestUtils.buildTestHeaders;
+import static org.mockito.Mockito.*;
 
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.ListMandatesQuery;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
@@ -28,7 +29,21 @@ class MandatesHandlerTests {
 
         sut.createMandate(request);
 
-        verify(mandatesApi, times(1)).createMandate(request);
+        verify(mandatesApi, times(1)).createMandate(null, request);
+    }
+
+    @Test
+    @DisplayName("It should call the create mandate endpoint with additional headers")
+    public void shouldCallCreateMandateWithAdditionalHeaders() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+        CreateMandateRequest request = CreateMandateRequest.builder().build();
+        Headers customHeaders = buildTestHeaders();
+
+        sut.createMandate(customHeaders, request);
+
+        verify(mandatesApi, times(1)).createMandate(customHeaders, request);
+        verifyNoMoreInteractions(mandatesApi);
     }
 
     @Test

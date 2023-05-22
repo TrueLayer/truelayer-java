@@ -19,6 +19,8 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
+import com.truelayer.java.payments.PaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
@@ -219,8 +221,9 @@ public class TrueLayerClientBuilder {
         OkHttpClient paymentsHttpClient = httpClientFactory.buildPaymentsApiClient(
                 authHttpClient, authenticationHandler, signingOptions, credentialsCache);
 
-        IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
+        IPaymentsHandler paymentsHandler = new PaymentsHandler(paymentsApi);
 
         IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
                 .clientCredentials(clientCredentials)
@@ -246,7 +249,7 @@ public class TrueLayerClientBuilder {
                 merchantAccountsHandler,
                 mandatesHandler,
                 payoutsHandler,
-                hppLinkBuilder,
-                commonApiHandler);
+                commonApiHandler,
+                hppLinkBuilder);
     }
 }

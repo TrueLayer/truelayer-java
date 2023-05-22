@@ -8,7 +8,7 @@ import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
-import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
 import java.util.concurrent.CompletableFuture;
@@ -23,14 +23,16 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 @AllArgsConstructor
 public class TrueLayerClient implements ITrueLayerClient {
+
     private IAuthenticationHandler authenticationHandler;
-    private IPaymentsApi paymentsHandler;
+    private IPaymentsHandler paymentsHandler;
     private IPaymentsProvidersHandler paymentsProvidersHandler;
     private IMerchantAccountsHandler merchantAccountsHandler;
     private IMandatesHandler mandatesHandler;
-    private IPayoutsApi payoutsHandler;
+    private IPayoutsApi payoutsHandler; // FIXME: handler needed
+    private ICommonApi commonApi; // FIXME: handler needed
+
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
-    private ICommonApi commonApi;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
@@ -61,7 +63,7 @@ public class TrueLayerClient implements ITrueLayerClient {
      * {@inheritDoc}
      */
     @Override
-    public IPaymentsApi payments() {
+    public IPaymentsHandler payments() {
         if (ObjectUtils.isEmpty(paymentsHandler)) {
             throw buildInitializationException("payments");
         }
@@ -73,6 +75,10 @@ public class TrueLayerClient implements ITrueLayerClient {
      */
     @Override
     public IPaymentsProvidersHandler paymentsProviders() {
+        // TODO: test
+        if (ObjectUtils.isEmpty(paymentsProvidersHandler)) {
+            throw buildInitializationException("payment providers");
+        }
         return paymentsProvidersHandler;
     }
 

@@ -12,6 +12,7 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.URI;
 import java.nio.file.Files;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class TestUtils {
     public static final Pattern UUID_REGEX_PATTERN =
@@ -194,5 +196,14 @@ public class TestUtils {
 
     public static OkHttpClient getHttpClientInstance() {
         return HTTP_CLIENT_INSTANCE;
+    }
+
+    public static Headers buildTestHeaders() {
+        String randomString = RandomStringUtils.random(5, true, true);
+        return Headers.builder()
+                .idempotencyKey("a-custom-key_" + randomString)
+                .signature("a-custom-signature_" + randomString)
+                .xForwardedFor("1.2.3.4_" + randomString)
+                .build();
     }
 }

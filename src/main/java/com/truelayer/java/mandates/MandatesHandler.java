@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -15,7 +16,13 @@ public class MandatesHandler implements IMandatesHandler {
 
     @Override
     public CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(CreateMandateRequest request) {
-        return mandatesApi.createMandate(request);
+        return mandatesApi.createMandate(null, request);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
+            Headers headers, CreateMandateRequest request) {
+        return mandatesApi.createMandate(headers, request);
     }
 
     @Override

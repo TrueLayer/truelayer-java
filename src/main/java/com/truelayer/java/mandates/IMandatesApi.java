@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -23,7 +24,8 @@ public interface IMandatesApi {
      * @see <a href="https://docs.truelayer.com/reference/create-mandate"><i>Create mandate</i> API reference</a>
      */
     @POST("/mandates")
-    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Body CreateMandateRequest request);
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
+            @Tag Headers headers, @Body CreateMandateRequest request);
 
     /**
      * Start the authorization flow for a mandate.

@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -14,6 +15,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface IMandatesHandler {
     CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(CreateMandateRequest request);
+
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(Headers headers, CreateMandateRequest request);
 
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String mandateId, StartAuthorizationFlowRequest request);

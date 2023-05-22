@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -252,7 +253,8 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 StartAuthorizationFlowRequest.builder().build();
 
         ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
-                .startAuthorizationFlow(A_PAYMENT_ID, request, endUserIpAddress)
+                .startAuthorizationFlow(
+                        Headers.builder().xForwardedFor(endUserIpAddress).build(), A_PAYMENT_ID, request)
                 .get();
 
         assertNotError(response);
