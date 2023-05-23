@@ -1,7 +1,7 @@
 package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
-import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
@@ -30,17 +30,17 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IMerchantAccountsHandler merchantAccountsHandler;
     private IMandatesHandler mandatesHandler;
     private IPayoutsHandler payoutsHandler;
-    private ICommonApi commonApi; // FIXME: handler needed
+    private ICommonHandler commonHandler;
 
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
             IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
-            ICommonApi commonApi) {
+            ICommonHandler commonApi) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
-        this.commonApi = commonApi;
+        this.commonHandler = commonApi;
     }
 
     /**
@@ -122,7 +122,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
             SubmitPaymentReturnParametersRequest request) {
-        return commonApi.submitPaymentReturnParameters(request);
+        return commonHandler.submitPaymentReturnParameters(request);
     }
 
     private TrueLayerException buildInitializationException(String handlerName) {
