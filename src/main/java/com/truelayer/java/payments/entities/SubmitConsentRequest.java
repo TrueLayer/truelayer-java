@@ -9,4 +9,5 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
+// TODO: can we remove this ?
 public class SubmitConsentRequest {}
