@@ -1,5 +1,6 @@
 package com.truelayer.java.payments;
 
+import com.truelayer.java.entities.EmptyRequestBody;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -72,7 +73,7 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/authorization-flow/actions/consent")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            @HeaderMap Map<String, String> headers, @Path("id") String paymentId, @Body SubmitConsentRequest request);
+            @HeaderMap Map<String, String> headers, @Path("id") String paymentId, @Body EmptyRequestBody request);
 
     /**
      * Submit form inputs collected from the PSU for a given payment resource.

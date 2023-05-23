@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.entities.EmptyRequestBody;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
 import java.util.Collections;
@@ -116,11 +117,10 @@ class PaymentsHandlerTests {
     public void shouldCallSubmitConsent() {
         IPaymentsApi paymentsApi = Mockito.mock(IPaymentsApi.class);
         PaymentsHandler sut = new PaymentsHandler(paymentsApi);
-        SubmitConsentRequest request = SubmitConsentRequest.builder().build();
 
-        sut.submitConsent(A_PAYMENT_ID, request);
+        sut.submitConsent(A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).submitConsent(emptyMap(), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitConsent(emptyMap(), A_PAYMENT_ID, new EmptyRequestBody());
     }
 
     @Test
@@ -129,11 +129,10 @@ class PaymentsHandlerTests {
         IPaymentsApi paymentsApi = Mockito.mock(IPaymentsApi.class);
         PaymentsHandler sut = new PaymentsHandler(paymentsApi);
         Headers customHeaders = TestUtils.buildTestHeaders();
-        SubmitConsentRequest request = SubmitConsentRequest.builder().build();
 
-        sut.submitConsent(customHeaders, A_PAYMENT_ID, request);
+        sut.submitConsent(customHeaders, A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).submitConsent(toMap(customHeaders), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitConsent(toMap(customHeaders), A_PAYMENT_ID, new EmptyRequestBody());
     }
 
     @Test

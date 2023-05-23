@@ -3,6 +3,7 @@ package com.truelayer.java.payments;
 import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
 
+import com.truelayer.java.entities.EmptyRequestBody;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
@@ -57,15 +58,13 @@ public class PaymentsHandler implements IPaymentsHandler {
     }
 
     @Override
-    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            String paymentId, SubmitConsentRequest request) {
-        return paymentsApi.submitConsent(emptyMap(), paymentId, request);
+    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(String paymentId) {
+        return paymentsApi.submitConsent(emptyMap(), paymentId, new EmptyRequestBody());
     }
 
     @Override
-    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            Headers headers, String paymentId, SubmitConsentRequest request) {
-        return paymentsApi.submitConsent(toMap(headers), paymentId, request);
+    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(Headers headers, String paymentId) {
+        return paymentsApi.submitConsent(toMap(headers), paymentId, new EmptyRequestBody());
     }
 
     @Override

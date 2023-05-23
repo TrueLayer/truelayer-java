@@ -31,11 +31,9 @@ public interface IPaymentsHandler {
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             Headers headers, String paymentId, SubmitProviderSelectionRequest request);
 
-    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            String paymentId, SubmitConsentRequest request);
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(String paymentId);
 
-    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            Headers headers, String paymentId, SubmitConsentRequest request);
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(Headers headers, String paymentId);
 
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(String paymentId, SubmitFormRequest request);
 
