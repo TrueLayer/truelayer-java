@@ -9,7 +9,7 @@ import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsHandler;
-import com.truelayer.java.payouts.IPayoutsApi;
+import com.truelayer.java.payouts.IPayoutsHandler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -135,7 +135,7 @@ public class TrueLayerClientTests {
                 .signingOptions(getSigningOptions())
                 .build();
 
-        IPayoutsApi payoutsHandler = trueLayerClient.payouts();
+        IPayoutsHandler payoutsHandler = trueLayerClient.payouts();
 
         assertNotNull(payoutsHandler);
     }

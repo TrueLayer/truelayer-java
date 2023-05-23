@@ -24,6 +24,8 @@ import com.truelayer.java.payments.PaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
+import com.truelayer.java.payouts.IPayoutsHandler;
+import com.truelayer.java.payouts.PayoutsHandler;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -239,8 +241,9 @@ public class TrueLayerClientBuilder {
                 .create(IMandatesApi.class);
         IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
 
-        IPayoutsApi payoutsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPayoutsApi.class);
+        IPayoutsHandler payoutsHandler = new PayoutsHandler(payoutsApi);
 
         return new TrueLayerClient(
                 authenticationHandler,
