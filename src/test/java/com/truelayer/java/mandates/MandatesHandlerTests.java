@@ -1,6 +1,8 @@
 package com.truelayer.java.mandates;
 
 import static com.truelayer.java.TestUtils.buildTestHeaders;
+import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
+import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.*;
 
 import com.truelayer.java.http.entities.Headers;
@@ -19,6 +21,8 @@ class MandatesHandlerTests {
     private static final int A_LIMIT = 15;
     private static final String AN_AMOUNT_IN_MINOR = "10";
     private static final String A_CURRENCY = "GBP";
+
+    // TODO: test for new methods
 
     @Test
     @DisplayName("It should call the create mandate endpoint")
@@ -42,7 +46,7 @@ class MandatesHandlerTests {
 
         sut.createMandate(customHeaders, request);
 
-        verify(mandatesApi, times(1)).createMandate(customHeaders, request);
+        verify(mandatesApi, times(1)).createMandate(toMap(customHeaders), request);
         verifyNoMoreInteractions(mandatesApi);
     }
 
@@ -56,7 +60,7 @@ class MandatesHandlerTests {
 
         sut.startAuthorizationFlow(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).startAuthorizationFlow(A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).startAuthorizationFlow(emptyMap(), A_MANDATE_ID, request);
     }
 
     @Test
@@ -69,7 +73,7 @@ class MandatesHandlerTests {
 
         sut.submitProviderSelection(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).submitProviderSelection(A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).submitProviderSelection(emptyMap(), A_MANDATE_ID, request);
     }
 
     @Test
@@ -118,7 +122,7 @@ class MandatesHandlerTests {
 
         sut.revokeMandate(A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).revokeMandate(A_MANDATE_ID);
+        verify(mandatesApi, times(1)).revokeMandate(emptyMap(), A_MANDATE_ID);
     }
 
     @Test
