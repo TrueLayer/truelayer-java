@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.http.entities.Headers;
+import com.truelayer.java.http.mappers.HeadersMapper;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,6 @@ class PaymentsHandlerTests {
 
         sut.createPayment(customHeaders, request);
 
-        verify(paymentsApi, times(1)).createPayment(customHeaders, request);
+        verify(paymentsApi, times(1)).createPayment(HeadersMapper.toMap(customHeaders), request);
     }
 }

@@ -1,4 +1,4 @@
-package com.truelayer.java.http.interceptors.customheaders;
+package com.truelayer.java.http.mappers;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Internal utility class for Headers to Map conversions.
+ * Utility class for Headers to Map conversions.
  */
-class CustomHeadersConverter {
-    static Map<String, String> toMap(Headers customHeaders) {
+public class HeadersMapper {
+    public static Map<String, String> toMap(Headers customHeaders) {
         Map<String, String> headersMap = new HashMap<>();
 
         if (isEmpty(customHeaders)) {

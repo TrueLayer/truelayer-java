@@ -1,4 +1,4 @@
-package com.truelayer.java.http.interceptors.customheaders;
+package com.truelayer.java.http.mappers;
 
 import static com.truelayer.java.Constants.HeaderNames.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,7 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class CustomHeadersConverterTests {
+class HeadersMapperTests {
 
     @Test
     @DisplayName("it should convert Headers object to an unmodifiable map")
@@ -19,7 +19,7 @@ class CustomHeadersConverterTests {
                 .idempotencyKey("very-unique-key")
                 .build();
 
-        Map<String, String> headersMap = CustomHeadersConverter.toMap(headers);
+        Map<String, String> headersMap = HeadersMapper.toMap(headers);
 
         assertThrows(UnsupportedOperationException.class, () -> headersMap.put("foo", "bar"));
         assertEquals(headers.getXForwardedFor(), headersMap.get(X_FORWARDED_FOR));

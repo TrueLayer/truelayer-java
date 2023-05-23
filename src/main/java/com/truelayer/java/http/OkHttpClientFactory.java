@@ -10,7 +10,6 @@ import com.truelayer.java.http.auth.AccessTokenInvalidator;
 import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.interceptors.*;
-import com.truelayer.java.http.interceptors.customheaders.CustomHeadersInterceptor;
 import com.truelayer.java.http.interceptors.logging.HttpLoggingInterceptor;
 import com.truelayer.java.http.interceptors.logging.SensitiveHeaderGuard;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -91,8 +90,6 @@ public class OkHttpClientFactory {
         }
 
         clientBuilder.addInterceptor(new TrueLayerAgentInterceptor(libraryInfoLoader.load()));
-        clientBuilder.addInterceptor(
-                new CustomHeadersInterceptor()); // TODO: shall we move this into the payments client only ?
 
         return clientBuilder.build();
     }

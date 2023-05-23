@@ -1,10 +1,10 @@
 package com.truelayer.java.payments;
 
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
@@ -16,14 +16,14 @@ import retrofit2.http.*;
 public interface IPaymentsApi {
     /**
      * Initialises a payment resource.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param request a create payment request payload
      * @return the response of the <i>Create Payment</i> operation
      * @see <a href="https://docs.truelayer.com/reference/create-payment"><i>Create Payment</i> API reference</a>
      */
     @POST("/payments")
     CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(
-            @Tag Headers headers, @Body CreatePaymentRequest request);
+            @HeaderMap Map<String, String> headers, @Body CreatePaymentRequest request);
 
     /**
      * Gets a payment resource by id.
@@ -36,7 +36,7 @@ public interface IPaymentsApi {
 
     /**
      * Starts an authorization flow for a given payment resource.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param paymentId the payment identifier
      * @param request a start authorization flow request payload
      * @return the response of the <i>Start Authorization Flow</i> operation
@@ -44,11 +44,13 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/authorization-flow")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
-            @Tag Headers headers, @Path("id") String paymentId, @Body StartAuthorizationFlowRequest request);
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String paymentId,
+            @Body StartAuthorizationFlowRequest request);
 
     /**
      * Submit the provider selection for a given payment resource.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param paymentId the payment identifier
      * @param request a submit provider selection request payload
      * @return the response of the <i>Submit Provider Selection</i> operation
@@ -56,11 +58,13 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
-            @Tag Headers headers, @Path("id") String paymentId, @Body SubmitProviderSelectionRequest request);
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String paymentId,
+            @Body SubmitProviderSelectionRequest request);
 
     /**
      * Submit consent collected from the PSU for a given payment resource.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param paymentId the payment identifier
      * @param request a submit consent request payload
      * @return the response of the <i>Submit Consent</i> operation
@@ -68,11 +72,11 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/authorization-flow/actions/consent")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(
-            @Tag Headers headers, @Path("id") String paymentId, @Body SubmitConsentRequest request);
+            @HeaderMap Map<String, String> headers, @Path("id") String paymentId, @Body SubmitConsentRequest request);
 
     /**
      * Submit form inputs collected from the PSU for a given payment resource.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param paymentId the payment identifier
      * @param request a submit form request payload
      * @return the response of the <i>Submit Form</i> operation
@@ -80,11 +84,11 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/authorization-flow/actions/form")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(
-            @Tag Headers headers, @Path("id") String paymentId, @Body SubmitFormRequest request);
+            @HeaderMap Map<String, String> headers, @Path("id") String paymentId, @Body SubmitFormRequest request);
 
     /**
      * Refund a merchant account payment.
-     * @param headers nullable field representing custom HTTP headers to be sent
+     * @param headers map representing custom HTTP headers to be sent
      * @param paymentId the payment identifier
      * @param request a create refund request payload
      * @return the response of the <i>Create Payment Refund</i> operation
@@ -92,7 +96,9 @@ public interface IPaymentsApi {
      */
     @POST("/payments/{id}/refunds")
     CompletableFuture<ApiResponse<CreatePaymentRefundResponse>> createPaymentRefund(
-            @Tag Headers headers, @Path("id") String paymentId, @Body CreatePaymentRefundRequest request);
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String paymentId,
+            @Body CreatePaymentRefundRequest request);
 
     /**
      * Returns all refunds of a payment.
