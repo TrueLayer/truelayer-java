@@ -4,6 +4,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 import retrofit2.http.GET;
@@ -54,6 +55,7 @@ public interface IMerchantAccountsApi {
     /**
      * Set the automatic sweeping settings for a merchant account. At regular intervals, any available balance in excess
      * of the configured <code>max_amount_in_minor</code> is withdrawn to a pre-configured IBAN.
+     * @param headers map representing custom HTTP headers to be sent
      * @param merchantAccountId the id of the merchant account
      * @param updateSweepingRequest the update/setup sweeping request
      * @return the updated sweeping settings
@@ -61,7 +63,9 @@ public interface IMerchantAccountsApi {
      */
     @POST("/merchant-accounts/{merchantAccountId}/sweeping")
     CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
-            @Path("merchantAccountId") String merchantAccountId, @Body UpdateSweepingRequest updateSweepingRequest);
+            @HeaderMap Map<String, String> headers,
+            @Path("merchantAccountId") String merchantAccountId,
+            @Body UpdateSweepingRequest updateSweepingRequest);
 
     /**
      * Get the automatic sweeping settings for a merchant account.
@@ -75,12 +79,14 @@ public interface IMerchantAccountsApi {
 
     /**
      * Disable automatic sweeping for a merchant account.
+     * @param headers map representing custom HTTP headers to be sent
      * @param merchantAccountId the id of the merchant account
      * @return an empty response in case of success
      * @see <a href="https://docs.truelayer.com/reference/delete_merchant-accounts-id-sweeping"><i>Disable Sweeping</i> API reference</a>
      */
     @DELETE("/merchant-accounts/{merchantAccountId}/sweeping")
-    CompletableFuture<ApiResponse<Void>> disableSweeping(@Path("merchantAccountId") String merchantAccountId);
+    CompletableFuture<ApiResponse<Void>> disableSweeping(
+            @HeaderMap Map<String, String> headers, @Path("merchantAccountId") String merchantAccountId);
 
     @GET("/merchant-accounts/{merchantAccountId}/payment-sources")
     CompletableFuture<ApiResponse<ListPaymentSourcesResponse>> listPaymentSources(

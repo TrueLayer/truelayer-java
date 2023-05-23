@@ -1,6 +1,7 @@
 package com.truelayer.java.merchantaccounts;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import java.util.concurrent.CompletableFuture;
@@ -18,9 +19,14 @@ public interface IMerchantAccountsHandler {
     CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
             String merchantAccountId, UpdateSweepingRequest updateSweepingRequest);
 
+    CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
+            Headers headers, String merchantAccountId, UpdateSweepingRequest updateSweepingRequest);
+
     CompletableFuture<ApiResponse<SweepingSettings>> getSweepingSettings(String merchantAccountId);
 
     CompletableFuture<ApiResponse<Void>> disableSweeping(String merchantAccountId);
+
+    CompletableFuture<ApiResponse<Void>> disableSweeping(Headers headers, String merchantAccountId);
 
     CompletableFuture<ApiResponse<ListPaymentSourcesResponse>> listPaymentSources(
             String merchantAccountId, ListPaymentSourcesQuery query);

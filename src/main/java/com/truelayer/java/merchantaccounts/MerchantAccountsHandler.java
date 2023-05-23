@@ -1,6 +1,10 @@
 package com.truelayer.java.merchantaccounts;
 
+import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
+import static java.util.Collections.emptyMap;
+
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +39,13 @@ public class MerchantAccountsHandler implements IMerchantAccountsHandler {
     @Override
     public CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
             String merchantAccountId, UpdateSweepingRequest updateSweepingRequest) {
-        return merchantAccountsApi.updateSweeping(merchantAccountId, updateSweepingRequest);
+        return merchantAccountsApi.updateSweeping(emptyMap(), merchantAccountId, updateSweepingRequest);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
+            Headers headers, String merchantAccountId, UpdateSweepingRequest updateSweepingRequest) {
+        return merchantAccountsApi.updateSweeping(toMap(headers), merchantAccountId, updateSweepingRequest);
     }
 
     @Override
@@ -45,7 +55,12 @@ public class MerchantAccountsHandler implements IMerchantAccountsHandler {
 
     @Override
     public CompletableFuture<ApiResponse<Void>> disableSweeping(String merchantAccountId) {
-        return merchantAccountsApi.disableSweeping(merchantAccountId);
+        return merchantAccountsApi.disableSweeping(emptyMap(), merchantAccountId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<Void>> disableSweeping(Headers headers, String merchantAccountId) {
+        return merchantAccountsApi.disableSweeping(toMap(headers), merchantAccountId);
     }
 
     @Override
