@@ -12,22 +12,25 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class TestUtils {
-
+    public static final Pattern UUID_REGEX_PATTERN =
+            Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
     private static final OkHttpClient HTTP_CLIENT_INSTANCE = new OkHttpClient.Builder()
             .followRedirects(false)
             .connectTimeout(Duration.ofSeconds(15))
             .build();
-
     private static final String KEYS_LOCATION = "src/test/resources/keys/";
     public static final String JSON_RESPONSES_LOCATION = "src/test/resources/__files/";
 
@@ -95,8 +98,6 @@ public class TestUtils {
 
     public static class RequestStub {
         private static final String LIBRARY_INFO = "truelayer-java\\/.+";
-        private static final String UUID_REGEX_PATTERN = "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$";
-
         private boolean withSignature;
         private boolean withAuthorization;
         private boolean withIdempotencyKey;
@@ -162,15 +163,15 @@ public class TestUtils {
             MappingBuilder request = request(method.toUpperCase(), path).withHeader(TL_AGENT, matching(LIBRARY_INFO));
 
             if (withSignature) {
-                request.withHeader(TL_SIGNATURE, matching(".*"));
+                request.withHeader(TL_SIGNATURE, matching(".+"));
             }
 
             if (withAuthorization) {
-                request.withHeader(AUTHORIZATION, matching(".*"));
+                request.withHeader(AUTHORIZATION, matching(".+"));
             }
 
             if (withIdempotencyKey) {
-                request.withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN));
+                request.withHeader(IDEMPOTENCY_KEY, matching(".+"));
             }
 
             if (!isEmpty(xForwardedForHeader)) {
@@ -195,5 +196,14 @@ public class TestUtils {
 
     public static OkHttpClient getHttpClientInstance() {
         return HTTP_CLIENT_INSTANCE;
+    }
+
+    public static Headers buildTestHeaders() {
+        String randomString = RandomStringUtils.random(5, true, true);
+        return Headers.builder()
+                .idempotencyKey("a-custom-key_" + randomString)
+                .signature("a-custom-signature_" + randomString)
+                .xForwardedFor("1.2.3.4_" + randomString)
+                .build();
     }
 }

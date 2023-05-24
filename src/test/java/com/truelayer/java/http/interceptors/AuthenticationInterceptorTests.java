@@ -33,7 +33,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
 
     @BeforeEach
     public void prepareTest() {
-        buildRequest();
+        arrangeRequest();
     }
 
     @Test

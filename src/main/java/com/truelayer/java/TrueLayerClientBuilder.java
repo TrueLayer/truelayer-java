@@ -4,7 +4,9 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
@@ -19,9 +21,13 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
+import com.truelayer.java.payments.PaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
+import com.truelayer.java.payouts.IPayoutsHandler;
+import com.truelayer.java.payouts.PayoutsHandler;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -207,20 +213,22 @@ public class TrueLayerClientBuilder {
 
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
-        ICommonApi commonApiHandler = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
+        ICommonApi commonApi = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
                 .create(ICommonApi.class);
+        ICommonHandler commonHandler = new CommonHandler(commonApi);
 
         // As per our RFC, if signing options is not configured we create a client which is able to interact
         // with the Authentication API only
         if (isEmpty(signingOptions)) {
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonApiHandler);
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonHandler);
         }
 
         OkHttpClient paymentsHttpClient = httpClientFactory.buildPaymentsApiClient(
                 authHttpClient, authenticationHandler, signingOptions, credentialsCache);
 
-        IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
+        IPaymentsHandler paymentsHandler = new PaymentsHandler(paymentsApi);
 
         IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
                 .clientCredentials(clientCredentials)
@@ -236,8 +244,9 @@ public class TrueLayerClientBuilder {
                 .create(IMandatesApi.class);
         IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
 
-        IPayoutsApi payoutsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPayoutsApi.class);
+        IPayoutsHandler payoutsHandler = new PayoutsHandler(payoutsApi);
 
         return new TrueLayerClient(
                 authenticationHandler,
@@ -246,7 +255,7 @@ public class TrueLayerClientBuilder {
                 merchantAccountsHandler,
                 mandatesHandler,
                 payoutsHandler,
-                hppLinkBuilder,
-                commonApiHandler);
+                commonHandler,
+                hppLinkBuilder);
     }
 }

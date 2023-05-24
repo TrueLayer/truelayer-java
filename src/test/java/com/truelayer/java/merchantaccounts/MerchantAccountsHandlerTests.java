@@ -1,9 +1,13 @@
 package com.truelayer.java.merchantaccounts;
 
+import static com.truelayer.java.TestUtils.buildTestHeaders;
+import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
+import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.ListPaymentSourcesQuery;
 import com.truelayer.java.merchantaccounts.entities.ListTransactionsQuery;
 import com.truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
@@ -63,7 +67,7 @@ class MerchantAccountsHandlerTests {
     }
 
     @Test
-    @DisplayName("It should call the update sweeping endpoint")
+    @DisplayName("It should call the update sweeping endpoint with empty headers map")
     public void shouldCallUpdateSweepingEndpoint() {
         IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
         MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
@@ -72,7 +76,21 @@ class MerchantAccountsHandlerTests {
 
         sut.updateSweeping(A_MERCHANT_ACCOUNT_ID, request);
 
-        verify(merchantsApi, times(1)).updateSweeping(A_MERCHANT_ACCOUNT_ID, request);
+        verify(merchantsApi, times(1)).updateSweeping(emptyMap(), A_MERCHANT_ACCOUNT_ID, request);
+    }
+
+    @Test
+    @DisplayName("It should call the update sweeping endpoint with custom headers")
+    public void shouldCallUpdateSweepingEndpointWithCustomHeaders() {
+        IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
+        MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
+        Headers customHeaders = buildTestHeaders();
+        UpdateSweepingRequest request =
+                UpdateSweepingRequest.builder().currency(CurrencyCode.GBP).build();
+
+        sut.updateSweeping(customHeaders, A_MERCHANT_ACCOUNT_ID, request);
+
+        verify(merchantsApi, times(1)).updateSweeping(toMap(customHeaders), A_MERCHANT_ACCOUNT_ID, request);
     }
 
     @Test
@@ -87,14 +105,26 @@ class MerchantAccountsHandlerTests {
     }
 
     @Test
-    @DisplayName("It should call the disable sweeping endpoint")
+    @DisplayName("It should call the disable sweeping endpoint with empty headers map")
     public void shouldCallDisableSweepingEndpoint() {
         IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
         MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
 
         sut.disableSweeping(A_MERCHANT_ACCOUNT_ID);
 
-        verify(merchantsApi, times(1)).disableSweeping(A_MERCHANT_ACCOUNT_ID);
+        verify(merchantsApi, times(1)).disableSweeping(emptyMap(), A_MERCHANT_ACCOUNT_ID);
+    }
+
+    @Test
+    @DisplayName("It should call the disable sweeping endpoint")
+    public void shouldCallDisableSweepingEndpointWithCustomHeaders() {
+        IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
+        MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
+        Headers customHeaders = buildTestHeaders();
+
+        sut.disableSweeping(customHeaders, A_MERCHANT_ACCOUNT_ID);
+
+        verify(merchantsApi, times(1)).disableSweeping(toMap(customHeaders), A_MERCHANT_ACCOUNT_ID);
     }
 
     @Test

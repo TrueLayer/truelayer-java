@@ -16,7 +16,7 @@ public class ErrorMapper {
     public static final String GENERIC_ERROR_TITLE = "server_error";
     public static final String GENERIC_ERROR_TYPE = "https://docs.truelayer.com/docs/error-types";
 
-    public <T> ProblemDetails toProblemDetails(Response<T> response) {
+    public static <T> ProblemDetails toProblemDetails(Response<T> response) {
         final String correlationId = tryGetCorrelationId(response.headers());
 
         final ResponseBody errorBody = response.errorBody();
@@ -43,7 +43,7 @@ public class ErrorMapper {
                 : tryMapLegacyError(response.code(), correlationId, errorBodyString);
     }
 
-    private ProblemDetails tryMapLegacyError(int code, String correlationId, String errorBody) {
+    private static ProblemDetails tryMapLegacyError(int code, String correlationId, String errorBody) {
         try {
             LegacyError legacyError = getObjectMapper().readValue(errorBody, LegacyError.class);
             return buildFallbackError(code, correlationId, legacyError.getError());
@@ -52,7 +52,7 @@ public class ErrorMapper {
         }
     }
 
-    private ProblemDetails buildFallbackError(int code, String correlationId, String title) {
+    private static ProblemDetails buildFallbackError(int code, String correlationId, String title) {
         return ProblemDetails.builder()
                 .status(code)
                 .title(title)
@@ -61,7 +61,7 @@ public class ErrorMapper {
                 .build();
     }
 
-    private String tryGetCorrelationId(Headers headers) {
+    private static String tryGetCorrelationId(Headers headers) {
         if (ObjectUtils.isEmpty(headers)) {
             return null;
         }

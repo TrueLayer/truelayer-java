@@ -3,11 +3,11 @@ package com.truelayer.java.http.interceptors.logging;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 import com.truelayer.java.Constants;
-import com.truelayer.java.http.entities.Header;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import okhttp3.Headers;
+import okhttp3.internal.http2.Header;
 
 public class SensitiveHeaderGuard {
 

@@ -6,6 +6,7 @@ import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
@@ -18,15 +19,18 @@ public interface IMandatesApi {
 
     /**
      * Create a new mandate
+     * @param headers map representing custom HTTP headers to be sent
      * @param request the create mandate request
      * @return the created mandate
      * @see <a href="https://docs.truelayer.com/reference/create-mandate"><i>Create mandate</i> API reference</a>
      */
     @POST("/mandates")
-    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Body CreateMandateRequest request);
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
+            @HeaderMap Map<String, String> headers, @Body CreateMandateRequest request);
 
     /**
      * Start the authorization flow for a mandate.
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @param request the start authorization flow request
      * @return the mandate authorization flow created
@@ -34,10 +38,13 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
-            @Path("id") String mandateId, @Body StartAuthorizationFlowRequest request);
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String mandateId,
+            @Body StartAuthorizationFlowRequest request);
 
     /**
      * Submit the provider details selected by the PSU
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @param request the provider selection request
      * @return the next action to take care of
@@ -45,7 +52,9 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
-            @Path("id") String mandateId, @Body SubmitProviderSelectionRequest request);
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String mandateId,
+            @Body SubmitProviderSelectionRequest request);
 
     /**
      * List all the mandates associated to the client used
@@ -70,12 +79,14 @@ public interface IMandatesApi {
 
     /**
      * Revoke mandate
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @return an empty response in case of success
      * @see <a href="https://docs.truelayer.com/reference/revoke-mandate"><i>Revoke mandate</i> API reference</a>
      */
     @POST("/mandates/{id}/revoke")
-    CompletableFuture<ApiResponse<Void>> revokeMandate(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<Void>> revokeMandate(
+            @HeaderMap Map<String, String> headers, @Path("id") String mandateId);
 
     /**
      * Get Confirmation Of Funds

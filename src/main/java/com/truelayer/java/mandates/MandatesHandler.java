@@ -1,6 +1,10 @@
 package com.truelayer.java.mandates;
 
+import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
+import static java.util.Collections.emptyMap;
+
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -15,19 +19,37 @@ public class MandatesHandler implements IMandatesHandler {
 
     @Override
     public CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(CreateMandateRequest request) {
-        return mandatesApi.createMandate(request);
+        return mandatesApi.createMandate(emptyMap(), request);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
+            Headers headers, CreateMandateRequest request) {
+        return mandatesApi.createMandate(toMap(headers), request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String mandateId, StartAuthorizationFlowRequest request) {
-        return mandatesApi.startAuthorizationFlow(mandateId, request);
+        return mandatesApi.startAuthorizationFlow(emptyMap(), mandateId, request);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
+            Headers headers, String mandateId, StartAuthorizationFlowRequest request) {
+        return mandatesApi.startAuthorizationFlow(toMap(headers), mandateId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             String mandateId, SubmitProviderSelectionRequest request) {
-        return mandatesApi.submitProviderSelection(mandateId, request);
+        return mandatesApi.submitProviderSelection(emptyMap(), mandateId, request);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
+            Headers headers, String mandateId, SubmitProviderSelectionRequest request) {
+        return mandatesApi.submitProviderSelection(toMap(headers), mandateId, request);
     }
 
     @Override
@@ -47,7 +69,12 @@ public class MandatesHandler implements IMandatesHandler {
 
     @Override
     public CompletableFuture<ApiResponse<Void>> revokeMandate(String mandateId) {
-        return mandatesApi.revokeMandate(mandateId);
+        return mandatesApi.revokeMandate(emptyMap(), mandateId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<Void>> revokeMandate(Headers headers, String mandateId) {
+        return mandatesApi.revokeMandate(toMap(headers), mandateId);
     }
 
     @Override

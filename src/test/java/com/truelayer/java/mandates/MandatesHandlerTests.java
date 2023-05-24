@@ -1,8 +1,11 @@
 package com.truelayer.java.mandates;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static com.truelayer.java.TestUtils.buildTestHeaders;
+import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
+import static java.util.Collections.emptyMap;
+import static org.mockito.Mockito.*;
 
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.ListMandatesQuery;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
@@ -20,7 +23,7 @@ class MandatesHandlerTests {
     private static final String A_CURRENCY = "GBP";
 
     @Test
-    @DisplayName("It should call the create mandate endpoint")
+    @DisplayName("It should call the create mandate endpoint with empty headers map")
     public void shouldCallCreateMandate() {
         IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
         MandatesHandler sut = new MandatesHandler(mandatesApi);
@@ -28,11 +31,25 @@ class MandatesHandlerTests {
 
         sut.createMandate(request);
 
-        verify(mandatesApi, times(1)).createMandate(request);
+        verify(mandatesApi, times(1)).createMandate(emptyMap(), request);
     }
 
     @Test
-    @DisplayName("It should call the start authorization flow endpoint")
+    @DisplayName("It should call the create mandate endpoint with custom headers")
+    public void shouldCallCreateMandateWithCustomHeaders() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+        CreateMandateRequest request = CreateMandateRequest.builder().build();
+        Headers customHeaders = buildTestHeaders();
+
+        sut.createMandate(customHeaders, request);
+
+        verify(mandatesApi, times(1)).createMandate(toMap(customHeaders), request);
+        verifyNoMoreInteractions(mandatesApi);
+    }
+
+    @Test
+    @DisplayName("It should call the start authorization flow endpoint with empty headers map")
     public void shouldCallStartAuthFlow() {
         IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
         MandatesHandler sut = new MandatesHandler(mandatesApi);
@@ -41,11 +58,25 @@ class MandatesHandlerTests {
 
         sut.startAuthorizationFlow(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).startAuthorizationFlow(A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).startAuthorizationFlow(emptyMap(), A_MANDATE_ID, request);
     }
 
     @Test
-    @DisplayName("It should call the submit provider endpoint")
+    @DisplayName("It should call the start authorization flow endpoint with custom headers")
+    public void shouldCallStartAuthFlowWithCustomHeaders() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+        Headers customHeaders = buildTestHeaders();
+        StartAuthorizationFlowRequest request =
+                StartAuthorizationFlowRequest.builder().build();
+
+        sut.startAuthorizationFlow(customHeaders, A_MANDATE_ID, request);
+
+        verify(mandatesApi, times(1)).startAuthorizationFlow(toMap(customHeaders), A_MANDATE_ID, request);
+    }
+
+    @Test
+    @DisplayName("It should call the submit provider endpoint with empty headers map")
     public void shouldCallSubmitProviderEndpoint() {
         IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
         MandatesHandler sut = new MandatesHandler(mandatesApi);
@@ -54,7 +85,21 @@ class MandatesHandlerTests {
 
         sut.submitProviderSelection(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).submitProviderSelection(A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).submitProviderSelection(emptyMap(), A_MANDATE_ID, request);
+    }
+
+    @Test
+    @DisplayName("It should call the submit provider endpoint with custom headers")
+    public void shouldCallSubmitProviderEndpointWithCustomHeaders() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+        Headers customHeaders = buildTestHeaders();
+        SubmitProviderSelectionRequest request =
+                SubmitProviderSelectionRequest.builder().build();
+
+        sut.submitProviderSelection(customHeaders, A_MANDATE_ID, request);
+
+        verify(mandatesApi, times(1)).submitProviderSelection(toMap(customHeaders), A_MANDATE_ID, request);
     }
 
     @Test
@@ -96,14 +141,26 @@ class MandatesHandlerTests {
     }
 
     @Test
-    @DisplayName("It should call the revoke mandate endpoint")
+    @DisplayName("It should call the revoke mandate endpoint with empty headers map")
     public void shouldCallRevokeMandatesEndpoint() {
         IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
         MandatesHandler sut = new MandatesHandler(mandatesApi);
 
         sut.revokeMandate(A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).revokeMandate(A_MANDATE_ID);
+        verify(mandatesApi, times(1)).revokeMandate(emptyMap(), A_MANDATE_ID);
+    }
+
+    @Test
+    @DisplayName("It should call the revoke mandate endpoint with custom headers")
+    public void shouldCallRevokeMandatesEndpointWithCustomHeaders() {
+        IMandatesApi mandatesApi = Mockito.mock(IMandatesApi.class);
+        MandatesHandler sut = new MandatesHandler(mandatesApi);
+        Headers customHeaders = buildTestHeaders();
+
+        sut.revokeMandate(customHeaders, A_MANDATE_ID);
+
+        verify(mandatesApi, times(1)).revokeMandate(toMap(customHeaders), A_MANDATE_ID);
     }
 
     @Test

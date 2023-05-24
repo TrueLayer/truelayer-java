@@ -171,9 +171,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // Submit consent
         ApiResponse<AuthorizationFlowResponse> submitConsentResponse = tlClient.payments()
-                .submitConsent(
-                        createPaymentResponse.getData().getId(),
-                        SubmitConsentRequest.builder().build())
+                .submitConsent(createPaymentResponse.getData().getId())
                 .get();
 
         assertNotError(submitConsentResponse);
@@ -220,9 +218,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         // Submit consent
         ApiResponse<AuthorizationFlowResponse> submitConsentResponse = tlClient.payments()
-                .submitConsent(
-                        createPaymentResponse.getData().getId(),
-                        SubmitConsentRequest.builder().build())
+                .submitConsent(createPaymentResponse.getData().getId())
                 .get();
 
         assertNotError(submitConsentResponse);
