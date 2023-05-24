@@ -37,10 +37,10 @@ public class TrueLayerClient implements ITrueLayerClient {
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
             IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
-            ICommonHandler commonApi) {
+            ICommonHandler commonHandler) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
-        this.commonHandler = commonApi;
+        this.commonHandler = commonHandler;
     }
 
     /**
