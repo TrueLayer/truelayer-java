@@ -18,7 +18,7 @@ public class FailedMandateDetail extends MandateDetail {
 
     String failureReason;
 
-    ZonedDateTime authorizationFailedAt;
+    ZonedDateTime failedAt;
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 
