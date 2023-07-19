@@ -11,7 +11,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class ProviderAvailability {
-    String recommendedStatus;
+    AvailabilityRecommendedStatus recommendedStatus;
     float errorRate;
     ZonedDateTime updatedAt;
 }
