@@ -43,12 +43,5 @@
   },
   "metadata": {
     "a_custom_key": "a-value"
-  },
-  "remitter": {
-    "account_holder_name": "Andrea Di Lisio",
-    "account_identifier": {
-      "type":"iban",
-      "iban":"GB53CLRB04066200002723"
-    }
   }
 }
