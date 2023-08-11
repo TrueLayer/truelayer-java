@@ -1,8 +1,8 @@
 package com.truelayer.java.http.auth;
 
 import static com.truelayer.java.Constants.Scopes.PAYMENTS;
+import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_SWEEPING;
 import static com.truelayer.java.TestUtils.buildAccessToken;
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -12,12 +12,19 @@ import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AccessTokenManagerTests {
+
+    // FIXME: temp
+    private final List<String> REQUESTED_SCOPES =
+            Collections.unmodifiableList(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING));
 
     @Test
     @DisplayName("It should get a cached token")
@@ -32,7 +39,7 @@ class AccessTokenManagerTests {
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, never()).getOauthToken(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, never()).getOauthToken(eq(REQUESTED_SCOPES));
     }
 
     @Test
@@ -42,7 +49,7 @@ class AccessTokenManagerTests {
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
         when(cache.getToken()).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        when(authenticationHandler.getOauthToken(eq(singletonList(PAYMENTS))))
+        when(authenticationHandler.getOauthToken(eq(REQUESTED_SCOPES)))
                 .thenReturn(CompletableFuture.completedFuture(
                         ApiResponse.<AccessToken>builder().data(expectedToken).build()));
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
@@ -51,7 +58,7 @@ class AccessTokenManagerTests {
 
         assertEquals(expectedToken, actualToken);
         verify(cache, times(1)).getToken();
-        verify(authenticationHandler, times(1)).getOauthToken(eq(singletonList(PAYMENTS)));
+        verify(authenticationHandler, times(1)).getOauthToken(eq(REQUESTED_SCOPES));
         verify(cache, times(1)).storeToken(eq(expectedToken));
     }
 

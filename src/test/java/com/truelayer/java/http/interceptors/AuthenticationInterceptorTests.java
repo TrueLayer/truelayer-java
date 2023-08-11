@@ -16,6 +16,7 @@ import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +41,11 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     @DisplayName("It should add an authorization header to the original request")
     public void shouldAddAuthorizationHeader() {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        List<String> scopes = Collections.singletonList("payments");
+
+        // FIXME: temp
+        List<String> scopes = Collections.unmodifiableList(
+                Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
+
         ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
@@ -63,7 +68,11 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     @DisplayName("It should throw an exception if authentication fails")
     public void shouldThrowException() {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        List<String> scopes = Collections.singletonList("payments");
+
+        // FIXME: temp
+        List<String> scopes = Collections.unmodifiableList(
+                Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
+
         when(authenticationHandler.getOauthToken(scopes))
                 .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
