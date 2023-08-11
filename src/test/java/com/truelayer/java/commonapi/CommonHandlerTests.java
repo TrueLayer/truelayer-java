@@ -2,7 +2,6 @@ package com.truelayer.java.commonapi;
 
 import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

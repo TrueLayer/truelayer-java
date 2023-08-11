@@ -2,6 +2,7 @@ package com.truelayer.java.auth;
 
 import com.truelayer.java.ClientCredentials;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.auth.entities.GenerateOauthTokenRequest;
 import com.truelayer.java.http.entities.ApiResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +24,12 @@ public class AuthenticationHandler implements IAuthenticationHandler {
 
     @Override
     public CompletableFuture<ApiResponse<AccessToken>> getOauthToken(List<String> scopes) {
-        return authenticationApi.getOauthToken(
-                clientCredentials.clientId(), clientCredentials.clientSecret(), ClientCredentials.GRANT_TYPE, scopes);
+        GenerateOauthTokenRequest generateOauthTokenRequest = GenerateOauthTokenRequest.builder()
+                .clientId(clientCredentials.clientId())
+                .clientSecret(clientCredentials.clientSecret())
+                .scopes(scopes)
+                .build();
+
+        return authenticationApi.generateOauthToken(generateOauthTokenRequest);
     }
 }
