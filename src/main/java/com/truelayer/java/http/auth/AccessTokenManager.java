@@ -1,14 +1,11 @@
 package com.truelayer.java.http.auth;
 
-import static java.util.Collections.singletonList;
-
 import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,8 +20,8 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     private final ICredentialsCache credentialsCache;
 
-    private final List<String> scopes = Collections.unmodifiableList(Arrays.asList(Constants.Scopes.PAYMENTS,
-            Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
+    private final List<String> scopes = Collections.unmodifiableList(
+            Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
 
     private Optional<ICredentialsCache> getCredentialsCache() {
         return Optional.ofNullable(credentialsCache);
