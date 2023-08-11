@@ -8,6 +8,9 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.Builder;
@@ -20,7 +23,8 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     private final ICredentialsCache credentialsCache;
 
-    private final List<String> scopes = singletonList(Constants.Scopes.PAYMENTS);
+    private final List<String> scopes = Collections.unmodifiableList(Arrays.asList(Constants.Scopes.PAYMENTS,
+            Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
 
     private Optional<ICredentialsCache> getCredentialsCache() {
         return Optional.ofNullable(credentialsCache);
