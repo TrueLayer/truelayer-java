@@ -1,6 +1,9 @@
 package com.truelayer.java.http.auth.cache;
 
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface ICredentialsCache {
@@ -9,13 +12,13 @@ public interface ICredentialsCache {
      * Gets a cached access token.
      * @return an optional access token. If the token is expired an empty optional is returned
      */
-    Optional<AccessToken> getToken();
+    Optional<AccessToken> getToken(RequestScopes scopes);
 
     /**
      * Stores an access token in cache
      * @param token the new token to store
      */
-    void storeToken(AccessToken token);
+    void storeToken(RequestScopes scopes, AccessToken token);
 
     /**
      * Resets the cache

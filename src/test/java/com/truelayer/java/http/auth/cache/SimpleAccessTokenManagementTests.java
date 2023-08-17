@@ -4,37 +4,44 @@ import static com.truelayer.java.TestUtils.buildAccessToken;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.truelayer.java.Constants;
 import com.truelayer.java.auth.entities.AccessToken;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+
+import com.truelayer.java.entities.RequestScopes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class SimpleAccessTokenManagementTests {
 
+    static final RequestScopes scopes = new RequestScopes(Collections.singletonList(Constants.Scopes.PAYMENTS));
+
     @Test
     @DisplayName("It should store a token record")
     public void shouldStoreATokenRecord() {
+
         AccessToken expectedToken = buildAccessToken().getData();
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
-        sut.storeToken(expectedToken);
+        sut.storeToken(scopes, expectedToken);
 
-        assertEquals(expectedToken, sut.getToken().get());
+        assertEquals(expectedToken, sut.getToken(scopes).get());
     }
 
     @Test
     @DisplayName("It should clear a token record")
     public void itShouldClearTheExistingToken() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        sut.storeToken(buildAccessToken().getData());
+        sut.storeToken(scopes, buildAccessToken().getData());
 
         sut.clearToken();
 
-        assertFalse(sut.getToken().isPresent());
+        assertFalse(sut.getToken(scopes).isPresent());
     }
 
     @Test
@@ -42,7 +49,7 @@ class SimpleAccessTokenManagementTests {
     public void itShouldYieldAnEmptyOptionalIfNoToken() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
 
-        assertFalse(sut.getToken().isPresent());
+        assertFalse(sut.getToken(scopes).isPresent());
     }
 
     @Test
@@ -59,17 +66,17 @@ class SimpleAccessTokenManagementTests {
                 .thenReturn(Clock.systemUTC().instant());
         when(fakeClock.getZone()).thenReturn(ZoneOffset.UTC);
         SimpleCredentialsCache sut = new SimpleCredentialsCache(fakeClock);
-        sut.storeToken(accessToken);
+        sut.storeToken(scopes, accessToken);
 
-        assertFalse(sut.getToken().isPresent());
+        assertFalse(sut.getToken(scopes).isPresent());
     }
 
     @Test
     @DisplayName("It should yield an token if token is not expired")
     public void itShouldYieldAnToken() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        sut.storeToken(buildAccessToken().getData());
+        sut.storeToken(scopes, buildAccessToken().getData());
 
-        assertTrue(sut.getToken().isPresent());
+        assertTrue(sut.getToken(scopes).isPresent());
     }
 }

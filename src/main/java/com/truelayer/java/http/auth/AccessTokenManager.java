@@ -4,6 +4,7 @@ import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import java.util.Arrays;
@@ -20,24 +21,21 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     private final ICredentialsCache credentialsCache;
 
-    private final List<String> scopes = Collections.unmodifiableList(
-            Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
-
     private Optional<ICredentialsCache> getCredentialsCache() {
         return Optional.ofNullable(credentialsCache);
     }
 
     @Override
-    public AccessToken getToken() {
+    public AccessToken getToken(RequestScopes scopes) {
         if (getCredentialsCache().isPresent()) {
-            return getCredentialsCache().get().getToken().orElseGet(() -> {
-                AccessToken token = tryGetToken();
-                credentialsCache.storeToken(token);
+            return getCredentialsCache().get().getToken(scopes).orElseGet(() -> {
+                AccessToken token = tryGetToken(scopes);
+                credentialsCache.storeToken(scopes, token);
                 return token;
             });
         }
 
-        return tryGetToken();
+        return tryGetToken(scopes);
     }
 
     @Override
@@ -46,10 +44,10 @@ public class AccessTokenManager implements IAccessTokenManager {
         getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
     }
 
-    private AccessToken tryGetToken() {
+    private AccessToken tryGetToken(RequestScopes scopes) {
         ApiResponse<AccessToken> accessTokenResponse;
         try {
-            accessTokenResponse = authenticationHandler.getOauthToken(scopes).get();
+            accessTokenResponse = authenticationHandler.getOauthToken(scopes.getScopes()).get();
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }

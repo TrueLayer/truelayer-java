@@ -1,11 +1,14 @@
 package com.truelayer.java.mandates;
 
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
@@ -25,8 +28,7 @@ public interface IMandatesApi {
      * @see <a href="https://docs.truelayer.com/reference/create-mandate"><i>Create mandate</i> API reference</a>
      */
     @POST("/mandates")
-    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
-            @HeaderMap Map<String, String> headers, @Body CreateMandateRequest request);
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Tag RequestScopes scopes, @HeaderMap Map<String, String> headers, @Body CreateMandateRequest request);
 
     /**
      * Start the authorization flow for a mandate.
@@ -38,6 +40,7 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
+            @Tag RequestScopes scopes,
             @HeaderMap Map<String, String> headers,
             @Path("id") String mandateId,
             @Body StartAuthorizationFlowRequest request);
@@ -52,6 +55,7 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
+            @Tag RequestScopes scopes,
             @HeaderMap Map<String, String> headers,
             @Path("id") String mandateId,
             @Body SubmitProviderSelectionRequest request);
@@ -66,7 +70,7 @@ public interface IMandatesApi {
      */
     @GET("/mandates")
     CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates(
-            @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") Integer limit);
+            @Tag RequestScopes scopes, @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") Integer limit);
 
     /**
      * Get mandate
@@ -75,7 +79,7 @@ public interface IMandatesApi {
      * @see <a href="https://docs.truelayer.com/reference/get-mandate"><i>Get mandate</i> API reference</a>
      */
     @GET("/mandates/{id}")
-    CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Tag RequestScopes scopes, @Path("id") String mandateId);
 
     /**
      * Revoke mandate
@@ -86,7 +90,7 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/revoke")
     CompletableFuture<ApiResponse<Void>> revokeMandate(
-            @HeaderMap Map<String, String> headers, @Path("id") String mandateId);
+            @Tag RequestScopes scopes, @HeaderMap Map<String, String> headers, @Path("id") String mandateId);
 
     /**
      * Get Confirmation Of Funds
@@ -98,6 +102,7 @@ public interface IMandatesApi {
      */
     @GET("/mandates/{id}/funds?")
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
+            @Tag RequestScopes scopes,
             @Path("id") String mandateId,
             @Query("amount_in_minor") String amount_in_minor,
             @Query("currency") String currency);
@@ -109,5 +114,5 @@ public interface IMandatesApi {
      * @see <a href="https://docs.truelayer.com/reference/get-constraints"><i>Get Mandate Constraints</i> API reference</a>
      */
     @GET("/mandates/{id}/constraints")
-    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(@Tag RequestScopes scopes, @Path("id") String mandateId);
 }

@@ -5,6 +5,8 @@ import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.*;
 
+import com.truelayer.java.Constants;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.ListMandatesQuery;
@@ -14,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+
 class MandatesHandlerTests {
     private static final String A_MANDATE_ID = "a-mandate-id";
     private static final String A_CURSOR = "a-cursor";
@@ -21,6 +25,8 @@ class MandatesHandlerTests {
     private static final int A_LIMIT = 15;
     private static final String AN_AMOUNT_IN_MINOR = "10";
     private static final String A_CURRENCY = "GBP";
+    private static final RequestScopes scopes = new RequestScopes(
+            Collections.singletonList(Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
 
     @Test
     @DisplayName("It should call the create mandate endpoint with empty headers map")
@@ -31,7 +37,7 @@ class MandatesHandlerTests {
 
         sut.createMandate(request);
 
-        verify(mandatesApi, times(1)).createMandate(emptyMap(), request);
+        verify(mandatesApi, times(1)).createMandate(scopes, emptyMap(), request);
     }
 
     @Test
@@ -44,7 +50,7 @@ class MandatesHandlerTests {
 
         sut.createMandate(customHeaders, request);
 
-        verify(mandatesApi, times(1)).createMandate(toMap(customHeaders), request);
+        verify(mandatesApi, times(1)).createMandate(scopes, toMap(customHeaders), request);
         verifyNoMoreInteractions(mandatesApi);
     }
 
@@ -58,7 +64,7 @@ class MandatesHandlerTests {
 
         sut.startAuthorizationFlow(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).startAuthorizationFlow(emptyMap(), A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).startAuthorizationFlow(scopes, emptyMap(), A_MANDATE_ID, request);
     }
 
     @Test
@@ -72,7 +78,7 @@ class MandatesHandlerTests {
 
         sut.startAuthorizationFlow(customHeaders, A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).startAuthorizationFlow(toMap(customHeaders), A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).startAuthorizationFlow(scopes, toMap(customHeaders), A_MANDATE_ID, request);
     }
 
     @Test
@@ -85,7 +91,7 @@ class MandatesHandlerTests {
 
         sut.submitProviderSelection(A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).submitProviderSelection(emptyMap(), A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).submitProviderSelection(scopes, emptyMap(), A_MANDATE_ID, request);
     }
 
     @Test
@@ -99,7 +105,7 @@ class MandatesHandlerTests {
 
         sut.submitProviderSelection(customHeaders, A_MANDATE_ID, request);
 
-        verify(mandatesApi, times(1)).submitProviderSelection(toMap(customHeaders), A_MANDATE_ID, request);
+        verify(mandatesApi, times(1)).submitProviderSelection(scopes, toMap(customHeaders), A_MANDATE_ID, request);
     }
 
     @Test
@@ -110,7 +116,7 @@ class MandatesHandlerTests {
 
         sut.listMandates();
 
-        verify(mandatesApi, times(1)).listMandates(null, null, null);
+        verify(mandatesApi, times(1)).listMandates(scopes, null, null, null);
     }
 
     @Test
@@ -126,7 +132,7 @@ class MandatesHandlerTests {
 
         sut.listMandates(query);
 
-        verify(mandatesApi, times(1)).listMandates(A_USER_ID, A_CURSOR, A_LIMIT);
+        verify(mandatesApi, times(1)).listMandates(scopes, A_USER_ID, A_CURSOR, A_LIMIT);
     }
 
     @Test
@@ -137,7 +143,7 @@ class MandatesHandlerTests {
 
         sut.getMandate(A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).getMandate(A_MANDATE_ID);
+        verify(mandatesApi, times(1)).getMandate(scopes, A_MANDATE_ID);
     }
 
     @Test
@@ -148,7 +154,7 @@ class MandatesHandlerTests {
 
         sut.revokeMandate(A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).revokeMandate(emptyMap(), A_MANDATE_ID);
+        verify(mandatesApi, times(1)).revokeMandate(scopes, emptyMap(), A_MANDATE_ID);
     }
 
     @Test
@@ -160,7 +166,7 @@ class MandatesHandlerTests {
 
         sut.revokeMandate(customHeaders, A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).revokeMandate(toMap(customHeaders), A_MANDATE_ID);
+        verify(mandatesApi, times(1)).revokeMandate(scopes, toMap(customHeaders), A_MANDATE_ID);
     }
 
     @Test
@@ -171,7 +177,7 @@ class MandatesHandlerTests {
 
         sut.getConfirmationOfFunds(A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
 
-        verify(mandatesApi, times(1)).getConfirmationOfFunds(A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
+        verify(mandatesApi, times(1)).getConfirmationOfFunds(scopes, A_MANDATE_ID, AN_AMOUNT_IN_MINOR, A_CURRENCY);
     }
 
     @Test
@@ -182,6 +188,6 @@ class MandatesHandlerTests {
 
         sut.getMandateConstraints(A_MANDATE_ID);
 
-        verify(mandatesApi, times(1)).getMandateConstraints(A_MANDATE_ID);
+        verify(mandatesApi, times(1)).getMandateConstraints(scopes, A_MANDATE_ID);
     }
 }

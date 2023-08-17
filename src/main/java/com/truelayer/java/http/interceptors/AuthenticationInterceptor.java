@@ -2,8 +2,12 @@ package com.truelayer.java.http.interceptors;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.IAccessTokenManager;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -16,7 +20,14 @@ public class AuthenticationInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        AccessToken accessToken = tokenManager.getToken();
+        RequestScopes scopes = chain.request().tag(RequestScopes.class);
+        if(scopes == null || scopes.getScopes().isEmpty())
+        {
+            // default to payments scope if not explicitly set in the request
+            scopes = new RequestScopes(Collections.singletonList(Constants.Scopes.PAYMENTS));
+        }
+
+        AccessToken accessToken = tokenManager.getToken(scopes);
 
         Request request = chain.request();
         Request newRequest = request.newBuilder()

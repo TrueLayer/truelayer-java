@@ -5,7 +5,12 @@ import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import com.truelayer.java.auth.entities.AccessToken;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.truelayer.java.entities.RequestScopes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +24,7 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     /**
      * internal state
      */
-    private AccessTokenRecord tokenRecord;
+    private Map<Integer, AccessTokenRecord> tokenRecords = new HashMap<>();
 
     private final Clock clock;
 
@@ -32,8 +37,10 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     }
 
     @Override
-    public Optional<AccessToken> getToken() {
-        if (isEmpty(tokenRecord) || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
+    public Optional<AccessToken> getToken(RequestScopes scopes) {
+        int key = scopes.hashCode();
+        AccessTokenRecord tokenRecord = tokenRecords.get(key);
+        if (tokenRecord == null || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
             return Optional.empty();
         }
 
@@ -41,13 +48,14 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     }
 
     @Override
-    public void storeToken(AccessToken token) {
-        tokenRecord = new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
+    public void storeToken(RequestScopes scopes, AccessToken token) {
+        AccessTokenRecord tokenRecord = new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
+        tokenRecords.put(scopes.hashCode(), tokenRecord);
     }
 
     @Override
     public void clearToken() {
-        tokenRecord = null;
+        tokenRecords = new HashMap<>();
     }
 
     @Getter
