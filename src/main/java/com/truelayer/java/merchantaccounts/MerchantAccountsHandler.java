@@ -25,18 +25,19 @@ public class MerchantAccountsHandler implements IAuthenticatedHandler, IMerchant
 
     @Override
     public CompletableFuture<ApiResponse<ListMerchantAccountsResponse>> listMerchantAccounts() {
-        return merchantAccountsApi.listMerchantAccounts();
+        return merchantAccountsApi.listMerchantAccounts(getRequestScopes());
     }
 
     @Override
     public CompletableFuture<ApiResponse<MerchantAccount>> getMerchantAccountById(String merchantAccountId) {
-        return merchantAccountsApi.getMerchantAccountById(merchantAccountId);
+        return merchantAccountsApi.getMerchantAccountById(getRequestScopes(), merchantAccountId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<ListTransactionsResponse>> listTransactions(
             String merchantAccountId, ListTransactionsQuery query) {
         return merchantAccountsApi.listTransactions(
+                getRequestScopes(),
                 merchantAccountId,
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.from()),
                 DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.to()),
@@ -46,33 +47,35 @@ public class MerchantAccountsHandler implements IAuthenticatedHandler, IMerchant
     @Override
     public CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
             String merchantAccountId, UpdateSweepingRequest updateSweepingRequest) {
-        return merchantAccountsApi.updateSweeping(emptyMap(), merchantAccountId, updateSweepingRequest);
+        return merchantAccountsApi.updateSweeping(
+                getRequestScopes(), emptyMap(), merchantAccountId, updateSweepingRequest);
     }
 
     @Override
     public CompletableFuture<ApiResponse<SweepingSettings>> updateSweeping(
             Headers headers, String merchantAccountId, UpdateSweepingRequest updateSweepingRequest) {
-        return merchantAccountsApi.updateSweeping(toMap(headers), merchantAccountId, updateSweepingRequest);
+        return merchantAccountsApi.updateSweeping(
+                getRequestScopes(), toMap(headers), merchantAccountId, updateSweepingRequest);
     }
 
     @Override
     public CompletableFuture<ApiResponse<SweepingSettings>> getSweepingSettings(String merchantAccountId) {
-        return merchantAccountsApi.getSweepingSettings(merchantAccountId);
+        return merchantAccountsApi.getSweepingSettings(getRequestScopes(), merchantAccountId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<Void>> disableSweeping(String merchantAccountId) {
-        return merchantAccountsApi.disableSweeping(emptyMap(), merchantAccountId);
+        return merchantAccountsApi.disableSweeping(getRequestScopes(), emptyMap(), merchantAccountId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<Void>> disableSweeping(Headers headers, String merchantAccountId) {
-        return merchantAccountsApi.disableSweeping(toMap(headers), merchantAccountId);
+        return merchantAccountsApi.disableSweeping(getRequestScopes(), toMap(headers), merchantAccountId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<ListPaymentSourcesResponse>> listPaymentSources(
             String merchantAccountId, ListPaymentSourcesQuery query) {
-        return merchantAccountsApi.listPaymentSources(merchantAccountId, query.userId());
+        return merchantAccountsApi.listPaymentSources(getRequestScopes(), merchantAccountId, query.userId());
     }
 }

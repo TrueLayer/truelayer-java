@@ -27,85 +27,85 @@ public class PaymentsHandler implements IAuthenticatedHandler, IPaymentsHandler 
 
     @Override
     public CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest request) {
-        return paymentsApi.createPayment(emptyMap(), request);
+        return paymentsApi.createPayment(getRequestScopes(), emptyMap(), request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(
             Headers headers, CreatePaymentRequest request) {
-        return paymentsApi.createPayment(toMap(headers), request);
+        return paymentsApi.createPayment(getRequestScopes(), toMap(headers), request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<PaymentDetail>> getPayment(String paymentId) {
-        return paymentsApi.getPayment(paymentId);
+        return paymentsApi.getPayment(getRequestScopes(), paymentId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String paymentId, StartAuthorizationFlowRequest request) {
-        return paymentsApi.startAuthorizationFlow(emptyMap(), paymentId, request);
+        return paymentsApi.startAuthorizationFlow(getRequestScopes(), emptyMap(), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             Headers headers, String paymentId, StartAuthorizationFlowRequest request) {
-        return paymentsApi.startAuthorizationFlow(toMap(headers), paymentId, request);
+        return paymentsApi.startAuthorizationFlow(getRequestScopes(), toMap(headers), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             String paymentId, SubmitProviderSelectionRequest request) {
-        return paymentsApi.submitProviderSelection(emptyMap(), paymentId, request);
+        return paymentsApi.submitProviderSelection(getRequestScopes(), emptyMap(), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             Headers headers, String paymentId, SubmitProviderSelectionRequest request) {
-        return paymentsApi.submitProviderSelection(toMap(headers), paymentId, request);
+        return paymentsApi.submitProviderSelection(getRequestScopes(), toMap(headers), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(String paymentId) {
-        return paymentsApi.submitConsent(emptyMap(), paymentId, new EmptyRequestBody());
+        return paymentsApi.submitConsent(getRequestScopes(), emptyMap(), paymentId, new EmptyRequestBody());
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitConsent(Headers headers, String paymentId) {
-        return paymentsApi.submitConsent(toMap(headers), paymentId, new EmptyRequestBody());
+        return paymentsApi.submitConsent(getRequestScopes(), toMap(headers), paymentId, new EmptyRequestBody());
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(
             String paymentId, SubmitFormRequest request) {
-        return paymentsApi.submitForm(emptyMap(), paymentId, request);
+        return paymentsApi.submitForm(getRequestScopes(), emptyMap(), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitForm(
             Headers headers, String paymentId, SubmitFormRequest request) {
-        return paymentsApi.submitForm(toMap(headers), paymentId, request);
+        return paymentsApi.submitForm(getRequestScopes(), toMap(headers), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePaymentRefundResponse>> createPaymentRefund(
             String paymentId, CreatePaymentRefundRequest request) {
-        return paymentsApi.createPaymentRefund(emptyMap(), paymentId, request);
+        return paymentsApi.createPaymentRefund(getRequestScopes(), emptyMap(), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePaymentRefundResponse>> createPaymentRefund(
             Headers headers, String paymentId, CreatePaymentRefundRequest request) {
-        return paymentsApi.createPaymentRefund(toMap(headers), paymentId, request);
+        return paymentsApi.createPaymentRefund(getRequestScopes(), toMap(headers), paymentId, request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<ListPaymentRefundsResponse>> listPaymentRefunds(String paymentId) {
-        return paymentsApi.listPaymentRefunds(paymentId);
+        return paymentsApi.listPaymentRefunds(getRequestScopes(), paymentId);
     }
 
     @Override
     public CompletableFuture<ApiResponse<PaymentRefund>> getPaymentRefundById(String paymentId, String refundId) {
-        return paymentsApi.getPaymentRefundById(paymentId, refundId);
+        return paymentsApi.getPaymentRefundById(getRequestScopes(), paymentId, refundId);
     }
 }

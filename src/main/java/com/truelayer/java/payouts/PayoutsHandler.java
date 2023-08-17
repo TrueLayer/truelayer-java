@@ -26,17 +26,17 @@ public class PayoutsHandler implements IAuthenticatedHandler, IPayoutsHandler {
 
     @Override
     public CompletableFuture<ApiResponse<CreatePayoutResponse>> createPayout(CreatePayoutRequest request) {
-        return payoutsApi.createPayout(emptyMap(), request);
+        return payoutsApi.createPayout(getRequestScopes(), emptyMap(), request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePayoutResponse>> createPayout(
             Headers headers, CreatePayoutRequest request) {
-        return payoutsApi.createPayout(toMap(headers), request);
+        return payoutsApi.createPayout(getRequestScopes(), toMap(headers), request);
     }
 
     @Override
     public CompletableFuture<ApiResponse<Payout>> getPayout(String payoutId) {
-        return payoutsApi.getPayout(payoutId);
+        return payoutsApi.getPayout(getRequestScopes(), payoutId);
     }
 }
