@@ -1,15 +1,11 @@
 package com.truelayer.java.http.auth;
 
-import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.Synchronized;
@@ -47,7 +43,8 @@ public class AccessTokenManager implements IAccessTokenManager {
     private AccessToken tryGetToken(RequestScopes scopes) {
         ApiResponse<AccessToken> accessTokenResponse;
         try {
-            accessTokenResponse = authenticationHandler.getOauthToken(scopes.getScopes()).get();
+            accessTokenResponse =
+                    authenticationHandler.getOauthToken(scopes.getScopes()).get();
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }

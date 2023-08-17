@@ -3,8 +3,6 @@ package com.truelayer.java.http.auth;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 
-import java.util.List;
-
 /**
  * Manages an internal state for access tokens.
  */

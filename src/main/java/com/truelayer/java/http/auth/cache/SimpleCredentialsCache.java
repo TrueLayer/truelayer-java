@@ -1,16 +1,12 @@
 package com.truelayer.java.http.auth.cache;
 
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.truelayer.java.entities.RequestScopes;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -38,7 +34,10 @@ public class SimpleCredentialsCache implements ICredentialsCache {
 
     @Override
     public Optional<AccessToken> getToken(RequestScopes scopes) {
+
+        // TODO: test
         int key = scopes.hashCode();
+
         AccessTokenRecord tokenRecord = tokenRecords.get(key);
         if (tokenRecord == null || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
             return Optional.empty();
@@ -49,7 +48,10 @@ public class SimpleCredentialsCache implements ICredentialsCache {
 
     @Override
     public void storeToken(RequestScopes scopes, AccessToken token) {
-        AccessTokenRecord tokenRecord = new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
+        AccessTokenRecord tokenRecord =
+                new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
+
+        // TODO: test
         tokenRecords.put(scopes.hashCode(), tokenRecord);
     }
 

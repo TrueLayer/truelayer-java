@@ -12,11 +12,10 @@ import com.truelayer.java.mandates.entities.CreateMandateRequest;
 import com.truelayer.java.mandates.entities.ListMandatesQuery;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
+import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Collections;
 
 class MandatesHandlerTests {
     private static final String A_MANDATE_ID = "a-mandate-id";
@@ -25,8 +24,8 @@ class MandatesHandlerTests {
     private static final int A_LIMIT = 15;
     private static final String AN_AMOUNT_IN_MINOR = "10";
     private static final String A_CURRENCY = "GBP";
-    private static final RequestScopes scopes = new RequestScopes(
-            Collections.singletonList(Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
+    private static final RequestScopes scopes =
+            new RequestScopes(Collections.singletonList(Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
 
     @Test
     @DisplayName("It should call the create mandate endpoint with empty headers map")

@@ -1,8 +1,11 @@
 package com.truelayer.java.payouts;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
 
+import com.truelayer.java.IAuthenticatedHandler;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payouts.entities.CreatePayoutRequest;
@@ -12,9 +15,14 @@ import java.util.concurrent.CompletableFuture;
 import lombok.Value;
 
 @Value
-public class PayoutsHandler implements IPayoutsHandler {
+public class PayoutsHandler implements IAuthenticatedHandler, IPayoutsHandler {
 
     IPayoutsApi payoutsApi;
+
+    @Override
+    public RequestScopes getRequestScopes() {
+        return RequestScopes.builder().scope(PAYMENTS).build();
+    }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePayoutResponse>> createPayout(CreatePayoutRequest request) {

@@ -13,7 +13,6 @@ import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
-
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.DisplayName;

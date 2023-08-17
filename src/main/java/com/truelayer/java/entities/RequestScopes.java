@@ -1,16 +1,12 @@
 package com.truelayer.java.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 @EqualsAndHashCode
 public class RequestScopes {
-
+    @Singular
     private final List<String> scopes;
-
 }

@@ -1,9 +1,12 @@
 package com.truelayer.java.payments;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
 
+import com.truelayer.java.IAuthenticatedHandler;
 import com.truelayer.java.entities.EmptyRequestBody;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
@@ -13,9 +16,14 @@ import java.util.concurrent.CompletableFuture;
 import lombok.Value;
 
 @Value
-public class PaymentsHandler implements IPaymentsHandler {
+public class PaymentsHandler implements IAuthenticatedHandler, IPaymentsHandler {
 
     IPaymentsApi paymentsApi;
+
+    @Override
+    public RequestScopes getRequestScopes() {
+        return RequestScopes.builder().scope(PAYMENTS).build();
+    }
 
     @Override
     public CompletableFuture<ApiResponse<CreatePaymentResponse>> createPayment(CreatePaymentRequest request) {

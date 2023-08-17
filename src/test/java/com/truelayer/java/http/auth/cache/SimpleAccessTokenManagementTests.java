@@ -6,13 +6,12 @@ import static org.mockito.Mockito.when;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-
-import com.truelayer.java.entities.RequestScopes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

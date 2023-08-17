@@ -2,8 +2,6 @@ package com.truelayer.java.http.auth.cache;
 
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
-
-import java.util.List;
 import java.util.Optional;
 
 public interface ICredentialsCache {
