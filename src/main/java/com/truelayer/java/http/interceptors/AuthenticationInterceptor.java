@@ -22,6 +22,7 @@ public class AuthenticationInterceptor implements Interceptor {
         RequestScopes requestedScopes = chain.request().tag(RequestScopes.class);
 
         if (ObjectUtils.isEmpty(requestedScopes) || requestedScopes.getScopes().isEmpty()) {
+            // usually this means that we're not using the interceptors on authenticated calls
             throw new TrueLayerException("Missing request scopes tag on the outgoing request");
         }
 
