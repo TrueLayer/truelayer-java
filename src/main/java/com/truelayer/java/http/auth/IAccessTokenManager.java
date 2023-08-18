@@ -17,5 +17,5 @@ public interface IAccessTokenManager {
     /**
      * Reset the state for access tokens. Called in case of 401 received by the API
      */
-    void invalidateToken();
+    void invalidateToken(String accessToken);
 }

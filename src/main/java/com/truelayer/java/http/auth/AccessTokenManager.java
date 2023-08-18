@@ -36,8 +36,8 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     @Override
     @Synchronized
-    public void invalidateToken() {
-        getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
+    public void invalidateToken(String accessToken) {
+        getCredentialsCache().ifPresent(iCredentialsCache -> iCredentialsCache.clearToken(accessToken));
     }
 
     private AccessToken tryGetToken(RequestScopes scopes) {

@@ -18,17 +18,18 @@ class AccessTokenInvalidatorTests {
     public void itShouldInvalidateAToken() {
         AccessTokenManager tokenManager = mock(AccessTokenManager.class);
         AccessTokenInvalidator sut = new AccessTokenInvalidator(tokenManager);
+        String accessToken = "a-token";
         Response response = mock(Response.class);
         when(response.request())
                 .thenReturn(new Request.Builder()
                         .url("http://localhost")
                         .get()
-                        .header(AUTHORIZATION, "a-token")
+                        .header(AUTHORIZATION, "Bearer " + accessToken)
                         .build());
 
         sut.authenticate(null, response);
 
-        verify(tokenManager, times(1)).invalidateToken();
+        verify(tokenManager, times(1)).invalidateToken(accessToken);
     }
 
     @SneakyThrows
@@ -43,6 +44,6 @@ class AccessTokenInvalidatorTests {
 
         sut.authenticate(null, response);
 
-        verify(tokenManager, never()).invalidateToken();
+        verify(tokenManager, never()).invalidateToken(anyString());
     }
 }

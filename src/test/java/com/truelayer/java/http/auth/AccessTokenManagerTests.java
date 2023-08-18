@@ -69,8 +69,11 @@ class AccessTokenManagerTests {
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
 
-        sut.invalidateToken();
+        AccessToken accessToken = buildAccessToken().getData();
+        cache.storeToken(SCOPES, accessToken);
 
-        verify(cache, times(1)).clearToken();
+        sut.invalidateToken(accessToken.getAccessToken());
+
+        verify(cache, times(1)).clearToken(accessToken.getAccessToken());
     }
 }
