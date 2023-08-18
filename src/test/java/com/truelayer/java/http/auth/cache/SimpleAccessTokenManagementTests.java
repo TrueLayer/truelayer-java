@@ -11,14 +11,14 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class SimpleAccessTokenManagementTests {
 
-    static final RequestScopes scopes = new RequestScopes(Collections.singletonList(Constants.Scopes.PAYMENTS));
+    static final RequestScopes scopes =
+            RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
 
     @Test
     @DisplayName("It should store a token record")

@@ -6,7 +6,9 @@ import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.truelayer.java.Constants;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.ListPaymentSourcesQuery;
 import com.truelayer.java.merchantaccounts.entities.ListTransactionsQuery;
@@ -21,7 +23,9 @@ import org.mockito.Mockito;
 
 class MerchantAccountsHandlerTests {
 
-    private static String A_MERCHANT_ACCOUNT_ID = "a-merchant-account-id";
+    private static final String A_MERCHANT_ACCOUNT_ID = "a-merchant-account-id";
+    private static final RequestScopes SCOPES =
+            RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
 
     @Test
     @DisplayName("It should call the list merchant accounts endpoint")
@@ -31,7 +35,7 @@ class MerchantAccountsHandlerTests {
 
         sut.listMerchantAccounts();
 
-        verify(merchantsApi, times(1)).listMerchantAccounts();
+        verify(merchantsApi, times(1)).listMerchantAccounts(SCOPES);
     }
 
     @Test
@@ -42,7 +46,7 @@ class MerchantAccountsHandlerTests {
 
         sut.getMerchantAccountById(A_MERCHANT_ACCOUNT_ID);
 
-        verify(merchantsApi, times(1)).getMerchantAccountById(A_MERCHANT_ACCOUNT_ID);
+        verify(merchantsApi, times(1)).getMerchantAccountById(SCOPES, A_MERCHANT_ACCOUNT_ID);
     }
 
     @Test
@@ -63,7 +67,11 @@ class MerchantAccountsHandlerTests {
 
         verify(merchantsApi, times(1))
                 .listTransactions(
-                        A_MERCHANT_ACCOUNT_ID, fromStr, DateTimeFormatter.ISO_ZONED_DATE_TIME.format(to), query.type());
+                        SCOPES,
+                        A_MERCHANT_ACCOUNT_ID,
+                        fromStr,
+                        DateTimeFormatter.ISO_ZONED_DATE_TIME.format(to),
+                        query.type());
     }
 
     @Test
@@ -76,7 +84,7 @@ class MerchantAccountsHandlerTests {
 
         sut.updateSweeping(A_MERCHANT_ACCOUNT_ID, request);
 
-        verify(merchantsApi, times(1)).updateSweeping(emptyMap(), A_MERCHANT_ACCOUNT_ID, request);
+        verify(merchantsApi, times(1)).updateSweeping(SCOPES, emptyMap(), A_MERCHANT_ACCOUNT_ID, request);
     }
 
     @Test
@@ -90,7 +98,7 @@ class MerchantAccountsHandlerTests {
 
         sut.updateSweeping(customHeaders, A_MERCHANT_ACCOUNT_ID, request);
 
-        verify(merchantsApi, times(1)).updateSweeping(toMap(customHeaders), A_MERCHANT_ACCOUNT_ID, request);
+        verify(merchantsApi, times(1)).updateSweeping(SCOPES, toMap(customHeaders), A_MERCHANT_ACCOUNT_ID, request);
     }
 
     @Test
@@ -101,7 +109,7 @@ class MerchantAccountsHandlerTests {
 
         sut.getSweepingSettings(A_MERCHANT_ACCOUNT_ID);
 
-        verify(merchantsApi, times(1)).getSweepingSettings(A_MERCHANT_ACCOUNT_ID);
+        verify(merchantsApi, times(1)).getSweepingSettings(SCOPES, A_MERCHANT_ACCOUNT_ID);
     }
 
     @Test
@@ -112,7 +120,7 @@ class MerchantAccountsHandlerTests {
 
         sut.disableSweeping(A_MERCHANT_ACCOUNT_ID);
 
-        verify(merchantsApi, times(1)).disableSweeping(emptyMap(), A_MERCHANT_ACCOUNT_ID);
+        verify(merchantsApi, times(1)).disableSweeping(SCOPES, emptyMap(), A_MERCHANT_ACCOUNT_ID);
     }
 
     @Test
@@ -124,7 +132,7 @@ class MerchantAccountsHandlerTests {
 
         sut.disableSweeping(customHeaders, A_MERCHANT_ACCOUNT_ID);
 
-        verify(merchantsApi, times(1)).disableSweeping(toMap(customHeaders), A_MERCHANT_ACCOUNT_ID);
+        verify(merchantsApi, times(1)).disableSweeping(SCOPES, toMap(customHeaders), A_MERCHANT_ACCOUNT_ID);
     }
 
     @Test
@@ -137,6 +145,6 @@ class MerchantAccountsHandlerTests {
 
         sut.listPaymentSources(A_MERCHANT_ACCOUNT_ID, query);
 
-        verify(merchantsApi, times(1)).listPaymentSources(A_MERCHANT_ACCOUNT_ID, query.userId());
+        verify(merchantsApi, times(1)).listPaymentSources(SCOPES, A_MERCHANT_ACCOUNT_ID, query.userId());
     }
 }

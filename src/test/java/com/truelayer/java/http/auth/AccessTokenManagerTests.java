@@ -21,45 +21,45 @@ import org.junit.jupiter.api.Test;
 class AccessTokenManagerTests {
 
     // FIXME: temp
-    private final List<String> REQUESTED_SCOPES =
-            Collections.unmodifiableList(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING));
+    private static final RequestScopes SCOPES = RequestScopes.builder()
+            .scope(PAYMENTS)
+            .scope(RECURRING_PAYMENTS_SWEEPING)
+            .build();
 
     @Test
     @DisplayName("It should get a cached token")
     public void itShouldGetACachedToken() {
-        RequestScopes scopes = new RequestScopes(REQUESTED_SCOPES);
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        when(cache.getToken(scopes)).thenReturn(Optional.of(expectedToken));
+        when(cache.getToken(SCOPES)).thenReturn(Optional.of(expectedToken));
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
 
-        AccessToken actualToken = sut.getToken(scopes);
+        AccessToken actualToken = sut.getToken(SCOPES);
 
         assertEquals(expectedToken, actualToken);
-        verify(cache, times(1)).getToken(scopes);
-        verify(authenticationHandler, never()).getOauthToken(eq(REQUESTED_SCOPES));
+        verify(cache, times(1)).getToken(SCOPES);
+        verify(authenticationHandler, never()).getOauthToken(eq(SCOPES.getScopes()));
     }
 
     @Test
     @DisplayName("It should get a new token and store it in cache")
     public void itShouldGetAFreshToken() {
-        RequestScopes scopes = new RequestScopes(REQUESTED_SCOPES);
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        when(cache.getToken(scopes)).thenReturn(Optional.empty());
+        when(cache.getToken(SCOPES)).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-        when(authenticationHandler.getOauthToken(eq(REQUESTED_SCOPES)))
+        when(authenticationHandler.getOauthToken(eq(SCOPES.getScopes())))
                 .thenReturn(CompletableFuture.completedFuture(
                         ApiResponse.<AccessToken>builder().data(expectedToken).build()));
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
 
-        AccessToken actualToken = sut.getToken(scopes);
+        AccessToken actualToken = sut.getToken(SCOPES);
 
         assertEquals(expectedToken, actualToken);
-        verify(cache, times(1)).getToken(scopes);
-        verify(authenticationHandler, times(1)).getOauthToken(eq(REQUESTED_SCOPES));
-        verify(cache, times(1)).storeToken(eq(scopes), eq(expectedToken));
+        verify(cache, times(1)).getToken(SCOPES);
+        verify(authenticationHandler, times(1)).getOauthToken(eq(SCOPES.getScopes()));
+        verify(cache, times(1)).storeToken(eq(SCOPES), eq(expectedToken));
     }
 
     @Test

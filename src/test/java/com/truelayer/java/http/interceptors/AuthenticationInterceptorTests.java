@@ -11,17 +11,21 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
+import okhttp3.Request;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class AuthenticationInterceptorTests extends BaseInterceptorTests {
 
@@ -32,24 +36,16 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         return this.interceptor;
     }
 
-    @BeforeEach
-    public void prepareTest() {
-        arrangeRequest();
-    }
-
-    @Test
-    @DisplayName("It should add an authorization header to the original request")
-    public void shouldAddAuthorizationHeader() {
+    @ParameterizedTest(name = "scopes={0}")
+    @MethodSource("provideInvalidScopesTag")
+    @DisplayName("It should throw an exception if request scopes are")
+    public void shouldThrowExceptionIfRequestScopesMissing(RequestScopes scopes) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.get("http://localhost"))
+                .tag(RequestScopes.class, scopes)
+                .build();
+        arrangeRequest(request);
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
-
-        // FIXME: temp
-        List<String> scopes = Collections.unmodifiableList(
-                Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
-
-        ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
-        when(authenticationHandler.getOauthToken(scopes))
-                .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
-
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
                 .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
@@ -57,23 +53,18 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
 
         this.interceptor = new AuthenticationInterceptor(accessTokenManager);
 
-        intercept();
+        Throwable thrown = Assertions.assertThrows(TrueLayerException.class, this::intercept);
 
-        verifyThat(request -> assertEquals(
-                "Bearer " + expectedAccessToken.getData().getAccessToken(),
-                request.header(Constants.HeaderNames.AUTHORIZATION)));
+        assertTrue(thrown.getMessage().startsWith("Missing request scopes tag on the outgoing request"));
     }
 
     @Test
     @DisplayName("It should throw an exception if authentication fails")
-    public void shouldThrowException() {
+    public void shouldThrowExceptionIfAuthenticationFails() {
+        arrangeRequest();
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
 
-        // FIXME: temp
-        List<String> scopes = Collections.unmodifiableList(
-                Arrays.asList(Constants.Scopes.PAYMENTS, Constants.Scopes.RECURRING_PAYMENTS_SWEEPING));
-
-        when(authenticationHandler.getOauthToken(scopes))
+        when(authenticationHandler.getOauthToken(SCOPES.getScopes()))
                 .thenReturn(CompletableFuture.completedFuture(ApiResponse.<AccessToken>builder()
                         .error(ProblemDetails.builder()
                                 .type("error")
@@ -91,5 +82,33 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         Throwable thrown = Assertions.assertThrows(TrueLayerException.class, this::intercept);
 
         assertTrue(thrown.getMessage().startsWith("Unable to authenticate request"));
+    }
+
+    @Test
+    @DisplayName("It should add an authorization header to the original request")
+    public void shouldAddAuthorizationHeader() {
+        arrangeRequest();
+        IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
+
+        ApiResponse<AccessToken> expectedAccessToken = TestUtils.buildAccessToken();
+        when(authenticationHandler.getOauthToken(SCOPES.getScopes()))
+                .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
+
+        AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
+                .authenticationHandler(authenticationHandler)
+                .build();
+
+        this.interceptor = new AuthenticationInterceptor(accessTokenManager);
+
+        intercept();
+
+        verifyThat(request -> assertEquals(
+                "Bearer " + expectedAccessToken.getData().getAccessToken(),
+                request.header(Constants.HeaderNames.AUTHORIZATION)));
+    }
+
+    public static Stream<Arguments> provideInvalidScopesTag() {
+        return Stream.of(null, Arguments.of(RequestScopes.builder().build()));
     }
 }

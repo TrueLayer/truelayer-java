@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payouts.entities.CreatePayoutRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +17,9 @@ import org.mockito.Mockito;
 
 class PayoutsHandlerTests {
 
-    private static String A_PAYOUT_ID = "a-payout-id";
+    private static final String A_PAYOUT_ID = "a-payout-id";
+    private static final RequestScopes SCOPES =
+            RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
 
     @Test
     @DisplayName("It should call the create payout endpoint with empty headers map")
@@ -27,7 +31,7 @@ class PayoutsHandlerTests {
 
         sut.createPayout(request);
 
-        verify(payoutsApi, times(1)).createPayout(emptyMap(), request);
+        verify(payoutsApi, times(1)).createPayout(SCOPES, emptyMap(), request);
     }
 
     @Test
@@ -41,7 +45,7 @@ class PayoutsHandlerTests {
 
         sut.createPayout(customHeaders, request);
 
-        verify(payoutsApi, times(1)).createPayout(toMap(customHeaders), request);
+        verify(payoutsApi, times(1)).createPayout(SCOPES, toMap(customHeaders), request);
     }
 
     @Test
@@ -52,6 +56,6 @@ class PayoutsHandlerTests {
 
         sut.getPayout(A_PAYOUT_ID);
 
-        verify(payoutsApi, times(1)).getPayout(A_PAYOUT_ID);
+        verify(payoutsApi, times(1)).getPayout(SCOPES, A_PAYOUT_ID);
     }
 }

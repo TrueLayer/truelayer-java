@@ -6,8 +6,10 @@ import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.entities.EmptyRequestBody;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.*;
 import java.util.Collections;
@@ -19,6 +21,8 @@ class PaymentsHandlerTests {
 
     private static final String A_PAYMENT_ID = "a-payment-id";
     private static final String A_REFUND_ID = "a-refund-id";
+    private static final RequestScopes SCOPES =
+            RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
 
     @Test
     @DisplayName("It should call the create payment endpoint")
@@ -29,7 +33,7 @@ class PaymentsHandlerTests {
 
         sut.createPayment(request);
 
-        verify(paymentsApi, times(1)).createPayment(emptyMap(), request);
+        verify(paymentsApi, times(1)).createPayment(SCOPES, emptyMap(), request);
     }
 
     @Test
@@ -42,7 +46,7 @@ class PaymentsHandlerTests {
 
         sut.createPayment(customHeaders, request);
 
-        verify(paymentsApi, times(1)).createPayment(toMap(customHeaders), request);
+        verify(paymentsApi, times(1)).createPayment(SCOPES, toMap(customHeaders), request);
     }
 
     @Test
@@ -53,7 +57,7 @@ class PaymentsHandlerTests {
 
         sut.getPayment(A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).getPayment(A_PAYMENT_ID);
+        verify(paymentsApi, times(1)).getPayment(SCOPES, A_PAYMENT_ID);
     }
 
     @Test
@@ -66,7 +70,7 @@ class PaymentsHandlerTests {
 
         sut.startAuthorizationFlow(A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).startAuthorizationFlow(emptyMap(), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).startAuthorizationFlow(SCOPES, emptyMap(), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -80,7 +84,7 @@ class PaymentsHandlerTests {
 
         sut.startAuthorizationFlow(customHeaders, A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).startAuthorizationFlow(toMap(customHeaders), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).startAuthorizationFlow(SCOPES, toMap(customHeaders), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -94,7 +98,7 @@ class PaymentsHandlerTests {
 
         sut.submitProviderSelection(A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).submitProviderSelection(emptyMap(), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitProviderSelection(SCOPES, emptyMap(), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -109,7 +113,7 @@ class PaymentsHandlerTests {
 
         sut.submitProviderSelection(customHeaders, A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).submitProviderSelection(toMap(customHeaders), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitProviderSelection(SCOPES, toMap(customHeaders), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -120,7 +124,7 @@ class PaymentsHandlerTests {
 
         sut.submitConsent(A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).submitConsent(emptyMap(), A_PAYMENT_ID, new EmptyRequestBody());
+        verify(paymentsApi, times(1)).submitConsent(SCOPES, emptyMap(), A_PAYMENT_ID, new EmptyRequestBody());
     }
 
     @Test
@@ -132,7 +136,7 @@ class PaymentsHandlerTests {
 
         sut.submitConsent(customHeaders, A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).submitConsent(toMap(customHeaders), A_PAYMENT_ID, new EmptyRequestBody());
+        verify(paymentsApi, times(1)).submitConsent(SCOPES, toMap(customHeaders), A_PAYMENT_ID, new EmptyRequestBody());
     }
 
     @Test
@@ -145,7 +149,7 @@ class PaymentsHandlerTests {
 
         sut.submitForm(A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).submitForm(emptyMap(), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitForm(SCOPES, emptyMap(), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -159,7 +163,7 @@ class PaymentsHandlerTests {
 
         sut.submitForm(customHeaders, A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).submitForm(toMap(customHeaders), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).submitForm(SCOPES, toMap(customHeaders), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -172,7 +176,7 @@ class PaymentsHandlerTests {
 
         sut.createPaymentRefund(A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).createPaymentRefund(emptyMap(), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).createPaymentRefund(SCOPES, emptyMap(), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -186,7 +190,7 @@ class PaymentsHandlerTests {
 
         sut.createPaymentRefund(customHeaders, A_PAYMENT_ID, request);
 
-        verify(paymentsApi, times(1)).createPaymentRefund(toMap(customHeaders), A_PAYMENT_ID, request);
+        verify(paymentsApi, times(1)).createPaymentRefund(SCOPES, toMap(customHeaders), A_PAYMENT_ID, request);
     }
 
     @Test
@@ -197,7 +201,7 @@ class PaymentsHandlerTests {
 
         sut.listPaymentRefunds(A_PAYMENT_ID);
 
-        verify(paymentsApi, times(1)).listPaymentRefunds(A_PAYMENT_ID);
+        verify(paymentsApi, times(1)).listPaymentRefunds(SCOPES, A_PAYMENT_ID);
     }
 
     @Test
@@ -208,6 +212,6 @@ class PaymentsHandlerTests {
 
         sut.getPaymentRefundById(A_PAYMENT_ID, A_REFUND_ID);
 
-        verify(paymentsApi, times(1)).getPaymentRefundById(A_PAYMENT_ID, A_REFUND_ID);
+        verify(paymentsApi, times(1)).getPaymentRefundById(SCOPES, A_PAYMENT_ID, A_REFUND_ID);
     }
 }

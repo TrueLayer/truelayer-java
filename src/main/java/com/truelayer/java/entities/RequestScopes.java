@@ -6,6 +6,7 @@ import lombok.*;
 @Getter
 @Builder
 @EqualsAndHashCode
+@ToString
 public class RequestScopes {
     @Singular
     private final List<String> scopes;
