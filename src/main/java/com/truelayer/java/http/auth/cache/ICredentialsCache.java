@@ -21,5 +21,5 @@ public interface ICredentialsCache {
     /**
      * Resets the cache
      */
-    void clearToken();
+    void clearToken(String accessToken);
 }

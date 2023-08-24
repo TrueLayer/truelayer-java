@@ -16,11 +16,10 @@ public class AccessTokenInvalidator implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) {
-        // TODO: can we invalidate a specific token in memory as opposed to all ?
-
         if (isNotEmpty(response.request().header(AUTHORIZATION))) {
             // we are here in case of 401 on requests containing an Authorization HTTP header
-            tokenManager.invalidateToken();
+            String accessToken = response.request().header(AUTHORIZATION);
+            tokenManager.invalidateToken(accessToken.replace("Bearer", "").trim());
         }
         return null;
     }

@@ -56,8 +56,12 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     }
 
     @Override
-    public void clearToken() {
-        tokenRecords = new HashMap<>();
+    public void clearToken(String accessToken) {
+        // TODO: test
+        tokenRecords.entrySet().stream()
+                .filter(entry -> entry.getValue().token.getAccessToken().equalsIgnoreCase(accessToken))
+                .findFirst()
+                .ifPresent(tokenRecord -> tokenRecords.remove(tokenRecord.getKey()));
     }
 
     @Getter

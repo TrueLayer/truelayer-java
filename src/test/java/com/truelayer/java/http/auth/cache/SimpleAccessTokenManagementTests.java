@@ -36,9 +36,10 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should clear a token record")
     public void itShouldClearTheExistingToken() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        sut.storeToken(scopes, buildAccessToken().getData());
+        AccessToken accessToken = buildAccessToken().getData();
+        sut.storeToken(scopes, accessToken);
 
-        sut.clearToken();
+        sut.clearToken(accessToken.getAccessToken());
 
         assertFalse(sut.getToken(scopes).isPresent());
     }
