@@ -14,11 +14,17 @@ import com.truelayer.java.merchantaccounts.entities.ListPaymentSourcesQuery;
 import com.truelayer.java.merchantaccounts.entities.ListTransactionsQuery;
 import com.truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 class MerchantAccountsHandlerTests {
@@ -49,16 +55,15 @@ class MerchantAccountsHandlerTests {
         verify(merchantsApi, times(1)).getMerchantAccountById(SCOPES, A_MERCHANT_ACCOUNT_ID);
     }
 
-    @Test
     @DisplayName("It should call the list transactions endpoint")
-    public void shouldCallListTransactionsEndpoint() {
+    @ParameterizedTest(name = "with from={0} and to={1}")
+    @MethodSource("provideFromAndToParameters")
+    public void shouldCallListTransactionsEndpoint(ZonedDateTime from, ZonedDateTime to) {
         IMerchantAccountsApi merchantsApi = Mockito.mock(IMerchantAccountsApi.class);
         MerchantAccountsHandler sut = new MerchantAccountsHandler(merchantsApi);
-        String fromStr = "2021-02-20T06:30:00Z";
-        ZonedDateTime to = ZonedDateTime.now(ZoneId.of("UTC"));
 
         ListTransactionsQuery query = ListTransactionsQuery.builder()
-                .from(ZonedDateTime.parse(fromStr))
+                .from(from)
                 .to(to)
                 .type(TransactionTypeQuery.PAYOUT)
                 .build();
@@ -69,8 +74,8 @@ class MerchantAccountsHandlerTests {
                 .listTransactions(
                         SCOPES,
                         A_MERCHANT_ACCOUNT_ID,
-                        fromStr,
-                        DateTimeFormatter.ISO_ZONED_DATE_TIME.format(to),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(from),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(to),
                         query.type());
     }
 
@@ -146,5 +151,17 @@ class MerchantAccountsHandlerTests {
         sut.listPaymentSources(A_MERCHANT_ACCOUNT_ID, query);
 
         verify(merchantsApi, times(1)).listPaymentSources(SCOPES, A_MERCHANT_ACCOUNT_ID, query.userId());
+    }
+
+    private static Stream<Arguments> provideFromAndToParameters() {
+        return Stream.of(
+                Arguments.of(ZonedDateTime.now(), ZonedDateTime.now().plusMonths(-12)),
+                Arguments.of(
+                        ZonedDateTime.now(ZoneId.of("Europe/Paris")),
+                        ZonedDateTime.now(ZoneId.of("Europe/Paris")).plusMonths(-12)),
+                Arguments.of(
+                        ZonedDateTime.of(LocalDate.of(2021, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
+                        ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("UTC"))),
+                Arguments.of(ZonedDateTime.parse("2021-03-01T00:00:00Z"), ZonedDateTime.parse("2022-03-01T00:00:00Z")));
     }
 }
