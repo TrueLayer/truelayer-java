@@ -36,12 +36,9 @@ public class MerchantAccountsHandler implements IAuthenticatedHandler, IMerchant
     @Override
     public CompletableFuture<ApiResponse<ListTransactionsResponse>> listTransactions(
             String merchantAccountId, ListTransactionsQuery query) {
-        return merchantAccountsApi.listTransactions(
-                getRequestScopes(),
-                merchantAccountId,
-                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.from()),
-                DateTimeFormatter.ISO_ZONED_DATE_TIME.format(query.to()),
-                query.type());
+        String from = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(query.from());
+        String to = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(query.to());
+        return merchantAccountsApi.listTransactions(getRequestScopes(), merchantAccountId, from, to, query.type());
     }
 
     @Override
