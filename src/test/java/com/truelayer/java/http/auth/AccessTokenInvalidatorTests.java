@@ -5,7 +5,6 @@ import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.truelayer.java.Constants;
 import com.truelayer.java.entities.RequestScopes;
 import lombok.SneakyThrows;
 import okhttp3.Request;
@@ -22,10 +21,7 @@ class AccessTokenInvalidatorTests {
         AccessTokenManager tokenManager = mock(AccessTokenManager.class);
         AccessTokenInvalidator sut = new AccessTokenInvalidator(tokenManager);
         String accessToken = "a-token";
-        RequestScopes requestScopes = RequestScopes
-                .builder()
-                .scope(PAYMENTS)
-                .build();
+        RequestScopes requestScopes = RequestScopes.builder().scope(PAYMENTS).build();
         Response response = mock(Response.class);
         when(response.request())
                 .thenReturn(new Request.Builder()

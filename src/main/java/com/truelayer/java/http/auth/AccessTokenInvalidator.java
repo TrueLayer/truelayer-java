@@ -21,8 +21,8 @@ public class AccessTokenInvalidator implements Authenticator {
         if (isNotEmpty(response.request().header(AUTHORIZATION))) {
             // we are here in case of 401 on requests containing an Authorization HTTP header
             RequestScopes requestedScopes = response.request().tag(RequestScopes.class);
-            if (ObjectUtils.isNotEmpty(requestedScopes) && !requestedScopes.getScopes().isEmpty())
-                tokenManager.invalidateToken(requestedScopes);
+            if (ObjectUtils.isNotEmpty(requestedScopes)
+                    && !requestedScopes.getScopes().isEmpty()) tokenManager.invalidateToken(requestedScopes);
         }
         return null;
     }

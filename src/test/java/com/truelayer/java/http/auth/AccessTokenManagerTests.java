@@ -25,9 +25,7 @@ class AccessTokenManagerTests {
     public void itShouldGetACachedToken() {
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        RequestScopes scopes = RequestScopes.builder()
-                .scope(PAYMENTS)
-                .build();
+        RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
         when(cache.getToken(scopes)).thenReturn(Optional.of(expectedToken));
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
@@ -44,9 +42,7 @@ class AccessTokenManagerTests {
     public void itShouldGetAFreshTokenWhenRequestedScopesAreNotCached() {
         AccessToken expectedToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        RequestScopes scopes = RequestScopes.builder()
-                .scope(PAYMENTS)
-                .build();
+        RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
         when(cache.getToken(scopes)).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         when(authenticationHandler.getOauthToken(eq(scopes.getScopes())))
@@ -68,12 +64,9 @@ class AccessTokenManagerTests {
         AccessToken expectedToken = buildAccessToken().getData();
         AccessToken storedPaymentsToken = buildAccessToken().getData();
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
-        RequestScopes paymentsScopes = RequestScopes.builder()
-                .scope(PAYMENTS)
-                .build();
-        RequestScopes vrpScopes = RequestScopes.builder()
-                .scope(RECURRING_PAYMENTS_SWEEPING)
-                .build();
+        RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
+        RequestScopes vrpScopes =
+                RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
         when(cache.getToken(paymentsScopes)).thenReturn(Optional.of(storedPaymentsToken));
         when(cache.getToken(vrpScopes)).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
@@ -96,9 +89,7 @@ class AccessTokenManagerTests {
         ICredentialsCache cache = mock(SimpleCredentialsCache.class);
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
-        RequestScopes scopes = RequestScopes.builder()
-                .scope(PAYMENTS)
-                .build();
+        RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
         AccessToken accessToken = buildAccessToken().getData();
         cache.storeToken(scopes, accessToken);

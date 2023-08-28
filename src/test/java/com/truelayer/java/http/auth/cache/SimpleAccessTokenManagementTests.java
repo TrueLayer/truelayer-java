@@ -6,24 +6,20 @@ import static com.truelayer.java.TestUtils.buildAccessToken;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.truelayer.java.Constants;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class SimpleAccessTokenManagementTests {
 
-    static final RequestScopes scopes =
-            RequestScopes.builder().scope(PAYMENTS).build();
+    static final RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
     @Test
     @DisplayName("It should store a token record")
@@ -89,14 +85,9 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should yield different tokens with different scopes")
     public void itShouldYieldDifferentTokensWithDifferentScopes() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        RequestScopes paymentsScopes =
-                RequestScopes.builder()
-                        .scope(PAYMENTS)
-                        .build();
+        RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
-                RequestScopes.builder()
-                        .scope(RECURRING_PAYMENTS_SWEEPING)
-                        .build();
+                RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
 
         AccessToken paymentsAccessToken = buildAccessToken().getData();
         AccessToken vrpAccessToken = buildAccessToken().getData();
@@ -114,14 +105,12 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should yield the token with same scopes in different order")
     public void itShouldYieldTokenWithSameScopesInDifferentOrder() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        RequestScopes storingScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
-                        .build();
-        RequestScopes requestingScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
-                        .build();
+        RequestScopes storingScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                .build();
+        RequestScopes requestingScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                .build();
 
         AccessToken accessToken = buildAccessToken().getData();
 
@@ -135,14 +124,12 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should replace the token with same scopes in different order")
     public void itShouldReplaceTheTokenWithSameScopesInDifferentOrder() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        RequestScopes orderedStoringScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
-                        .build();
-        RequestScopes reverseOrderedStoringScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
-                        .build();
+        RequestScopes orderedStoringScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                .build();
+        RequestScopes reverseOrderedStoringScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                .build();
 
         AccessToken anAccessToken = buildAccessToken().getData();
         AccessToken anotherAccessToken = buildAccessToken().getData();
@@ -158,14 +145,9 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should clear the cache only for the required scopes")
     public void itShouldClearTheCacheOnlyForRequiredScopes() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        RequestScopes paymentsScopes =
-                RequestScopes.builder()
-                        .scope(PAYMENTS)
-                        .build();
+        RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
-                RequestScopes.builder()
-                        .scope(RECURRING_PAYMENTS_SWEEPING)
-                        .build();
+                RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
 
         AccessToken paymentsAccessToken = buildAccessToken().getData();
         AccessToken vrpAccessToken = buildAccessToken().getData();
@@ -183,14 +165,12 @@ class SimpleAccessTokenManagementTests {
     @DisplayName("It should clear the cache with same scopes in different order")
     public void itShouldClearTheCacheWithSameScopesInDifferentOrder() {
         SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
-        RequestScopes storingScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
-                        .build();
-        RequestScopes clearCacheScopes =
-                RequestScopes.builder()
-                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
-                        .build();
+        RequestScopes storingScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                .build();
+        RequestScopes clearCacheScopes = RequestScopes.builder()
+                .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                .build();
 
         AccessToken accessToken = buildAccessToken().getData();
 
