@@ -7,6 +7,7 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.commonapi.ICommonHandler;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
@@ -40,6 +41,11 @@ import okhttp3.OkHttpClient;
  */
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
+
+    /**
+     * Optional configuration for custom scopes used by the client globally
+     */
+    private RequestScopes defaultScopes;
 
     private SigningOptions signingOptions;
 
@@ -90,6 +96,12 @@ public class TrueLayerClientBuilder {
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = signingOptions;
+        return this;
+    }
+
+    // TODO javadoc
+    public TrueLayerClientBuilder withDefaultScopes(RequestScopes defaultScopes) {
+        this.defaultScopes = defaultScopes;
         return this;
     }
 
@@ -228,7 +240,13 @@ public class TrueLayerClientBuilder {
 
         IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
-        IPaymentsHandler paymentsHandler = new PaymentsHandler(paymentsApi);
+
+        PaymentsHandler.PaymentsHandlerBuilder paymentsHandlerBuilder =
+                PaymentsHandler.builder().paymentsApi(paymentsApi);
+        if (customScopesPresent()) {
+            paymentsHandlerBuilder.scopes(defaultScopes);
+        }
+        IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
         IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
                 .clientCredentials(clientCredentials)
@@ -257,5 +275,9 @@ public class TrueLayerClientBuilder {
                 payoutsHandler,
                 commonHandler,
                 hppLinkBuilder);
+    }
+
+    private boolean customScopesPresent() {
+        return !isEmpty(defaultScopes) && !isEmpty(defaultScopes.getScopes());
     }
 }

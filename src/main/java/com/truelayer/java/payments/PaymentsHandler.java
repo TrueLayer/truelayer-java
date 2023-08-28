@@ -13,16 +13,19 @@ import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import java.util.concurrent.CompletableFuture;
-import lombok.Value;
+import lombok.Builder;
 
-@Value
+@Builder
 public class PaymentsHandler implements IAuthenticatedHandler, IPaymentsHandler {
 
-    IPaymentsApi paymentsApi;
+    private IPaymentsApi paymentsApi;
+
+    @Builder.Default
+    private RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
     @Override
     public RequestScopes getRequestScopes() {
-        return RequestScopes.builder().scope(PAYMENTS).build();
+        return scopes;
     }
 
     @Override
