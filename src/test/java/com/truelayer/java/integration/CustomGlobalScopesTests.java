@@ -36,7 +36,7 @@ public class CustomGlobalScopesTests extends IntegrationTests {
         tlClient = TrueLayerClient.New()
                 .clientCredentials(getClientCredentials())
                 .signingOptions(TestUtils.getSigningOptions())
-                .withDefaultScopes(RequestScopes.builder().scopes(CUSTOM_SCOPES).build())
+                .withGlobalScopes(RequestScopes.builder().scopes(CUSTOM_SCOPES).build())
                 .environment(testEnvironment)
                 .withCredentialsCaching()
                 .build();

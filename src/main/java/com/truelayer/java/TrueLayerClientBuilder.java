@@ -43,10 +43,7 @@ import okhttp3.OkHttpClient;
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
 
-    /**
-     * Optional configuration for custom scopes used by the client globally
-     */
-    private RequestScopes defaultScopes;
+    private RequestScopes globalScopes;
 
     private SigningOptions signingOptions;
 
@@ -91,7 +88,7 @@ public class TrueLayerClientBuilder {
 
     /**
      * Utility to set the signing options required for payments.
-     * @param signingOptions the signing options object that holds signature related informations.
+     * @param signingOptions the signing options object that holds signature related information.
      * @return the instance of the client builder used.
      * @see SigningOptions
      */
@@ -100,9 +97,15 @@ public class TrueLayerClientBuilder {
         return this;
     }
 
-    // TODO javadoc
-    public TrueLayerClientBuilder withDefaultScopes(RequestScopes defaultScopes) {
-        this.defaultScopes = defaultScopes;
+    /**
+     * Utility to set custom global scopes used by the library. If used, the specified scopes will override the
+     * default scopes used by the library. If using this option, make sure to set valid scopes for all the API interactions
+     * that your integration will have.
+     * @param globalScopes custom global scopes to be used by the library for all authenticated endpoints.
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withGlobalScopes(RequestScopes globalScopes) {
+        this.globalScopes = globalScopes;
         return this;
     }
 
@@ -245,7 +248,7 @@ public class TrueLayerClientBuilder {
         PaymentsHandler.PaymentsHandlerBuilder paymentsHandlerBuilder =
                 PaymentsHandler.builder().paymentsApi(paymentsApi);
         if (customScopesPresent()) {
-            paymentsHandlerBuilder.scopes(defaultScopes);
+            paymentsHandlerBuilder.scopes(globalScopes);
         }
         IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
@@ -279,6 +282,6 @@ public class TrueLayerClientBuilder {
     }
 
     private boolean customScopesPresent() {
-        return isNotEmpty(defaultScopes) && isNotEmpty(defaultScopes.getScopes());
+        return isNotEmpty(globalScopes) && isNotEmpty(globalScopes.getScopes());
     }
 }
