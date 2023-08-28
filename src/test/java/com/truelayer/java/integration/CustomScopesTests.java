@@ -24,7 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class CustomScopeTests extends IntegrationTests {
+public class CustomScopesTests extends IntegrationTests {
     private static final List<String> CUSTOM_SCOPES =
             Collections.unmodifiableList(Arrays.asList(Constants.Scopes.PAYMENTS, "signupplus"));
 
@@ -43,9 +43,9 @@ public class CustomScopeTests extends IntegrationTests {
     }
 
     @Test
-    @DisplayName("It should create a payment with custom scopes")
+    @DisplayName("It should create a payment using the global custom scopes")
     @SneakyThrows
-    public void shouldCreateAPaymentWithCustomScopes() {
+    public void shouldCreateAPaymentWithGlobalCustomScopes() {
         stubGenerateTokenRequest();
         RequestStub.New()
                 .method("post")
