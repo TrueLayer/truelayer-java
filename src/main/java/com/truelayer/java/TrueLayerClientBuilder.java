@@ -260,7 +260,12 @@ public class TrueLayerClientBuilder {
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
-        IMerchantAccountsHandler merchantAccountsHandler = new MerchantAccountsHandler(merchantAccountsApi);
+        MerchantAccountsHandler.MerchantAccountsHandlerBuilder merchantAccountsHandlerBuilder =
+                MerchantAccountsHandler.builder().merchantAccountsApi(merchantAccountsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IMerchantAccountsHandler merchantAccountsHandler = merchantAccountsHandlerBuilder.build();
 
         IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);
@@ -273,7 +278,12 @@ public class TrueLayerClientBuilder {
 
         IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPayoutsApi.class);
-        IPayoutsHandler payoutsHandler = new PayoutsHandler(payoutsApi);
+        PayoutsHandler.PayoutsHandlerBuilder payoutsHandlerBuilder =
+                PayoutsHandler.builder().payoutsApi(payoutsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IPayoutsHandler payoutsHandler = payoutsHandlerBuilder.build();
 
         return new TrueLayerClient(
                 authenticationHandler,

@@ -67,7 +67,7 @@ class MandatesHandlerTests {
     }
 
     @Test
-    @DisplayName("It should call the create payment endpoint with the default scopes")
+    @DisplayName("It should call the create mandate endpoint with the default scopes")
     public void shouldCallCreateAMandateWithDefaultScopes() {
         MandatesHandler sut =
                 MandatesHandler.builder().mandatesApi(mandatesApiMock).build();
