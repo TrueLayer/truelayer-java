@@ -10,12 +10,14 @@ public interface IAccessTokenManager {
 
     /**
      * Gets either a cached or a fresh token based on internal decisions.
+     * @param scopes the requested scopes
      * @return the access token
      */
     AccessToken getToken(RequestScopes scopes);
 
     /**
-     * Reset the state for access tokens. Called in case of 401 received by the API
+     * Reset the state for access token related to requested scopes. Called in case of 401 received by the API
+     * @param scopes the requested scopes
      */
-    void invalidateToken(String accessToken);
+    void invalidateToken(RequestScopes scopes);
 }

@@ -1,5 +1,7 @@
 package com.truelayer.java.http.auth.cache;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
+import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_SWEEPING;
 import static com.truelayer.java.TestUtils.buildAccessToken;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -11,6 +13,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,7 +23,7 @@ import org.mockito.Mockito;
 class SimpleAccessTokenManagementTests {
 
     static final RequestScopes scopes =
-            RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
+            RequestScopes.builder().scope(PAYMENTS).build();
 
     @Test
     @DisplayName("It should store a token record")
@@ -39,7 +44,7 @@ class SimpleAccessTokenManagementTests {
         AccessToken accessToken = buildAccessToken().getData();
         sut.storeToken(scopes, accessToken);
 
-        sut.clearToken(accessToken.getAccessToken());
+        sut.clearToken(scopes);
 
         assertFalse(sut.getToken(scopes).isPresent());
     }
@@ -78,5 +83,120 @@ class SimpleAccessTokenManagementTests {
         sut.storeToken(scopes, buildAccessToken().getData());
 
         assertTrue(sut.getToken(scopes).isPresent());
+    }
+
+    @Test
+    @DisplayName("It should yield different tokens with different scopes")
+    public void itShouldYieldDifferentTokensWithDifferentScopes() {
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        RequestScopes paymentsScopes =
+                RequestScopes.builder()
+                        .scope(PAYMENTS)
+                        .build();
+        RequestScopes vrpScopes =
+                RequestScopes.builder()
+                        .scope(RECURRING_PAYMENTS_SWEEPING)
+                        .build();
+
+        AccessToken paymentsAccessToken = buildAccessToken().getData();
+        AccessToken vrpAccessToken = buildAccessToken().getData();
+
+        sut.storeToken(paymentsScopes, paymentsAccessToken);
+        sut.storeToken(vrpScopes, vrpAccessToken);
+
+        assertTrue(sut.getToken(paymentsScopes).isPresent());
+        assertEquals(paymentsAccessToken, sut.getToken(paymentsScopes).get());
+        assertTrue(sut.getToken(vrpScopes).isPresent());
+        assertEquals(vrpAccessToken, sut.getToken(vrpScopes).get());
+    }
+
+    @Test
+    @DisplayName("It should yield the token with same scopes in different order")
+    public void itShouldYieldTokenWithSameScopesInDifferentOrder() {
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        RequestScopes storingScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                        .build();
+        RequestScopes requestingScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                        .build();
+
+        AccessToken accessToken = buildAccessToken().getData();
+
+        sut.storeToken(storingScopes, accessToken);
+
+        assertTrue(sut.getToken(requestingScopes).isPresent());
+        assertEquals(accessToken, sut.getToken(requestingScopes).get());
+    }
+
+    @Test
+    @DisplayName("It should replace the token with same scopes in different order")
+    public void itShouldReplaceTheTokenWithSameScopesInDifferentOrder() {
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        RequestScopes orderedStoringScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                        .build();
+        RequestScopes reverseOrderedStoringScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                        .build();
+
+        AccessToken anAccessToken = buildAccessToken().getData();
+        AccessToken anotherAccessToken = buildAccessToken().getData();
+
+        sut.storeToken(orderedStoringScopes, anAccessToken);
+        sut.storeToken(reverseOrderedStoringScopes, anotherAccessToken);
+
+        assertTrue(sut.getToken(orderedStoringScopes).isPresent());
+        assertEquals(anotherAccessToken, sut.getToken(orderedStoringScopes).get());
+    }
+
+    @Test
+    @DisplayName("It should clear the cache only for the required scopes")
+    public void itShouldClearTheCacheOnlyForRequiredScopes() {
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        RequestScopes paymentsScopes =
+                RequestScopes.builder()
+                        .scope(PAYMENTS)
+                        .build();
+        RequestScopes vrpScopes =
+                RequestScopes.builder()
+                        .scope(RECURRING_PAYMENTS_SWEEPING)
+                        .build();
+
+        AccessToken paymentsAccessToken = buildAccessToken().getData();
+        AccessToken vrpAccessToken = buildAccessToken().getData();
+
+        sut.storeToken(paymentsScopes, paymentsAccessToken);
+        sut.storeToken(vrpScopes, vrpAccessToken);
+
+        sut.clearToken(paymentsScopes);
+
+        assertFalse(sut.getToken(paymentsScopes).isPresent());
+        assertTrue(sut.getToken(vrpScopes).isPresent());
+    }
+
+    @Test
+    @DisplayName("It should clear the cache with same scopes in different order")
+    public void itShouldClearTheCacheWithSameScopesInDifferentOrder() {
+        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        RequestScopes storingScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
+                        .build();
+        RequestScopes clearCacheScopes =
+                RequestScopes.builder()
+                        .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
+                        .build();
+
+        AccessToken accessToken = buildAccessToken().getData();
+
+        sut.storeToken(storingScopes, accessToken);
+        sut.clearToken(clearCacheScopes);
+
+        assertFalse(sut.getToken(storingScopes).isPresent());
     }
 }

@@ -72,8 +72,8 @@ class AccessTokenManagerTests {
         AccessToken accessToken = buildAccessToken().getData();
         cache.storeToken(SCOPES, accessToken);
 
-        sut.invalidateToken(accessToken.getAccessToken());
+        sut.invalidateToken(SCOPES);
 
-        verify(cache, times(1)).clearToken(accessToken.getAccessToken());
+        verify(cache, times(1)).clearToken(SCOPES);
     }
 }
