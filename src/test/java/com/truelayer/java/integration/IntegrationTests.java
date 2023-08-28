@@ -36,17 +36,13 @@ public abstract class IntegrationTests {
      * @param expectedScopes the scopes that we expect to be declared by the library
      */
     protected void verifyGeneratedToken(List<String> expectedScopes) {
-        verify(
-                1,
-                postRequestedFor(urlPathEqualTo("/connect/token"))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_id", equalTo(getClientCredentials().clientId())))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_secret",
-                                equalTo(getClientCredentials().clientSecret())))
-                        .withRequestBody(matchingJsonPath("$.scope", equalTo(String.join(" ", expectedScopes))))
-                        .withRequestBody(matchingJsonPath(
-                                "$.grant_type",
-                                equalTo(GenerateOauthTokenRequest.GrantType.CLIENT_CREDENTIALS.getType()))));
+        verify(postRequestedFor(urlPathEqualTo("/connect/token"))
+                .withRequestBody(matchingJsonPath(
+                        "$.client_id", equalTo(getClientCredentials().clientId())))
+                .withRequestBody(matchingJsonPath(
+                        "$.client_secret", equalTo(getClientCredentials().clientSecret())))
+                .withRequestBody(matchingJsonPath("$.scope", equalTo(String.join(" ", expectedScopes))))
+                .withRequestBody(matchingJsonPath(
+                        "$.grant_type", equalTo(GenerateOauthTokenRequest.GrantType.CLIENT_CREDENTIALS.getType()))));
     }
 }

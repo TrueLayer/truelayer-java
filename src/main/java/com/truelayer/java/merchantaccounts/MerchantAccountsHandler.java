@@ -18,6 +18,7 @@ import lombok.Value;
 public class MerchantAccountsHandler implements IAuthenticatedHandler, IMerchantAccountsHandler {
     IMerchantAccountsApi merchantAccountsApi;
 
+    // TODO: global scopes
     @Override
     public RequestScopes getRequestScopes() {
         return RequestScopes.builder().scope(PAYMENTS).build();

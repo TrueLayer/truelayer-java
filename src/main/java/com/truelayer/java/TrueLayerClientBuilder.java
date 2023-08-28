@@ -264,7 +264,12 @@ public class TrueLayerClientBuilder {
 
         IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);
-        IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
+        MandatesHandler.MandatesHandlerBuilder mandatesHandlerBuilder =
+                MandatesHandler.builder().mandatesApi(mandatesApi);
+        if (customScopesPresent()) {
+            mandatesHandlerBuilder.scopes(globalScopes);
+        }
+        IMandatesHandler mandatesHandler = mandatesHandlerBuilder.build();
 
         IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPayoutsApi.class);

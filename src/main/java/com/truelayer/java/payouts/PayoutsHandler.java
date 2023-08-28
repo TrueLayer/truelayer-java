@@ -19,6 +19,7 @@ public class PayoutsHandler implements IAuthenticatedHandler, IPayoutsHandler {
 
     IPayoutsApi payoutsApi;
 
+    // TODO: global scopes
     @Override
     public RequestScopes getRequestScopes() {
         return RequestScopes.builder().scope(PAYMENTS).build();

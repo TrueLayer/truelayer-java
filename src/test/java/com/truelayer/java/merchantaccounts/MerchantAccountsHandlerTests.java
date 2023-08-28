@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 class MerchantAccountsHandlerTests {
 
     private static final String A_MERCHANT_ACCOUNT_ID = "a-merchant-account-id";
+
     private static final RequestScopes SCOPES =
             RequestScopes.builder().scope(Constants.Scopes.PAYMENTS).build();
 

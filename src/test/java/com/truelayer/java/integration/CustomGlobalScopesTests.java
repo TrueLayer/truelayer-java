@@ -12,6 +12,8 @@ import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.TrueLayerClient;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.mandates.entities.CreateMandateRequest;
+import com.truelayer.java.mandates.entities.CreateMandateResponse;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import com.truelayer.java.payments.entities.CreatePaymentResponse;
 import java.net.URI;
@@ -63,6 +65,47 @@ public class CustomGlobalScopesTests extends IntegrationTests {
 
         verifyGeneratedToken(CUSTOM_SCOPES);
         assertNotError(createPaymentResponse);
+    }
+
+    @Test
+    @DisplayName(
+            "It should not invoke the generate token endpoint a second time, if global scopes are set and caching is enabled, "
+                    + "even if the 2 authenticated endpoints declare different scopes at the handler level")
+    @SneakyThrows
+    public void shouldNotCallTokenEndpointMultipleTimesIfGlobalScopesAreSet() {
+        stubGenerateTokenRequest();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("payments/201.create_payment.authorized.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/mandates"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("mandates/201.create_mandate.json")
+                .build();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        CreateMandateRequest createMandateRequest =
+                CreateMandateRequest.builder().build();
+        ApiResponse<CreateMandateResponse> createMandateResponse =
+                tlClient.mandates().createMandate(createMandateRequest).get();
+
+        verifyGeneratedToken(CUSTOM_SCOPES);
+        verify(exactly(1), postRequestedFor(urlPathEqualTo("/connect/token")));
+        assertNotError(createPaymentResponse);
+        assertNotError(createMandateResponse);
     }
 
     private void stubGenerateTokenRequest() {
