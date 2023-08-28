@@ -1,5 +1,7 @@
 package com.truelayer.java.http.interceptors;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.entities.AccessToken;
@@ -19,21 +21,30 @@ public class AuthenticationInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        RequestScopes requestedScopes = chain.request().tag(RequestScopes.class);
+        Request request = chain.request();
 
+        if (!needsTokenGeneration(request)) {
+            // we are here if a custom access token was specified on the request.
+            // if so, we skip all the internal management
+            return chain.proceed(request);
+        }
+
+        RequestScopes requestedScopes = request.tag(RequestScopes.class);
         if (ObjectUtils.isEmpty(requestedScopes) || requestedScopes.getScopes().isEmpty()) {
             // usually this means that we're not using the interceptors on authenticated calls
             throw new TrueLayerException("Missing request scopes tag on the outgoing request");
         }
-
         AccessToken accessToken = tokenManager.getToken(requestedScopes);
 
-        Request request = chain.request();
         Request newRequest = request.newBuilder()
                 .header(Constants.HeaderNames.AUTHORIZATION, buildAuthorizationHeader(accessToken.getAccessToken()))
                 .build();
 
         return chain.proceed(newRequest);
+    }
+
+    private boolean needsTokenGeneration(Request request) {
+        return isEmpty(request.header(Constants.HeaderNames.AUTHORIZATION));
     }
 
     private String buildAuthorizationHeader(String token) {

@@ -1,6 +1,7 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
@@ -278,6 +279,6 @@ public class TrueLayerClientBuilder {
     }
 
     private boolean customScopesPresent() {
-        return !isEmpty(defaultScopes) && !isEmpty(defaultScopes.getScopes());
+        return isNotEmpty(defaultScopes) && isNotEmpty(defaultScopes.getScopes());
     }
 }

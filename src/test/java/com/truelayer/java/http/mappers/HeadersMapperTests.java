@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.http.entities.Headers;
 import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,7 @@ class HeadersMapperTests {
         Headers headers = Headers.builder()
                 .xForwardedFor("1.2.3.4")
                 .signature("signed!")
+                .accessToken(UUID.randomUUID().toString())
                 .idempotencyKey("very-unique-key")
                 .build();
 
@@ -25,5 +27,6 @@ class HeadersMapperTests {
         assertEquals(headers.getXForwardedFor(), headersMap.get(X_FORWARDED_FOR));
         assertEquals(headers.getSignature(), headersMap.get(TL_SIGNATURE));
         assertEquals(headers.getIdempotencyKey(), headersMap.get(IDEMPOTENCY_KEY));
+        assertEquals("Bearer " + headers.getAccessToken(), headersMap.get(AUTHORIZATION));
     }
 }

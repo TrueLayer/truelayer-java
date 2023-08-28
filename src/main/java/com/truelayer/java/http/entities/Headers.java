@@ -18,4 +18,6 @@ public class Headers {
     private String signature;
 
     private String xForwardedFor;
+
+    private String accessToken;
 }

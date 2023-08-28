@@ -35,6 +35,12 @@ public class HeadersMapper {
             headersMap.put(Constants.HeaderNames.X_FORWARDED_FOR, xForwardedFor);
         }
 
+        String accessToken = customHeaders.getAccessToken();
+        if (isNotEmpty(accessToken)) {
+            headersMap.put(Constants.HeaderNames.AUTHORIZATION, "Bearer " + accessToken);
+            // TODO: shall we also add an extra header for troubleshooting purposes on HC? can be added later though
+        }
+
         return Collections.unmodifiableMap(headersMap);
     }
 }
