@@ -4,9 +4,7 @@ import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +18,7 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     /**
      * internal state
      */
-    private Map<Integer, AccessTokenRecord> tokenRecords = new HashMap<>();
+    private final Map<Integer, AccessTokenRecord> tokenRecords = new HashMap<>();
 
     private final Clock clock;
 
@@ -34,9 +32,7 @@ public class SimpleCredentialsCache implements ICredentialsCache {
 
     @Override
     public Optional<AccessToken> getToken(RequestScopes scopes) {
-
-        // TODO: test
-        int key = scopes.hashCode();
+        int key = computeCacheKey(scopes);
 
         AccessTokenRecord tokenRecord = tokenRecords.get(key);
         if (tokenRecord == null || LocalDateTime.now(clock).compareTo(tokenRecord.expiresAt) >= 0) {
@@ -51,17 +47,12 @@ public class SimpleCredentialsCache implements ICredentialsCache {
         AccessTokenRecord tokenRecord =
                 new AccessTokenRecord(token, LocalDateTime.now(clock).plusSeconds(token.getExpiresIn()));
 
-        // TODO: test
-        tokenRecords.put(scopes.hashCode(), tokenRecord);
+        tokenRecords.put(computeCacheKey(scopes), tokenRecord);
     }
 
     @Override
-    public void clearToken(String accessToken) {
-        // TODO: test
-        tokenRecords.entrySet().stream()
-                .filter(entry -> entry.getValue().token.getAccessToken().equalsIgnoreCase(accessToken))
-                .findFirst()
-                .ifPresent(tokenRecord -> tokenRecords.remove(tokenRecord.getKey()));
+    public void clearToken(RequestScopes scopes) {
+        tokenRecords.remove(computeCacheKey(scopes));
     }
 
     @Getter
@@ -69,5 +60,11 @@ public class SimpleCredentialsCache implements ICredentialsCache {
     public static class AccessTokenRecord {
         private final AccessToken token;
         private final LocalDateTime expiresAt;
+    }
+
+    private static int computeCacheKey(RequestScopes scopes) {
+        List<String> sortedScopes = new ArrayList<>(scopes.getScopes());
+        Collections.sort(sortedScopes);
+        return sortedScopes.hashCode();
     }
 }
