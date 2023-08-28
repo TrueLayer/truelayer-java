@@ -54,4 +54,24 @@ class AccessTokenInvalidatorTests {
 
         verify(tokenManager, never()).invalidateToken(any(RequestScopes.class));
     }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should not invalidate a token if requested scopes are absent on the request")
+    public void itShouldNotInvalidateATokenIfRequestedScopesNotSet() {
+        AccessTokenManager tokenManager = mock(AccessTokenManager.class);
+        AccessTokenInvalidator sut = new AccessTokenInvalidator(tokenManager);
+        Response response = mock(Response.class);
+        String accessToken = "a-token";
+        when(response.request())
+                .thenReturn(new Request.Builder()
+                        .url("http://localhost")
+                        .get()
+                        .header(AUTHORIZATION, "Bearer " + accessToken)
+                        .build());
+
+        sut.authenticate(null, response);
+
+        verify(tokenManager, never()).invalidateToken(any(RequestScopes.class));
+    }
 }
