@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,6 +12,7 @@ import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payouts.entities.CreatePayoutRequest;
 import com.truelayer.java.payouts.entities.CreatePayoutResponse;
 import com.truelayer.java.payouts.entities.Payout;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,7 @@ public class PayoutsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePayoutResponse> response =
                 tlClient.payouts().createPayout(payoutRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         CreatePayoutResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePayoutResponse.class);
         assertEquals(expected, response.getData());
@@ -74,6 +77,7 @@ public class PayoutsIntegrationTests extends IntegrationTests {
 
         ApiResponse<Payout> response = tlClient.payouts().getPayout(A_PAYOUT_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         Payout expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, Payout.class);
         assertEquals(expectedStatus, response.getData().getStatus());
@@ -103,6 +107,7 @@ public class PayoutsIntegrationTests extends IntegrationTests {
         ApiResponse<Payout> response =
                 tlClient.payouts().getPayout(anInvalidPayoutId).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertTrue(response.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, response.getError());

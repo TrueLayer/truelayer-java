@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("General endpoints integration tests")
 public class CommonApiIntegrationTests extends IntegrationTests {
 
     @Test

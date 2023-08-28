@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +45,8 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
 
         ApiResponse<ListMerchantAccountsResponse> response =
                 tlClient.merchantAccounts().listMerchantAccounts().get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         ListMerchantAccountsResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, ListMerchantAccountsResponse.class);
@@ -71,6 +75,8 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
         ApiResponse<MerchantAccount> response = tlClient.merchantAccounts()
                 .getMerchantAccountById(A_MERCHANT_ACCOUNT_ID)
                 .get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         MerchantAccount expected = deserializeJsonFileTo(jsonResponseFile, MerchantAccount.class);
         assertEquals(expected, response.getData());
@@ -104,6 +110,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .listTransactions(A_MERCHANT_ACCOUNT_ID, query)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         ListTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, ListTransactionsResponse.class);
         assertEquals(expected, response.getData());
@@ -132,6 +139,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .getSweepingSettings(A_MERCHANT_ACCOUNT_ID)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         SweepingSettings expected = deserializeJsonFileTo(jsonResponseFile, SweepingSettings.class);
         assertEquals(expected, response.getData());
@@ -163,6 +171,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .updateSweeping(A_MERCHANT_ACCOUNT_ID, updateSweepingRequest)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
     }
 
@@ -187,6 +196,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .disableSweeping(A_MERCHANT_ACCOUNT_ID)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
     }
 
@@ -215,6 +225,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .listPaymentSources(A_MERCHANT_ACCOUNT_ID, query)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         ListPaymentSourcesResponse expected = deserializeJsonFileTo(jsonResponseFile, ListPaymentSourcesResponse.class);
         assertEquals(expected, response.getData());

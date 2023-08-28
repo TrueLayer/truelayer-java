@@ -10,7 +10,6 @@ import com.truelayer.java.Environment;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.TrueLayerClient;
-import com.truelayer.java.auth.entities.GenerateOauthTokenRequest;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
@@ -24,7 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class CustomScopesTests extends IntegrationTests {
+@DisplayName("Custom global scopes tests")
+public class CustomGlobalScopesTests extends IntegrationTests {
     private static final List<String> CUSTOM_SCOPES =
             Collections.unmodifiableList(Arrays.asList(Constants.Scopes.PAYMENTS, "signupplus"));
 
@@ -61,7 +61,7 @@ public class CustomScopesTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
-        verifyTokenUsed();
+        verifyGeneratedToken(CUSTOM_SCOPES);
         assertNotError(createPaymentResponse);
     }
 
@@ -72,21 +72,5 @@ public class CustomScopesTests extends IntegrationTests {
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-    }
-
-    // TODO: move this into a test utils and add this assertion on default-scoped tests as well.
-    private void verifyTokenUsed() {
-        verify(
-                1,
-                postRequestedFor(urlPathEqualTo("/connect/token"))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_id", equalTo(getClientCredentials().clientId())))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_secret",
-                                equalTo(getClientCredentials().clientSecret())))
-                        .withRequestBody(matchingJsonPath("$.scope", equalTo(String.join(" ", CUSTOM_SCOPES))))
-                        .withRequestBody(matchingJsonPath(
-                                "$.grant_type",
-                                equalTo(GenerateOauthTokenRequest.GrantType.CLIENT_CREDENTIALS.getType()))));
     }
 }

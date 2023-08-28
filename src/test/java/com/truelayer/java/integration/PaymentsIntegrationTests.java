@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.payments.entities.paymentdetail.Status.*;
 import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.BANK_TRANSFER;
@@ -17,6 +18,7 @@ import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
+import java.util.Collections;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -57,6 +59,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> response =
                 tlClient.payments().createPayment(paymentRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
         assertEquals(expectedStatus, response.getData().getStatus());
@@ -88,6 +91,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
@@ -121,6 +125,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<PaymentDetail> response =
                 tlClient.payments().getPayment(A_PAYMENT_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         PaymentDetail expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
@@ -152,6 +157,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
@@ -182,6 +188,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertTrue(paymentResponse.isError());
         ProblemDetails expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class);
         assertEquals(expected, paymentResponse.getError());
@@ -222,6 +229,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .startAuthorizationFlow(A_PAYMENT_ID, request)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         AuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
@@ -257,6 +265,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                         Headers.builder().xForwardedFor(endUserIpAddress).build(), A_PAYMENT_ID, request)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         AuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
@@ -290,6 +299,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .submitProviderSelection(A_PAYMENT_ID, submitProviderSelectionRequest)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         AuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
@@ -324,6 +334,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .createPaymentRefund(A_PAYMENT_ID, createPaymentRefundRequest)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         CreatePaymentRefundResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentRefundResponse.class);
@@ -352,6 +363,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         ApiResponse<ListPaymentRefundsResponse> response =
                 tlClient.payments().listPaymentRefunds(A_PAYMENT_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         ListPaymentRefundsResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, ListPaymentRefundsResponse.class);
@@ -383,6 +395,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .getPaymentRefundById(A_PAYMENT_ID, A_PAYMENT_REFUND_ID)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         PaymentRefund expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentRefund.class);
         assertEquals(expectedStatus, response.getData().getStatus());
