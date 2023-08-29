@@ -1,6 +1,5 @@
 package com.truelayer.java.mandates;
 
-import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_SWEEPING;
 import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
@@ -22,10 +21,8 @@ public class MandatesHandler implements IAuthenticatedHandler, IMandatesHandler 
     private IMandatesApi mandatesApi;
 
     @Builder.Default
-    private RequestScopes scopes = RequestScopes.builder()
-            .scope(PAYMENTS)
-            .scope(RECURRING_PAYMENTS_SWEEPING)
-            .build();
+    private RequestScopes scopes =
+            RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
 
     @Override
     public RequestScopes getRequestScopes() {

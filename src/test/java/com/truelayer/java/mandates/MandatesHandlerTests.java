@@ -7,7 +7,6 @@ import static com.truelayer.java.http.mappers.HeadersMapper.toMap;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.*;
 
-import com.truelayer.java.Constants;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.CreateMandateRequest;
@@ -75,10 +74,8 @@ class MandatesHandlerTests {
 
         sut.createMandate(request);
 
-        RequestScopes expectedDefaultScopes = RequestScopes.builder()
-                .scope(Constants.Scopes.PAYMENTS)
-                .scope(RECURRING_PAYMENTS_SWEEPING)
-                .build();
+        RequestScopes expectedDefaultScopes =
+                RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
         verify(mandatesApiMock, times(1)).createMandate(expectedDefaultScopes, emptyMap(), request);
     }
 
