@@ -12,6 +12,7 @@ import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
+//todo: rename for clarity
 public class DefaultAccessTokenCacheTests extends IntegrationTests {
 
     @SneakyThrows
@@ -120,4 +121,6 @@ public class DefaultAccessTokenCacheTests extends IntegrationTests {
                 postRequestedFor(urlPathEqualTo("/payments"))
                         .withHeader(AUTHORIZATION, equalTo("Bearer " + expectedToken.getAccessToken())));
     }
+
+    //TODO: add test for global scopes
 }
