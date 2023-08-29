@@ -17,7 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class SimpleAccessTokenManagementTests {
+class SimpleCredentialsCacheTests {
 
     static final RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
