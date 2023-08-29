@@ -174,7 +174,7 @@ public class TestUtils {
                 request.withHeader(IDEMPOTENCY_KEY, matching(".+"));
             }
 
-            if (!isEmpty(xForwardedForHeader)) {
+            if (isNotEmpty(xForwardedForHeader)) {
                 request.withHeader(X_FORWARDED_FOR, equalTo(xForwardedForHeader));
             }
 
@@ -186,7 +186,7 @@ public class TestUtils {
                 response.withFixedDelay(delayMilliseconds);
             }
 
-            if (!isEmpty(bodyFile)) {
+            if (isNotEmpty(bodyFile)) {
                 response.withBodyFile(bodyFile);
             }
 

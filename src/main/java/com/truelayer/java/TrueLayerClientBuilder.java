@@ -1,12 +1,14 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.commonapi.ICommonHandler;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
@@ -40,6 +42,8 @@ import okhttp3.OkHttpClient;
  */
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
+
+    private RequestScopes globalScopes;
 
     private SigningOptions signingOptions;
 
@@ -84,12 +88,24 @@ public class TrueLayerClientBuilder {
 
     /**
      * Utility to set the signing options required for payments.
-     * @param signingOptions the signing options object that holds signature related informations.
+     * @param signingOptions the signing options object that holds signature related information.
      * @return the instance of the client builder used.
      * @see SigningOptions
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = signingOptions;
+        return this;
+    }
+
+    /**
+     * Utility to set custom global scopes used by the library. If used, the specified scopes will override the
+     * default scopes used by the library. If using this option, make sure to set valid scopes for all the API interactions
+     * that your integration will have.
+     * @param globalScopes custom global scopes to be used by the library for all authenticated endpoints.
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withGlobalScopes(RequestScopes globalScopes) {
+        this.globalScopes = globalScopes;
         return this;
     }
 
@@ -228,7 +244,13 @@ public class TrueLayerClientBuilder {
 
         IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
-        IPaymentsHandler paymentsHandler = new PaymentsHandler(paymentsApi);
+
+        PaymentsHandler.PaymentsHandlerBuilder paymentsHandlerBuilder =
+                PaymentsHandler.builder().paymentsApi(paymentsApi);
+        if (customScopesPresent()) {
+            paymentsHandlerBuilder.scopes(globalScopes);
+        }
+        IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
         IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
                 .clientCredentials(clientCredentials)
@@ -238,15 +260,30 @@ public class TrueLayerClientBuilder {
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
-        IMerchantAccountsHandler merchantAccountsHandler = new MerchantAccountsHandler(merchantAccountsApi);
+        MerchantAccountsHandler.MerchantAccountsHandlerBuilder merchantAccountsHandlerBuilder =
+                MerchantAccountsHandler.builder().merchantAccountsApi(merchantAccountsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IMerchantAccountsHandler merchantAccountsHandler = merchantAccountsHandlerBuilder.build();
 
         IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);
-        IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
+        MandatesHandler.MandatesHandlerBuilder mandatesHandlerBuilder =
+                MandatesHandler.builder().mandatesApi(mandatesApi);
+        if (customScopesPresent()) {
+            mandatesHandlerBuilder.scopes(globalScopes);
+        }
+        IMandatesHandler mandatesHandler = mandatesHandlerBuilder.build();
 
         IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPayoutsApi.class);
-        IPayoutsHandler payoutsHandler = new PayoutsHandler(payoutsApi);
+        PayoutsHandler.PayoutsHandlerBuilder payoutsHandlerBuilder =
+                PayoutsHandler.builder().payoutsApi(payoutsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IPayoutsHandler payoutsHandler = payoutsHandlerBuilder.build();
 
         return new TrueLayerClient(
                 authenticationHandler,
@@ -257,5 +294,9 @@ public class TrueLayerClientBuilder {
                 payoutsHandler,
                 commonHandler,
                 hppLinkBuilder);
+    }
+
+    private boolean customScopesPresent() {
+        return isNotEmpty(globalScopes) && isNotEmpty(globalScopes.getScopes());
     }
 }

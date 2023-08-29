@@ -5,7 +5,6 @@ import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.getClientCredentials;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
@@ -21,8 +20,6 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
-@WireMockTest
-@Tag("integration")
 @DisplayName("Auth integration tests")
 public class AuthIntegrationTests extends IntegrationTests {
 
@@ -76,18 +73,7 @@ public class AuthIntegrationTests extends IntegrationTests {
                 .getOauthToken(Collections.singletonList(Constants.Scopes.PAYMENTS))
                 .get();
 
-        verify(
-                1,
-                postRequestedFor(urlPathEqualTo("/connect/token"))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_id", equalTo(getClientCredentials().clientId())))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_secret",
-                                equalTo(getClientCredentials().clientSecret())))
-                        .withRequestBody(matchingJsonPath("$.scope", equalTo(Constants.Scopes.PAYMENTS)))
-                        .withRequestBody(matchingJsonPath(
-                                "$.grant_type",
-                                equalTo(GenerateOauthTokenRequest.GrantType.CLIENT_CREDENTIALS.getType()))));
+        verifyGeneratedToken(Collections.singletonList(Constants.Scopes.PAYMENTS));
         assertNotError(response);
         AccessToken expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
         assertEquals(expected, response.getData());
@@ -115,19 +101,7 @@ public class AuthIntegrationTests extends IntegrationTests {
         ApiResponse<AccessToken> response =
                 tlClient.auth().getOauthToken(scopes).get();
 
-        verify(
-                1,
-                postRequestedFor(urlPathEqualTo("/connect/token"))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_id", equalTo(getClientCredentials().clientId())))
-                        .withRequestBody(matchingJsonPath(
-                                "$.client_secret",
-                                equalTo(getClientCredentials().clientSecret())))
-                        .withRequestBody(matchingJsonPath("$.scope", equalTo(String.join(" ", scopes))))
-                        .withRequestBody(matchingJsonPath(
-                                "$.grant_type",
-                                equalTo(GenerateOauthTokenRequest.GrantType.CLIENT_CREDENTIALS.getType()))));
-
+        verifyGeneratedToken(scopes);
         assertNotError(response);
         AccessToken expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, AccessToken.class);
         assertEquals(expected, response.getData());

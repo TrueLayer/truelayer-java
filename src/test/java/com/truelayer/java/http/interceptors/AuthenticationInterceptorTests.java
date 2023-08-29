@@ -2,8 +2,7 @@ package com.truelayer.java.http.interceptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils;
@@ -19,7 +18,6 @@ import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import org.junit.jupiter.api.*;
@@ -41,8 +39,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
     @DisplayName("It should throw an exception if request scopes are")
     public void shouldThrowExceptionIfRequestScopesMissing(RequestScopes scopes) {
         Request request = new Request.Builder()
-                .url(HttpUrl.get("http://localhost"))
-                .tag(RequestScopes.class, scopes)
+                .url("http://localhost/payment")
+                .method("POST", EMPTY_REQUEST_BODY)
                 .build();
         arrangeRequest(request);
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
@@ -103,6 +101,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
 
         intercept();
 
+        verify(authenticationHandler, times(1)).getOauthToken(SCOPES.getScopes());
         verifyThat(request -> assertEquals(
                 "Bearer " + expectedAccessToken.getData().getAccessToken(),
                 request.header(Constants.HeaderNames.AUTHORIZATION)));

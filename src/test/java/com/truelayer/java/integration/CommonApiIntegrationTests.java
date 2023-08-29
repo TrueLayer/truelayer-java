@@ -1,6 +1,6 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("General endpoints integration tests")
 public class CommonApiIntegrationTests extends IntegrationTests {
 
     @Test
@@ -32,6 +33,7 @@ public class CommonApiIntegrationTests extends IntegrationTests {
                                 SubmitPaymentReturnParametersRequest.builder().build())
                         .get();
 
+        verify(exactly(0), postRequestedFor(urlPathEqualTo("/connect/token")));
         assertNotError(submitPaymentReturnParametersResponse);
         SubmitPaymentReturnParametersResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, SubmitPaymentReturnParametersResponse.class);

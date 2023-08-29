@@ -12,15 +12,18 @@ import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
-import lombok.Value;
+import lombok.Builder;
 
-@Value
+@Builder
 public class MerchantAccountsHandler implements IAuthenticatedHandler, IMerchantAccountsHandler {
-    IMerchantAccountsApi merchantAccountsApi;
+    private IMerchantAccountsApi merchantAccountsApi;
+
+    @Builder.Default
+    private RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
     @Override
     public RequestScopes getRequestScopes() {
-        return RequestScopes.builder().scope(PAYMENTS).build();
+        return scopes;
     }
 
     @Override

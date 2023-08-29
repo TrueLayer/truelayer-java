@@ -12,16 +12,19 @@ import com.truelayer.java.payouts.entities.CreatePayoutRequest;
 import com.truelayer.java.payouts.entities.CreatePayoutResponse;
 import com.truelayer.java.payouts.entities.Payout;
 import java.util.concurrent.CompletableFuture;
-import lombok.Value;
+import lombok.Builder;
 
-@Value
+@Builder
 public class PayoutsHandler implements IAuthenticatedHandler, IPayoutsHandler {
 
-    IPayoutsApi payoutsApi;
+    private IPayoutsApi payoutsApi;
+
+    @Builder.Default
+    private RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
     @Override
     public RequestScopes getRequestScopes() {
-        return RequestScopes.builder().scope(PAYMENTS).build();
+        return scopes;
     }
 
     @Override

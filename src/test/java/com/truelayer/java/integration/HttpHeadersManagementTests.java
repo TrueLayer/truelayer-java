@@ -4,9 +4,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.*;
 import static com.truelayer.java.TestUtils.UUID_REGEX_PATTERN;
 
+import com.truelayer.java.Constants;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ public class HttpHeadersManagementTests extends IntegrationTests {
 
         tlClient.payments().createPayment(paymentRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(Constants.Scopes.PAYMENTS));
         verify(postRequestedFor(urlPathEqualTo("/payments"))
                 .withHeader(IDEMPOTENCY_KEY, matching(UUID_REGEX_PATTERN.pattern()))
                 .withHeader(TL_SIGNATURE, matching(".+")));
@@ -56,6 +59,7 @@ public class HttpHeadersManagementTests extends IntegrationTests {
                         paymentRequest)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(Constants.Scopes.PAYMENTS));
         verify(postRequestedFor(urlPathEqualTo("/payments"))
                 .withHeader(TL_SIGNATURE, equalTo(signature))
                 .withHeader(IDEMPOTENCY_KEY, equalTo(idempotencyKey)));

@@ -15,18 +15,21 @@ import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
 import java.util.concurrent.CompletableFuture;
-import lombok.Value;
+import lombok.Builder;
 
-@Value
+@Builder
 public class MandatesHandler implements IAuthenticatedHandler, IMandatesHandler {
-    IMandatesApi mandatesApi;
+    private IMandatesApi mandatesApi;
+
+    @Builder.Default
+    private RequestScopes scopes = RequestScopes.builder()
+            .scope(PAYMENTS)
+            .scope(RECURRING_PAYMENTS_SWEEPING)
+            .build();
 
     @Override
     public RequestScopes getRequestScopes() {
-        return RequestScopes.builder()
-                .scope(PAYMENTS)
-                .scope(RECURRING_PAYMENTS_SWEEPING)
-                .build();
+        return scopes;
     }
 
     @Override
