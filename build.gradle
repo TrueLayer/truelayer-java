@@ -7,7 +7,7 @@ plugins {
     // to publish packages
     id 'maven-publish'
     // code linting
-    id "com.diffplug.spotless" version "6.20.0"
+    id "com.diffplug.spotless" version "6.21.0"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
