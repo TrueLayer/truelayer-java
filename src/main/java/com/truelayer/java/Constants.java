@@ -10,6 +10,8 @@ public final class Constants {
      */
     public static final class Scopes {
         public static final String PAYMENTS = "payments";
+
+        public static final String RECURRING_PAYMENTS_SWEEPING = "recurring_payments:sweeping";
     }
 
     /**

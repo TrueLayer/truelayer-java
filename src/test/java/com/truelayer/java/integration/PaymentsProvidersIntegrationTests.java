@@ -1,6 +1,6 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,6 +32,7 @@ public class PaymentsProvidersIntegrationTests extends IntegrationTests {
         ApiResponse<PaymentsProvider> response =
                 tlClient.paymentsProviders().getProvider(providerId).get();
 
+        verify(exactly(0), postRequestedFor(urlPathEqualTo("/connect/token")));
         assertNotError(response);
         PaymentsProvider expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentsProvider.class);
         assertEquals(expected, response.getData());

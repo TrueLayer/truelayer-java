@@ -2,6 +2,7 @@ package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_SWEEPING;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +17,7 @@ import com.truelayer.java.mandates.entities.mandatedetail.Status;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<CreateMandateResponse> response =
                 tlClient.mandates().createMandate(createMandateRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         assertNotError(response);
         CreateMandateResponse expected = deserializeJsonFileTo(jsonResponseFile, CreateMandateResponse.class);
         assertEquals(expected, response.getData());
@@ -80,6 +83,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<ListMandatesResponse> response =
                 tlClient.mandates().listMandates().get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         ListMandatesResponse expected = deserializeJsonFileTo(jsonResponseFile, ListMandatesResponse.class);
         assertEquals(expected, response.getData());
     }
@@ -107,6 +111,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<MandateDetail> response =
                 tlClient.mandates().getMandate(A_MANDATE_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         MandateDetail expected = deserializeJsonFileTo(jsonResponseFile, MandateDetail.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
@@ -139,6 +144,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .startAuthorizationFlow(A_MANDATE_ID, request)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         assertNotError(response);
         AuthorizationFlowResponse expected = deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(expected, response.getData());
@@ -171,6 +177,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .submitProviderSelection(A_MANDATE_ID, submitProviderSelectionRequest)
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         assertNotError(response);
         AuthorizationFlowResponse expected = deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);
         assertEquals(status, response.getData().getStatus());
@@ -198,6 +205,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<Void> response =
                 tlClient.mandates().revokeMandate(A_MANDATE_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         assertNotError(response);
     }
 
@@ -225,9 +233,9 @@ public class MandatesIntegrationTests extends IntegrationTests {
                 .getConfirmationOfFunds(A_MANDATE_ID, "1", "gbp")
                 .get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         GetConfirmationOfFundsResponse expected =
                 deserializeJsonFileTo(jsonResponseFile, GetConfirmationOfFundsResponse.class);
-
         assertNotError(response);
         assertEquals(expected.getConfirmed(), response.getData().getConfirmed());
     }
@@ -255,8 +263,8 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<GetConstraintsResponse> response =
                 tlClient.mandates().getMandateConstraints(A_MANDATE_ID).get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         GetConstraintsResponse expected = deserializeJsonFileTo(jsonResponseFile, GetConstraintsResponse.class);
-
         assertNotError(response);
         assertEquals(expected, response.getData());
     }
@@ -287,6 +295,7 @@ public class MandatesIntegrationTests extends IntegrationTests {
         ApiResponse<CreateMandateResponse> response =
                 tlClient.mandates().createMandate(createMandateRequest).get();
 
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
         assertTrue(response.isError());
         assertEquals(response.getError(), deserializeJsonFileTo(jsonResponseFile, ProblemDetails.class));
     }
