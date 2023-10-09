@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    // Quarkus libraries
     implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-arc'
@@ -17,8 +18,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
 
     // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:4.0.0'
+    implementation 'com.truelayer:truelayer-java:10.0.0'
 
+    // Test libraries
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }
