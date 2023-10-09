@@ -1,11 +1,13 @@
 package com.truelayer.java.mandates;
 
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest;
 import com.truelayer.java.payments.entities.SubmitProviderSelectionRequest;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import retrofit2.http.*;
 
@@ -18,15 +20,20 @@ public interface IMandatesApi {
 
     /**
      * Create a new mandate
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent
      * @param request the create mandate request
      * @return the created mandate
      * @see <a href="https://docs.truelayer.com/reference/create-mandate"><i>Create mandate</i> API reference</a>
      */
     @POST("/mandates")
-    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(@Body CreateMandateRequest request);
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(
+            @Tag RequestScopes scopes, @HeaderMap Map<String, String> headers, @Body CreateMandateRequest request);
 
     /**
      * Start the authorization flow for a mandate.
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @param request the start authorization flow request
      * @return the mandate authorization flow created
@@ -34,10 +41,15 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
-            @Path("id") String mandateId, @Body StartAuthorizationFlowRequest request);
+            @Tag RequestScopes scopes,
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String mandateId,
+            @Body StartAuthorizationFlowRequest request);
 
     /**
      * Submit the provider details selected by the PSU
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @param request the provider selection request
      * @return the next action to take care of
@@ -45,10 +57,14 @@ public interface IMandatesApi {
      */
     @POST("/mandates/{id}/authorization-flow/actions/provider-selection")
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
-            @Path("id") String mandateId, @Body SubmitProviderSelectionRequest request);
+            @Tag RequestScopes scopes,
+            @HeaderMap Map<String, String> headers,
+            @Path("id") String mandateId,
+            @Body SubmitProviderSelectionRequest request);
 
     /**
      * List all the mandates associated to the client used
+     * @param scopes the scopes to be used by the underlying Oauth token
      * @param userId optional query parameters to only fetch mandates belonging to a particular user
      * @param cursor cursor used for pagination purposes that represents the first item of the page
      * @param limit maximum number of items included in a returned page
@@ -57,28 +73,36 @@ public interface IMandatesApi {
      */
     @GET("/mandates")
     CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates(
-            @Query("user_id") String userId, @Query("cursor") String cursor, @Query("limit") Integer limit);
+            @Tag RequestScopes scopes,
+            @Query("user_id") String userId,
+            @Query("cursor") String cursor,
+            @Query("limit") Integer limit);
 
     /**
      * Get mandate
+     * @param scopes the scopes to be used by the underlying Oauth token
      * @param mandateId the id of the mandate
      * @return the mandate matching the given id
      * @see <a href="https://docs.truelayer.com/reference/get-mandate"><i>Get mandate</i> API reference</a>
      */
     @GET("/mandates/{id}")
-    CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<MandateDetail>> getMandate(@Tag RequestScopes scopes, @Path("id") String mandateId);
 
     /**
      * Revoke mandate
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent
      * @param mandateId the id of the mandate
      * @return an empty response in case of success
      * @see <a href="https://docs.truelayer.com/reference/revoke-mandate"><i>Revoke mandate</i> API reference</a>
      */
     @POST("/mandates/{id}/revoke")
-    CompletableFuture<ApiResponse<Void>> revokeMandate(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<Void>> revokeMandate(
+            @Tag RequestScopes scopes, @HeaderMap Map<String, String> headers, @Path("id") String mandateId);
 
     /**
      * Get Confirmation Of Funds
+     * @param scopes the scopes to be used by the underlying Oauth token
      * @param mandateId the id of the mandate
      * @param amount_in_minor the amount to be confirmed present in the bank account
      * @param currency the currency of the mandate
@@ -87,16 +111,19 @@ public interface IMandatesApi {
      */
     @GET("/mandates/{id}/funds?")
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
+            @Tag RequestScopes scopes,
             @Path("id") String mandateId,
             @Query("amount_in_minor") String amount_in_minor,
             @Query("currency") String currency);
 
     /**
      * Get Mandate Constraints
+     * @param scopes the scopes to be used by the underlying Oauth token
      * @param mandateId the id of the mandate
      * @return the current status of the mandate constraints
      * @see <a href="https://docs.truelayer.com/reference/get-constraints"><i>Get Mandate Constraints</i> API reference</a>
      */
     @GET("/mandates/{id}/constraints")
-    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(@Path("id") String mandateId);
+    CompletableFuture<ApiResponse<GetConstraintsResponse>> getMandateConstraints(
+            @Tag RequestScopes scopes, @Path("id") String mandateId);
 }

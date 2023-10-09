@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates;
 
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.mandates.entities.*;
 import com.truelayer.java.mandates.entities.mandatedetail.MandateDetail;
 import com.truelayer.java.payments.entities.AuthorizationFlowResponse;
@@ -15,11 +16,19 @@ import java.util.concurrent.CompletableFuture;
 public interface IMandatesHandler {
     CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(CreateMandateRequest request);
 
+    CompletableFuture<ApiResponse<CreateMandateResponse>> createMandate(Headers headers, CreateMandateRequest request);
+
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String mandateId, StartAuthorizationFlowRequest request);
 
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
+            Headers headers, String mandateId, StartAuthorizationFlowRequest request);
+
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
             String mandateId, SubmitProviderSelectionRequest request);
+
+    CompletableFuture<ApiResponse<AuthorizationFlowResponse>> submitProviderSelection(
+            Headers headers, String mandateId, SubmitProviderSelectionRequest request);
 
     CompletableFuture<ApiResponse<ListMandatesResponse>> listMandates();
 
@@ -28,6 +37,8 @@ public interface IMandatesHandler {
     CompletableFuture<ApiResponse<MandateDetail>> getMandate(String mandateId);
 
     CompletableFuture<ApiResponse<Void>> revokeMandate(String mandateId);
+
+    CompletableFuture<ApiResponse<Void>> revokeMandate(Headers headers, String mandateId);
 
     CompletableFuture<ApiResponse<GetConfirmationOfFundsResponse>> getConfirmationOfFunds(
             String mandateId, String amount, String currency);

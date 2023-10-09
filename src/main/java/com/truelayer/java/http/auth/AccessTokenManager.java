@@ -1,14 +1,11 @@
 package com.truelayer.java.http.auth;
 
-import static java.util.Collections.singletonList;
-
-import com.truelayer.java.Constants;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
-import java.util.List;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.Synchronized;
@@ -20,35 +17,34 @@ public class AccessTokenManager implements IAccessTokenManager {
 
     private final ICredentialsCache credentialsCache;
 
-    private final List<String> scopes = singletonList(Constants.Scopes.PAYMENTS);
-
     private Optional<ICredentialsCache> getCredentialsCache() {
         return Optional.ofNullable(credentialsCache);
     }
 
     @Override
-    public AccessToken getToken() {
+    public AccessToken getToken(RequestScopes scopes) {
         if (getCredentialsCache().isPresent()) {
-            return getCredentialsCache().get().getToken().orElseGet(() -> {
-                AccessToken token = tryGetToken();
-                credentialsCache.storeToken(token);
+            return getCredentialsCache().get().getToken(scopes).orElseGet(() -> {
+                AccessToken token = tryGetToken(scopes);
+                credentialsCache.storeToken(scopes, token);
                 return token;
             });
         }
 
-        return tryGetToken();
+        return tryGetToken(scopes);
     }
 
     @Override
     @Synchronized
-    public void invalidateToken() {
-        getCredentialsCache().ifPresent(ICredentialsCache::clearToken);
+    public void invalidateToken(RequestScopes scopes) {
+        getCredentialsCache().ifPresent(iCredentialsCache -> iCredentialsCache.clearToken(scopes));
     }
 
-    private AccessToken tryGetToken() {
+    private AccessToken tryGetToken(RequestScopes scopes) {
         ApiResponse<AccessToken> accessTokenResponse;
         try {
-            accessTokenResponse = authenticationHandler.getOauthToken(scopes).get();
+            accessTokenResponse =
+                    authenticationHandler.getOauthToken(scopes.getScopes()).get();
         } catch (Exception e) {
             throw new TrueLayerException("unable to get an access token response", e);
         }

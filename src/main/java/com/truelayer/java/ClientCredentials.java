@@ -23,8 +23,6 @@ public class ClientCredentials {
 
     String clientSecret;
 
-    public static String GRANT_TYPE = "client_credentials";
-
     public static class ClientCredentialsBuilder {
 
         public ClientCredentials build() {

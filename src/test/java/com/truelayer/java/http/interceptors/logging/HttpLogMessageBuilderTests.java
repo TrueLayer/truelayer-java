@@ -3,11 +3,11 @@ package com.truelayer.java.http.interceptors.logging;
 import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.INCOMING;
 import static com.truelayer.java.http.interceptors.logging.HttpLogPrefix.OUTGOING;
 
-import com.truelayer.java.http.entities.Header;
 import com.truelayer.java.http.interceptors.logging.HttpLogMessage.HttpLogMessageBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import okhttp3.internal.http2.Header;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

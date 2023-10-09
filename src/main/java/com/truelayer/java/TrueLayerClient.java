@@ -1,15 +1,16 @@
 package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
-import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
-import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
+import com.truelayer.java.payouts.IPayoutsHandler;
 import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -22,21 +23,24 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 @AllArgsConstructor
 public class TrueLayerClient implements ITrueLayerClient {
+
     private IAuthenticationHandler authenticationHandler;
-    private IPaymentsApi paymentsHandler;
+    private IPaymentsHandler paymentsHandler;
     private IPaymentsProvidersHandler paymentsProvidersHandler;
     private IMerchantAccountsHandler merchantAccountsHandler;
     private IMandatesHandler mandatesHandler;
+    private IPayoutsHandler payoutsHandler;
+    private ICommonHandler commonHandler;
+
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
-    private ICommonApi commonApi;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
             IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
-            ICommonApi commonApi) {
+            ICommonHandler commonHandler) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
-        this.commonApi = commonApi;
+        this.commonHandler = commonHandler;
     }
 
     /**
@@ -59,7 +63,7 @@ public class TrueLayerClient implements ITrueLayerClient {
      * {@inheritDoc}
      */
     @Override
-    public IPaymentsApi payments() {
+    public IPaymentsHandler payments() {
         if (ObjectUtils.isEmpty(paymentsHandler)) {
             throw buildInitializationException("payments");
         }
@@ -71,6 +75,9 @@ public class TrueLayerClient implements ITrueLayerClient {
      */
     @Override
     public IPaymentsProvidersHandler paymentsProviders() {
+        if (ObjectUtils.isEmpty(paymentsProvidersHandler)) {
+            throw buildInitializationException("payment providers");
+        }
         return paymentsProvidersHandler;
     }
 
@@ -93,6 +100,14 @@ public class TrueLayerClient implements ITrueLayerClient {
         return mandatesHandler;
     }
 
+    @Override
+    public IPayoutsHandler payouts() {
+        if (ObjectUtils.isEmpty(payoutsHandler)) {
+            throw buildInitializationException("payouts");
+        }
+        return payoutsHandler;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -107,7 +122,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     @Override
     public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
             SubmitPaymentReturnParametersRequest request) {
-        return commonApi.submitPaymentReturnParameters(request);
+        return commonHandler.submitPaymentReturnParameters(request);
     }
 
     private TrueLayerException buildInitializationException(String handlerName) {

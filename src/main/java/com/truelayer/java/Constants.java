@@ -10,6 +10,8 @@ public final class Constants {
      */
     public static final class Scopes {
         public static final String PAYMENTS = "payments";
+
+        public static final String RECURRING_PAYMENTS_SWEEPING = "recurring_payments:sweeping";
     }
 
     /**
@@ -28,6 +30,8 @@ public final class Constants {
         public static final String TL_SIGNATURE = "Tl-Signature";
         public static final String TL_AGENT = "TL-Agent";
         public static final String AUTHORIZATION = "Authorization";
+        public static final String PROXY_AUTHORIZATION = "Proxy-Authorization";
+        public static final String X_FORWARDED_FOR = "X-Forwarded-For";
         public static final String COOKIE = "Cookie";
         public static final String TL_CORRELATION_ID = "X-Tl-Correlation-Id";
     }

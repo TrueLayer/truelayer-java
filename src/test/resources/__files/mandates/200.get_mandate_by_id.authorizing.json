@@ -47,10 +47,7 @@
     "provider_id": "a-provider-id"
   },
   "user": {
-    "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c",
-    "name": "Remi Terr",
-    "email": "remi.terr@aol.com",
-    "phone": "+44777777777"
+    "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c"
   },
   "created_at": "2022-01-17T17:13:18.214924Z",
   "constraints": {

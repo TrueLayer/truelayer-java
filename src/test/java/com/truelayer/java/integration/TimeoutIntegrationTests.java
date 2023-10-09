@@ -19,8 +19,9 @@ import org.junit.jupiter.api.*;
 public class TimeoutIntegrationTests extends IntegrationTests {
 
     private static final int A_TIMEOUT_MS = 300;
+    private static final int API_RESPONSE_TIME_MS = 1000;
 
-    // overrides the default implementation by setting a timeout
+    // overrides the default setup by setting a custom call timeout
     @BeforeEach
     @Override
     public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
@@ -43,7 +44,7 @@ public class TimeoutIntegrationTests extends IntegrationTests {
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
-                .delayMs(1000)
+                .delayMs(API_RESPONSE_TIME_MS)
                 .build();
 
         assertThrows(

@@ -18,12 +18,12 @@ class TrueLayerAgentInterceptorTests extends BaseInterceptorTests {
 
     @BeforeEach
     public void prepareTest() {
-        buildRequest();
+        arrangeRequest();
     }
 
     @Test
-    @DisplayName("It should add a User-Agent header containing the library name and version")
-    public void shouldAddUserAgentHeader() {
+    @DisplayName("It should add a TL-Agent header containing the library name and version")
+    public void shouldAddATrueLayerAgentHeader() {
         intercept();
 
         String javaVersionIdentifier =

@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
+import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
-import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
+import com.truelayer.java.payouts.IPayoutsHandler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +57,7 @@ public class TrueLayerClientTests {
                 .signingOptions(getSigningOptions())
                 .build();
 
-        IPaymentsApi paymentsHandler = trueLayerClient.payments();
+        IPaymentsHandler paymentsHandler = trueLayerClient.payments();
 
         assertNotNull(paymentsHandler);
     }
@@ -69,8 +71,8 @@ public class TrueLayerClientTests {
                 .signingOptions(getSigningOptions())
                 .build();
 
-        IPaymentsApi paymentHandler1 = trueLayerClient.payments();
-        IPaymentsApi paymentHandler2 = trueLayerClient.payments();
+        IPaymentsHandler paymentHandler1 = trueLayerClient.payments();
+        IPaymentsHandler paymentHandler2 = trueLayerClient.payments();
 
         assertSame(paymentHandler1, paymentHandler2);
     }
@@ -110,5 +112,31 @@ public class TrueLayerClientTests {
         IMerchantAccountsHandler merchantAccountsHandler = trueLayerClient.merchantAccounts();
 
         assertNotNull(merchantAccountsHandler);
+    }
+
+    @Test
+    @DisplayName("It should yield a mandates handler")
+    public void itShouldYieldAMandatesHandler() {
+        ITrueLayerClient trueLayerClient = TrueLayerClient.New()
+                .clientCredentials(getClientCredentials())
+                .signingOptions(getSigningOptions())
+                .build();
+
+        IMandatesHandler mandatesHandler = trueLayerClient.mandates();
+
+        assertNotNull(mandatesHandler);
+    }
+
+    @Test
+    @DisplayName("It should yield a payouts handler")
+    public void itShouldYieldAPayoutsHandler() {
+        ITrueLayerClient trueLayerClient = TrueLayerClient.New()
+                .clientCredentials(getClientCredentials())
+                .signingOptions(getSigningOptions())
+                .build();
+
+        IPayoutsHandler payoutsHandler = trueLayerClient.payouts();
+
+        assertNotNull(payoutsHandler);
     }
 }

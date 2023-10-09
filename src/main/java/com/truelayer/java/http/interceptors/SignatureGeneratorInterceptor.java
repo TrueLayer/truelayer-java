@@ -15,7 +15,7 @@ import okhttp3.Response;
 import okio.Buffer;
 
 @RequiredArgsConstructor
-public class SignatureInterceptor implements Interceptor {
+public class SignatureGeneratorInterceptor implements Interceptor {
 
     private final SigningOptions signingOptions;
 
@@ -23,20 +23,20 @@ public class SignatureInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        if (needsSignature(request)) {
-            Request clonedRequest = request.newBuilder().build();
-
-            String signature = computeSignature(
-                    clonedRequest.method().toLowerCase(),
-                    clonedRequest.url().encodedPath(),
-                    clonedRequest.header(IDEMPOTENCY_KEY),
-                    getBodyAsString(clonedRequest));
-            Request newRequest =
-                    request.newBuilder().header(TL_SIGNATURE, signature).build();
-            return chain.proceed(newRequest);
+        if (!needsSignatureGeneration(request)) {
+            return chain.proceed(request);
         }
 
-        return chain.proceed(request);
+        Request clonedRequest = request.newBuilder().build();
+
+        String signature = computeSignature(
+                clonedRequest.method().toLowerCase(),
+                clonedRequest.url().encodedPath(),
+                clonedRequest.header(IDEMPOTENCY_KEY),
+                getBodyAsString(clonedRequest));
+        Request newRequest =
+                request.newBuilder().header(TL_SIGNATURE, signature).build();
+        return chain.proceed(newRequest);
     }
 
     private String getBodyAsString(Request request) throws IOException {
@@ -50,8 +50,8 @@ public class SignatureInterceptor implements Interceptor {
         }
     }
 
-    private boolean needsSignature(Request request) {
-        return !request.method().equalsIgnoreCase("get");
+    private boolean needsSignatureGeneration(Request request) {
+        return !request.method().equalsIgnoreCase("get") && isEmpty(request.header(TL_SIGNATURE));
     }
 
     private String computeSignature(String method, String path, String idempotencyKey, String jsonBody) {

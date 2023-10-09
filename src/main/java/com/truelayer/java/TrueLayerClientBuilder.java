@@ -1,10 +1,14 @@
 package com.truelayer.java;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
+import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
+import com.truelayer.java.commonapi.ICommonHandler;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
@@ -19,8 +23,13 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsApi;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
+import com.truelayer.java.payments.IPaymentsHandler;
+import com.truelayer.java.payments.PaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
+import com.truelayer.java.payouts.IPayoutsApi;
+import com.truelayer.java.payouts.IPayoutsHandler;
+import com.truelayer.java.payouts.PayoutsHandler;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -33,6 +42,8 @@ import okhttp3.OkHttpClient;
  */
 public class TrueLayerClientBuilder {
     private ClientCredentials clientCredentials;
+
+    private RequestScopes globalScopes;
 
     private SigningOptions signingOptions;
 
@@ -60,6 +71,8 @@ public class TrueLayerClientBuilder {
 
     private ICredentialsCache credentialsCache;
 
+    private ProxyConfiguration proxyConfiguration;
+
     TrueLayerClientBuilder() {}
 
     /**
@@ -75,12 +88,24 @@ public class TrueLayerClientBuilder {
 
     /**
      * Utility to set the signing options required for payments.
-     * @param signingOptions the signing options object that holds signature related informations.
+     * @param signingOptions the signing options object that holds signature related information.
      * @return the instance of the client builder used.
      * @see SigningOptions
      */
     public TrueLayerClientBuilder signingOptions(SigningOptions signingOptions) {
         this.signingOptions = signingOptions;
+        return this;
+    }
+
+    /**
+     * Utility to set custom global scopes used by the library. If used, the specified scopes will override the
+     * default scopes used by the library. If using this option, make sure to set valid scopes for all the API interactions
+     * that your integration will have.
+     * @param globalScopes custom global scopes to be used by the library for all authenticated endpoints.
+     * @return the instance of the client builder used.
+     */
+    public TrueLayerClientBuilder withGlobalScopes(RequestScopes globalScopes) {
+        this.globalScopes = globalScopes;
         return this;
     }
 
@@ -168,6 +193,16 @@ public class TrueLayerClientBuilder {
     }
 
     /**
+     * Utility to configure a custom proxy, optionally including an authentication.
+     * @param proxyConfiguration the configuration describing the custom proxy
+     * @return the instance of the client builder used
+     */
+    public TrueLayerClientBuilder withProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+        this.proxyConfiguration = proxyConfiguration;
+        return this;
+    }
+
+    /**
      * Builds the Java library main class to interact with TrueLayer APIs.
      * @return a client instance
      * @see TrueLayerClient
@@ -180,7 +215,7 @@ public class TrueLayerClientBuilder {
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
 
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
-                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer);
+                timeout, connectionPoolOptions, requestExecutor, logMessageConsumer, proxyConfiguration);
 
         OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
 
@@ -194,20 +229,28 @@ public class TrueLayerClientBuilder {
 
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
-        ICommonApi commonApiHandler = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
+        ICommonApi commonApi = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
                 .create(ICommonApi.class);
+        ICommonHandler commonHandler = new CommonHandler(commonApi);
 
         // As per our RFC, if signing options is not configured we create a client which is able to interact
         // with the Authentication API only
         if (isEmpty(signingOptions)) {
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonApiHandler);
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonHandler);
         }
 
         OkHttpClient paymentsHttpClient = httpClientFactory.buildPaymentsApiClient(
                 authHttpClient, authenticationHandler, signingOptions, credentialsCache);
 
-        IPaymentsApi paymentsHandler = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
+
+        PaymentsHandler.PaymentsHandlerBuilder paymentsHandlerBuilder =
+                PaymentsHandler.builder().paymentsApi(paymentsApi);
+        if (customScopesPresent()) {
+            paymentsHandlerBuilder.scopes(globalScopes);
+        }
+        IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
         IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
                 .clientCredentials(clientCredentials)
@@ -217,11 +260,30 @@ public class TrueLayerClientBuilder {
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMerchantAccountsApi.class);
-        IMerchantAccountsHandler merchantAccountsHandler = new MerchantAccountsHandler(merchantAccountsApi);
+        MerchantAccountsHandler.MerchantAccountsHandlerBuilder merchantAccountsHandlerBuilder =
+                MerchantAccountsHandler.builder().merchantAccountsApi(merchantAccountsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IMerchantAccountsHandler merchantAccountsHandler = merchantAccountsHandlerBuilder.build();
 
         IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IMandatesApi.class);
-        IMandatesHandler mandatesHandler = new MandatesHandler(mandatesApi);
+        MandatesHandler.MandatesHandlerBuilder mandatesHandlerBuilder =
+                MandatesHandler.builder().mandatesApi(mandatesApi);
+        if (customScopesPresent()) {
+            mandatesHandlerBuilder.scopes(globalScopes);
+        }
+        IMandatesHandler mandatesHandler = mandatesHandlerBuilder.build();
+
+        IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(IPayoutsApi.class);
+        PayoutsHandler.PayoutsHandlerBuilder payoutsHandlerBuilder =
+                PayoutsHandler.builder().payoutsApi(payoutsApi);
+        if (customScopesPresent()) {
+            merchantAccountsHandlerBuilder.scopes(globalScopes);
+        }
+        IPayoutsHandler payoutsHandler = payoutsHandlerBuilder.build();
 
         return new TrueLayerClient(
                 authenticationHandler,
@@ -229,7 +291,12 @@ public class TrueLayerClientBuilder {
                 paymentsProvidersHandler,
                 merchantAccountsHandler,
                 mandatesHandler,
-                hppLinkBuilder,
-                commonApiHandler);
+                payoutsHandler,
+                commonHandler,
+                hppLinkBuilder);
+    }
+
+    private boolean customScopesPresent() {
+        return isNotEmpty(globalScopes) && isNotEmpty(globalScopes.getScopes());
     }
 }
