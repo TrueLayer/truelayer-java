@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
@@ -64,6 +65,31 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should create a payment with additional product intention")
+    public void shouldCreateAPaymentWithAdditionalProductIntention() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .amountInMinor(100)
+                .relatedProducts(RelatedProducts.builder()
+                        .signupPlus(Collections.emptyMap())
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {}}"))));
     }
 
     @Test
