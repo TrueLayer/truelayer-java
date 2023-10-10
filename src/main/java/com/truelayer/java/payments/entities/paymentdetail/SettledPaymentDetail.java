@@ -1,14 +1,11 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
 import com.truelayer.java.entities.PaymentSource;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
@@ -27,24 +24,15 @@ public class SettledPaymentDetail extends PaymentDetail {
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 
+    SettlementRisk settlementRisk;
+
     @JsonGetter
     public Optional<AuthorizationFlowWithConfiguration> getAuthorizationFlow() {
         return Optional.ofNullable(authorizationFlow);
     }
 
-    @Value
-    @EqualsAndHashCode
-    public static class SettlementRisk {
-        Category category;
-
-        @RequiredArgsConstructor
-        @Getter
-        public enum Category {
-            LOW_RISK("low_risk"),
-            HIGH_RISK("high_risk");
-
-            @JsonValue
-            private final String category;
-        }
+    @JsonGetter
+    public Optional<SettlementRisk> getSettlementRisk() {
+        return Optional.ofNullable(settlementRisk);
     }
 }
