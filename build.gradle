@@ -3,7 +3,7 @@ plugins {
     // to unleash the lombok magic
     id "io.freefair.lombok" version "8.4"
     // to make our tests output more fancy
-    id 'com.adarshr.test-logger' version '3.2.0'
+    id 'com.adarshr.test-logger' version '4.0.0'
     // to publish packages
     id 'maven-publish'
     // code linting
@@ -19,7 +19,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(19)
     }
 }
 
