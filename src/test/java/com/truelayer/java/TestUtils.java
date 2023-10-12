@@ -107,6 +107,7 @@ public class TestUtils {
         private String bodyFile;
         private Integer delayMilliseconds;
         private String xForwardedForHeader;
+        private String xDeviceUserAgent;
 
         private RequestStub() {}
 
@@ -154,6 +155,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub withXDeviceUserAgent(String deviceUserAgent) {
+            this.xDeviceUserAgent = deviceUserAgent;
+            return this;
+        }
+
         public RequestStub delayMs(int delayMilliseconds) {
             this.delayMilliseconds = delayMilliseconds;
             return this;
@@ -176,6 +182,10 @@ public class TestUtils {
 
             if (isNotEmpty(xForwardedForHeader)) {
                 request.withHeader(X_FORWARDED_FOR, equalTo(xForwardedForHeader));
+            }
+
+            if (isNotEmpty(xDeviceUserAgent)) {
+                request.withHeader(X_DEVICE_USER_AGENT, equalTo(xDeviceUserAgent));
             }
 
             ResponseDefinitionBuilder response = aResponse()
@@ -204,6 +214,7 @@ public class TestUtils {
                 .idempotencyKey("a-custom-key_" + randomString)
                 .signature("a-custom-signature_" + randomString)
                 .xForwardedFor("1.2.3.4_" + randomString)
+                .xDeviceUserAgent("ADummyUserAgen")
                 .build();
     }
 }

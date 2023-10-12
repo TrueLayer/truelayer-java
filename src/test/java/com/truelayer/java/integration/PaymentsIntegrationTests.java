@@ -1,6 +1,8 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.truelayer.java.Constants.HeaderNames.X_DEVICE_USER_AGENT;
+import static com.truelayer.java.Constants.HeaderNames.X_FORWARDED_FOR;
 import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.payments.entities.paymentdetail.Status.*;
@@ -10,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
@@ -64,6 +67,31 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         CreatePaymentResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePaymentResponse.class);
         assertEquals(expectedStatus, response.getData().getStatus());
         assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should create a payment with additional product intention")
+    public void shouldCreateAPaymentWithAdditionalProductIntention() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .amountInMinor(100)
+                .relatedProducts(RelatedProducts.builder()
+                        .signupPlus(Collections.emptyMap())
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {}}"))));
     }
 
     @Test
@@ -238,10 +266,11 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
     @SneakyThrows
     @Test
-    @DisplayName("It should start an authorization flow with custom X-Forwarded-For HTTP header")
-    public void shouldStartAnAuthorizationFlowWithXForwardedForHeader() {
+    @DisplayName("It should start an authorization flow with custom headers")
+    public void shouldStartAnAuthorizationFlowWithCustomHeaders() {
         String jsonResponseFile = "payments/200.start_authorization_flow.authorizing.wait.json";
         String endUserIpAddress = "11.1.2.3";
+        String deviceUserAgent = "DummyUserAgent";
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
@@ -254,6 +283,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withAuthorization()
                 .withIdempotencyKey()
                 .withXForwardedForHeader(endUserIpAddress)
+                .withXDeviceUserAgent(deviceUserAgent)
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -262,10 +292,18 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
         ApiResponse<AuthorizationFlowResponse> response = tlClient.payments()
                 .startAuthorizationFlow(
-                        Headers.builder().xForwardedFor(endUserIpAddress).build(), A_PAYMENT_ID, request)
+                        Headers.builder()
+                                .xForwardedFor(endUserIpAddress)
+                                .xDeviceUserAgent(deviceUserAgent)
+                                .build(),
+                        A_PAYMENT_ID,
+                        request)
                 .get();
 
         verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/authorization-flow"))
+                .withHeader(X_FORWARDED_FOR, equalTo(endUserIpAddress))
+                .withHeader(X_DEVICE_USER_AGENT, equalTo(deviceUserAgent)));
         assertNotError(response);
         AuthorizationFlowResponse expected =
                 TestUtils.deserializeJsonFileTo(jsonResponseFile, AuthorizationFlowResponse.class);

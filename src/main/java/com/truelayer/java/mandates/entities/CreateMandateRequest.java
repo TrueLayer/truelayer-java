@@ -1,6 +1,7 @@
 package com.truelayer.java.mandates.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.mandates.entities.mandate.Mandate;
 import java.util.Map;
@@ -24,4 +25,6 @@ public class CreateMandateRequest {
     private Constraints constraints;
 
     private Map<String, String> metadata;
+
+    private RelatedProducts relatedProducts;
 }
