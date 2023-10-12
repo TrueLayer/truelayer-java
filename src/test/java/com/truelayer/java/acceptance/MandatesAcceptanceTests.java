@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.ProviderFilter;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.http.entities.ApiResponse;
@@ -66,6 +67,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
                 startAuthFlowForMandate(createMandateResponse.getData().getId());
         assertNotError(startAuthorizationFlowResponse);
+    }
+
+    @Test
+    @DisplayName("It should create a VRP sweeping mandate to be used with Signup+")
+    @SneakyThrows
+    public void itShouldCreateASweepingMandateWithSignupPlusIntention() {
+        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
+                .createMandate(createMandateRequest(
+                        SWEEPING,
+                        ProviderSelection.preselected().providerId(PROVIDER_ID).build(),
+                        RelatedProducts.builder()
+                                .signupPlus(Collections.emptyMap())
+                                .build()))
+                .get();
+
+        assertNotError(createMandateResponse);
     }
 
     @Test
@@ -292,6 +309,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     private CreateMandateRequest createMandateRequest(Mandate.Type type, ProviderSelection providerSelection) {
+        return createMandateRequest(type, providerSelection, null);
+    }
+
+    private CreateMandateRequest createMandateRequest(
+            Mandate.Type type, ProviderSelection providerSelection, RelatedProducts relatedProducts) {
         Mandate mandate = null;
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
@@ -317,7 +339,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                     .build();
         }
 
-        return CreateMandateRequest.builder()
+        CreateMandateRequest.CreateMandateRequestBuilder builder = CreateMandateRequest.builder()
                 .mandate(mandate)
                 .currency(CurrencyCode.GBP)
                 .user(User.builder()
@@ -334,8 +356,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .maximumIndividualAmount(1000)
                         .build())
-                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
-                .build();
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"));
+
+        if (ObjectUtils.isNotEmpty(relatedProducts)) {
+            builder.relatedProducts(relatedProducts);
+        }
+
+        return builder.build();
     }
 
     @SneakyThrows

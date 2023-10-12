@@ -35,6 +35,11 @@ public class HeadersMapper {
             headersMap.put(Constants.HeaderNames.X_FORWARDED_FOR, xForwardedFor);
         }
 
+        String xDeviceUserAgent = customHeaders.getXDeviceUserAgent();
+        if (isNotEmpty(xDeviceUserAgent)) {
+            headersMap.put(Constants.HeaderNames.X_DEVICE_USER_AGENT, xDeviceUserAgent);
+        }
+
         return Collections.unmodifiableMap(headersMap);
     }
 }
