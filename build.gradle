@@ -19,8 +19,13 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(11)
     }
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 spotless {
@@ -117,7 +122,7 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: mockitoVersion
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion
-    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.35.0'
+    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.2.0'
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
