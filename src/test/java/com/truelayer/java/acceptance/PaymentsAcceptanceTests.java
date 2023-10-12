@@ -89,6 +89,22 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
+    @DisplayName("It should create a payment to be used with Signup+")
+    @SneakyThrows
+    public void itShouldCreateAPaymentWithSignupPlusIntention() {
+        ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
+                .createPayment(buildPaymentRequestWithProviderSelection(
+                        buildPreselectedProviderSelection(),
+                        CurrencyCode.GBP,
+                        RelatedProducts.builder()
+                                .signupPlus(Collections.emptyMap())
+                                .build()))
+                .get();
+
+        assertNotError(createPaymentResponse);
+    }
+
+    @Test
     @DisplayName("It should create and get by id a payment with preselected provider")
     @SneakyThrows
     public void shouldCreateAPaymentWithPreselectedProvider() {
@@ -509,10 +525,14 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         }
     }
 
-    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection, CurrencyCode currencyCode) {
-        return CreatePaymentRequest.builder()
+        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null);
+    }
+
+    private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
+            ProviderSelection providerSelection, CurrencyCode currencyCode, RelatedProducts relatedProducts) {
+        CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
@@ -531,8 +551,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .countryCode("GB")
                                 .build())
                         .build())
-                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
-                .build();
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"));
+
+        if (relatedProducts != null) {
+            builder.relatedProducts(relatedProducts);
+        }
+
+        return builder.build();
     }
 
     private CreatePaymentRequest buildPaymentRequest(CurrencyCode currencyCode) {

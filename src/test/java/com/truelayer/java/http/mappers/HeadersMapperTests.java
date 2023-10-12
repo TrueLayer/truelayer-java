@@ -23,6 +23,7 @@ class HeadersMapperTests {
 
         assertThrows(UnsupportedOperationException.class, () -> headersMap.put("foo", "bar"));
         assertEquals(headers.getXForwardedFor(), headersMap.get(X_FORWARDED_FOR));
+        assertEquals(headers.getXDeviceUserAgent(), headersMap.get(X_DEVICE_USER_AGENT));
         assertEquals(headers.getSignature(), headersMap.get(TL_SIGNATURE));
         assertEquals(headers.getIdempotencyKey(), headersMap.get(IDEMPOTENCY_KEY));
     }

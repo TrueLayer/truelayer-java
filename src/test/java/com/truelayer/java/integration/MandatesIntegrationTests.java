@@ -1,7 +1,6 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_SWEEPING;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
@@ -9,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.TestUtils.RequestStub;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.mandates.entities.*;
@@ -59,6 +59,30 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertNotError(response);
         CreateMandateResponse expected = deserializeJsonFileTo(jsonResponseFile, CreateMandateResponse.class);
         assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should create a mandate with additional product intention")
+    public void shouldCreateAMandateWithAdditionalProductIntention() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        CreateMandateRequest createMandateRequest = CreateMandateRequest.builder()
+                .relatedProducts(RelatedProducts.builder()
+                        .signupPlus(Collections.singletonMap("foo", "bar"))
+                        .build())
+                .build();
+
+        tlClient.mandates().createMandate(createMandateRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
+        verify(postRequestedFor(urlPathEqualTo("/mandates"))
+                .withRequestBody(
+                        matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {\"foo\": \"bar\"}}"))));
     }
 
     @Test

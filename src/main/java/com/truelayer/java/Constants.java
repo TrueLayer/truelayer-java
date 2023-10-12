@@ -32,6 +32,7 @@ public final class Constants {
         public static final String AUTHORIZATION = "Authorization";
         public static final String PROXY_AUTHORIZATION = "Proxy-Authorization";
         public static final String X_FORWARDED_FOR = "X-Forwarded-For";
+        public static final String X_DEVICE_USER_AGENT = "X-Device-User-Agent";
         public static final String COOKIE = "Cookie";
         public static final String TL_CORRELATION_ID = "X-Tl-Correlation-Id";
     }
