@@ -92,6 +92,11 @@ dependencies {
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
+    implementation group: 'io.opentelemetry.instrumentation', name: 'opentelemetry-okhttp-3.0', version: '1.30.0-alpha'
+    implementation group: 'io.opentelemetry', name: 'opentelemetry-sdk', version: '1.31.0'
+    implementation group: 'io.opentelemetry', name: 'opentelemetry-exporter-otlp', version: '1.31.0'
+
+
     // TL signing library
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.5'
 
