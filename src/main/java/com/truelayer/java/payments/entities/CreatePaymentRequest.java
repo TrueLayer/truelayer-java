@@ -1,6 +1,7 @@
 package com.truelayer.java.payments.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.util.Map;
@@ -23,4 +24,9 @@ public class CreatePaymentRequest {
     private User user;
 
     private Map<String, String> metadata;
+
+    /**
+     * Optional field. Not available when creating recurring payments.
+     */
+    private RelatedProducts relatedProducts;
 }
