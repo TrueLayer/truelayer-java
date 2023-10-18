@@ -132,6 +132,7 @@ class PaymentDetailTests {
                 ZonedDateTime.now(Clock.systemUTC()),
                 ZonedDateTime.now(Clock.systemUTC()),
                 ZonedDateTime.now(Clock.systemUTC()),
+                null,
                 null);
 
         assertTrue(sut.isSettled());
@@ -145,6 +146,7 @@ class PaymentDetailTests {
                 ZonedDateTime.now(Clock.systemUTC()),
                 ZonedDateTime.now(Clock.systemUTC()),
                 ZonedDateTime.now(Clock.systemUTC()),
+                null,
                 null);
 
         assertDoesNotThrow(sut::asSettled);
@@ -163,7 +165,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should yield true if instance is of type ExecutedPaymentDetail")
     public void shouldYieldTrueIfExecutedPaymentDetail() {
-        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null);
+        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null, null);
 
         assertTrue(sut.isExecuted());
     }
@@ -171,7 +173,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should convert to an instance of class ExecutedPaymentDetail")
     public void shouldConvertToExecutedPaymentDetail() {
-        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null);
+        PaymentDetail sut = new ExecutedPaymentDetail(null, ZonedDateTime.now(Clock.systemUTC()), null, null);
 
         assertDoesNotThrow(sut::asExecuted);
     }
