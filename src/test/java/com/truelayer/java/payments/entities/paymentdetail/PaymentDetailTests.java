@@ -67,7 +67,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should yield true if instance is of type AuthorizedPaymentDetail")
     public void shouldYieldTrueIfAuthorizedPaymentDetail() {
-        PaymentDetail sut = new AuthorizedPaymentDetail(new AuthorizationFlowWithConfiguration(null));
+        PaymentDetail sut = new AuthorizedPaymentDetail(null, new AuthorizationFlowWithConfiguration(null));
 
         assertTrue(sut.isAuthorized());
     }
@@ -75,7 +75,7 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should convert to an instance of class AuthorizedPaymentDetail")
     public void shouldConvertToAuthorizedPaymentDetail() {
-        PaymentDetail sut = new AuthorizedPaymentDetail(new AuthorizationFlowWithConfiguration(null));
+        PaymentDetail sut = new AuthorizedPaymentDetail(null, new AuthorizationFlowWithConfiguration(null));
 
         assertDoesNotThrow(sut::asAuthorized);
     }
@@ -94,6 +94,7 @@ class PaymentDetailTests {
     @DisplayName("It should yield true if instance is of type FailedPaymentDetail")
     public void shouldYieldTrueIfFailedPaymentDetail() {
         PaymentDetail sut = new FailedPaymentDetail(
+                null,
                 ZonedDateTime.now(Clock.systemUTC()),
                 FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED,
                 "failed for some reason",
@@ -106,6 +107,7 @@ class PaymentDetailTests {
     @DisplayName("It should convert to an instance of class FailedPaymentDetail")
     public void shouldConvertToFailedPaymentDetail() {
         PaymentDetail sut = new FailedPaymentDetail(
+                null,
                 ZonedDateTime.now(Clock.systemUTC()),
                 FailedPaymentDetail.FailureStage.AUTHORIZATION_REQUIRED,
                 "failed for some reason",
