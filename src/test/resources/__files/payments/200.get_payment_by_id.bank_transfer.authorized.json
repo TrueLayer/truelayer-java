@@ -55,5 +55,14 @@
   },
   "metadata": {
     "a_custom_key": "a-value"
+  },
+  "payment_source":{
+    "account_identifiers":[
+      {
+        "type":"nrb",
+        "nrb":"123456"
+      }
+    ],
+    "account_holder_name":"John Doe"
   }
 }
