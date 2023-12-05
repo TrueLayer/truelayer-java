@@ -1,5 +1,7 @@
 package com.truelayer.java.acceptance;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
+import static com.truelayer.java.Constants.Scopes.RECURRING_PAYMENTS_COMMERCIAL;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.getHttpClientInstance;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
@@ -8,10 +10,10 @@ import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.ProviderFilter;
-import com.truelayer.java.entities.RelatedProducts;
-import com.truelayer.java.entities.User;
+import com.truelayer.java.ClientCredentials;
+import com.truelayer.java.SigningOptions;
+import com.truelayer.java.TrueLayerClient;
+import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
@@ -26,6 +28,7 @@ import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.retry.Retry;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
@@ -88,6 +91,25 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should create a VRP commercial mandate with preselected provider")
     @SneakyThrows
     public void itShouldCreateACommercialMandateWithPreselectedProvider() {
+        // We need a custom client with the VRP commercial scope
+        var tlClient = TrueLayerClient.New()
+                .environment(environment)
+                .clientCredentials(ClientCredentials.builder()
+                        .clientId(System.getenv("TL_CLIENT_ID"))
+                        .clientSecret(System.getenv("TL_CLIENT_SECRET"))
+                        .build())
+                .signingOptions(SigningOptions.builder()
+                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
+                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
+                        .build())
+                .withGlobalScopes(RequestScopes.builder()
+                        .scope(PAYMENTS)
+                        .scope(RECURRING_PAYMENTS_COMMERCIAL)
+                        .build())
+                .withHttpLogs()
+                .withCredentialsCaching()
+                .build();
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
