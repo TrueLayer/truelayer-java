@@ -1,10 +1,13 @@
 package com.truelayer.java.acceptance;
 
+import static com.truelayer.java.Constants.Scopes.*;
+
 import com.truelayer.java.ClientCredentials;
 import com.truelayer.java.Environment;
 import com.truelayer.java.SigningOptions;
 import com.truelayer.java.TrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -35,6 +38,11 @@ public abstract class AcceptanceTests {
                 .signingOptions(SigningOptions.builder()
                         .keyId(System.getenv("TL_SIGNING_KEY_ID"))
                         .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
+                        .build())
+                .withGlobalScopes(RequestScopes.builder()
+                        .scope(PAYMENTS)
+                        .scope(RECURRING_PAYMENTS_SWEEPING)
+                        .scope(RECURRING_PAYMENTS_COMMERCIAL)
                         .build())
                 .withHttpLogs()
                 .withCredentialsCaching()

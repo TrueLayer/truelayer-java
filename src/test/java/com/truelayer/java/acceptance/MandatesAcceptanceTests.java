@@ -37,7 +37,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.commons.lang3.ObjectUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -86,7 +85,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
-    @Disabled("The provider ob-uki-mock-bank-sbox does not support commercial VRP yet")
     @DisplayName("It should create a VRP commercial mandate with preselected provider")
     @SneakyThrows
     public void itShouldCreateACommercialMandateWithPreselectedProvider() {
