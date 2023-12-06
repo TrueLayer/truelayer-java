@@ -27,16 +27,16 @@ public abstract class AcceptanceTests {
 
     @BeforeAll
     public static void setup() {
-        environment = Environment.development();
+        environment = Environment.sandbox();
         tlClient = TrueLayerClient.New()
                 .environment(environment)
                 .clientCredentials(ClientCredentials.builder()
-                        .clientId(System.getenv("TL_CLIENT_ID_DEV"))
-                        .clientSecret(System.getenv("TL_CLIENT_SECRET_DEV"))
+                        .clientId(System.getenv("TL_CLIENT_ID"))
+                        .clientSecret(System.getenv("TL_CLIENT_SECRET"))
                         .build())
                 .signingOptions(SigningOptions.builder()
-                        .keyId(System.getenv("TL_SIGNING_KEY_ID_DEV"))
-                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY_DEV").getBytes(StandardCharsets.UTF_8))
+                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
+                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
                         .build())
                 .withHttpLogs()
                 .withCredentialsCaching()
