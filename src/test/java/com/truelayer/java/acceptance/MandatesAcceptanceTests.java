@@ -191,6 +191,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // authorize the created mandate without explicit user interaction
         authorizeMandate(startAuthorizationFlowResponse.getData());
+
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // finally make a confirmation of funds request for 1 penny
@@ -401,6 +402,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
+    @Deprecated // TODO: replace with the new shared test utility for mandates
     private void authorizeMandate(AuthorizationFlowResponse authorizationFlowResponse) {
         // first we check the state of the mandate returned by the gateway
         assertTrue(
