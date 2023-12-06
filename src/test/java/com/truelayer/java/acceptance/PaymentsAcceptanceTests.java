@@ -4,8 +4,6 @@ import static com.truelayer.java.TestUtils.*;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
 import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
@@ -348,21 +346,15 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .get();
         assertNotError(startAuthorizationFlowResponse);
 
-        // Call the mock payment api response to trigger the executed state on the payment just created
-        Response paymentResponse = callMockProviderRedirectUrl(startAuthorizationFlowResponse.getData());
-        assertTrue(paymentResponse.isSuccessful());
-        String responseString = paymentResponse.body().string();
-        assertNotNull(responseString);
-
-        // Grab the provider return query and fragment from the mock payment api response
-        URI responseUrl = URI.create(responseString);
-        SubmitPaymentReturnParametersRequest submitProviderReturn = SubmitPaymentReturnParametersRequest.builder()
-                .query(responseUrl.getQuery())
-                .fragment(responseUrl.getFragment())
-                .build();
-        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
-                tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
-        assertNotError(submitPaymentReturnParametersResponse);
+        URI redirectUri = startAuthorizationFlowResponse
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.PAYMENTS);
     }
 
     @SneakyThrows
@@ -394,21 +386,15 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .get();
         assertNotError(startAuthorizationFlowResponse);
 
-        // Call the mock payment api response to trigger the executed state on the payment just created
-        Response paymentResponse = callMockProviderRedirectUrl(startAuthorizationFlowResponse.getData());
-        assertTrue(paymentResponse.isSuccessful());
-        String responseString = paymentResponse.body().string();
-        assertNotNull(responseString);
-
-        // Grab the provider return query and fragment from the mock payment api response
-        URI responseUrl = URI.create(responseString);
-        SubmitPaymentReturnParametersRequest submitProviderReturn = SubmitPaymentReturnParametersRequest.builder()
-                .query(responseUrl.getQuery())
-                .fragment(responseUrl.getFragment())
-                .build();
-        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
-                tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
-        assertNotError(submitPaymentReturnParametersResponse);
+        URI redirectUri = startAuthorizationFlowResponse
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.PAYMENTS);
 
         waitForPaymentToBeSettled(paymentId);
 
@@ -453,31 +439,6 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertEquals(
                 createPaymentRefundRequest.getMetadata(),
                 paymentRefundApiResponse.getData().getMetadata());
-    }
-
-    @SneakyThrows
-    private Response callMockProviderRedirectUrl(AuthorizationFlowResponse startAuthorizationFlowResponse) {
-        URI redirectUri = startAuthorizationFlowResponse
-                .asAuthorizing()
-                .getAuthorizationFlow()
-                .getActions()
-                .getNext()
-                .asRedirect()
-                .getUri();
-        assertNotNull(redirectUri);
-        String protocol = redirectUri.getScheme();
-        String host = redirectUri.getHost();
-        String bankPaymentId = redirectUri.getPath().replaceFirst("/login/", "");
-        RequestBody body =
-                RequestBody.create(MediaType.get("application/json"), "{\"action\":\"Execute\", \"redirect\": false}");
-        Request request = new Request.Builder()
-                .url(String.format("%s://%s/api/single-immediate-payments/%s/action", protocol, host, bankPaymentId))
-                .post(body)
-                .addHeader(
-                        "Authorization",
-                        String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
-                .build();
-        return getHttpClientInstance().newCall(request).execute();
     }
 
     private PreselectedProviderSelection buildPreselectedProviderSelection() {
