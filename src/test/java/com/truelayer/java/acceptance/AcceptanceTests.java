@@ -6,14 +6,13 @@ import com.truelayer.java.SigningOptions;
 import com.truelayer.java.TrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Tag("acceptance")
 public abstract class AcceptanceTests {

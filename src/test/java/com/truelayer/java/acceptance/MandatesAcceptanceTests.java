@@ -520,16 +520,28 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         return Stream.of(
                 Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, null),
                 Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, null),
-                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, Retry.standard().forDuration("30m").build()),
-                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, Retry.standard().forDuration("30m").build()),
-                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, Retry.smart()
-                        .forDuration("90d")
-                        .ensureMinimumBalanceInMinor(100)
-                        .build()),
-                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, Retry.smart()
-                        .forDuration("90d")
-                        .ensureMinimumBalanceInMinor(100)
-                        .build()));
+                Arguments.of(
+                        RECURRING_PAYMENTS_SWEEPING,
+                        SWEEPING,
+                        Retry.standard().forDuration("30m").build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_COMMERCIAL,
+                        COMMERCIAL,
+                        Retry.standard().forDuration("30m").build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_SWEEPING,
+                        SWEEPING,
+                        Retry.smart()
+                                .forDuration("90d")
+                                .ensureMinimumBalanceInMinor(100)
+                                .build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_COMMERCIAL,
+                        COMMERCIAL,
+                        Retry.smart()
+                                .forDuration("90d")
+                                .ensureMinimumBalanceInMinor(100)
+                                .build()));
     }
 
     private static Stream<Arguments> provideMandatesTypes() {
