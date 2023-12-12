@@ -53,7 +53,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
     @ParameterizedTest
     @DisplayName("It should create a VRP mandate with preselected provider")
-    @MethodSource("provideMandatesTypes")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
     public void itShouldCreateAMandateWithPreselectedProvider(String mandatesScope, Mandate.Type mandateType) {
         // create client with required scopes
@@ -130,7 +130,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
     @ParameterizedTest
     @DisplayName("It should get confirm funds")
-    @MethodSource("provideMandatesTypes")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
     public void itShouldGetFunds(String mandatesScope, Mandate.Type mandateType) {
         // create client with required scopes
@@ -187,7 +187,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
     @ParameterizedTest
     @DisplayName("It should get mandate constraints")
-    @MethodSource("provideMandatesTypes")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
     public void itShouldGetConstraints(String mandatesScope, Mandate.Type mandateType) {
         // create client with required scopes
@@ -243,7 +243,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
     @ParameterizedTest
     @DisplayName("It should create and revoke a mandate")
-    @MethodSource("provideMandatesTypes")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
     public void itShouldCreateAndRevokeAMandate(String mandatesScope, Mandate.Type mandateType) {
         // create client with required scopes
@@ -544,7 +544,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                 .build()));
     }
 
-    private static Stream<Arguments> provideMandatesTypes() {
+    private static Stream<Arguments> provideMandatesScopesAndTypes() {
         return Stream.of(
                 Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING),
                 Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL));
