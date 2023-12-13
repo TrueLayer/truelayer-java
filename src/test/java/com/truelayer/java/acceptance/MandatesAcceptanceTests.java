@@ -437,7 +437,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
-    @Deprecated // TODO: replace with the new shared test utility for mandates
+    @Deprecated // TODO: cleanup
     private void authorizeMandate(AuthorizationFlowResponse authorizationFlowResponse) {
         // first we check the state of the mandate returned by the gateway
         assertTrue(
