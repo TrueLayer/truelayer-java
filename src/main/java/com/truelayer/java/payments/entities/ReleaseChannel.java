@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum ReleaseChannel {
     GENERAL_AVAILABILITY("general_availability"),
     PUBLIC_BETA("public_beta"),
-    PRIVATE_BETA("private_beta");
+    PRIVATE_BETA("private_beta"),
+    ALPHA("alpha");
 
     @JsonValue
     private final String releaseChannel;

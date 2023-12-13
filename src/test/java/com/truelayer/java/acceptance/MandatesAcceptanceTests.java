@@ -111,7 +111,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         // create mandate
         ProviderSelection userSelectedProvider = ProviderSelection.userSelected()
                 .filter(ProviderFilter.builder()
-                        .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
                         .build())
                 .build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
