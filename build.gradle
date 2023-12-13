@@ -78,7 +78,8 @@ tasks.register('acceptance-tests', Test) {
     useJUnitPlatform{
         includeTags "acceptance"
     }
-    testLogging.showStandardStreams = true
+    // toggle to see the HTTP traces when running acceptance tests
+    testLogging.showStandardStreams = false
 }
 
 dependencies {
