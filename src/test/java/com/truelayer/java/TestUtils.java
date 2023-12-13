@@ -228,11 +228,12 @@ public class TestUtils {
         assertNotNull(redirectUri);
         String protocol = redirectUri.getScheme();
         String host = redirectUri.getHost();
-        String bankPaymentId = redirectUri.getPath().replaceFirst("/login/", "");
+        String resourceId =
+                redirectUri.getPath().substring(redirectUri.getPath().lastIndexOf("/") + 1);
         var body = RequestBody.create(MediaType.get("application/json"), headlessResourceAuthorization.payload);
         Request request = new Request.Builder()
                 .url(String.format(
-                        "%s://%s/api/%s/%s/action", protocol, host, headlessResourceAuthorization.path, bankPaymentId))
+                        "%s://%s/api/%s/%s/action", protocol, host, headlessResourceAuthorization.path, resourceId))
                 .post(body)
                 .addHeader(
                         "Authorization",
@@ -246,12 +247,20 @@ public class TestUtils {
 
         // Grab the provider return query and fragment from the mock payment api response
         URI responseUrl = URI.create(responseString);
-        SubmitPaymentReturnParametersRequest submitProviderReturn = SubmitPaymentReturnParametersRequest.builder()
-                .query(responseUrl.getQuery())
-                .fragment(responseUrl.getFragment())
-                .build();
+
+        // Mandates require some adjustments to the query string...
+        String query = headlessResourceAuthorization == HeadlessResourceAuthorization.MANDATES
+                ? responseUrl.getQuery().replaceFirst("mandate-", "")
+                : responseUrl.getQuery();
+
+        SubmitPaymentReturnParametersRequest submitProviderReturneRequest =
+                SubmitPaymentReturnParametersRequest.builder()
+                        .query(query)
+                        .fragment(responseUrl.getFragment())
+                        .build();
         ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
-                tlClient.submitPaymentReturnParameters(submitProviderReturn).get();
+                tlClient.submitPaymentReturnParameters(submitProviderReturneRequest)
+                        .get();
         assertNotError(submitPaymentReturnParametersResponse);
     }
 
