@@ -249,7 +249,7 @@ public class TestUtils {
         URI responseUrl = URI.create(responseString);
 
         // Mandates require some adjustments to the query string...
-        //TODO: review if we want this to be a permanent solution
+        // TODO: review if we want this to be a permanent solution
         String query = headlessResourceAuthorization == HeadlessResourceAuthorization.MANDATES
                 ? responseUrl.getQuery().replaceFirst("mandate-", "")
                 : responseUrl.getQuery();
