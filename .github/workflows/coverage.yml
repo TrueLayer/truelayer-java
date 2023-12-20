@@ -3,8 +3,9 @@ name: Coverage
 on:
   workflow_call:
     inputs:
-      branch:
-        required: true
+      checkout_ref:
+        description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
+        required: false
         type: string
     secrets:
       coveralls_repo_token:
