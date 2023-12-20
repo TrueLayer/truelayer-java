@@ -8,7 +8,7 @@ via TrueLayer Payments API.
 
 ## Requirements
 
-To run the project it is enough to have Java 11 installed with  with `JAVA_HOME` environment variable configured appropriately;
+To run the project it is enough to have Java 11 installed with  with `JAVA_HOME` environment variable configured appropriately.
 
 ## Configuration
 
