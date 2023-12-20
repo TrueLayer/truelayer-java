@@ -7,7 +7,7 @@ plugins {
     // to publish packages
     id 'maven-publish'
     // code linting
-    id "com.diffplug.spotless" version "6.22.0"
+    id "com.diffplug.spotless" version "6.23.3"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
@@ -78,7 +78,8 @@ tasks.register('acceptance-tests', Test) {
     useJUnitPlatform{
         includeTags "acceptance"
     }
-    testLogging.showStandardStreams = true
+    // toggle this to see raw logs during acceptance tests
+    testLogging.showStandardStreams = false
 }
 
 dependencies {
@@ -114,18 +115,18 @@ dependencies {
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
     // JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.1'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.6.0'
-    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.2.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.8.0'
+    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.3.1'
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
 
     // Transitive dependencies constraints
     constraints {
-        implementation('com.squareup.okhttp3:okhttp:4.11.0') {
+        implementation('com.squareup.okhttp3:okhttp:4.12.0') {
             because 'version 3.14.9 used by com.squareup.retrofit2:retrofit:2.9.0 has known vulnerabilities'
         }
     }

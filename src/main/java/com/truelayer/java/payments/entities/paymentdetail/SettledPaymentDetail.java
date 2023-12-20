@@ -27,9 +27,16 @@ public class SettledPaymentDetail extends PaymentDetail {
 
     AuthorizationFlowWithConfiguration authorizationFlow;
 
+    SettlementRisk settlementRisk;
+
     @JsonGetter
     public Optional<AuthorizationFlowWithConfiguration> getAuthorizationFlow() {
         return Optional.ofNullable(authorizationFlow);
+    }
+
+    @JsonGetter
+    public Optional<SettlementRisk> getSettlementRisk() {
+        return Optional.ofNullable(settlementRisk);
     }
 
     @Value

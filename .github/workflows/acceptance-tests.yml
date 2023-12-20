@@ -2,6 +2,11 @@ name: Acceptance tests
 
 on:
   workflow_call:
+    inputs:
+      checkout_ref:
+        description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
+        required: false
+        type: string
     secrets:
       tl_client_id:
         required: true
@@ -16,11 +21,13 @@ jobs:
   acceptance-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout_ref }}
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '20'
+          java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper

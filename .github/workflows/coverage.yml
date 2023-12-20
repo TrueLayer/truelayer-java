@@ -3,8 +3,9 @@ name: Coverage
 on:
   workflow_call:
     inputs:
-      branch:
-        required: true
+      checkout_ref:
+        description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
+        required: false
         type: string
     secrets:
       coveralls_repo_token:
@@ -15,11 +16,11 @@ jobs:
     name: Test coverage analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '20'
+          java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
