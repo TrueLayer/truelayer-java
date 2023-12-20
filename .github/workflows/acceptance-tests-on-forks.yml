@@ -1,0 +1,43 @@
+name: Run acceptance-tests from forks
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+jobs:
+  access-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get User Permission
+        id: checkAccess
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check User Permission
+        if: steps.checkAccess.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
+          echo "Job originally triggered by ${{ github.actor }}"
+          exit 1
+      - name: Safe checkout code (Reviewer has write access on truelayer-java)
+        uses: actions/checkout@v3
+        with:
+          # This is dangerous without the first access check
+          ref: ${{  github.event.pull_request.head.sha }}
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Acceptance tests in sandbox
+        env:
+          TL_CLIENT_ID: ${{ secrets.tl_client_id }}
+          TL_CLIENT_SECRET: ${{ secrets.tl_client_secret }}
+          TL_SIGNING_KEY_ID: ${{ secrets.tl_signing_key_id }}
+          TL_SIGNING_PRIVATE_KEY: ${{ secrets.tl_signing_private_key }}
+        run: ./gradlew acceptance-tests
