@@ -13,25 +13,26 @@ on:
 
 jobs:
   test-slack:
+    runs-on: ubuntu-latest
     steps:
-    - name: (test) Notify slack
-      uses: slackapi/slack-github-action@v1.24.0
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      with:
-        payload: |
-          {
-            "text": "Acceptance tests failed on trueLayer-java (test!)",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      - name: (test) Notify slack
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: |
+            {
+              "text": "Acceptance tests failed on trueLayer-java (test!)",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
   coverage:
     name: Test coverage analysis
     uses: ./.github/workflows/coverage.yml
