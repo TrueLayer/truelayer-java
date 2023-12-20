@@ -16,11 +16,13 @@ jobs:
     name: Test coverage analysis
     uses: ./.github/workflows/coverage.yml
     with:
-      branch: ${{ github.head_ref }}
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
     secrets:
       coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
   build:
     name: Build and tests
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
     uses: ./.github/workflows/build.yml
   access-check:
     runs-on: ubuntu-latest
@@ -43,6 +45,8 @@ jobs:
   acceptance-tests:
     name: Acceptance tests in Sandbox environment
     needs: [build, access-check]
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
     uses: ./.github/workflows/acceptance-tests.yml
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
@@ -55,6 +59,8 @@ jobs:
     needs: [build, acceptance-tests]
     steps:
       - uses: actions/checkout@v4
+        with:
+          checkout_ref: ${{ github.event.pull_request.head.sha }}
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:

@@ -2,6 +2,11 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      checkout_ref:
+        description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
+        required: false
+        type: string
     outputs:
       project_version:
         description: "The project version"
