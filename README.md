@@ -10,6 +10,7 @@ The official [TrueLayer](https://truelayer.com) Java client provides convenient 
 
 ## Installation
 
+
 ### Stable releases
 
 Our stable releases are hosted on [Maven Central](https://search.maven.org/artifact/com.truelayer/truelayer-java).
