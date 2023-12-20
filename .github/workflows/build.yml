@@ -52,9 +52,21 @@ jobs:
         run: ./gradlew build -x test
       - name: Unit tests
         run: ./gradlew unit-tests
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: failure()
+      - name: (test) Notify slack
         uses: slackapi/slack-github-action@v1.24.0
+        payload: |
+          {
+            "text": "Acceptance tests failed on trueLayer-java (test!)",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              }
+            ]
+          }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Integration tests
