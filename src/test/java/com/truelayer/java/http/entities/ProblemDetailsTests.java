@@ -15,6 +15,7 @@ public class ProblemDetailsTests {
         assertFalse(sut.isWellFormed());
     }
 
+    //FIXME: temp: Deliberately broken
     @Test
     @DisplayName("It should yield well formed")
     public void itShouldYieldWellFormed() {
@@ -24,6 +25,6 @@ public class ProblemDetailsTests {
                 .status(400)
                 .build();
 
-        assertTrue(sut.isWellFormed());
+        assertFalse(sut.isWellFormed());
     }
 }
