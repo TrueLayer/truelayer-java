@@ -12,6 +12,13 @@ on:
     types: [ opened, synchronize ]
 
 jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        run: |
+          echo "pr head sha: ${{ github.event.pull_request.head.sha }}"
+          echo "ref: ${{ github.ref }}"
   test-slack:
     runs-on: ubuntu-latest
     steps:
