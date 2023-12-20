@@ -19,6 +19,8 @@ jobs:
         run: |
           echo "pr head sha: ${{ github.event.pull_request.head.sha }}"
           echo "ref: ${{ github.ref }}"
+          echo "checkout ref: ${{ github.event.pull_request.head.sha || github.ref }}"
+          echo "repo: ${{ github.repository }}"
   test-slack:
     runs-on: ubuntu-latest
     steps:
