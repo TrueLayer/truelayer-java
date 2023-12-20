@@ -21,17 +21,23 @@ jobs:
           echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
           echo "Job originally triggered by ${{ github.actor }}"
           exit 1
-      - name: Safe checkout code (User has write access)
+      - name: Safe checkout code (Reviewer has write access on truelayer-java)
         uses: actions/checkout@v3
         with:
           # This is dangerous without the first access check
           ref: ${{  github.event.pull_request.head.sha }}
-  acceptance-tests:
-    name: Acceptance tests in Sandbox environment
-    needs: access-check
-    uses: ./.github/workflows/acceptance-tests.yml
-    secrets:
-      tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
-      tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
-      tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
-      tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Acceptance tests in sandbox
+        env:
+          TL_CLIENT_ID: ${{ secrets.tl_client_id }}
+          TL_CLIENT_SECRET: ${{ secrets.tl_client_secret }}
+          TL_SIGNING_KEY_ID: ${{ secrets.tl_signing_key_id }}
+          TL_SIGNING_PRIVATE_KEY: ${{ secrets.tl_signing_private_key }}
+        run: ./gradlew acceptance-tests
