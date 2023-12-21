@@ -37,12 +37,14 @@ jobs:
       - name: Create Snapshot version
         run: |
           CHECKOUT_REF=${{inputs.checkout_ref}}
+          STRIPPED_CHECKOUT_REF=${CHECKOUT_REF##*/}
           echo "checkout_ref=$CHECKOUT_REF"
-          echo "project_version_snapshot=${{inputs.project_version}}-${CHECKOUT_REF##*/}-SNAPSHOT" >> $GITHUB_ENV
+          echo "stripped_checkout_ref=$STRIPPED_CHECKOUT_REF" >> $GITHUB_ENV
+          echo "project_version_snapshot=${{inputs.project_version}}-$STRIPPED_CHECKOUT_REF-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Snapshot version check
         run: |
-          SNAPSHOT_VERSION_REGEX="^([0-9]+)\.([0-9]+)\.([0-9]+)-${CHECKOUT_REF##*/}-SNAPSHOT$";
+          SNAPSHOT_VERSION_REGEX="^([0-9]+)\.([0-9]+)\.([0-9]+)-${{env.stripped_checkout_ref}}-SNAPSHOT$";
           if [[ "${{env.project_version_snapshot}}" =~ $SNAPSHOT_VERSION_REGEX ]]; then
               echo "Project version ${{env.project_version_snapshot}} is valid"
           else
