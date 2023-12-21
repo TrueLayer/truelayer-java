@@ -3,8 +3,8 @@ name: Scheduled acceptance tests in Sandbox environment
 
 on:
   schedule:
-    # cron that runs every 1 hour between 10 and 20 (UTC)
-    - cron: "0 7-19/1 * * *"
+    # every hour between 8 and 19 UTC time
+    - cron: "0 8-19/1 * * *"
 
 jobs:
   scheduled-acceptance-tests:
