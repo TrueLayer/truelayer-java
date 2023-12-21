@@ -1,4 +1,4 @@
-# Scheduled workflow to run acceptance tests in Sandbox environment
+# Workflow that runs on a schedule and triggers acceptance tests in Sandbox environment
 name: Scheduled acceptance tests in Sandbox environment
 
 on:
