@@ -10,8 +10,10 @@ jobs:
     uses: ./.github/workflows/acceptance-tests.yml
     with:
       checkout_ref: /refs/heads/main
+      notify_slack_on_failure: true
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
       tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
       tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL}}
