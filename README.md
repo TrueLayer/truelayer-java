@@ -4,6 +4,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.truelayer/truelayer-java/badge.svg?style=flat)](https://search.maven.org/artifact/com.truelayer/truelayer-java)
 [![javadoc](https://javadoc.io/badge2/com.truelayer/truelayer-java/javadoc.svg)](https://javadoc.io/doc/com.truelayer/truelayer-java)
 [![Coverage Status](https://coveralls.io/repos/github/TrueLayer/truelayer-java/badge.svg?t=gcGKQv)](https://coveralls.io/github/TrueLayer/truelayer-java)
+[![Scheduled acceptance tests](https://github.com/TrueLayer/truelayer-java/actions/workflows/scheduled-acceptance-tests.yml/badge.svg)](https://github.com/TrueLayer/truelayer-java/actions/workflows/scheduled-acceptance-tests.yml)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://truelayer.mit-license.org/)
 
 The official [TrueLayer](https://truelayer.com) Java client provides convenient access to TrueLayer APIs from applications built with Java. 
