@@ -5,11 +5,10 @@
 name: Workflow for PR on forks
 
 on:
-  # This applies to both *internal* and *external* contributions
   pull_request_target:
     types: [ opened, synchronize ]
-
-#TODO exclude events on internal branches
+    branches-ignore:
+      - 'TrueLayer:**'
 
 jobs:
   access-check:
