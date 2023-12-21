@@ -1,0 +1,46 @@
+# Workflow that runs on PR on forks.
+# Triggered by PR events like opening or synchronizing.
+# Build, test, run coverage analysis and release to Maven Central a snapshot release.
+# The job will only run successfully if re-triggered by an internal contributor.
+name: Workflow for PR on forks
+
+on:
+  pull_request_target:
+    types: [ opened, synchronize ]
+
+jobs:
+  check-access:
+    if: ${{ ! startsWith(github.event.pull_request.head.repo.full_name, 'TrueLayer/truelayer-java') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check access
+        if: ${{ github.event.pull_request.author_association != 'COLLABORATOR' && github.event.pull_request.author_association != 'OWNER' }}
+        run: |
+          echo "Event not triggered by a collaborator."
+          exit 1
+  build-test-coverage:
+    needs: check-access
+    uses: ./.github/workflows/build-test-coverage.yml
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
+    secrets:
+      coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  acceptance-tests:
+    needs: build-test-coverage
+    uses: ./.github/workflows/acceptance-tests.yml
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
+    secrets:
+      tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+      tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
+      tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
+      tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
+  release-snapshot:
+    needs: [build-test-coverage, acceptance-tests]
+    uses: ./.github/workflows/release-snapshot.yml
+    with:
+      checkout_ref: ${{ github.event.pull_request.head.sha }}
+      project_version: ${{ needs.build-test-coverage.outputs.project_version }}
+    secrets:
+      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
+      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}

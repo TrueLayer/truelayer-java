@@ -1,0 +1,38 @@
+# Workflow that runs only on internal branches that are not then main one.
+# Triggered by pushes on internal branches (excluding main and tags).
+# Build, test, run coverage analysis and release to Maven Central a final release.
+name: Workflow on internal branch, excluding main
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+    tags-ignore:
+      - '**'
+
+jobs:
+  build-test-coverage:
+    uses: ./.github/workflows/build-test-coverage.yml
+    with:
+      checkout_ref: ${{ github.ref }}
+    secrets:
+      coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  acceptance-tests:
+    needs: build-test-coverage
+    uses: ./.github/workflows/acceptance-tests.yml
+    with:
+      checkout_ref: ${{ github.ref }}
+    secrets:
+      tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
+      tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
+      tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
+      tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
+  release-snapshot:
+    needs: [build-test-coverage, acceptance-tests]
+    uses: ./.github/workflows/release-snapshot.yml
+    with:
+      checkout_ref: ${{ github.ref }}
+      project_version: ${{ needs.build-test-coverage.outputs.project_version }}
+    secrets:
+      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
+      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}

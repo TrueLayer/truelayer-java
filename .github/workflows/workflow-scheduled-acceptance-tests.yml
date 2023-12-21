@@ -1,4 +1,5 @@
-name: Scheduled acceptance tests
+# Workflow that runs on a schedule and triggers acceptance tests in Sandbox environment
+name: Scheduled acceptance tests in Sandbox environment
 
 on:
   schedule:
@@ -6,8 +7,9 @@ on:
 
 jobs:
   scheduled-acceptance-tests:
-    name: Scheduled acceptance tests in Sandbox environment
     uses: ./.github/workflows/acceptance-tests.yml
+    with:
+      checkout_ref: /refs/heads/main
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
