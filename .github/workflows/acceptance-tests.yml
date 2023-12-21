@@ -13,11 +13,6 @@ on:
         required: false
         default: true # FIXME: false by default
         type: boolean
-      notify_slack_tags:
-        description: 'The tags to notify slack on.'
-        required: false
-        default: '<@adl> <@Luca Baggi>' #FIXME: add payIn?
-        type: string
     secrets:
       tl_client_id:
         required: true
@@ -71,7 +66,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n${{ inputs.notify_slack_tags }}"
+                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n<!here>"
                   }
                 },
                 {
