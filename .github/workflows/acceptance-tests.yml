@@ -11,12 +11,12 @@ on:
       notify_slack_on_failure:
         description: 'Whether to notify slack or not.'
         required: false
-        default: true
+        default: true # FIXME: false by default
         type: boolean
       notify_slack_tags:
         description: 'The tags to notify slack on.'
         required: false
-        default: '@adl'
+        default: '@adl' #FIXME: add payIn?
         type: string
     secrets:
       tl_client_id:
