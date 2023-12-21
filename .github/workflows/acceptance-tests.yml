@@ -84,7 +84,7 @@ jobs:
                         "type": "plain_text",
                         "text": ":eyes: View on Github"
                       },
-                      "url": "${{ github.job || "https://github.com/TrueLayer/truelayer-java/actions" }}"
+                      "url": "${{ github.job || github.repository }}"
                     }
                   ]
                 },
