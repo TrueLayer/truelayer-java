@@ -50,7 +50,7 @@ jobs:
       tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
       tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
   release-snapshot:
-    needs: acceptance-tests
+    needs: [build-test-coverage, acceptance-tests]
     uses: ./.github/workflows/release-snapshot.yml
     with:
       checkout_ref: ${{ github.ref }}
