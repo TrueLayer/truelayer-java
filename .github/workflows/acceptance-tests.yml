@@ -8,6 +8,16 @@ on:
         description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
         required: true
         type: string
+      notify_slack_on_failure:
+        description: 'Whether to notify slack or not.'
+        required: false
+        default: true
+        type: boolean
+      notify_slack_tags:
+        description: 'The tags to notify slack on.'
+        required: false
+        default: '@adl'
+        type: string
     secrets:
       tl_client_id:
         required: true
@@ -17,6 +27,8 @@ on:
         required: true
       tl_signing_private_key:
         required: true
+      slack_webhook_url:
+        required: false
 
 jobs:
   acceptance-tests:
@@ -40,3 +52,51 @@ jobs:
           TL_SIGNING_KEY_ID: ${{ secrets.tl_signing_key_id }}
           TL_SIGNING_PRIVATE_KEY: ${{ secrets.tl_signing_private_key }}
         run: ./gradlew acceptance-tests
+  notify-slack:
+    runs-on: ubuntu-latest
+    if: ${{ failure() && inputs.notify_slack_on_failure == 'true' }}
+    steps:
+      - name: echo test
+        run: echo ${{ github.job }}"
+      - name: Notify slack
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }}
+          # type is required for custom payloads
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n${{ inputs.checkout_ref }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":eyes: View on Github"
+                      },
+                      "url": "${{ github.job || https://github.com/TrueLayer/truelayer-java/actions}}"
+                    }
+                  ]
+                },
+                {
+                  "type": "image",
+                  "title": {
+                    "type": "plain_text",
+                    "text": "I don't like that",
+                    "emoji": true
+                  },
+                  "image_url": "https://media.giphy.com/media/4cuyucPeVWbNS/giphy.gif",
+                  "alt_text": "marg"
+                }
+              ]
+            }
