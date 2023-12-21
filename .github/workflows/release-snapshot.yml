@@ -36,7 +36,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Create Snapshot version
         run: |
-          echo "project_version_snapshot=${{inputs.project_version}}-${{inputs.checkout_ref##*/}}-SNAPSHOT" >> $GITHUB_ENV
+          echo "project_version_snapshot=${{inputs.project_version}}-${${{inputs.checkout_ref}}##*/}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Snapshot version check
         run: |
