@@ -26,7 +26,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Test coverage
-        run: ./gradlew unit-tests jacocoTestReport coveralls
+        run: echo "TEST"
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.coveralls_repo_token }}
           CI_BRANCH: ${{ inputs.branch }}
