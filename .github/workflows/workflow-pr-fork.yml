@@ -9,10 +9,6 @@ on:
     types: [ opened, synchronize ]
 
 jobs:
-  echo:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "repo ${{ github.repository }}"
   access-check:
     if: ${{ ! startsWith(github.repository, 'TrueLayer/truelayer-java') }}
     runs-on: ubuntu-latest

@@ -12,7 +12,12 @@ on:
       - '**'
 
 jobs:
+  echo-test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "repo ${{ github.repository }}"
   build-test-coverage:
+    if: ${{ ! startsWith(github.repository, 'TrueLayer/truelayer-java') }}
     uses: ./.github/workflows/build-test-coverage.yml
     with:
       checkout_ref: ${{ github.ref }}
