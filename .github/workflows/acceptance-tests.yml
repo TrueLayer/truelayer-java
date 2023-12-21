@@ -57,8 +57,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always() && contains(needs.*.result, 'failure') && inputs.notify_slack_on_failure == true }}
     steps:
+      #todo remove
       - name: echo test
-        run: echo ${{ github.job }}"
+        run: | 
+          echo "job: ${{ github.job }}"
+          echo "repo: ${{ github.repository }}"
       - name: Notify slack
         uses: slackapi/slack-github-action@v1.24.0
         env:
