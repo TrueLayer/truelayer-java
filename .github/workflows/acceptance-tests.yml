@@ -11,7 +11,7 @@ on:
       notify_slack_on_failure:
         description: 'Whether to notify slack or not.'
         required: false
-        default: true # FIXME: false by default
+        default: false
         type: boolean
     secrets:
       tl_client_id:
@@ -66,7 +66,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n<!here>"
+                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!"
                   }
                 },
                 {
