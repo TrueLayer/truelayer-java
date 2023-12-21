@@ -8,6 +8,10 @@ on:
         description: 'The reference to checkout before running the acceptance tests. Used to run the tests on a fork.'
         required: true
         type: string
+      project_version:
+        description: "The project version"
+        required: true
+        type: string
     secrets:
       sonatype_username:
         required: true
@@ -32,7 +36,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Create Snapshot version
         run: |
-          echo "project_version_snapshot=${{needs.build.outputs.project_version}}-${GITHUB_REF##*/}-SNAPSHOT" >> $GITHUB_ENV
+          echo "project_version_snapshot=${{inputs.project_version}}-${GITHUB_REF##*/}-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
       - name: Snapshot version check
         run: |

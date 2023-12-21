@@ -54,6 +54,7 @@ jobs:
     uses: ./.github/workflows/release-snapshot.yml
     with:
       checkout_ref: ${{ github.ref }}
+      project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
       sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
       sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}

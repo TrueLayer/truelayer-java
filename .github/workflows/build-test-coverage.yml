@@ -14,10 +14,10 @@ on:
     outputs:
       project_version:
         description: "The project version"
-        value: ${{ jobs.build.outputs.project_version }}
+        value: ${{ jobs.build-test.outputs.project_version }}
 
 jobs:
-  build-tests:
+  build-test:
     name: Build and tests
     strategy:
       fail-fast: false
