@@ -32,6 +32,8 @@ jobs:
           java-version: ${{ matrix.java-version }}
           distribution: ${{ matrix.java-distribution }}
           cache: 'gradle'
+      - name: Lint
+        run: echo "MAL TEST"
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Get project version
