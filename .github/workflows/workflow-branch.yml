@@ -1,7 +1,7 @@
 # Workflow that runs only on internal branches that are not then main one.
 # Triggered by pushes on internal branches (excluding main and tags).
 # Build, test, run coverage analysis and release to Maven Central a final release.
-name: Workflow on main branch
+name: Workflow on internal branch, excluding main
 
 on:
   push:
