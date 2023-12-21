@@ -44,7 +44,7 @@ jobs:
         id: get_project_version
         run: |
           PROJECT_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
-          echo "::set-output name=project_version::$PROJECT_VERSION"
+          echo "project_version=$PROJECT_VERSION" >> $GITHUB_OUTPUT
         #FIXME: this is deprecated. See https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
       - name: Semantic versioning check
         run: |
