@@ -16,7 +16,7 @@ on:
       notify_slack_tags:
         description: 'The tags to notify slack on.'
         required: false
-        default: '@adl' #FIXME: add payIn?
+        default: '<@adl> <@Luca Baggi>' #FIXME: add payIn?
         type: string
     secrets:
       tl_client_id:
