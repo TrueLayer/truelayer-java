@@ -38,7 +38,6 @@ jobs:
         run: |
           CHECKOUT_REF=${{inputs.checkout_ref}}
           STRIPPED_CHECKOUT_REF=${CHECKOUT_REF##*/}
-          echo "checkout_ref=$CHECKOUT_REF"
           echo "stripped_checkout_ref=$STRIPPED_CHECKOUT_REF" >> $GITHUB_ENV
           echo "project_version_snapshot=${{inputs.project_version}}-$STRIPPED_CHECKOUT_REF-SNAPSHOT" >> $GITHUB_ENV
           echo "Snapshot project version created: ${{env.project_version_snapshot}}"
