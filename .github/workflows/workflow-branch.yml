@@ -28,8 +28,6 @@ jobs:
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
       tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
       tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
-      # TODO: remove
-      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL}}
   release-snapshot:
     needs: [build-test-coverage, acceptance-tests]
     uses: ./.github/workflows/release-snapshot.yml
