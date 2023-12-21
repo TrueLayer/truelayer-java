@@ -53,9 +53,9 @@ jobs:
           TL_SIGNING_PRIVATE_KEY: ${{ secrets.tl_signing_private_key }}
         run: ./gradlew acceptance-tests
   notify-slack:
-    needs: [acceptance-tests]
+    needs: acceptance-tests
     runs-on: ubuntu-latest
-    if: ${{ failure() && inputs.notify_slack_on_failure == 'true' }}
+    if: ${{ always() && contains(join(needs.*.result, ','), 'failure') && inputs.notify_slack_on_failure == 'true' }}
     steps:
       - name: echo test
         run: echo ${{ github.job }}"
