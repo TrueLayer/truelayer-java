@@ -1,4 +1,7 @@
-name: Release final version
+# Main workflow that runs on the main branch.
+# Triggered by pushes on the main branch (excluding tags).
+# Build, test, run coverage analysis and release to Maven Central a final release.
+name: Workflow on main branch
 
 on:
   push:
@@ -8,20 +11,17 @@ on:
       - '**'
 
 jobs:
-  coverage:
-    name: Test coverage analysis
-    uses: ./.github/workflows/coverage.yml
+  build-test-coverage:
+    uses: ./.github/workflows/build-test-coverage.yml
     with:
-      branch: ${{ github.head_ref }}
+      checkout_ref: ${{ github.ref }}
     secrets:
-      coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  build:
-    name: Build and tests
-    uses: ./.github/workflows/build.yml
+        coveralls_repo_token: ${{ secrets.COVERALLS_REPO_TOKEN }}
   acceptance-tests:
-    name: Acceptance tests in Sandbox environment
-    needs: build
+    needs: build-test-coverage
     uses: ./.github/workflows/acceptance-tests.yml
+    with:
+      checkout_ref: ${{ github.ref }}
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
@@ -30,11 +30,13 @@ jobs:
   release:
     name: Release to Maven Central
     runs-on: ubuntu-latest
-    needs: [build, acceptance-tests]
+    needs: acceptance-tests
     steps:
       - uses: actions/checkout@v4
+        with:
+          checkout_ref: ${{ github.ref }}
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
