@@ -57,11 +57,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always() && contains(needs.*.result, 'failure') && inputs.notify_slack_on_failure == true }}
     steps:
-      #todo remove
-      - name: echo test
-        run: | 
-          echo "job: ${{ github.job }}"
-          echo "repo: ${{ github.repository }}"
       - name: Notify slack
         uses: slackapi/slack-github-action@v1.24.0
         env:
@@ -76,7 +71,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n${{ inputs.checkout_ref }}"
+                    "text": ":warning: :java: *Acceptance tests* are failing in `Sandbox` on our <https://github.com/TrueLayer/truelayer-java|Java client library>!\n${{ inputs.notify_slack_tags }}"
                   }
                 },
                 {
@@ -88,7 +83,7 @@ jobs:
                         "type": "plain_text",
                         "text": ":eyes: View on Github"
                       },
-                      "url": "${{ github.job || github.repository }}"
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                     }
                   ]
                 },
