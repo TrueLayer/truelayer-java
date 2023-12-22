@@ -3,14 +3,15 @@ name: Scheduled acceptance tests in Sandbox environment
 
 on:
   schedule:
-    - cron: "0 7-19/2 * * *" # every 2 hours between 10 and 20 (UTC)
+    # every hour between 8 and 19 UTC time
+    - cron: "0 8-19/1 * * *"
 
 jobs:
   scheduled-acceptance-tests:
     uses: ./.github/workflows/acceptance-tests.yml
     with:
-      checkout_ref: /refs/heads/main
       notify_slack_on_failure: true
+      checkout_ref: main
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
