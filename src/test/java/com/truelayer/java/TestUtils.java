@@ -11,8 +11,9 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.truelayer.java.auth.entities.AccessToken;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.commonapi.entities.PaymentProviderReturnResource;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.versioninfo.VersionInfo;
@@ -254,15 +255,33 @@ public class TestUtils {
                 ? responseUrl.getQuery().replaceFirst("mandate-", "")
                 : responseUrl.getQuery();
 
-        SubmitPaymentReturnParametersRequest submitProviderReturneRequest =
-                SubmitPaymentReturnParametersRequest.builder()
-                        .query(query)
-                        .fragment(responseUrl.getFragment())
-                        .build();
-        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
+        SubmitPaymentsProviderReturnRequest submitProviderReturneRequest = SubmitPaymentsProviderReturnRequest.builder()
+                .query(query)
+                .fragment(responseUrl.getFragment())
+                .build();
+        ApiResponse<SubmitPaymentsProviderReturnResponse> submitPaymentReturnParametersResponse =
                 tlClient.submitPaymentReturnParameters(submitProviderReturneRequest)
                         .get();
         assertNotError(submitPaymentReturnParametersResponse);
+
+        switch (headlessResourceAuthorization) {
+            case PAYMENTS:
+                assertEquals(
+                        PaymentProviderReturnResource.Type.PAYMENT,
+                        submitPaymentReturnParametersResponse
+                                .getData()
+                                .getResource()
+                                .getType());
+                break;
+            case MANDATES:
+                assertEquals(
+                        PaymentProviderReturnResource.Type.MANDATE,
+                        submitPaymentReturnParametersResponse
+                                .getData()
+                                .getResource()
+                                .getType());
+                break;
+        }
     }
 
     @RequiredArgsConstructor

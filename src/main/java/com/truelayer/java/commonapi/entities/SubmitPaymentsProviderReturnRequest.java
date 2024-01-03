@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class SubmitPaymentReturnParametersRequest {
+public class SubmitPaymentsProviderReturnRequest {
     private String query;
 
     private String fragment;
