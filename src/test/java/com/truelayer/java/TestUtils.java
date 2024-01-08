@@ -4,13 +4,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.*;
 import static com.truelayer.java.Utils.getObjectMapper;
 import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.truelayer.java.auth.entities.AccessToken;
+import com.truelayer.java.commonapi.entities.PaymentProviderReturnResource;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.versioninfo.VersionInfo;
@@ -20,8 +23,10 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class TestUtils {
@@ -216,5 +221,76 @@ public class TestUtils {
                 .xForwardedFor("1.2.3.4_" + randomString)
                 .xDeviceUserAgent("ADummyUserAgen")
                 .build();
+    }
+
+    @SneakyThrows
+    public static void runAndAssertHeadlessResourceAuthorisation(
+            TrueLayerClient tlClient, URI redirectUri, HeadlessResourceAuthorization headlessResourceAuthorization) {
+        assertNotNull(redirectUri);
+        String protocol = redirectUri.getScheme();
+        String host = redirectUri.getHost();
+        String resourceId =
+                redirectUri.getPath().substring(redirectUri.getPath().lastIndexOf("/") + 1);
+        var body = RequestBody.create(MediaType.get("application/json"), headlessResourceAuthorization.payload);
+        Request request = new Request.Builder()
+                .url(String.format(
+                        "%s://%s/api/%s/%s/action", protocol, host, headlessResourceAuthorization.path, resourceId))
+                .post(body)
+                .addHeader(
+                        "Authorization",
+                        String.format("Bearer %s", redirectUri.getFragment().replaceFirst("token=", "")))
+                .build();
+        Response authorisationResponse =
+                getHttpClientInstance().newCall(request).execute();
+        assertTrue(authorisationResponse.isSuccessful());
+        String responseString = authorisationResponse.body().string();
+        assertNotNull(responseString);
+
+        // Grab the provider return query and fragment from the mock payment api response
+        URI responseUrl = URI.create(responseString);
+
+        // Mandates require some adjustments to the query string...
+        // TODO: review if we want this to be a permanent solution
+        String query = headlessResourceAuthorization == HeadlessResourceAuthorization.MANDATES
+                ? responseUrl.getQuery().replaceFirst("mandate-", "")
+                : responseUrl.getQuery();
+
+        SubmitPaymentsProviderReturnRequest submitProviderReturneRequest = SubmitPaymentsProviderReturnRequest.builder()
+                .query(query)
+                .fragment(responseUrl.getFragment())
+                .build();
+        ApiResponse<SubmitPaymentsProviderReturnResponse> submitPaymentReturnParametersResponse =
+                tlClient.submitPaymentReturnParameters(submitProviderReturneRequest)
+                        .get();
+        assertNotError(submitPaymentReturnParametersResponse);
+
+        switch (headlessResourceAuthorization) {
+            case PAYMENTS:
+                assertEquals(
+                        PaymentProviderReturnResource.Type.PAYMENT,
+                        submitPaymentReturnParametersResponse
+                                .getData()
+                                .getResource()
+                                .getType());
+                break;
+            case MANDATES:
+                assertEquals(
+                        PaymentProviderReturnResource.Type.MANDATE,
+                        submitPaymentReturnParametersResponse
+                                .getData()
+                                .getResource()
+                                .getType());
+                break;
+        }
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum HeadlessResourceAuthorization {
+        PAYMENTS("single-immediate-payments", "{\"action\":\"Execute\", \"redirect\": false}"),
+        MANDATES("vrp-consents", "{\"action\":\"Authorise\", \"redirect\": false}");
+
+        private final String path;
+        private final String payload;
     }
 }

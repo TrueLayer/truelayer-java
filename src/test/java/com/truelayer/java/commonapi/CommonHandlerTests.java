@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.TestUtils;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
 import com.truelayer.java.http.entities.Headers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class CommonHandlerTests {
     public void shouldCallSubmitPaymentReturnParamsEndpoint() {
         ICommonApi commonApi = Mockito.mock(ICommonApi.class);
         CommonHandler sut = new CommonHandler(commonApi);
-        SubmitPaymentReturnParametersRequest request = SubmitPaymentReturnParametersRequest.builder()
+        SubmitPaymentsProviderReturnRequest request = SubmitPaymentsProviderReturnRequest.builder()
                 .query("a-query")
                 .fragment("a-fragment")
                 .build();
@@ -35,7 +35,7 @@ class CommonHandlerTests {
         ICommonApi commonApi = Mockito.mock(ICommonApi.class);
         CommonHandler sut = new CommonHandler(commonApi);
         Headers customHeaders = TestUtils.buildTestHeaders();
-        SubmitPaymentReturnParametersRequest request = SubmitPaymentReturnParametersRequest.builder()
+        SubmitPaymentsProviderReturnRequest request = SubmitPaymentsProviderReturnRequest.builder()
                 .query("a-query")
                 .fragment("a-fragment")
                 .build();

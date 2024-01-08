@@ -6,8 +6,8 @@ import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.truelayer.java.TestUtils.RequestStub;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
 import com.truelayer.java.http.entities.ApiResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -28,15 +28,15 @@ public class CommonApiIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
-        ApiResponse<SubmitPaymentReturnParametersResponse> submitPaymentReturnParametersResponse =
+        ApiResponse<SubmitPaymentsProviderReturnResponse> submitPaymentReturnParametersResponse =
                 tlClient.submitPaymentReturnParameters(
-                                SubmitPaymentReturnParametersRequest.builder().build())
+                                SubmitPaymentsProviderReturnRequest.builder().build())
                         .get();
 
         verify(exactly(0), postRequestedFor(urlPathEqualTo("/connect/token")));
         assertNotError(submitPaymentReturnParametersResponse);
-        SubmitPaymentReturnParametersResponse expected =
-                deserializeJsonFileTo(jsonResponseFile, SubmitPaymentReturnParametersResponse.class);
+        SubmitPaymentsProviderReturnResponse expected =
+                deserializeJsonFileTo(jsonResponseFile, SubmitPaymentsProviderReturnResponse.class);
         assertEquals(expected, submitPaymentReturnParametersResponse.getData());
     }
 }

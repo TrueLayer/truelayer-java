@@ -1,5 +1,7 @@
 package com.truelayer.java.acceptance;
 
+import static com.truelayer.java.Constants.Scopes.*;
+import static com.truelayer.java.TestUtils.*;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.getHttpClientInstance;
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
@@ -8,10 +10,8 @@ import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.SWEEPING
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.truelayer.java.entities.CurrencyCode;
-import com.truelayer.java.entities.ProviderFilter;
-import com.truelayer.java.entities.RelatedProducts;
-import com.truelayer.java.entities.User;
+import com.truelayer.java.*;
+import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.entities.*;
@@ -26,6 +26,7 @@ import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.retry.Retry;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
@@ -37,7 +38,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.commons.lang3.ObjectUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,17 +49,21 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class MandatesAcceptanceTests extends AcceptanceTests {
 
     public static final String RETURN_URI = "http://localhost:3000/callback";
-    public static final String PROVIDER_ID = "ob-uki-mock-bank-sbox";
+    public static final String PROVIDER_ID = "mock-payments-gb-redirect";
 
-    @Test
-    @DisplayName("It should create a VRP sweeping mandate with preselected provider")
+    @ParameterizedTest
+    @DisplayName("It should create a VRP mandate with preselected provider")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
-    public void itShouldCreateASweepingMandateWithPreselectedProvider() {
+    public void itShouldCreateAMandateWithPreselectedProvider(String mandatesScope, Mandate.Type mandateType) {
+        // create client with required scopes
+        var tlClient = buildMandatesTlClient(mandatesScope);
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(mandateType, preselectedProvider))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -83,25 +87,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .get();
 
         assertNotError(createMandateResponse);
-    }
-
-    @Test
-    @Disabled("The provider ob-uki-mock-bank-sbox does not support commercial VRP yet")
-    @DisplayName("It should create a VRP commercial mandate with preselected provider")
-    @SneakyThrows
-    public void itShouldCreateACommercialMandateWithPreselectedProvider() {
-        // create mandate
-        ProviderSelection preselectedProvider =
-                ProviderSelection.preselected().providerId(PROVIDER_ID).build();
-        ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(COMMERCIAL, preselectedProvider))
-                .get();
-        assertNotError(createMandateResponse);
-
-        // start auth flow
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse =
-                startAuthFlowForMandate(createMandateResponse.getData().getId());
-        assertNotError(startAuthorizationFlowResponse);
     }
 
     @Test
@@ -143,15 +128,19 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(listMandatesResponse);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("It should get confirm funds")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
-    public void itShouldGetFunds() {
+    public void itShouldGetFunds(String mandatesScope, Mandate.Type mandateType) {
+        // create client with required scopes
+        var tlClient = buildMandatesTlClient(mandatesScope);
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(mandateType, preselectedProvider))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -169,8 +158,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         assertNotError(startAuthorizationFlowResponse);
 
+        // we check the state of the mandate returned by the gateway
+        AuthorizationFlowResponse authorizationFlowResponse = startAuthorizationFlowResponse.getData();
+        assertTrue(
+                authorizationFlowResponse.isAuthorizing(),
+                "Mandate status is " + authorizationFlowResponse.getStatus().getStatus());
+
         // authorize the created mandate without explicit user interaction
-        authorizeMandate(startAuthorizationFlowResponse.getData());
+        URI redirectUri = authorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // finally make a confirmation of funds request for 1 penny
@@ -182,14 +185,18 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertEquals(true, getConfirmationOfFundsResponseApiResponse.getData().getConfirmed());
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("It should get mandate constraints")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
-    public void itShouldGetConstraints() {
+    public void itShouldGetConstraints(String mandatesScope, Mandate.Type mandateType) {
+        // create client with required scopes
+        var tlClient = buildMandatesTlClient(mandatesScope);
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
-        CreateMandateRequest createMandateRequest = createMandateRequest(SWEEPING, preselectedProvider);
+        CreateMandateRequest createMandateRequest = createMandateRequest(mandateType, preselectedProvider);
         ApiResponse<CreateMandateResponse> createMandateResponse =
                 tlClient.mandates().createMandate(createMandateRequest).get();
         assertNotError(createMandateResponse);
@@ -208,8 +215,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         assertNotError(startAuthorizationFlowResponse);
 
+        // we check the state of the mandate returned by the gateway
+        AuthorizationFlowResponse authorizationFlowResponse = startAuthorizationFlowResponse.getData();
+        assertTrue(
+                authorizationFlowResponse.isAuthorizing(),
+                "Mandate status is " + authorizationFlowResponse.getStatus().getStatus());
+
         // authorize the created mandate without explicit user interaction
-        authorizeMandate(startAuthorizationFlowResponse.getData());
+        URI redirectUri = authorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // finally make a Get constraints request
@@ -220,15 +241,19 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertNotError(getConstraintsResponseApiResponse);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("It should create and revoke a mandate")
+    @MethodSource("provideMandatesScopesAndTypes")
     @SneakyThrows
-    public void itShouldCreateAndRevokeAMandate() {
+    public void itShouldCreateAndRevokeAMandate(String mandatesScope, Mandate.Type mandateType) {
+        // create client with required scopes
+        var tlClient = buildMandatesTlClient(mandatesScope);
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(mandateType, preselectedProvider))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -237,8 +262,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 startAuthFlowForMandate(createMandateResponse.getData().getId());
         assertNotError(startAuthorizationFlowResponse);
 
+        // we check the state of the mandate returned by the gateway
+        AuthorizationFlowResponse authorizationFlowResponse = startAuthorizationFlowResponse.getData();
+        assertTrue(
+                authorizationFlowResponse.isAuthorizing(),
+                "Mandate status is " + authorizationFlowResponse.getStatus().getStatus());
+
         // authorize the created mandate without explicit user interaction
-        authorizeMandate(startAuthorizationFlowResponse.getData());
+        URI redirectUri = authorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // revoke mandate by id
@@ -252,12 +291,15 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @ParameterizedTest(name = "with retry {0}")
     @MethodSource("provideItShouldCreateAPaymentOnMandateTestParameters")
     @SneakyThrows
-    public void itShouldCreateAPaymentOnMandate(Retry retry) {
+    public void itShouldCreateAPaymentOnMandate(String mandatesScope, Mandate.Type mandateType, Retry retry) {
+        // create client with required scopes
+        var tlClient = buildMandatesTlClient(mandatesScope);
+
         // create mandate
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(SWEEPING, preselectedProvider))
+                .createMandate(createMandateRequest(mandateType, preselectedProvider))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -275,8 +317,22 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         assertNotError(startAuthorizationFlowResponse);
 
+        // we check the state of the mandate returned by the gateway
+        AuthorizationFlowResponse authorizationFlowResponse = startAuthorizationFlowResponse.getData();
+        assertTrue(
+                authorizationFlowResponse.isAuthorizing(),
+                "Mandate status is " + authorizationFlowResponse.getStatus().getStatus());
+
         // authorize the created mandate without explicit user interaction
-        authorizeMandate(startAuthorizationFlowResponse.getData());
+        URI redirectUri = authorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+
         waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
 
         // get mandate by id
@@ -381,6 +437,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     @SneakyThrows
+    @Deprecated // TODO: cleanup
     private void authorizeMandate(AuthorizationFlowResponse authorizationFlowResponse) {
         // first we check the state of the mandate returned by the gateway
         assertTrue(
@@ -395,6 +452,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
+
         Response redirectResponse = getHttpClientInstance()
                 .newCall(new Request.Builder().url(redirectUri.toURL()).get().build())
                 .execute();
@@ -438,13 +496,57 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 });
     }
 
-    public static Stream<Arguments> provideItShouldCreateAPaymentOnMandateTestParameters() {
+    private static TrueLayerClient buildMandatesTlClient(String mandatesScope) {
+        return TrueLayerClient.New()
+                .environment(environment)
+                .clientCredentials(ClientCredentials.builder()
+                        .clientId(System.getenv("TL_CLIENT_ID"))
+                        .clientSecret(System.getenv("TL_CLIENT_SECRET"))
+                        .build())
+                .signingOptions(SigningOptions.builder()
+                        .keyId(System.getenv("TL_SIGNING_KEY_ID"))
+                        .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
+                        .build())
+                .withGlobalScopes(RequestScopes.builder()
+                        .scope(PAYMENTS)
+                        .scope(mandatesScope)
+                        .build())
+                .withHttpLogs()
+                .withCredentialsCaching()
+                .build();
+    }
+
+    private static Stream<Arguments> provideItShouldCreateAPaymentOnMandateTestParameters() {
         return Stream.of(
-                null,
-                Arguments.of(Retry.standard().forDuration("30m").build()),
-                Arguments.of(Retry.smart()
-                        .forDuration("90d")
-                        .ensureMinimumBalanceInMinor(100)
-                        .build()));
+                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, null),
+                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, null),
+                Arguments.of(
+                        RECURRING_PAYMENTS_SWEEPING,
+                        SWEEPING,
+                        Retry.standard().forDuration("30m").build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_COMMERCIAL,
+                        COMMERCIAL,
+                        Retry.standard().forDuration("30m").build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_SWEEPING,
+                        SWEEPING,
+                        Retry.smart()
+                                .forDuration("90d")
+                                .ensureMinimumBalanceInMinor(100)
+                                .build()),
+                Arguments.of(
+                        RECURRING_PAYMENTS_COMMERCIAL,
+                        COMMERCIAL,
+                        Retry.smart()
+                                .forDuration("90d")
+                                .ensureMinimumBalanceInMinor(100)
+                                .build()));
+    }
+
+    private static Stream<Arguments> provideMandatesScopesAndTypes() {
+        return Stream.of(
+                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING),
+                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL));
     }
 }

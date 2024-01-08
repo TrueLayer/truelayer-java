@@ -2,8 +2,8 @@ package com.truelayer.java;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.ICommonHandler;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersRequest;
-import com.truelayer.java.commonapi.entities.SubmitPaymentReturnParametersResponse;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
+import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
@@ -120,8 +120,8 @@ public class TrueLayerClient implements ITrueLayerClient {
      * {@inheritDoc}
      */
     @Override
-    public CompletableFuture<ApiResponse<SubmitPaymentReturnParametersResponse>> submitPaymentReturnParameters(
-            SubmitPaymentReturnParametersRequest request) {
+    public CompletableFuture<ApiResponse<SubmitPaymentsProviderReturnResponse>> submitPaymentReturnParameters(
+            SubmitPaymentsProviderReturnRequest request) {
         return commonHandler.submitPaymentReturnParameters(request);
     }
 

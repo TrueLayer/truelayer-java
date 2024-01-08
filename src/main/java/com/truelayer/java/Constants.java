@@ -12,6 +12,8 @@ public final class Constants {
         public static final String PAYMENTS = "payments";
 
         public static final String RECURRING_PAYMENTS_SWEEPING = "recurring_payments:sweeping";
+
+        public static final String RECURRING_PAYMENTS_COMMERCIAL = "recurring_payments:commercial";
     }
 
     /**
