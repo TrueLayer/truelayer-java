@@ -25,6 +25,7 @@ import com.truelayer.java.merchantaccounts.MerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsApi;
 import com.truelayer.java.payments.IPaymentsHandler;
 import com.truelayer.java.payments.PaymentsHandler;
+import com.truelayer.java.paymentsproviders.IPaymentsProvidersApi;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
@@ -252,10 +253,18 @@ public class TrueLayerClientBuilder {
         }
         IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
-        IPaymentsProvidersHandler paymentsProvidersHandler = PaymentsProvidersHandler.New()
-                .clientCredentials(clientCredentials)
-                .httpClient(RetrofitFactory.build(baseHttpClient, environment.getPaymentsApiUri()))
-                .build();
+        OkHttpClient paymentsProvidersHttpClient = httpClientFactory.buildPaymentsApiClient(
+                authHttpClient, authenticationHandler, signingOptions, credentialsCache);
+
+        IPaymentsProvidersApi paymentsProvidersApi = RetrofitFactory.build(paymentsProvidersHttpClient, environment.getPaymentsApiUri())
+                .create(IPaymentsProvidersApi.class);
+
+        PaymentsProvidersHandler.PaymentsProvidersHandlerBuilder paymentsProvidersHandlerBuilder =
+                PaymentsProvidersHandler.builder().paymentsProvidersApi(paymentsProvidersApi);
+        if (customScopesPresent()) {
+            paymentsProvidersHandlerBuilder.scopes(globalScopes);
+        }
+        IPaymentsProvidersHandler paymentsProvidersHandler = paymentsProvidersHandlerBuilder.build();
 
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
                         paymentsHttpClient, environment.getPaymentsApiUri())
