@@ -41,6 +41,12 @@
   "created_at":"2022-01-17T17:13:18.214924Z",
   "status":"authorizing",
   "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"redirect",
+        "uri": "https://a-redirect-uri.com?transactionid=123456&psuid=John Doe&"
+      }
+    },
     "configuration":{
       "provider_selection":{
         "status":"supported"
