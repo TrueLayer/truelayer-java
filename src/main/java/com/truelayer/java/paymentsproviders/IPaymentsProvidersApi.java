@@ -15,6 +15,5 @@ public interface IPaymentsProvidersApi {
 
     @GET("/payments-providers/{id}")
     CompletableFuture<ApiResponse<PaymentsProvider>> getProvider(
-            @Tag RequestScopes scopes,
-            @Path("id") String providerId);
+            @Tag RequestScopes scopes, @Path("id") String providerId);
 }

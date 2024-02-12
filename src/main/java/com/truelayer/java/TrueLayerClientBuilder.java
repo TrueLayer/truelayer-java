@@ -253,10 +253,8 @@ public class TrueLayerClientBuilder {
         }
         IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
-        OkHttpClient paymentsProvidersHttpClient = httpClientFactory.buildPaymentsApiClient(
-                authHttpClient, authenticationHandler, signingOptions, credentialsCache);
-
-        IPaymentsProvidersApi paymentsProvidersApi = RetrofitFactory.build(paymentsProvidersHttpClient, environment.getPaymentsApiUri())
+        IPaymentsProvidersApi paymentsProvidersApi = RetrofitFactory.build(
+                        paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsProvidersApi.class);
 
         PaymentsProvidersHandler.PaymentsProvidersHandlerBuilder paymentsProvidersHandlerBuilder =

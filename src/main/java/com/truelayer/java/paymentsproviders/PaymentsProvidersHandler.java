@@ -9,13 +9,11 @@ import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
 import java.util.concurrent.CompletableFuture;
 import lombok.Builder;
 
-
 /**
  * {@inheritDoc}
  */
 @Builder
 public class PaymentsProvidersHandler implements IAuthenticatedHandler, IPaymentsProvidersHandler {
-
 
     IPaymentsProvidersApi paymentsProvidersApi;
 
@@ -27,14 +25,8 @@ public class PaymentsProvidersHandler implements IAuthenticatedHandler, IPayment
         return scopes;
     }
 
-    public static PaymentsProvidersHandlerBuilder New() {
-        return new PaymentsProvidersHandlerBuilder();
-    }
-
     @Override
     public CompletableFuture<ApiResponse<PaymentsProvider>> getProvider(String providerId) {
-        return paymentsProvidersApi.getProvider(
-                getRequestScopes(),
-                providerId);
+        return paymentsProvidersApi.getProvider(getRequestScopes(), providerId);
     }
 }

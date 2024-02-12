@@ -9,11 +9,10 @@ import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 @DisplayName("Payments providers integration tests")
 public class PaymentsProvidersIntegrationTests extends IntegrationTests {
