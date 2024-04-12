@@ -3,6 +3,7 @@ alias l := lint
 alias ut := unit-test
 alias it := integration-test
 alias at := acceptance-test
+alias t := test
 
 build:
     ./gradlew build -x test
@@ -19,3 +20,5 @@ integration-test:
 acceptance-test:
     echo "Staring acceptance-tests with client_id=[$TL_CLIENT_ID]..."
     ./gradlew acceptance-tests
+
+test: unit-test integration-test acceptance-test
