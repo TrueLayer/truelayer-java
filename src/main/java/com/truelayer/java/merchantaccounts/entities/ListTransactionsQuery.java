@@ -15,4 +15,6 @@ public class ListTransactionsQuery {
     private ZonedDateTime to;
 
     private TransactionTypeQuery type;
+
+    private String cursor;
 }

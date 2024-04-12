@@ -55,7 +55,8 @@ public interface IMerchantAccountsApi {
             @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,
-            @Query("type") TransactionTypeQuery type);
+            @Query("type") TransactionTypeQuery type,
+            @Query("cursor") String cursor);
 
     /**
      * Set the automatic sweeping settings for a merchant account. At regular intervals, any available balance in excess

@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -80,13 +81,14 @@ class MerchantAccountsHandlerTests {
     }
 
     @DisplayName("It should call the list transactions endpoint")
-    @ParameterizedTest(name = "with from={0} and to={1}")
+    @ParameterizedTest(name = "with from={0}, to={1} and cursor={2}")
     @MethodSource("provideFromAndToParameters")
-    public void shouldCallListTransactionsEndpoint(ZonedDateTime from, ZonedDateTime to) {
+    public void shouldCallListTransactionsEndpoint(ZonedDateTime from, ZonedDateTime to, String cursor) {
         ListTransactionsQuery query = ListTransactionsQuery.builder()
                 .from(from)
                 .to(to)
                 .type(TransactionTypeQuery.PAYOUT)
+                .cursor(cursor)
                 .build();
 
         sut.listTransactions(A_MERCHANT_ACCOUNT_ID, query);
@@ -97,7 +99,8 @@ class MerchantAccountsHandlerTests {
                         A_MERCHANT_ACCOUNT_ID,
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(from),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(to),
-                        query.type());
+                        query.type(),
+                        query.cursor());
     }
 
     @Test
@@ -163,13 +166,26 @@ class MerchantAccountsHandlerTests {
 
     private static Stream<Arguments> provideFromAndToParameters() {
         return Stream.of(
-                Arguments.of(ZonedDateTime.now(), ZonedDateTime.now().plusMonths(-12)),
+                Arguments.of(
+                        ZonedDateTime.now(),
+                        ZonedDateTime.now().plusMonths(-12),
+                        "a-cursor"
+                ),
                 Arguments.of(
                         ZonedDateTime.now(ZoneId.of("Europe/Paris")),
-                        ZonedDateTime.now(ZoneId.of("Europe/Paris")).plusMonths(-12)),
+                        ZonedDateTime.now(ZoneId.of("Europe/Paris")).plusMonths(-12),
+                        UUID.randomUUID().toString()
+                ),
                 Arguments.of(
                         ZonedDateTime.of(LocalDate.of(2021, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
-                        ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("UTC"))),
-                Arguments.of(ZonedDateTime.parse("2021-03-01T00:00:00Z"), ZonedDateTime.parse("2022-03-01T00:00:00Z")));
+                        ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
+                        "another-cursor"
+                ),
+                Arguments.of(
+                        ZonedDateTime.parse("2021-03-01T00:00:00Z"),
+                        ZonedDateTime.parse("2022-03-01T00:00:00Z"),
+                        "yet-another-cursor"
+                )
+        );
     }
 }
