@@ -37,5 +37,6 @@ public final class Constants {
         public static final String X_DEVICE_USER_AGENT = "X-Device-User-Agent";
         public static final String COOKIE = "Cookie";
         public static final String TL_CORRELATION_ID = "X-Tl-Correlation-Id";
+        public static final String TL_ENABLE_PAGINATION = "tl-enable-pagination";
     }
 }

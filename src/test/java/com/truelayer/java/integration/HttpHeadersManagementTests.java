@@ -55,12 +55,14 @@ public class HttpHeadersManagementTests extends IntegrationTests {
                         Headers.builder()
                                 .signature(signature)
                                 .idempotencyKey(idempotencyKey)
+                                .enablePagination()
                                 .build(),
                         paymentRequest)
                 .get();
 
         verifyGeneratedToken(Collections.singletonList(Constants.Scopes.PAYMENTS));
         verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withHeader(TL_ENABLE_PAGINATION, equalTo("true"))
                 .withHeader(TL_SIGNATURE, equalTo(signature))
                 .withHeader(IDEMPOTENCY_KEY, equalTo(idempotencyKey)));
     }

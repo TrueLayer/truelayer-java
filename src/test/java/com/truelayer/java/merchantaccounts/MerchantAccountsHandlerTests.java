@@ -96,6 +96,7 @@ class MerchantAccountsHandlerTests {
         verify(merchantAccountsApiMock, times(1))
                 .listTransactions(
                         SCOPES,
+                        emptyMap(),
                         A_MERCHANT_ACCOUNT_ID,
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(from),
                         DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(to),
@@ -166,26 +167,18 @@ class MerchantAccountsHandlerTests {
 
     private static Stream<Arguments> provideFromAndToParameters() {
         return Stream.of(
-                Arguments.of(
-                        ZonedDateTime.now(),
-                        ZonedDateTime.now().plusMonths(-12),
-                        "a-cursor"
-                ),
+                Arguments.of(ZonedDateTime.now(), ZonedDateTime.now().plusMonths(-12), "a-cursor"),
                 Arguments.of(
                         ZonedDateTime.now(ZoneId.of("Europe/Paris")),
                         ZonedDateTime.now(ZoneId.of("Europe/Paris")).plusMonths(-12),
-                        UUID.randomUUID().toString()
-                ),
+                        UUID.randomUUID().toString()),
                 Arguments.of(
                         ZonedDateTime.of(LocalDate.of(2021, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
                         ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
-                        "another-cursor"
-                ),
+                        "another-cursor"),
                 Arguments.of(
                         ZonedDateTime.parse("2021-03-01T00:00:00Z"),
                         ZonedDateTime.parse("2022-03-01T00:00:00Z"),
-                        "yet-another-cursor"
-                )
-        );
+                        "yet-another-cursor"));
     }
 }

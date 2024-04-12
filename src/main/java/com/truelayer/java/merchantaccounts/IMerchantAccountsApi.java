@@ -42,6 +42,7 @@ public interface IMerchantAccountsApi {
     /**
      * Get the transactions of a single merchant account.
      * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent. In this case used for old clients to opt-in to paginated results
      * @param merchantAccountId the id of the merchant account
      * @param from Timestamp as a string for the start of the range you are querying. Mandatory
      * @param to Timestamp as a string for the end of the range you are querying. Mandatory
@@ -52,6 +53,7 @@ public interface IMerchantAccountsApi {
     @GET("/merchant-accounts/{merchantAccountId}/transactions")
     CompletableFuture<ApiResponse<ListTransactionsResponse>> listTransactions(
             @Tag RequestScopes scopes,
+            @HeaderMap Map<String, String> headers,
             @Path("merchantAccountId") String merchantAccountId,
             @Query("from") String from,
             @Query("to") String to,

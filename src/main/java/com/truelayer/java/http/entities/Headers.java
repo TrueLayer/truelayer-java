@@ -20,4 +20,16 @@ public class Headers {
     private String xForwardedFor;
 
     private String xDeviceUserAgent;
+
+    private boolean enablePagination;
+
+    /**
+     * Custom builder for the Headers class that prevents setting the enablePagination field to false.
+     */
+    public static class HeadersBuilder {
+        public HeadersBuilder enablePagination() {
+            this.enablePagination = true;
+            return this;
+        }
+    }
 }
