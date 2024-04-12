@@ -176,7 +176,7 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
     @SneakyThrows
     @Test
     @DisplayName(
-            "It should get the list of transactions for a given merchant account with pagination cursor with HTTP opt-in header")
+            "It should get the list of transactions for a given merchant account with pagination cursor with HTTP header opt-in")
     public void shouldGetTransactionsWithPaginationCursorWithHttpHeaderOptIn() {
         String jsonResponseFile = "merchant_accounts/200.get_transactions.json";
         RequestStub.New()
