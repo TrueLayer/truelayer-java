@@ -7,5 +7,6 @@ import lombok.Value;
 @Value
 public class VrpCommercialCapabilities {
     ReleaseChannel releaseChannel;
+    
     ProviderAvailability availability;
 }
