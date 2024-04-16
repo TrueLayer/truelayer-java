@@ -219,7 +219,8 @@ public class TestUtils {
                 .idempotencyKey("a-custom-key_" + randomString)
                 .signature("a-custom-signature_" + randomString)
                 .xForwardedFor("1.2.3.4_" + randomString)
-                .xDeviceUserAgent("ADummyUserAgen")
+                .xDeviceUserAgent("ADummyUserAgent")
+                .enablePagination()
                 .build();
     }
 

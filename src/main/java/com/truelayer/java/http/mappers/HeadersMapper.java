@@ -40,6 +40,10 @@ public class HeadersMapper {
             headersMap.put(Constants.HeaderNames.X_DEVICE_USER_AGENT, xDeviceUserAgent);
         }
 
+        if (customHeaders.isEnablePagination()) {
+            headersMap.put(Constants.HeaderNames.TL_ENABLE_PAGINATION, "true");
+        }
+
         return Collections.unmodifiableMap(headersMap);
     }
 }

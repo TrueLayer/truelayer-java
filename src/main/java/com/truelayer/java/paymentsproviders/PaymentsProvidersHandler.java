@@ -1,26 +1,32 @@
 package com.truelayer.java.paymentsproviders;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
+
+import com.truelayer.java.IAuthenticatedHandler;
+import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
 import java.util.concurrent.CompletableFuture;
-import lombok.Value;
+import lombok.Builder;
 
 /**
  * {@inheritDoc}
  */
-@Value
-public class PaymentsProvidersHandler implements IPaymentsProvidersHandler {
-
-    String clientId;
+@Builder
+public class PaymentsProvidersHandler implements IAuthenticatedHandler, IPaymentsProvidersHandler {
 
     IPaymentsProvidersApi paymentsProvidersApi;
 
-    public static PaymentsProvidersHandlerBuilder New() {
-        return new PaymentsProvidersHandlerBuilder();
+    @Builder.Default
+    private RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
+
+    @Override
+    public RequestScopes getRequestScopes() {
+        return scopes;
     }
 
     @Override
     public CompletableFuture<ApiResponse<PaymentsProvider>> getProvider(String providerId) {
-        return paymentsProvidersApi.getProvider(providerId, clientId);
+        return paymentsProvidersApi.getProvider(getRequestScopes(), providerId);
     }
 }

@@ -165,5 +165,8 @@
       "refund_id":"an-id",
       "payment_id":"another-id"
     }
-  ]
+  ],
+  "pagination": {
+    "next_cursor": "MjAyMi0wNC0xM1QxNjoxNzoyOS4zMzJaLDZhZWI2MjZmLWM4MGQtNDUzOC05NjAwLTQ2MzUyZDhjN2Q4NA=="
+  }
 }

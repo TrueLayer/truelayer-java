@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,6 +9,7 @@ import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
+import java.util.Collections;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,11 +22,17 @@ public class PaymentsProvidersIntegrationTests extends IntegrationTests {
     @SneakyThrows
     public void shouldReturnAPaymentsProvider() {
         String jsonResponseFile = "payments_providers/200.get_payments_provider.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
         String providerId = "ob-barclays";
-        String clientId = TestUtils.getClientCredentials().clientId();
         RequestStub.New()
                 .method("get")
-                .path(urlEqualTo("/payments-providers/" + providerId + "?client_id=" + clientId))
+                .path(urlEqualTo("/payments-providers/" + providerId))
+                .withAuthorization()
                 .status(200)
                 .bodyFile(jsonResponseFile)
                 .build();
@@ -32,7 +40,7 @@ public class PaymentsProvidersIntegrationTests extends IntegrationTests {
         ApiResponse<PaymentsProvider> response =
                 tlClient.paymentsProviders().getProvider(providerId).get();
 
-        verify(exactly(0), postRequestedFor(urlPathEqualTo("/connect/token")));
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         assertNotError(response);
         PaymentsProvider expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, PaymentsProvider.class);
         assertEquals(expected, response.getData());

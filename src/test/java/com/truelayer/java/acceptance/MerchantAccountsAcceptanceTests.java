@@ -4,6 +4,7 @@ import static com.truelayer.java.TestUtils.assertNotError;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
@@ -133,6 +134,9 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     private ApiResponse<ListTransactionsResponse> getTransactions(ZonedDateTime from, ZonedDateTime to) {
         return tlClient.merchantAccounts()
                 .listTransactions(
+                        Headers.builder()
+                                .enablePagination()
+                                .build(), // Required for clients before December 2023 to opt-in for paginated results
                         getMerchantAccount(CurrencyCode.GBP).getId(),
                         ListTransactionsQuery.builder().from(from).to(to).build())
                 .get();
@@ -141,11 +145,11 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
     private static Stream<Arguments> provideFromAndToParameters() {
         return Stream.of(
                 Arguments.of(
-                        ZonedDateTime.of(LocalDate.of(2021, 3, 1), LocalTime.MIN, ZoneId.of("UTC")),
-                        ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("UTC"))),
+                        ZonedDateTime.of(LocalDate.of(2024, 2, 1), LocalTime.MIN, ZoneId.of("UTC")),
+                        ZonedDateTime.of(LocalDate.of(2024, 3, 1), LocalTime.MIN, ZoneId.of("UTC"))),
                 Arguments.of(
-                        ZonedDateTime.of(LocalDate.of(2021, 3, 1), LocalTime.MIN, ZoneId.of("Europe/Paris")),
-                        ZonedDateTime.of(LocalDate.of(2022, 3, 1), LocalTime.MIN, ZoneId.of("Europe/Paris"))),
-                Arguments.of(ZonedDateTime.parse("2021-03-01T00:00:00Z"), ZonedDateTime.parse("2022-03-01T00:00:00Z")));
+                        ZonedDateTime.of(LocalDate.of(2024, 2, 1), LocalTime.MIN, ZoneId.of("Europe/Paris")),
+                        ZonedDateTime.of(LocalDate.of(2024, 3, 1), LocalTime.MIN, ZoneId.of("Europe/Paris"))),
+                Arguments.of(ZonedDateTime.parse("2024-02-01T00:00:00Z"), ZonedDateTime.parse("2024-03-01T00:00:00Z")));
     }
 }

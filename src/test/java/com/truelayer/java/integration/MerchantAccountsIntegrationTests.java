@@ -1,6 +1,7 @@
 package com.truelayer.java.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.truelayer.java.Constants.HeaderNames.TL_ENABLE_PAGINATION;
 import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
@@ -9,12 +10,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.truelayer.java.TestUtils.RequestStub;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.*;
 import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.sweeping.SweepingSettings;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,9 +104,11 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .bodyFile(jsonResponseFile)
                 .build();
 
+        String from = "2022-01-01T00:00:00Z";
+        String to = "2022-03-01T00:00:00Z";
         ListTransactionsQuery query = ListTransactionsQuery.builder()
-                .from(ZonedDateTime.parse("2021-03-01T00:00:00Z"))
-                .to(ZonedDateTime.parse("2022-03-01T00:00:00Z"))
+                .from(ZonedDateTime.parse(from))
+                .to(ZonedDateTime.parse(to))
                 .type(TransactionTypeQuery.PAYMENT)
                 .build();
         ApiResponse<ListTransactionsResponse> response = tlClient.merchantAccounts()
@@ -111,6 +116,104 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .get();
 
         verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(getRequestedFor(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withoutHeader(TL_ENABLE_PAGINATION)
+                .withQueryParam("from", equalTo(to))
+                .withQueryParam("from", equalTo(from))
+                .withQueryParam("type", equalTo(TransactionTypeQuery.PAYMENT.toString()))
+                .withoutQueryParam("cursor"));
+
+        assertNotError(response);
+        ListTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, ListTransactionsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should get the list of transactions for a given merchant account with pagination cursor")
+    public void shouldGetTransactionsWithPaginationCursor() {
+        String jsonResponseFile = "merchant_accounts/200.get_transactions.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        String from = "2022-01-01T00:00:00Z";
+        String to = "2022-03-01T00:00:00Z";
+        String cursor = UUID.randomUUID().toString();
+        ListTransactionsQuery query = ListTransactionsQuery.builder()
+                .from(ZonedDateTime.parse(from))
+                .to(ZonedDateTime.parse(to))
+                .type(TransactionTypeQuery.PAYMENT)
+                .cursor(cursor)
+                .build();
+        ApiResponse<ListTransactionsResponse> response = tlClient.merchantAccounts()
+                .listTransactions(A_MERCHANT_ACCOUNT_ID, query)
+                .get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(getRequestedFor(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withoutHeader(TL_ENABLE_PAGINATION)
+                .withQueryParam("from", equalTo(to))
+                .withQueryParam("from", equalTo(from))
+                .withQueryParam("type", equalTo(TransactionTypeQuery.PAYMENT.toString()))
+                .withQueryParam("cursor", equalTo(cursor)));
+
+        assertNotError(response);
+        ListTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, ListTransactionsResponse.class);
+        assertEquals(expected, response.getData());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName(
+            "It should get the list of transactions for a given merchant account with pagination cursor with HTTP header opt-in")
+    public void shouldGetTransactionsWithPaginationCursorWithHttpHeaderOptIn() {
+        String jsonResponseFile = "merchant_accounts/200.get_transactions.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        String from = "2022-01-01T00:00:00Z";
+        String to = "2022-03-01T00:00:00Z";
+        String cursor = UUID.randomUUID().toString();
+        ListTransactionsQuery query = ListTransactionsQuery.builder()
+                .from(ZonedDateTime.parse(from))
+                .to(ZonedDateTime.parse(to))
+                .type(TransactionTypeQuery.PAYMENT)
+                .cursor(cursor)
+                .build();
+        ApiResponse<ListTransactionsResponse> response = tlClient.merchantAccounts()
+                .listTransactions(Headers.builder().enablePagination().build(), A_MERCHANT_ACCOUNT_ID, query)
+                .get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(getRequestedFor(urlPathEqualTo("/merchant-accounts/" + A_MERCHANT_ACCOUNT_ID + "/transactions"))
+                .withHeader(TL_ENABLE_PAGINATION, equalTo("true"))
+                .withQueryParam("from", equalTo(to))
+                .withQueryParam("from", equalTo(from))
+                .withQueryParam("type", equalTo(TransactionTypeQuery.PAYMENT.toString()))
+                .withQueryParam("cursor", equalTo(cursor)));
+
         assertNotError(response);
         ListTransactionsResponse expected = deserializeJsonFileTo(jsonResponseFile, ListTransactionsResponse.class);
         assertEquals(expected, response.getData());
