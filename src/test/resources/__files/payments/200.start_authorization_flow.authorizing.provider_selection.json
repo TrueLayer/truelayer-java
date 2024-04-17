@@ -13,7 +13,6 @@
             "country_code":"GB",
             "availability": {
               "recommended_status":"healthy",
-              "error_rate":0.1,
               "updated_at":"2022-01-17T17:13:18.214924Z"
             },
             "search_aliases": ["firstalias", "anotheralias"]

@@ -12,6 +12,5 @@ import lombok.ToString;
 @ToString
 public class ProviderAvailability {
     AvailabilityRecommendedStatus recommendedStatus;
-    float errorRate;
     ZonedDateTime updatedAt;
 }

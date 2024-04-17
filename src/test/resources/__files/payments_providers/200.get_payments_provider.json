@@ -9,6 +9,10 @@
     "payments": {
       "bank_transfer": {
         "release_channel": "general_availability",
+        "availability": {
+          "recommended_status":"healthy",
+          "updated_at":"2024-04-16T14:11:18.214924Z"
+        },
         "schemes": [
           {
             "id": "faster_payments_service"
@@ -18,7 +22,18 @@
     },
     "mandates": {
       "vrp_sweeping": {
-        "release_channel": "general_availability"
+        "release_channel": "general_availability",
+        "availability": {
+          "recommended_status":"healthy",
+          "updated_at":"2024-04-16T14:11:18.214924Z"
+        }
+      },
+      "vrp_commercial": {
+        "release_channel": "general_availability",
+        "availability": {
+          "recommended_status":"healthy",
+          "updated_at":"2024-04-16T14:11:18.214924Z"
+        }
       }
     }
   }
