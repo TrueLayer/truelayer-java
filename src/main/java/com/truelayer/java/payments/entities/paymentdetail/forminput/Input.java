@@ -21,7 +21,7 @@ public abstract class Input {
     String id;
     boolean mandatory;
     DisplayText displayText;
-    String description;
+    DisplayText description;
 
     @JsonIgnore
     public boolean isText() {
