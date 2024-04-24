@@ -12,7 +12,10 @@
               "key": "text_input_1.display_text",
               "default": "Text input 1"
             },
-            "description": "some description",
+            "description": {
+              "key": "a-key",
+              "default": "some text"
+            },
             "format": "alphanumerical",
             "sensitive": true,
             "min_length": 5,
@@ -35,7 +38,10 @@
               "key": "text_with_image_input_1.display_text",
               "default": "Text with image input 1"
             },
-            "description": "some description",
+            "description": {
+              "key": "a-key",
+              "default": "some text"
+            },
             "format": "alphanumerical",
             "sensitive": true,
             "min_length": 5,
@@ -63,7 +69,10 @@
               "key": "select_input_1.display_text",
               "default": "Select input 1"
             },
-            "description": "some description",
+            "description": {
+              "key": "a-key",
+              "default": "some text"
+            },
             "options": [
               {
                 "id": "option_1",
