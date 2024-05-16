@@ -67,7 +67,7 @@ jobs:
         name: Generate Slack report from Junit results
         id: generate_slack_report
         with:
-          title: ":fire: Acceptance tests are failing in Sandbox on ${{ github.repository }}! :java:"
+          title: ":fire: Acceptance tests are failing in Sandbox on the Java backend library!"
           include_skipped: true
           reports_pattern: './build/test-results/**/*.xml'
       - name: Send Slack report
