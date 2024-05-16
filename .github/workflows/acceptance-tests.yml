@@ -53,6 +53,7 @@ jobs:
         with:
           name: test-results
           path: ./build/test-results
+          retention-days: 1
   notify-slack:
     needs: acceptance-tests
     runs-on: ubuntu-latest
