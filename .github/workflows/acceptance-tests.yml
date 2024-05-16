@@ -68,6 +68,7 @@ jobs:
         id: generate_slack_report
         with:
           include_skipped: true
+          reports_pattern: './build/test-results/**/*.xml'
       - name: Send Slack report
         uses: slackapi/slack-github-action@v1.26.0
         with:
