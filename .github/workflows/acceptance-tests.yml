@@ -47,50 +47,30 @@ jobs:
           TL_SIGNING_KEY_ID: ${{ secrets.tl_signing_key_id }}
           TL_SIGNING_PRIVATE_KEY: ${{ secrets.tl_signing_private_key }}
         run: ./gradlew acceptance-tests
+      - uses: actions/upload-artifact@v4
+        name: Upload test results as artifact
+        with:
+          name: test-results
+          path: ./build/test-results
   notify-slack:
     needs: acceptance-tests
     runs-on: ubuntu-latest
     if: ${{ always() && contains(needs.*.result, 'failure') && inputs.notify_slack_on_failure == true }}
     steps:
-      - name: Notify slack
-        uses: slackapi/slack-github-action@v1.24.0
+      - uses: actions/download-artifact@v4
+        name: Download test results artifacts
+        with:
+          name: test-results
+          path: ./build/test-results
+      - uses: dili91/testvox@v0.1.0
+        name: Generate Slack report from Junit results
+        id: generate_slack_report
+        with:
+          include_skipped: true
+      - name: Send Slack report
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: ${{steps.generate_slack_report.outputs.report}}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_url }}
-          # type is required for custom payloads
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":fire: *Acceptance tests* are failing in *Sandbox* on our *Java* backend library! :java:"
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":eyes: View on Github"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "image",
-                  "title": {
-                    "type": "plain_text",
-                    "text": "I don't like that",
-                    "emoji": true
-                  },
-                  "image_url": "https://media.giphy.com/media/jOpLbiGmHR9S0/giphy.gif",
-                  "alt_text": "this is the worst"
-                }
-              ]
-            }
