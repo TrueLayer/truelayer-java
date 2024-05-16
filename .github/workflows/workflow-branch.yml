@@ -23,6 +23,7 @@ jobs:
     with:
       checkout_ref: ${{ github.ref }}
       notify_slack_on_failure: true #TODO: remove
+      slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL}} #TODO remove
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
