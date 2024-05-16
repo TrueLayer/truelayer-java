@@ -38,7 +38,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.commons.lang3.ObjectUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,6 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @ParameterizedTest
     @DisplayName("It should create a VRP mandate with preselected provider")
     @MethodSource("provideMandatesScopesAndTypes")
-    @Disabled("TODO: remove")
     @SneakyThrows
     public void itShouldCreateAMandateWithPreselectedProvider(String mandatesScope, Mandate.Type mandateType) {
         // create client with required scopes
