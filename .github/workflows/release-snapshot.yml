@@ -33,7 +33,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: Create Snapshot version
         run: |
           CHECKOUT_REF=${{inputs.checkout_ref}}

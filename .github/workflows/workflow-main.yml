@@ -42,7 +42,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
       - name: Create tag
         id: create_tag
         uses: mathieudutour/github-tag-action@v6.1
