@@ -22,6 +22,7 @@ jobs:
     uses: ./.github/workflows/acceptance-tests.yml
     with:
       checkout_ref: ${{ github.ref }}
+      notify_slack_on_failure: true #TODO: remove
     secrets:
       tl_client_id: ${{ secrets.ACCEPTANCE_TEST_CLIENT_ID }}
       tl_client_secret: ${{ secrets.ACCEPTANCE_TEST_CLIENT_SECRET }}
