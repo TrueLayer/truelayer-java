@@ -84,7 +84,6 @@ tasks.register('acceptance-tests', Test) {
 
 dependencies {
     // Utilities
-    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.10.1'
 
 
