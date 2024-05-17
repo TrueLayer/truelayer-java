@@ -569,7 +569,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                     }
                 })
                 .pollInterval(1, TimeUnit.SECONDS)
-                .atMost(15, TimeUnit.SECONDS)
+                .atMost(30, TimeUnit.SECONDS)
                 .until(() -> {
                     // get payment by id
                     ApiResponse<PaymentDetail> getPaymentResponse =

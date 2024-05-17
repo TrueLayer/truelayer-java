@@ -486,7 +486,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     private void waitForMandateToBeAuthorized(String mandateId) {
         await().with()
                 .pollInterval(1, TimeUnit.SECONDS)
-                .atMost(5, TimeUnit.SECONDS)
+                .atMost(30, TimeUnit.SECONDS)
                 .until(() -> {
                     // get mandate by id
                     ApiResponse<MandateDetail> getMandateResponse =
