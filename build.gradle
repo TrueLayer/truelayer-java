@@ -86,7 +86,6 @@ dependencies {
     // Utilities
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.10.1'
 
-
     // HTTP client
     def retrofitVersion = '2.9.0'
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
