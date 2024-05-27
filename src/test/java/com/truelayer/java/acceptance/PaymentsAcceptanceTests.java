@@ -359,7 +359,6 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Test
-    @Disabled("TODO: remove")
     @DisplayName("It should create a payment refund and get refund details")
     public void shouldCreateAPaymentRefundAndGetRefundDetails() {
         // create payment
@@ -440,6 +439,9 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertEquals(
                 createPaymentRefundRequest.getMetadata(),
                 paymentRefundApiResponse.getData().getMetadata());
+        assertEquals(
+                createPaymentRefundRequest.getMetadata(),
+                Collections.singletonMap("foo", "bar"));
     }
 
     private PreselectedProviderSelection buildPreselectedProviderSelection() {
