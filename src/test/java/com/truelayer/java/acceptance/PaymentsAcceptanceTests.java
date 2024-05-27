@@ -439,7 +439,6 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertEquals(
                 createPaymentRefundRequest.getMetadata(),
                 paymentRefundApiResponse.getData().getMetadata());
-        assertEquals(createPaymentRefundRequest.getMetadata(), Collections.singletonMap("foo", "bar"));
     }
 
     private PreselectedProviderSelection buildPreselectedProviderSelection() {
