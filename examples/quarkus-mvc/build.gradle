@@ -24,7 +24,7 @@ dependencies {
 }
 
 group 'com.truelayer'
-version '13.0.4-kotlin-test-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
