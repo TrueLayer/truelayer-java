@@ -13,6 +13,7 @@ class LibraryInfoLoaderTests {
         LibraryInfoLoader sut = new LibraryInfoLoader();
 
         VersionInfo versionInfo = sut.load();
-        assertNotNull(versionInfo);
+
+g        assertNotNull(versionInfo);
     }
 }

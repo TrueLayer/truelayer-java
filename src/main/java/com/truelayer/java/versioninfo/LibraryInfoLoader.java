@@ -12,7 +12,7 @@ public class LibraryInfoLoader {
     private static final String CONFIG_FILE_PREXIF = "truelayer-java";
 
     public VersionInfo load() {
-        Properties libraryVersionProps = getGradleProperties();
+        Properties libraryVersionProps = getVersionInfoProperties();
 
         return VersionInfo.builder()
                 .libraryName(libraryVersionProps.getProperty(Constants.VersionInfo.NAME))
@@ -20,7 +20,7 @@ public class LibraryInfoLoader {
                 .build();
     }
 
-    private Properties getGradleProperties() {
+    private Properties getVersionInfoProperties() {
         try {
             Properties versionInfoProps = new Properties();
             versionInfoProps.load(getClass()
