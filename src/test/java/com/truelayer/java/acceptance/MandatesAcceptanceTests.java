@@ -174,7 +174,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getUri();
         runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
 
-        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+        waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
         // finally make a confirmation of funds request for 1 penny
         ApiResponse<GetConfirmationOfFundsResponse> getConfirmationOfFundsResponseApiResponse = tlClient.mandates()
@@ -231,7 +231,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getUri();
         runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
 
-        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+        waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
         // finally make a Get constraints request
         ApiResponse<GetConstraintsResponse> getConstraintsResponseApiResponse = tlClient.mandates()
@@ -278,7 +278,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getUri();
         runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
 
-        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+        waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
         // revoke mandate by id
         ApiResponse<Void> revokeMandateResponse = tlClient.mandates()
@@ -333,7 +333,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getUri();
         runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
 
-        waitForMandateToBeAuthorized(createMandateResponse.getData().getId());
+        waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
         // get mandate by id
         ApiResponse<MandateDetail> getMandateResponse = tlClient.mandates()
@@ -483,7 +483,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         assertTrue(submitProviderParamsResponse.isSuccessful());
     }
 
-    private void waitForMandateToBeAuthorized(String mandateId) {
+    private void waitForMandateToBeAuthorized(TrueLayerClient tlClient, String mandateId) {
         await().with()
                 .pollInterval(1, TimeUnit.SECONDS)
                 .atMost(30, TimeUnit.SECONDS)
