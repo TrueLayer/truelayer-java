@@ -193,7 +193,8 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should yield true if instance is of type AttemptFailedPaymentDetail")
     public void shouldYieldTrueIfAttemptFailedPaymentDetail() {
-        PaymentDetail sut = new AttemptFailedPaymentDetail(null,
+        PaymentDetail sut = new AttemptFailedPaymentDetail(
+                null,
                 ZonedDateTime.now(Clock.systemUTC()),
                 AttemptFailedPaymentDetail.FailureStage.AUTHORIZING,
                 "failed for some reason",
@@ -205,7 +206,8 @@ class PaymentDetailTests {
     @Test
     @DisplayName("It should convert to an instance of class AttemptFailedPaymentDetail")
     public void shouldConvertToAttemptFailedPaymentDetail() {
-        PaymentDetail sut = new AttemptFailedPaymentDetail(null,
+        PaymentDetail sut = new AttemptFailedPaymentDetail(
+                null,
                 ZonedDateTime.now(Clock.systemUTC()),
                 AttemptFailedPaymentDetail.FailureStage.AUTHORIZING,
                 "failed for some reason",

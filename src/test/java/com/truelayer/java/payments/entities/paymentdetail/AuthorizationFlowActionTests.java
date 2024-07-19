@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.truelayer.java.TrueLayerException;
 import java.net.URI;
 import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

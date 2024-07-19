@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
 import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -308,11 +307,13 @@ public class TestUtils {
         String payload;
 
         @Builder
-        public static HeadlessResourceAuthorization newHeadlessResourceAuthorization(HeadlessResource resource, HeadlessResourceAction action) {
-            HeadlessResourceAuthorization testHeadlessResourceAuthorization = new HeadlessResourceAuthorization(action, resource);
-            testHeadlessResourceAuthorization.payload = String.format("{\"action\":\"%s\", \"redirect\": false}", action.getAction());
-            switch (resource)
-            {
+        public static HeadlessResourceAuthorization newHeadlessResourceAuthorization(
+                HeadlessResource resource, HeadlessResourceAction action) {
+            HeadlessResourceAuthorization testHeadlessResourceAuthorization =
+                    new HeadlessResourceAuthorization(action, resource);
+            testHeadlessResourceAuthorization.payload =
+                    String.format("{\"action\":\"%s\", \"redirect\": false}", action.getAction());
+            switch (resource) {
                 case PAYMENTS:
                     testHeadlessResourceAuthorization.path = "single-immediate-payments";
                     break;

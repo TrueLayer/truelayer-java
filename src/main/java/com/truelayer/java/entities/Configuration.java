@@ -2,9 +2,8 @@ package com.truelayer.java.entities;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.payments.entities.paymentdetail.RedirectStatus;
-import lombok.Value;
-
 import java.util.Optional;
+import lombok.Value;
 
 @Value
 public class Configuration {

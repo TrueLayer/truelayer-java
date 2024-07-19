@@ -6,10 +6,9 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.Retry;
 import com.truelayer.java.payments.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.Optional;
 
 @Builder
 @Getter

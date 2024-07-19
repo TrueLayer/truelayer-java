@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.AuthorizationFlowWithConfiguration;
 import com.truelayer.java.entities.PaymentSource;
+import java.time.ZonedDateTime;
+import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-
-import java.time.ZonedDateTime;
-import java.util.Optional;
 
 @Value
 @EqualsAndHashCode(callSuper = false)

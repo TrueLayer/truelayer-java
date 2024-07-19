@@ -1,9 +1,8 @@
 package com.truelayer.java.payments.entities.paymentdetail;
 
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-
-import java.util.List;
 
 @Value
 @EqualsAndHashCode(callSuper = false)

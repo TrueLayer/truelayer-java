@@ -35,14 +35,13 @@ import com.truelayer.java.payments.entities.providerselection.PreselectedProvide
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
-import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
@@ -371,10 +370,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.builder()
-                .action(HeadlessResourceAction.EXECUTE)
-                .resource(HeadlessResource.PAYMENTS)
-                .build());
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.EXECUTE)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
     }
 
     @SneakyThrows
@@ -382,8 +384,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     @DisplayName("It should return attempt failed payment status if authorization is rejected with retry")
     public void shouldReturnAttemptFailedPaymentStatusIfAuthorizationIsRejectedWithRetry() {
         // create payment
-        CreatePaymentRequest paymentRequest =
-                buildPaymentRequestWithProviderSelectionWithRetry(buildPreselectedProviderSelection(), CurrencyCode.GBP);
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelectionWithRetry(
+                buildPreselectedProviderSelection(), CurrencyCode.GBP);
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -392,7 +394,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // start the auth flow
-        AuthorizationFlowResponse startAuthorizationFlowResponse = startAuthorizationFlowWithRetry(createPaymentResponse.getData().getId());
+        AuthorizationFlowResponse startAuthorizationFlowResponse =
+                startAuthorizationFlowWithRetry(createPaymentResponse.getData().getId());
         URI redirectUri = startAuthorizationFlowResponse
                 .asAuthorizing()
                 .getAuthorizationFlow()
@@ -402,10 +405,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getUri();
 
         // use specific action to get the authorization to be rejected
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.builder()
-                .action(HeadlessResourceAction.REJECT_AUTHORISATION)
-                .resource(HeadlessResource.PAYMENTS)
-                .build());
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.REJECT_AUTHORISATION)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
 
         // get by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
@@ -453,10 +459,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.builder()
-                .action(HeadlessResourceAction.EXECUTE)
-                .resource(HeadlessResource.PAYMENTS)
-                .build());
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.EXECUTE)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
 
         waitForPaymentToBeSettled(paymentId);
 
@@ -559,7 +568,10 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
-            ProviderSelection providerSelection, CurrencyCode currencyCode, RelatedProducts relatedProducts, Retry retry) {
+            ProviderSelection providerSelection,
+            CurrencyCode currencyCode,
+            RelatedProducts relatedProducts,
+            Retry retry) {
         CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(currencyCode)
@@ -676,7 +688,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 AccessTokenManager.builder().authenticationHandler(authenticationHandler);
         AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
 
-        OkHttpClient httpClient = baseHttpClient.newBuilder()
+        OkHttpClient httpClient = baseHttpClient
+                .newBuilder()
                 .addInterceptor(new TrueLayerAgentInterceptor(new LibraryInfoLoader().load()))
                 .addInterceptor(new IdempotencyKeyGeneratorInterceptor())
                 .addInterceptor(new SignatureGeneratorInterceptor(signingOptions))
@@ -700,13 +713,16 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         String requestJsonString = mapper.writeValueAsString(jsonNode);
 
         // build url
-        HttpUrl url = HttpUrl.parse(String.format("%s/payments/%s/authorization-flow",
+        HttpUrl url = HttpUrl.parse(String.format(
+                "%s/payments/%s/authorization-flow",
                 Environment.sandbox().getPaymentsApiUri().toString(), paymentId));
 
         RequestBody body = RequestBody.create(requestJsonString, MediaType.parse("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .url(Objects.requireNonNull(url))
-                .tag(RequestScopes.class, RequestScopes.builder().scope(PAYMENTS).build())
+                .tag(
+                        RequestScopes.class,
+                        RequestScopes.builder().scope(PAYMENTS).build())
                 .post(body)
                 .build();
 
@@ -718,5 +734,4 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         }
         return mapper.readValue(responseBody, AuthorizationFlowResponse.class);
     }
-
 }
