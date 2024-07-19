@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
 import java.net.URI;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -146,6 +148,35 @@ class AuthorizationFlowActionTests {
         AuthorizationFlowAction sut = new ProviderSelection(null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asRedirect);
+
+        assertEquals(
+                String.format(
+                        "Authorization flow is of type %s.", sut.getClass().getSimpleName()),
+                thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type Retry")
+    public void shouldYieldTrueIfRetry() {
+        AuthorizationFlowAction sut = new Retry(List.of("restart"));
+
+        assertTrue(sut.isRetry());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class Retry")
+    public void shouldConvertToRetry() {
+        AuthorizationFlowAction sut = new Retry(List.of("restart"));
+
+        assertDoesNotThrow(sut::asRetry);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to Retry")
+    public void shouldNotConvertToRetry() {
+        AuthorizationFlowAction sut = new ProviderSelection(null);
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asRetry);
 
         assertEquals(
                 String.format(

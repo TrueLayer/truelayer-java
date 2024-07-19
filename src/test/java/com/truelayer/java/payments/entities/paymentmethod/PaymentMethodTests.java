@@ -12,7 +12,7 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should yield true if instance is of type BankTransfer")
     public void shouldYieldTrueIfBankTransfer() {
-        PaymentMethod sut = new BankTransfer(null, null);
+        PaymentMethod sut = new BankTransfer(null, null, null);
 
         assertTrue(sut.isBankTransfer());
     }
@@ -20,7 +20,7 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should convert to an instance of class BankTransfer")
     public void shouldConvertToBankTransfer() {
-        PaymentMethod sut = new BankTransfer(null, null);
+        PaymentMethod sut = new BankTransfer(null, null, null);
 
         assertDoesNotThrow(sut::asBankTransfer);
     }
@@ -58,7 +58,7 @@ class PaymentMethodTests {
     @Test
     @DisplayName("It should throw an error when converting to Mandate")
     public void shouldNotConvertToMandate() {
-        PaymentMethod sut = new BankTransfer(null, null);
+        PaymentMethod sut = new BankTransfer(null, null, null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asMandate);
 

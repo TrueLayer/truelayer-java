@@ -23,9 +23,8 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+
+import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -252,7 +251,7 @@ public class TestUtils {
 
         // Mandates require some adjustments to the query string...
         // TODO: review if we want this to be a permanent solution
-        String query = headlessResourceAuthorization == HeadlessResourceAuthorization.MANDATES
+        String query = headlessResourceAuthorization.resource == HeadlessResource.MANDATES
                 ? responseUrl.getQuery().replaceFirst("mandate-", "")
                 : responseUrl.getQuery();
 
@@ -265,7 +264,7 @@ public class TestUtils {
                         .get();
         assertNotError(submitPaymentReturnParametersResponse);
 
-        switch (headlessResourceAuthorization) {
+        switch (headlessResourceAuthorization.resource) {
             case PAYMENTS:
                 assertEquals(
                         PaymentProviderReturnResource.Type.PAYMENT,
@@ -285,13 +284,44 @@ public class TestUtils {
         }
     }
 
+    public enum HeadlessResource {
+        PAYMENTS,
+        MANDATES
+    }
+
     @RequiredArgsConstructor
     @Getter
-    public enum HeadlessResourceAuthorization {
-        PAYMENTS("single-immediate-payments", "{\"action\":\"Execute\", \"redirect\": false}"),
-        MANDATES("vrp-consents", "{\"action\":\"Authorise\", \"redirect\": false}");
+    public enum HeadlessResourceAction {
+        EXECUTE("Execute"),
+        AUTHORISE("Authorise"),
+        REJECT_AUTHORISATION("RejectAuthorisation");
 
-        private final String path;
-        private final String payload;
+        private final String action;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class HeadlessResourceAuthorization {
+        final HeadlessResourceAction action;
+        final HeadlessResource resource;
+        String path;
+        String payload;
+
+        @Builder
+        public static HeadlessResourceAuthorization newHeadlessResourceAuthorization(HeadlessResource resource, HeadlessResourceAction action) {
+            HeadlessResourceAuthorization testHeadlessResourceAuthorization = new HeadlessResourceAuthorization(action, resource);
+            testHeadlessResourceAuthorization.payload = String.format("{\"action\":\"%s\", \"redirect\": false}", action.getAction());
+            switch (resource)
+            {
+                case PAYMENTS:
+                    testHeadlessResourceAuthorization.path = "single-immediate-payments";
+                    break;
+                case MANDATES:
+                    testHeadlessResourceAuthorization.path = "vrp-consents";
+                    break;
+            }
+
+            return testHeadlessResourceAuthorization;
+        }
     }
 }
