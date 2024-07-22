@@ -301,10 +301,10 @@ public class TestUtils {
     @RequiredArgsConstructor
     @Getter
     public static class HeadlessResourceAuthorization {
-        final HeadlessResourceAction action;
-        final HeadlessResource resource;
-        String path;
-        String payload;
+        private final HeadlessResourceAction action;
+        private final HeadlessResource resource;
+        private String path;
+        private String payload;
 
         @Builder
         public static HeadlessResourceAuthorization newHeadlessResourceAuthorization(

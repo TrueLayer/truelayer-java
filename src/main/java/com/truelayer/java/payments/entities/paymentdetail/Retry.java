@@ -9,5 +9,5 @@ import lombok.Value;
 public class Retry extends AuthorizationFlowAction {
     Type type = Type.RETRY;
 
-    List<String> retryOptions;
+    List<RetryOption> retryOptions;
 }

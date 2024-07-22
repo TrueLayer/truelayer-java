@@ -157,7 +157,7 @@ class AuthorizationFlowActionTests {
     @Test
     @DisplayName("It should yield true if instance is of type Retry")
     public void shouldYieldTrueIfRetry() {
-        AuthorizationFlowAction sut = new Retry(List.of("restart"));
+        AuthorizationFlowAction sut = new Retry(List.of(RetryOption.RESTART));
 
         assertTrue(sut.isRetry());
     }
@@ -165,7 +165,7 @@ class AuthorizationFlowActionTests {
     @Test
     @DisplayName("It should convert to an instance of class Retry")
     public void shouldConvertToRetry() {
-        AuthorizationFlowAction sut = new Retry(List.of("restart"));
+        AuthorizationFlowAction sut = new Retry(List.of(RetryOption.RESTART));
 
         assertDoesNotThrow(sut::asRetry);
     }
