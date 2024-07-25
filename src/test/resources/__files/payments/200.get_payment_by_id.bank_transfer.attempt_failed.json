@@ -1,0 +1,56 @@
+{
+  "id": "24c8aae5-fbe9-4b5e-87d0-***",
+  "amount_in_minor": 475,
+  "currency": "GBP",
+  "user": {
+    "id": "90a4e9d7-8b0a-4498-87a3-***"
+  },
+  "payment_method": {
+    "type": "bank_transfer",
+    "beneficiary": {
+      "type": "merchant_account",
+      "reference": "5c3d16d6-1439-4b64-a084-***",
+      "merchant_account_id": "93e2c5f1-d935-47aa-90c0-***"
+    },
+    "provider_selection": {
+      "type": "preselected",
+      "provider_id": "mock-payments-gb-redirect",
+      "scheme_id": "faster_payments_service",
+      "remitter": {
+        "account_holder_name": "John Doe",
+        "account_identifier": {
+          "type": "sort_code_account_number",
+          "sort_code": "123456",
+          "account_number": "12345678"
+        }
+      }
+    },
+    "retry": {}
+  },
+  "created_at": "2024-07-19T15:19:01.691821Z",
+  "status": "attempt_failed",
+  "authorization_flow": {
+    "actions": {
+      "next": {
+        "type": "retry",
+        "retry_options": [
+          "restart"
+        ]
+      }
+    },
+    "configuration": {
+      "provider_selection": {},
+      "redirect": {
+        "return_uri": "http://localhost:3000/callback",
+        "direct_return_uri": "http://localhost:3000/callback"
+      },
+      "retry": {}
+    }
+  },
+  "failed_at": "2024-07-19T15:19:03.207135Z",
+  "failure_stage": "authorizing",
+  "failure_reason": "authorization_failed",
+  "metadata": {
+    "a_custom_key": "a-custom-value"
+  }
+}

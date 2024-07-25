@@ -1,14 +1,27 @@
 package com.truelayer.java.acceptance;
 
+import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.*;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.truelayer.java.*;
+import com.truelayer.java.auth.AuthenticationHandler;
+import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.entities.*;
 import com.truelayer.java.entities.Address;
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
+import com.truelayer.java.http.RetrofitFactory;
+import com.truelayer.java.http.auth.AccessTokenManager;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
+import com.truelayer.java.http.interceptors.IdempotencyKeyGeneratorInterceptor;
+import com.truelayer.java.http.interceptors.SignatureGeneratorInterceptor;
+import com.truelayer.java.http.interceptors.TrueLayerAgentInterceptor;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
 import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Redirect;
@@ -22,12 +35,14 @@ import com.truelayer.java.payments.entities.providerselection.PreselectedProvide
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-import lombok.SneakyThrows;
+import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.awaitility.core.*;
@@ -96,7 +111,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         CurrencyCode.GBP,
                         RelatedProducts.builder()
                                 .signupPlus(Collections.emptyMap())
-                                .build()))
+                                .build(),
+                        null))
                 .get();
 
         assertNotError(createPaymentResponse);
@@ -354,7 +370,56 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.PAYMENTS);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.EXECUTE)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should return attempt failed payment status if authorization is rejected with retry")
+    public void shouldReturnAttemptFailedPaymentStatusIfAuthorizationIsRejectedWithRetry() {
+        // create payment
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelectionWithRetry(
+                buildPreselectedProviderSelection(), CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // start the auth flow
+        AuthorizationFlowResponse startAuthorizationFlowResponse =
+                startAuthorizationFlowWithRetry(createPaymentResponse.getData().getId());
+        URI redirectUri = startAuthorizationFlowResponse
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+
+        // use specific action to get the authorization to be rejected
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.REJECT_AUTHORISATION)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
+
+        // get by id
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
+
+        assertNotError(getPaymentByIdResponse);
+        assertTrue(getPaymentByIdResponse.getData().isAttemptFailed());
     }
 
     @SneakyThrows
@@ -394,7 +459,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.PAYMENTS);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.EXECUTE)
+                        .resource(HeadlessResource.PAYMENTS)
+                        .build());
 
         waitForPaymentToBeSettled(paymentId);
 
@@ -488,17 +559,26 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection, CurrencyCode currencyCode) {
-        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null);
+        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, null);
+    }
+
+    private CreatePaymentRequest buildPaymentRequestWithProviderSelectionWithRetry(
+            ProviderSelection providerSelection, CurrencyCode currencyCode) {
+        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, new Retry());
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
-            ProviderSelection providerSelection, CurrencyCode currencyCode, RelatedProducts relatedProducts) {
+            ProviderSelection providerSelection,
+            CurrencyCode currencyCode,
+            RelatedProducts relatedProducts,
+            Retry retry) {
         CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
                 .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
                         .beneficiary(buildBeneficiary(currencyCode))
+                        .retry(retry)
                         .build())
                 .user(User.builder()
                         .name("Andrea Di Lisio")
@@ -577,5 +657,81 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                     assertNotError(getPaymentResponse);
                     return getPaymentResponse.getData().getStatus().equals(Status.SETTLED);
                 });
+    }
+
+    // since the StartAuthorizationFlowRequest object does not support retry property
+    // we need to do a raw HTTP call with a JSON string request body
+    @SneakyThrows
+    private static AuthorizationFlowResponse startAuthorizationFlowWithRetry(String paymentId) {
+
+        // build HTTP Client with required interceptors for auth token, signature etc.
+        OkHttpClient baseHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new IdempotencyKeyGeneratorInterceptor())
+                .build();
+
+        SigningOptions signingOptions = SigningOptions.builder()
+                .keyId(System.getenv("TL_SIGNING_KEY_ID"))
+                .privateKey(System.getenv("TL_SIGNING_PRIVATE_KEY").getBytes(StandardCharsets.UTF_8))
+                .build();
+
+        ClientCredentials clientCredentials = ClientCredentials.builder()
+                .clientId(System.getenv("TL_CLIENT_ID"))
+                .clientSecret(System.getenv("TL_CLIENT_SECRET"))
+                .build();
+
+        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
+                .clientCredentials(clientCredentials)
+                .httpClient(RetrofitFactory.build(baseHttpClient, environment.getAuthApiUri()))
+                .build();
+
+        AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
+                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
+        AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
+
+        OkHttpClient httpClient = baseHttpClient
+                .newBuilder()
+                .addInterceptor(new TrueLayerAgentInterceptor(new LibraryInfoLoader().load()))
+                .addInterceptor(new IdempotencyKeyGeneratorInterceptor())
+                .addInterceptor(new SignatureGeneratorInterceptor(signingOptions))
+                .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
+                .build();
+
+        // build base StartAuthorizationFlowRequest object
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder()
+                        .returnUri(URI.create(RETURN_URI))
+                        .directReturnUri(URI.create(RETURN_URI))
+                        .build())
+                .withProviderSelection()
+                .build();
+
+        // serialize the base object to json and append retry object
+        ObjectMapper mapper = Utils.getObjectMapper();
+        String baseRequestJsonString = mapper.writeValueAsString(startAuthorizationFlowRequest);
+        JsonNode jsonNode = mapper.readTree(baseRequestJsonString);
+        ((ObjectNode) jsonNode).set("retry", mapper.createObjectNode());
+        String requestJsonString = mapper.writeValueAsString(jsonNode);
+
+        // build url
+        HttpUrl url = HttpUrl.parse(String.format(
+                "%s/payments/%s/authorization-flow",
+                Environment.sandbox().getPaymentsApiUri().toString(), paymentId));
+
+        RequestBody body = RequestBody.create(requestJsonString, MediaType.parse("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(Objects.requireNonNull(url))
+                .tag(
+                        RequestScopes.class,
+                        RequestScopes.builder().scope(PAYMENTS).build())
+                .post(body)
+                .build();
+
+        String responseBody;
+        try (Response response = httpClient.newCall(request).execute()) {
+            assertTrue(response.isSuccessful());
+            assertNotNull(response.body());
+            responseBody = response.body().string();
+        }
+        return mapper.readValue(responseBody, AuthorizationFlowResponse.class);
     }
 }

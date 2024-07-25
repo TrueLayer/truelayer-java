@@ -16,7 +16,8 @@ import lombok.ToString;
     @JsonSubTypes.Type(value = Consent.class, name = "consent"),
     @JsonSubTypes.Type(value = Form.class, name = "form"),
     @JsonSubTypes.Type(value = WaitForOutcome.class, name = "wait"),
-    @JsonSubTypes.Type(value = Redirect.class, name = "redirect")
+    @JsonSubTypes.Type(value = Redirect.class, name = "redirect"),
+    @JsonSubTypes.Type(value = Retry.class, name = "retry")
 })
 @ToString
 @EqualsAndHashCode
@@ -49,6 +50,11 @@ public abstract class AuthorizationFlowAction {
     @JsonIgnore
     public boolean isRedirect() {
         return this instanceof Redirect;
+    }
+
+    @JsonIgnore
+    public boolean isRetry() {
+        return this instanceof Retry;
     }
 
     public ProviderSelection asProviderSelection() {
@@ -86,6 +92,13 @@ public abstract class AuthorizationFlowAction {
         return (Redirect) this;
     }
 
+    public Retry asRetry() {
+        if (!isRetry()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (Retry) this;
+    }
+
     private String buildErrorMessage() {
         return String.format(
                 "Authorization flow is of type %s.", this.getClass().getSimpleName());
@@ -98,7 +111,8 @@ public abstract class AuthorizationFlowAction {
         CONSENT("consent"),
         FORM("form"),
         REDIRECT("redirect"),
-        WAIT("wait");
+        WAIT("wait"),
+        RETRY("retry");
 
         @JsonValue
         private final String type;

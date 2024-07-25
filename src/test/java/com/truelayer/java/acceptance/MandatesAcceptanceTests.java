@@ -172,7 +172,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.AUTHORISE)
+                        .resource(HeadlessResource.MANDATES)
+                        .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
@@ -229,7 +235,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.AUTHORISE)
+                        .resource(HeadlessResource.MANDATES)
+                        .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
@@ -276,7 +288,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.AUTHORISE)
+                        .resource(HeadlessResource.MANDATES)
+                        .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 
@@ -331,7 +349,13 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 .getNext()
                 .asRedirect()
                 .getUri();
-        runAndAssertHeadlessResourceAuthorisation(tlClient, redirectUri, HeadlessResourceAuthorization.MANDATES);
+        runAndAssertHeadlessResourceAuthorisation(
+                tlClient,
+                redirectUri,
+                HeadlessResourceAuthorization.builder()
+                        .action(HeadlessResourceAction.AUTHORISE)
+                        .resource(HeadlessResource.MANDATES)
+                        .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
 

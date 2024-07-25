@@ -17,7 +17,8 @@ import lombok.*;
     @JsonSubTypes.Type(value = AuthorizedPaymentDetail.class, name = "authorized"),
     @JsonSubTypes.Type(value = FailedPaymentDetail.class, name = "failed"),
     @JsonSubTypes.Type(value = SettledPaymentDetail.class, name = "settled"),
-    @JsonSubTypes.Type(value = ExecutedPaymentDetail.class, name = "executed")
+    @JsonSubTypes.Type(value = ExecutedPaymentDetail.class, name = "executed"),
+    @JsonSubTypes.Type(value = AttemptFailedPaymentDetail.class, name = "attempt_failed")
 })
 @Getter
 public abstract class PaymentDetail {
@@ -69,6 +70,11 @@ public abstract class PaymentDetail {
     }
 
     @JsonIgnore
+    public boolean isAttemptFailed() {
+        return this instanceof AttemptFailedPaymentDetail;
+    }
+
+    @JsonIgnore
     public AuthorizationRequiredPaymentDetail asAuthorizationRequired() {
         if (!isAuthorizationRequired()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -114,6 +120,14 @@ public abstract class PaymentDetail {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (SettledPaymentDetail) this;
+    }
+
+    @JsonIgnore
+    public AttemptFailedPaymentDetail asAttemptFailed() {
+        if (!isAttemptFailed()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (AttemptFailedPaymentDetail) this;
     }
 
     private String buildErrorMessage() {

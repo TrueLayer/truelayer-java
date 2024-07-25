@@ -12,7 +12,8 @@ public enum Status {
     AUTHORIZED("authorized"),
     EXECUTED("executed"),
     FAILED("failed"),
-    SETTLED("settled");
+    SETTLED("settled"),
+    ATTEMPT_FAILED("attempt_failed");
 
     @JsonValue
     private final String status;

@@ -448,6 +448,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 Arguments.of(BANK_TRANSFER, EXECUTED),
                 Arguments.of(BANK_TRANSFER, SETTLED),
                 Arguments.of(BANK_TRANSFER, FAILED),
+                Arguments.of(BANK_TRANSFER, ATTEMPT_FAILED),
                 Arguments.of(MANDATE, EXECUTED),
                 Arguments.of(MANDATE, FAILED));
     }

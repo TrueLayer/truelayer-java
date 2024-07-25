@@ -189,4 +189,40 @@ class PaymentDetailTests {
 
         assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type AttemptFailedPaymentDetail")
+    public void shouldYieldTrueIfAttemptFailedPaymentDetail() {
+        PaymentDetail sut = new AttemptFailedPaymentDetail(
+                null,
+                ZonedDateTime.now(Clock.systemUTC()),
+                AttemptFailedPaymentDetail.FailureStage.AUTHORIZING,
+                "failed for some reason",
+                null);
+
+        assertTrue(sut.isAttemptFailed());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class AttemptFailedPaymentDetail")
+    public void shouldConvertToAttemptFailedPaymentDetail() {
+        PaymentDetail sut = new AttemptFailedPaymentDetail(
+                null,
+                ZonedDateTime.now(Clock.systemUTC()),
+                AttemptFailedPaymentDetail.FailureStage.AUTHORIZING,
+                "failed for some reason",
+                null);
+
+        assertDoesNotThrow(sut::asAttemptFailed);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to AttemptFailedPaymentDetail")
+    public void shouldNotConvertToAttemptFailedPaymentDetail() {
+        PaymentDetail sut = new AuthorizationRequiredPaymentDetail();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asAttemptFailed);
+
+        assertEquals(String.format("Payment is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
 }
