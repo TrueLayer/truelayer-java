@@ -11,6 +11,5 @@ import lombok.experimental.Accessors;
 public class InstantPreferredSchemeSelection extends SchemeSelection {
     private final Type type = Type.INSTANT_PREFERRED;
 
-    @Accessors(fluent = true)
     private boolean allowRemitterFee;
 }
