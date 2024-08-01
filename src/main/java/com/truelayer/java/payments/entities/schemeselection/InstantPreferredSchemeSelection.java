@@ -3,7 +3,6 @@ package com.truelayer.java.payments.entities.schemeselection;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.experimental.Accessors;
 
 @Getter
 @Builder
