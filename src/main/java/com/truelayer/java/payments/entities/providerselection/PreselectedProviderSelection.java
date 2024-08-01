@@ -3,10 +3,12 @@ package com.truelayer.java.payments.entities.providerselection;
 import com.truelayer.java.entities.Remitter;
 import com.truelayer.java.payments.entities.SchemeId;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @Builder
+@EqualsAndHashCode(callSuper = false)
 public class PreselectedProviderSelection extends ProviderSelection {
     private final Type type = Type.PRESELECTED;
 

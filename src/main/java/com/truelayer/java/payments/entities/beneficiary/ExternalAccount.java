@@ -4,10 +4,12 @@ import static com.truelayer.java.payments.entities.beneficiary.Beneficiary.Type.
 
 import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Builder
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class ExternalAccount extends Beneficiary {
     private final Type type = EXTERNAL_ACCOUNT;
 

@@ -6,10 +6,12 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.payments.entities.retry.Retry;
 import java.util.Optional;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Builder
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class Mandate extends PaymentMethod {
     private final Type type = MANDATE;
 
