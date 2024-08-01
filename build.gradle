@@ -112,7 +112,7 @@ dependencies {
 
     // Mocking libraries
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.12.0'
-    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.9.0'
+    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.9.1'
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.1'

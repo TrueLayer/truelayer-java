@@ -413,6 +413,9 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .resource(HeadlessResource.PAYMENTS)
                         .build());
 
+        // sometimes status change event has a bit of delay
+        waitForPaymentStatusUpdate(createPaymentResponse.getData().getId(), Status.ATTEMPT_FAILED);
+
         // get by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
                 .getPayment(createPaymentResponse.getData().getId())
@@ -467,7 +470,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .resource(HeadlessResource.PAYMENTS)
                         .build());
 
-        waitForPaymentToBeSettled(paymentId);
+        waitForPaymentStatusUpdate(paymentId, Status.SETTLED);
 
         // Create full payment refund
         CreatePaymentRefundRequest createPaymentRefundRequest = CreatePaymentRefundRequest.builder()
@@ -636,7 +639,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertTrue(hppResponse.isSuccessful());
     }
 
-    private void waitForPaymentToBeSettled(String paymentId) {
+    private void waitForPaymentStatusUpdate(String paymentId, Status paymentStatus) {
         await().with()
                 .conditionEvaluationListener(new ConditionEvaluationListener() {
                     @Override
@@ -644,8 +647,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
                     @Override
                     public void onTimeout(TimeoutEvent timeoutEvent) {
-                        Logger.warn(
-                                "Payment is taking too much time to settle, status polling timed out. Refunds test cannot be evaluated without a settled payment");
+                        Logger.warn("Payment is taking too much time to update its status, status polling timed out.");
                     }
                 })
                 .pollInterval(1, TimeUnit.SECONDS)
@@ -655,7 +657,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                     ApiResponse<PaymentDetail> getPaymentResponse =
                             tlClient.payments().getPayment(paymentId).get();
                     assertNotError(getPaymentResponse);
-                    return getPaymentResponse.getData().getStatus().equals(Status.SETTLED);
+                    return getPaymentResponse.getData().getStatus().equals(paymentStatus);
                 });
     }
 
