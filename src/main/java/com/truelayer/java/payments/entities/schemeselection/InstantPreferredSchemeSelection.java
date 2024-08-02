@@ -10,5 +10,9 @@ import lombok.Getter;
 public class InstantPreferredSchemeSelection extends SchemeSelection {
     private final Type type = Type.INSTANT_PREFERRED;
 
+    // Apparently there's a problem with fluent setters and serialization...
+    // https://stackoverflow.com/questions/72570822/accessorsfluent-true-does-not-work-with-jakson
+
+    // @Accessors(fluent = true)
     private boolean allowRemitterFee;
 }
