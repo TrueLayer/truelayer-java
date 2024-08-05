@@ -4,10 +4,12 @@ import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.payments.entities.SchemeId;
 import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Builder
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class UserSelectedProviderSelection extends ProviderSelection {
     private final Type type = Type.USER_SELECTED;
 

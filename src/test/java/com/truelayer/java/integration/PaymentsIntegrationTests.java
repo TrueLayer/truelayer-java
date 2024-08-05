@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TestUtils.RequestStub;
+import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
@@ -21,6 +23,9 @@ import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
+import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
+import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
 import java.util.Collections;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -92,6 +97,47 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         verify(postRequestedFor(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {}}"))));
+    }
+
+    @DisplayName("It should create payment with")
+    @ParameterizedTest(name = "scheme_selection={0} and expected allow_remitter_fee={1}")
+    @MethodSource("provideSchemeSelectionTestParameters")
+    @SneakyThrows
+    public void shouldCreateAPaymentWithSchemeSelection(
+            SchemeSelection schemeSelection, boolean expectedAllowRemitterFee) {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+
+        UserSelectedProviderSelection userSelectedProviderSelection = ProviderSelection.userSelected()
+                .filter(ProviderFilter.builder()
+                        .countries(Collections.singletonList(CountryCode.GB))
+                        .releaseChannel(ReleaseChannel.GENERAL_AVAILABILITY)
+                        .customerSegments(Collections.singletonList(CustomerSegment.RETAIL))
+                        .build())
+                .schemeSelection(schemeSelection)
+                .build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(50)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .providerSelection(userSelectedProviderSelection)
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath(
+                        "$.payment_method.provider_selection.scheme_selection",
+                        equalToJson(String.format(
+                                "{\"type\": \"%s\", \"allow_remitter_fee\": %s}",
+                                schemeSelection.getType().getType(), expectedAllowRemitterFee)))));
     }
 
     @Test
@@ -451,5 +497,23 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 Arguments.of(BANK_TRANSFER, ATTEMPT_FAILED),
                 Arguments.of(MANDATE, EXECUTED),
                 Arguments.of(MANDATE, FAILED));
+    }
+
+    private static Stream<Arguments> provideSchemeSelectionTestParameters() {
+        return Stream.of(
+                Arguments.of(
+                        SchemeSelection.instantOnly().allowRemitterFee(true).build(), true),
+                Arguments.of(
+                        SchemeSelection.instantOnly().allowRemitterFee(false).build(), false),
+                Arguments.of(
+                        SchemeSelection.instantPreferred()
+                                .allowRemitterFee(true)
+                                .build(),
+                        true),
+                Arguments.of(
+                        SchemeSelection.instantPreferred()
+                                .allowRemitterFee(false)
+                                .build(),
+                        false));
     }
 }

@@ -16,9 +16,9 @@ public class PaymentsProvidersAcceptanceTests extends AcceptanceTests {
     public static final String PROVIDER_ID = "mock-payments-gb-redirect";
 
     @Test
-    @DisplayName("It should get by id a payments provider")
+    @DisplayName("It should get a payments provider by id")
     @SneakyThrows
-    public void shouldCreateAPaymentWithUserSelectionProvider() {
+    public void shouldGetAPaymentsProviderById() {
         ApiResponse<PaymentsProvider> getPaymentsProviderResponse =
                 tlClient.paymentsProviders().getProvider(PROVIDER_ID).get();
 

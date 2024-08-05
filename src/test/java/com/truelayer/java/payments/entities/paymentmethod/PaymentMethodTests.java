@@ -3,6 +3,9 @@ package com.truelayer.java.payments.entities.paymentmethod;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TrueLayerException;
+import com.truelayer.java.entities.Remitter;
+import com.truelayer.java.payments.entities.beneficiary.Beneficiary;
+import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,5 +67,52 @@ class PaymentMethodTests {
 
         assertEquals(
                 String.format("Payment method is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("BankTransfer class should implement equals method")
+    public void bankTransferShouldImplementEqualsMethod() {
+        String aBeneficiaryReference = "a_beneficiary_reference";
+        String anotherBeneficiaryReference = "another_beneficiary_reference";
+        String aRemitterName = "a_remitter_name";
+        String anotherRemitterName = "another_remitter_name";
+
+        BankTransfer bankTransfer = createBankTransfer(aBeneficiaryReference, aRemitterName);
+        BankTransfer identicalBankTransfer = createBankTransfer(aBeneficiaryReference, aRemitterName);
+        BankTransfer differentBankTransfer = createBankTransfer(anotherBeneficiaryReference, anotherRemitterName);
+
+        assertEquals(bankTransfer, identicalBankTransfer);
+        assertNotEquals(bankTransfer, differentBankTransfer);
+    }
+
+    @Test
+    @DisplayName("Mandate class should implement equals method")
+    public void mandateShouldImplementEqualsMethod() {
+        String aMandateId = UUID.randomUUID().toString();
+        String anotherMandateId = UUID.randomUUID().toString();
+
+        Mandate mandate = createMandate(aMandateId);
+        Mandate identicalMandate = createMandate(aMandateId);
+        Mandate differentMandate = createMandate(anotherMandateId);
+
+        assertEquals(mandate, identicalMandate);
+        assertNotEquals(mandate, differentMandate);
+    }
+
+    private static BankTransfer createBankTransfer(String beneficiaryReference, String remitterName) {
+        return BankTransfer.builder()
+                .providerSelection(ProviderSelection.preselected()
+                        .remitter(Remitter.builder()
+                                .accountHolderName(remitterName)
+                                .build())
+                        .build())
+                .beneficiary(Beneficiary.externalAccount()
+                        .reference(beneficiaryReference)
+                        .build())
+                .build();
+    }
+
+    private static Mandate createMandate(String id) {
+        return Mandate.builder().mandateId(id).build();
     }
 }

@@ -8,10 +8,12 @@ import com.truelayer.java.payments.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import java.util.Optional;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Builder
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class BankTransfer extends PaymentMethod {
     private final Type type = BANK_TRANSFER;
 
