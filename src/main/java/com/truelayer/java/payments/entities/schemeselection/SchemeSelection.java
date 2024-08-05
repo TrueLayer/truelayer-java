@@ -18,8 +18,8 @@ public abstract class SchemeSelection {
     @JsonIgnore
     public abstract Type getType();
 
-    // @JsonIgnore
-    // public abstract boolean allowRemitterFee();
+    @JsonIgnore
+    public abstract boolean allowRemitterFee();
 
     public static InstantOnlySchemeSelection.InstantOnlySchemeSelectionBuilder instantOnly() {
         return InstantOnlySchemeSelection.builder();

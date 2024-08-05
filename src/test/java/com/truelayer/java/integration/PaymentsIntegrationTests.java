@@ -99,19 +99,18 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withRequestBody(matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {}}"))));
     }
 
-    @Test
-    @DisplayName("It should create payment with scheme_selection with allow_remitter_fee flag = true")
+    @DisplayName("It should create payment with")
+    @ParameterizedTest(name = "scheme_selection={0} and expected allow_remitter_fee={1}")
+    @MethodSource("provideSchemeSelectionTestParameters")
     @SneakyThrows
-    public void shouldCreateAPaymentWithSchemeSelection() {
+    public void shouldCreateAPaymentWithSchemeSelection(
+            SchemeSelection schemeSelection, boolean expectedAllowRemitterFee) {
         RequestStub.New()
                 .method("post")
                 .path(urlPathEqualTo("/connect/token"))
                 .status(200)
                 .bodyFile("auth/200.access_token.json")
                 .build();
-
-        SchemeSelection schemeSelection =
-                SchemeSelection.instantOnly().allowRemitterFee(true).build();
 
         UserSelectedProviderSelection userSelectedProviderSelection = ProviderSelection.userSelected()
                 .filter(ProviderFilter.builder()
@@ -136,7 +135,9 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         verify(postRequestedFor(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath(
                         "$.payment_method.provider_selection.scheme_selection",
-                        equalToJson("{\"type\": \"instant_only\", \"allow_remitter_fee\": true}"))));
+                        equalToJson(String.format(
+                                "{\"type\": \"%s\", \"allow_remitter_fee\": %s}",
+                                schemeSelection.getType().getType(), expectedAllowRemitterFee)))));
     }
 
     @Test
@@ -496,5 +497,23 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 Arguments.of(BANK_TRANSFER, ATTEMPT_FAILED),
                 Arguments.of(MANDATE, EXECUTED),
                 Arguments.of(MANDATE, FAILED));
+    }
+
+    private static Stream<Arguments> provideSchemeSelectionTestParameters() {
+        return Stream.of(
+                Arguments.of(
+                        SchemeSelection.instantOnly().allowRemitterFee(true).build(), true),
+                Arguments.of(
+                        SchemeSelection.instantOnly().allowRemitterFee(false).build(), false),
+                Arguments.of(
+                        SchemeSelection.instantPreferred()
+                                .allowRemitterFee(true)
+                                .build(),
+                        true),
+                Arguments.of(
+                        SchemeSelection.instantPreferred()
+                                .allowRemitterFee(false)
+                                .build(),
+                        false));
     }
 }
