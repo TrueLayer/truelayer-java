@@ -19,6 +19,7 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
@@ -26,7 +27,9 @@ import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -97,6 +100,41 @@ public class PaymentsIntegrationTests extends IntegrationTests {
         verifyGeneratedToken(Collections.singletonList(PAYMENTS));
         verify(postRequestedFor(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath("$.related_products", equalToJson("{\"signup_plus\": {}}"))));
+    }
+
+    @DisplayName("It should create a payment with automated verification")
+    @MethodSource("provideAutomatedVerifications")
+    @ParameterizedTest()
+    @SneakyThrows
+    public void shouldCreateAPaymentWithAutomatedVerification(AutomatedVerification verification) {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .beneficiary(MerchantAccount.merchantAccount()
+                                .verification(verification)
+                                .merchantAccountId(UUID.randomUUID().toString())
+                                .build())
+                        .build())
+                .amountInMinor(100)
+                .relatedProducts(RelatedProducts.builder()
+                        .signupPlus(Collections.emptyMap())
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath(
+                        "$.payment_method.beneficiary.verification",
+                        equalToJson("{\"type\": \"automated\", \"remitter_name\": " + verification.isRemitterName()
+                                + ", \"remitter_date_of_birth\": " + verification.isRemitterDateOfBirth() + "}"))));
     }
 
     @DisplayName("It should create payment with")
@@ -515,5 +553,13 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                                 .allowRemitterFee(false)
                                 .build(),
                         false));
+    }
+
+    private static Stream<Arguments> provideAutomatedVerifications() {
+        return Stream.of(
+                Arguments.of(AutomatedVerification.builder().withRemitterName().build()),
+                Arguments.of(AutomatedVerification.builder()
+                        .withRemitterDateOfBirth()
+                        .build()));
     }
 }

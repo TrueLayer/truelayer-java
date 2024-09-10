@@ -35,6 +35,8 @@ import com.truelayer.java.payments.entities.providerselection.PreselectedProvide
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.verification.AutomatedVerification;
+import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -113,6 +115,47 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                                 .signupPlus(Collections.emptyMap())
                                 .build(),
                         null))
+                .get();
+
+        assertNotError(createPaymentResponse);
+    }
+
+    @ParameterizedTest
+    @DisplayName("It should create a payment with automated verification")
+    @MethodSource("provideAutomatedVerifications")
+    @SneakyThrows
+    public void itShouldCreateAPaymentWithAutomatedVerification(Verification verification) {
+        CurrencyCode currency = CurrencyCode.GBP;
+        MerchantAccount account = getMerchantAccount(currency);
+        CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(currency)
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .providerSelection(ProviderSelection.preselected()
+                                .providerId(PROVIDER_ID)
+                                .build())
+                        .beneficiary(Beneficiary.merchantAccount()
+                                .merchantAccountId(account.getId())
+                                .reference(UUID.randomUUID().toString())
+                                .verification(verification)
+                                .build())
+                        .build())
+                .user(User.builder()
+                        .name("Andrea Di Lisio")
+                        .email("andrea@truelayer.com")
+                        .dateOfBirth(LocalDate.now())
+                        .address(Address.builder()
+                                .addressLine1("1 Hardwick Street")
+                                .city("London")
+                                .state("Greater London")
+                                .zip("EC1R 4RB")
+                                .countryCode("GB")
+                                .build())
+                        .build());
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
+                .createPayment(buildPaymentRequestWithProviderSelection(
+                        buildPreselectedProviderSelection(), CurrencyCode.GBP, null, null))
                 .get();
 
         assertNotError(createPaymentResponse);
@@ -735,5 +778,13 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
             responseBody = response.body().string();
         }
         return mapper.readValue(responseBody, AuthorizationFlowResponse.class);
+    }
+
+    private static Stream<Arguments> provideAutomatedVerifications() {
+        return Stream.of(
+                Arguments.of(AutomatedVerification.builder().withRemitterName().build()),
+                Arguments.of(AutomatedVerification.builder()
+                        .withRemitterDateOfBirth()
+                        .build()));
     }
 }
