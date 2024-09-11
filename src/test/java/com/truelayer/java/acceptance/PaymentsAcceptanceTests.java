@@ -114,6 +114,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         RelatedProducts.builder()
                                 .signupPlus(Collections.emptyMap())
                                 .build(),
+                        null,
                         null))
                 .get();
 
@@ -155,7 +156,23 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
                 .createPayment(buildPaymentRequestWithProviderSelection(
-                        buildPreselectedProviderSelection(), CurrencyCode.GBP, null, null))
+                        buildPreselectedProviderSelection(), CurrencyCode.GBP, null, null, null))
+                .get();
+
+        assertNotError(createPaymentResponse);
+    }
+
+    @Test
+    @DisplayName("It should create a payment with risk assessment")
+    @SneakyThrows
+    public void itShouldCreateAPaymentWithRiskAssessment() {
+        ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
+                .createPayment(buildPaymentRequestWithProviderSelection(
+                        buildPreselectedProviderSelection(),
+                        CurrencyCode.GBP,
+                        null,
+                        RiskAssessment.builder().segment("a-custom-segment").build(),
+                        null))
                 .get();
 
         assertNotError(createPaymentResponse);
@@ -605,18 +622,19 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection, CurrencyCode currencyCode) {
-        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, null);
+        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, null, null);
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelectionWithRetry(
             ProviderSelection providerSelection, CurrencyCode currencyCode) {
-        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, new Retry());
+        return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, null, new Retry());
     }
 
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection,
             CurrencyCode currencyCode,
             RelatedProducts relatedProducts,
+            RiskAssessment riskAssessment,
             Retry retry) {
         CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
                 .amountInMinor(RandomUtils.nextInt(50, 500))
@@ -642,6 +660,10 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         if (relatedProducts != null) {
             builder.relatedProducts(relatedProducts);
+        }
+
+        if (riskAssessment != null) {
+            builder.riskAssessment(riskAssessment);
         }
 
         return builder.build();

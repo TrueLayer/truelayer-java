@@ -29,4 +29,9 @@ public class CreatePaymentRequest {
      * Optional field. Not available when creating recurring payments.
      */
     private RelatedProducts relatedProducts;
+
+    /**
+     * Optional field for configuring risk assessment and the payment_creditable webhook
+     */
+    private RiskAssessment riskAssessment;
 }
