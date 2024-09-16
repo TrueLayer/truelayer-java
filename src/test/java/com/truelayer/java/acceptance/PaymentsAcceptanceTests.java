@@ -171,12 +171,15 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void itShouldCreateAPaymentWithAutomatedVerification(Verification verification) {
         CurrencyCode currency = CurrencyCode.GBP;
         MerchantAccount account = getMerchantAccount(currency);
-        CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
+        CreatePaymentRequest.CreatePaymentRequestBuilder createPaymentRequestBuilder = CreatePaymentRequest.builder()
                 .amountInMinor(100)
                 .currency(currency)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.preselected()
                                 .providerId(PROVIDER_ID)
+                                .schemeSelection(com.truelayer.java.payments.entities.schemeselection.preselected
+                                        .SchemeSelection.instantPreferred()
+                                        .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
                                 .merchantAccountId(account.getId())
@@ -198,8 +201,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build());
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
-                .createPayment(buildPaymentRequestWithProviderSelection(
-                        buildPreselectedProviderSelection(), CurrencyCode.GBP, null, null, null))
+                .createPayment(createPaymentRequestBuilder.build())
                 .get();
 
         assertNotError(createPaymentResponse);
