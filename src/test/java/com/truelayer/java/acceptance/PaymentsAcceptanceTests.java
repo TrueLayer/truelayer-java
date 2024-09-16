@@ -34,7 +34,7 @@ import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
-import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -101,6 +101,49 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
         assertNotError(getPaymentByIdResponse);
         assertEquals(getPaymentByIdResponse.getData().getPaymentMethod(), paymentRequest.getPaymentMethod());
+    }
+
+    @Test
+    @DisplayName("It should create and get by id a payment with preselected provider and preselected scheme_selection")
+    @SneakyThrows
+    public void shouldCreateAPaymentWithPreselectedProviderAndPreselectedSchemeSelection() {
+        // create payment
+        PreselectedProviderSelection preselectedProvider = ProviderSelection.preselected()
+                .providerId(PROVIDER_ID)
+                .schemeSelection(
+                        com.truelayer.java.payments.entities.schemeselection.preselected.SchemeSelection.preselected()
+                                .schemeId("faster_payments_service")
+                                .build())
+                .build();
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectedProvider, CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // get it by id
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
+
+        assertNotError(getPaymentByIdResponse);
+
+        ProviderSelection providerSelection = getPaymentByIdResponse
+                .getData()
+                .getPaymentMethod()
+                .asBankTransfer()
+                .getProviderSelection();
+        assertTrue(providerSelection.asPreselected().getSchemeSelection().isPreselected());
+        assertEquals(
+                providerSelection
+                        .asPreselected()
+                        .getSchemeSelection()
+                        .asPreselected()
+                        .getSchemeId(),
+                "faster_payments_service");
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.truelayer.java.payments.entities.providerselection;
 
 import com.truelayer.java.entities.ProviderFilter;
 import com.truelayer.java.payments.entities.SchemeId;
-import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
