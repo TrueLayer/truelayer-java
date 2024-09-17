@@ -1,4 +1,4 @@
-package com.truelayer.java.payments.entities.schemeselection;
+package com.truelayer.java.payments.entities.schemeselection.userselected;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

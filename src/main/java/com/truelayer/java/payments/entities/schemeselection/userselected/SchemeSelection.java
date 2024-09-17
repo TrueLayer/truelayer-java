@@ -1,10 +1,14 @@
-package com.truelayer.java.payments.entities.schemeselection;
+package com.truelayer.java.payments.entities.schemeselection.userselected;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.*;
+import com.truelayer.java.TrueLayerException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = InstantOnlySchemeSelection.class)
 @JsonSubTypes({
@@ -15,6 +19,7 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public abstract class SchemeSelection {
+
     @JsonIgnore
     public abstract Type getType();
 
@@ -27,6 +32,36 @@ public abstract class SchemeSelection {
 
     public static InstantPreferredSchemeSelection.InstantPreferredSchemeSelectionBuilder instantPreferred() {
         return InstantPreferredSchemeSelection.builder();
+    }
+
+    @JsonIgnore
+    public boolean isInstantOnly() {
+        return this instanceof InstantOnlySchemeSelection;
+    }
+
+    @JsonIgnore
+    public boolean isInstantPreferred() {
+        return this instanceof InstantPreferredSchemeSelection;
+    }
+
+    @JsonIgnore
+    public InstantOnlySchemeSelection asInstantOnly() {
+        if (!isInstantOnly()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (InstantOnlySchemeSelection) this;
+    }
+
+    @JsonIgnore
+    public InstantPreferredSchemeSelection asInstantPreferred() {
+        if (!isInstantPreferred()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (InstantPreferredSchemeSelection) this;
+    }
+
+    private String buildErrorMessage() {
+        return String.format("Scheme selection is of type %s.", this.getClass().getSimpleName());
     }
 
     @RequiredArgsConstructor

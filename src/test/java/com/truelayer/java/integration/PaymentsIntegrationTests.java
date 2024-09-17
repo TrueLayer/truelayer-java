@@ -26,7 +26,7 @@ import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
-import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import java.util.Collections;
 import java.util.UUID;
@@ -139,7 +139,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
 
     @DisplayName("It should create payment with")
     @ParameterizedTest(name = "scheme_selection={0} and expected allow_remitter_fee={1}")
-    @MethodSource("provideSchemeSelectionTestParameters")
+    @MethodSource("provideUserSelectedSchemeSelectionTestParameters")
     @SneakyThrows
     public void shouldCreateAPaymentWithSchemeSelection(
             SchemeSelection schemeSelection, boolean expectedAllowRemitterFee) {
@@ -537,7 +537,7 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 Arguments.of(MANDATE, FAILED));
     }
 
-    private static Stream<Arguments> provideSchemeSelectionTestParameters() {
+    private static Stream<Arguments> provideUserSelectedSchemeSelectionTestParameters() {
         return Stream.of(
                 Arguments.of(
                         SchemeSelection.instantOnly().allowRemitterFee(true).build(), true),

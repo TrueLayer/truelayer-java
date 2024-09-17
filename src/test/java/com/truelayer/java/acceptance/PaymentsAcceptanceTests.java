@@ -34,7 +34,7 @@ import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
-import com.truelayer.java.payments.entities.schemeselection.SchemeSelection;
+import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -104,6 +104,49 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     }
 
     @Test
+    @DisplayName("It should create and get by id a payment with preselected provider and preselected scheme_selection")
+    @SneakyThrows
+    public void shouldCreateAPaymentWithPreselectedProviderAndPreselectedSchemeSelection() {
+        // create payment
+        PreselectedProviderSelection preselectedProvider = ProviderSelection.preselected()
+                .providerId(PROVIDER_ID)
+                .schemeSelection(
+                        com.truelayer.java.payments.entities.schemeselection.preselected.SchemeSelection.preselected()
+                                .schemeId("faster_payments_service")
+                                .build())
+                .build();
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(preselectedProvider, CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // get it by id
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
+
+        assertNotError(getPaymentByIdResponse);
+
+        ProviderSelection providerSelection = getPaymentByIdResponse
+                .getData()
+                .getPaymentMethod()
+                .asBankTransfer()
+                .getProviderSelection();
+        assertTrue(providerSelection.asPreselected().getSchemeSelection().isPreselected());
+        assertEquals(
+                providerSelection
+                        .asPreselected()
+                        .getSchemeSelection()
+                        .asPreselected()
+                        .getSchemeId(),
+                "faster_payments_service");
+    }
+
+    @Test
     @DisplayName("It should create a payment to be used with Signup+")
     @SneakyThrows
     public void itShouldCreateAPaymentWithSignupPlusIntention() {
@@ -128,12 +171,15 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     public void itShouldCreateAPaymentWithAutomatedVerification(Verification verification) {
         CurrencyCode currency = CurrencyCode.GBP;
         MerchantAccount account = getMerchantAccount(currency);
-        CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
+        CreatePaymentRequest.CreatePaymentRequestBuilder createPaymentRequestBuilder = CreatePaymentRequest.builder()
                 .amountInMinor(100)
                 .currency(currency)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(ProviderSelection.preselected()
                                 .providerId(PROVIDER_ID)
+                                .schemeSelection(com.truelayer.java.payments.entities.schemeselection.preselected
+                                        .SchemeSelection.instantPreferred()
+                                        .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
                                 .merchantAccountId(account.getId())
@@ -155,8 +201,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build());
 
         ApiResponse<CreatePaymentResponse> createPaymentResponse = tlClient.payments()
-                .createPayment(buildPaymentRequestWithProviderSelection(
-                        buildPreselectedProviderSelection(), CurrencyCode.GBP, null, null, null))
+                .createPayment(createPaymentRequestBuilder.build())
                 .get();
 
         assertNotError(createPaymentResponse);
