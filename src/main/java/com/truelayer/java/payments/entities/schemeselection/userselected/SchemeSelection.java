@@ -13,7 +13,8 @@ import lombok.ToString;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = InstantOnlySchemeSelection.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = InstantOnlySchemeSelection.class, name = "instant_only"),
-    @JsonSubTypes.Type(value = InstantPreferredSchemeSelection.class, name = "instant_preferred")
+    @JsonSubTypes.Type(value = InstantPreferredSchemeSelection.class, name = "instant_preferred"),
+    @JsonSubTypes.Type(value = UserSelectedSchemeSelection.class, name = "user_selected"),
 })
 @Getter
 @ToString
@@ -23,15 +24,16 @@ public abstract class SchemeSelection {
     @JsonIgnore
     public abstract Type getType();
 
-    @JsonIgnore
-    public abstract boolean allowRemitterFee();
-
     public static InstantOnlySchemeSelection.InstantOnlySchemeSelectionBuilder instantOnly() {
         return InstantOnlySchemeSelection.builder();
     }
 
     public static InstantPreferredSchemeSelection.InstantPreferredSchemeSelectionBuilder instantPreferred() {
         return InstantPreferredSchemeSelection.builder();
+    }
+
+    public static UserSelectedSchemeSelection.UserSelectedSchemeSelectionBuilder userSelected() {
+        return UserSelectedSchemeSelection.builder();
     }
 
     @JsonIgnore
@@ -42,6 +44,11 @@ public abstract class SchemeSelection {
     @JsonIgnore
     public boolean isInstantPreferred() {
         return this instanceof InstantPreferredSchemeSelection;
+    }
+
+    @JsonIgnore
+    public boolean isUserSelected() {
+        return this instanceof UserSelectedSchemeSelection;
     }
 
     @JsonIgnore
@@ -60,6 +67,14 @@ public abstract class SchemeSelection {
         return (InstantPreferredSchemeSelection) this;
     }
 
+    @JsonIgnore
+    public UserSelectedSchemeSelection asUserSelected() {
+        if (!isUserSelected()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (UserSelectedSchemeSelection) this;
+    }
+
     private String buildErrorMessage() {
         return String.format("Scheme selection is of type %s.", this.getClass().getSimpleName());
     }
@@ -68,7 +83,8 @@ public abstract class SchemeSelection {
     @Getter
     public enum Type {
         INSTANT_ONLY("instant_only"),
-        INSTANT_PREFERRED("instant_preferred");
+        INSTANT_PREFERRED("instant_preferred"),
+        USER_SELECTED("user_selected");
 
         @JsonValue
         private final String type;

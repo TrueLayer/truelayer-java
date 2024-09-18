@@ -14,6 +14,7 @@ import lombok.ToString;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = InstantOnlySchemeSelection.class, name = "instant_only"),
     @JsonSubTypes.Type(value = InstantPreferredSchemeSelection.class, name = "instant_preferred"),
+    @JsonSubTypes.Type(value = UserSelectedSchemeSelection.class, name = "user_selected"),
     @JsonSubTypes.Type(value = PreselectedSchemeSelection.class, name = "preselected"),
 })
 @Getter
@@ -32,6 +33,10 @@ public abstract class SchemeSelection {
         return InstantPreferredSchemeSelection.builder();
     }
 
+    public static UserSelectedSchemeSelection.UserSelectedSchemeSelectionBuilder userSelected() {
+        return UserSelectedSchemeSelection.builder();
+    }
+
     public static PreselectedSchemeSelection.PreselectedSchemeSelectionBuilder preselected() {
         return PreselectedSchemeSelection.builder();
     }
@@ -44,6 +49,11 @@ public abstract class SchemeSelection {
     @JsonIgnore
     public boolean isInstantPreferred() {
         return this instanceof InstantPreferredSchemeSelection;
+    }
+
+    @JsonIgnore
+    public boolean isUserSelected() {
+        return this instanceof UserSelectedSchemeSelection;
     }
 
     @JsonIgnore
@@ -68,6 +78,14 @@ public abstract class SchemeSelection {
     }
 
     @JsonIgnore
+    public UserSelectedSchemeSelection asUserSelected() {
+        if (!isUserSelected()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (UserSelectedSchemeSelection) this;
+    }
+
+    @JsonIgnore
     public PreselectedSchemeSelection asPreselected() {
         if (!isPreselected()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -84,6 +102,7 @@ public abstract class SchemeSelection {
     public enum Type {
         INSTANT_ONLY("instant_only"),
         INSTANT_PREFERRED("instant_preferred"),
+        USER_SELECTED("user_selected"),
         PRESELECTED("preselected");
 
         @JsonValue

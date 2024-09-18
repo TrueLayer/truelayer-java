@@ -62,6 +62,32 @@ public class SchemeSelectionTests {
     }
 
     @Test
+    @DisplayName("It should yield true if instance is of type UserSelectedSchemeSelection")
+    public void shouldYieldTrueIfUserSelected() {
+        SchemeSelection sut = new UserSelectedSchemeSelection();
+        assertTrue(sut.isUserSelected());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class UserSelectedSchemeSelection")
+    public void shouldConvertToUserSelected() {
+        SchemeSelection sut = new UserSelectedSchemeSelection();
+
+        assertDoesNotThrow(sut::asUserSelected);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to UserSelectedSchemeSelection")
+    public void shouldNotConvertToUserSelected() {
+        SchemeSelection sut = new InstantOnlySchemeSelection(true);
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asUserSelected);
+
+        assertEquals(
+                String.format("Scheme selection is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
+
+    @Test
     @DisplayName("It should yield true if instance is of type PreselectedSchemeSelection")
     public void shouldYieldTrueIfPreselected() {
         SchemeSelection sut = new PreselectedSchemeSelection(null);
