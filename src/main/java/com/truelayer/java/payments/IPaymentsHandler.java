@@ -19,6 +19,10 @@ public interface IPaymentsHandler {
 
     CompletableFuture<ApiResponse<PaymentDetail>> getPayment(String paymentId);
 
+    CompletableFuture<ApiResponse<Void>> cancelPayment(String paymentId);
+
+    CompletableFuture<ApiResponse<Void>> cancelPayment(Headers headers, String paymentId);
+
     CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String paymentId, StartAuthorizationFlowRequest request);
 

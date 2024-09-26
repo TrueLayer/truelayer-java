@@ -620,6 +620,27 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 paymentRefundApiResponse.getData().getMetadata());
     }
 
+    @SneakyThrows
+    @Test
+    @DisplayName("It should create a payment and cancel it")
+    public void shouldCreateAPaymentAndCancelIt() {
+        // create payment
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // Cancel the payment
+        ApiResponse<Void> cancelPaymentResponse = tlClient.payments()
+                .cancelPayment(createPaymentResponse.getData().getId())
+                .get();
+        assertNotError(cancelPaymentResponse);
+    }
+
     private PreselectedProviderSelection buildPreselectedProviderSelection() {
         return ProviderSelection.preselected()
                 .providerId(PROVIDER_ID)
