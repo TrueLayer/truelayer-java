@@ -245,6 +245,30 @@ public class PaymentsIntegrationTests extends IntegrationTests {
     }
 
     @Test
+    @DisplayName("It should cancel a payment")
+    @SneakyThrows
+    public void shouldCancelPayment() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments/" + A_PAYMENT_ID + "/actions/cancel"))
+                .withAuthorization()
+                .status(202)
+                .build();
+
+        ApiResponse<Void> response =
+                tlClient.payments().cancelPayment(A_PAYMENT_ID).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        assertNotError(response);
+    }
+
+    @Test
     @DisplayName("It should return an error if a payment is not found")
     @SneakyThrows
     public void shouldThrowIfPaymentNotFound() {

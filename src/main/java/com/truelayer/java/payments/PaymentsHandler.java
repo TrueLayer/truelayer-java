@@ -45,6 +45,16 @@ public class PaymentsHandler implements IAuthenticatedHandler, IPaymentsHandler 
     }
 
     @Override
+    public CompletableFuture<ApiResponse<Void>> cancelPayment(String paymentId) {
+        return paymentsApi.cancelPayment(getRequestScopes(), emptyMap(), paymentId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<Void>> cancelPayment(Headers headers, String paymentId) {
+        return paymentsApi.cancelPayment(getRequestScopes(), toMap(headers), paymentId);
+    }
+
+    @Override
     public CompletableFuture<ApiResponse<AuthorizationFlowResponse>> startAuthorizationFlow(
             String paymentId, StartAuthorizationFlowRequest request) {
         return paymentsApi.startAuthorizationFlow(getRequestScopes(), emptyMap(), paymentId, request);

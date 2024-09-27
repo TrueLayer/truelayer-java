@@ -39,6 +39,18 @@ public interface IPaymentsApi {
     CompletableFuture<ApiResponse<PaymentDetail>> getPayment(@Tag RequestScopes scopes, @Path("id") String paymentId);
 
     /**
+     * Cancel a payment.
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param headers map representing custom HTTP headers to be sent
+     * @param paymentId the payment identifier
+     * @return an empty response in case of success
+     * @see <a href="https://docs.truelayer.com/reference/cancel-payment"><i>Cancel Payment</i> API reference</a>
+     */
+    @POST("/payments/{id}/actions/cancel")
+    CompletableFuture<ApiResponse<Void>> cancelPayment(
+            @Tag RequestScopes scopes, @HeaderMap Map<String, String> headers, @Path("id") String paymentId);
+
+    /**
      * Starts an authorization flow for a given payment resource.
      * @param scopes the scopes to be used by the underlying Oauth token
      * @param headers map representing custom HTTP headers to be sent

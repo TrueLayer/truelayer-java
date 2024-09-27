@@ -102,6 +102,14 @@ public interface IMerchantAccountsApi {
             @HeaderMap Map<String, String> headers,
             @Path("merchantAccountId") String merchantAccountId);
 
+    /**
+     * Get the payment sources from which the merchant account has received payment
+     * @param scopes the scopes to be used by the underlying Oauth token
+     * @param merchantAccountId the id of the merchant account
+     * @param userId the id of the user
+     * @return The list of payment sources from which the merchant account has received payment
+     * @see <a href="https://docs.truelayer.com/reference/get-merchant-account-payment-sources"><i>Get payment sources</i> API reference</a>
+     */
     @GET("/merchant-accounts/{merchantAccountId}/payment-sources")
     CompletableFuture<ApiResponse<ListPaymentSourcesResponse>> listPaymentSources(
             @Tag RequestScopes scopes,
