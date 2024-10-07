@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "8.10"
+    id "io.freefair.lombok" version "8.10.2"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // to publish packages
