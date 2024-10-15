@@ -11,6 +11,8 @@ import com.truelayer.java.payouts.entities.CreatePayoutResponse;
 import com.truelayer.java.payouts.entities.Payout;
 import com.truelayer.java.payouts.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.payouts.entities.beneficiary.Beneficiary;
+import com.truelayer.java.payouts.entities.submerchants.BusinessClient;
+import com.truelayer.java.payouts.entities.submerchants.SubMerchants;
 import java.util.Collections;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomUtils;
@@ -40,6 +42,12 @@ public class PayoutsAcceptanceTests extends AcceptanceTests {
                                 .build())
                         .reference("Java SDK payout test")
                         .accountHolderName("LucaB merchant")
+                        .build())
+                .subMerchants(SubMerchants.builder()
+                        .ultimateCounterparty(BusinessClient.businessClient()
+                                .tradingName("A sub merchant trading name")
+                                .registrationNumber("123456")
+                                .build())
                         .build())
                 .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
                 .build();
