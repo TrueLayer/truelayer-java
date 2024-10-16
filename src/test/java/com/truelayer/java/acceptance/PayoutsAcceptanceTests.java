@@ -14,8 +14,8 @@ import com.truelayer.java.payouts.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payouts.entities.schemeselection.SchemeSelection;
 import com.truelayer.java.payouts.entities.submerchants.BusinessClient;
 import com.truelayer.java.payouts.entities.submerchants.SubMerchants;
-import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -34,7 +34,7 @@ public class PayoutsAcceptanceTests extends AcceptanceTests {
         // create the payout
         CreatePayoutRequest createPayoutRequest = CreatePayoutRequest.builder()
                 .merchantAccountId(merchantAccount.getId())
-                .amountInMinor(SecureRandom.getInstanceStrong().nextInt(10, 100))
+                .amountInMinor(ThreadLocalRandom.current().nextInt(10, 100))
                 .currency(CurrencyCode.GBP)
                 .beneficiary(Beneficiary.externalAccount()
                         .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()

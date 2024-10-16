@@ -40,9 +40,9 @@ import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.*;
@@ -704,7 +704,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
             RiskAssessment riskAssessment,
             Retry retry) {
         CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
-                .amountInMinor(SecureRandom.getInstanceStrong().nextInt(50, 500))
+                .amountInMinor(ThreadLocalRandom.current().nextInt(50, 500))
                 .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)
