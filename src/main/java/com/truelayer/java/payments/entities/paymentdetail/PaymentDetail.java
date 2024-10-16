@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.commonapi.entities.UserDetail;
+import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -26,7 +27,7 @@ public abstract class PaymentDetail {
 
     private int amountInMinor;
 
-    private String currency;
+    private CurrencyCode currency;
 
     private UserDetail user;
 
