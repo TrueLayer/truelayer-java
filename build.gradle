@@ -111,7 +111,7 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.0'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.13.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.2'
     testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.9.1'
 
     // Wait test utility
