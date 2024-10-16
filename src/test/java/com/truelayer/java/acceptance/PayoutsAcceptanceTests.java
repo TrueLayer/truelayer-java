@@ -11,11 +11,12 @@ import com.truelayer.java.payouts.entities.CreatePayoutResponse;
 import com.truelayer.java.payouts.entities.Payout;
 import com.truelayer.java.payouts.entities.accountidentifier.AccountIdentifier;
 import com.truelayer.java.payouts.entities.beneficiary.Beneficiary;
+import com.truelayer.java.payouts.entities.schemeselection.SchemeSelection;
 import com.truelayer.java.payouts.entities.submerchants.BusinessClient;
 import com.truelayer.java.payouts.entities.submerchants.SubMerchants;
+import java.security.SecureRandom;
 import java.util.Collections;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class PayoutsAcceptanceTests extends AcceptanceTests {
         // create the payout
         CreatePayoutRequest createPayoutRequest = CreatePayoutRequest.builder()
                 .merchantAccountId(merchantAccount.getId())
-                .amountInMinor(RandomUtils.nextInt(10, 100))
+                .amountInMinor(SecureRandom.getInstanceStrong().nextInt(10, 100))
                 .currency(CurrencyCode.GBP)
                 .beneficiary(Beneficiary.externalAccount()
                         .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
@@ -43,6 +44,7 @@ public class PayoutsAcceptanceTests extends AcceptanceTests {
                         .reference("Java SDK payout test")
                         .accountHolderName("LucaB merchant")
                         .build())
+                .schemeSelection(SchemeSelection.instantPreferred().build())
                 .subMerchants(SubMerchants.builder()
                         .ultimateCounterparty(BusinessClient.businessClient()
                                 .tradingName("A sub merchant trading name")

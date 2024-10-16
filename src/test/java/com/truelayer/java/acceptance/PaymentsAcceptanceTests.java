@@ -40,13 +40,13 @@ import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.*;
 import okhttp3.*;
-import org.apache.commons.lang3.RandomUtils;
 import org.awaitility.core.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -696,6 +696,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         return buildPaymentRequestWithProviderSelection(providerSelection, currencyCode, null, null, new Retry());
     }
 
+    @SneakyThrows
     private CreatePaymentRequest buildPaymentRequestWithProviderSelection(
             ProviderSelection providerSelection,
             CurrencyCode currencyCode,
@@ -703,7 +704,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
             RiskAssessment riskAssessment,
             Retry retry) {
         CreatePaymentRequest.CreatePaymentRequestBuilder builder = CreatePaymentRequest.builder()
-                .amountInMinor(RandomUtils.nextInt(50, 500))
+                .amountInMinor(SecureRandom.getInstanceStrong().nextInt(50, 500))
                 .currency(currencyCode)
                 .paymentMethod(PaymentMethod.bankTransfer()
                         .providerSelection(providerSelection)

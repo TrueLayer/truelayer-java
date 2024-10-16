@@ -2,6 +2,7 @@ package com.truelayer.java.payouts.entities;
 
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.payouts.entities.beneficiary.Beneficiary;
+import com.truelayer.java.payouts.entities.schemeselection.SchemeSelection;
 import com.truelayer.java.payouts.entities.submerchants.SubMerchants;
 import java.util.Map;
 import lombok.Builder;
@@ -19,5 +20,6 @@ public class CreatePayoutRequest {
     private CurrencyCode currency;
     private Beneficiary beneficiary;
     private SubMerchants subMerchants;
+    private SchemeSelection schemeSelection;
     private Map<String, String> metadata;
 }
