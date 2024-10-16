@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 11, 17, 20, 21 ]
+        java-version: [ 11, 17, 20, 23 ]
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
@@ -70,7 +70,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '23'
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
