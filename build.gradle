@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "8.10"
+    id "io.freefair.lombok" version "8.10.2"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // to publish packages
@@ -108,10 +108,10 @@ dependencies {
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
     // JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.2'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.13.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.2'
     testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.9.1'
 
     // Wait test utility
