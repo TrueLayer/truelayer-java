@@ -31,6 +31,9 @@ import com.truelayer.java.paymentsproviders.PaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsApi;
 import com.truelayer.java.payouts.IPayoutsHandler;
 import com.truelayer.java.payouts.PayoutsHandler;
+import com.truelayer.java.signupplus.ISignupPlusApi;
+import com.truelayer.java.signupplus.ISignupPlusHandler;
+import com.truelayer.java.signupplus.SignupPlusHandler;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.time.Clock;
 import java.time.Duration;
@@ -292,6 +295,17 @@ public class TrueLayerClientBuilder {
         }
         IPayoutsHandler payoutsHandler = payoutsHandlerBuilder.build();
 
+        // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
+        // endpoint
+        ISignupPlusApi signupPlusApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+                .create(ISignupPlusApi.class);
+        SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
+                SignupPlusHandler.builder().signupPlusApi(signupPlusApi);
+        if (customScopesPresent()) {
+            signupPlusHandlerBuilder.scopes(globalScopes);
+        }
+        ISignupPlusHandler signupPlusHandler = signupPlusHandlerBuilder.build();
+
         return new TrueLayerClient(
                 authenticationHandler,
                 paymentsHandler,
@@ -299,6 +313,7 @@ public class TrueLayerClientBuilder {
                 merchantAccountsHandler,
                 mandatesHandler,
                 payoutsHandler,
+                signupPlusHandler,
                 commonHandler,
                 hppLinkBuilder);
     }

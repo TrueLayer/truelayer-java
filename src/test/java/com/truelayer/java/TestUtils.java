@@ -21,11 +21,14 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class TestUtils {
     public static final Pattern UUID_REGEX_PATTERN =
@@ -111,6 +114,7 @@ public class TestUtils {
         private Integer delayMilliseconds;
         private String xForwardedForHeader;
         private String xDeviceUserAgent;
+        private List<Pair<String, String>> queryParams = new ArrayList<>();
 
         private RequestStub() {}
 
@@ -163,6 +167,11 @@ public class TestUtils {
             return this;
         }
 
+        public RequestStub withQueryParam(String key, String value) {
+            this.queryParams.add(Pair.of(key, value));
+            return this;
+        }
+
         public RequestStub delayMs(int delayMilliseconds) {
             this.delayMilliseconds = delayMilliseconds;
             return this;
@@ -170,6 +179,10 @@ public class TestUtils {
 
         public StubMapping build() {
             MappingBuilder request = request(method.toUpperCase(), path).withHeader(TL_AGENT, matching(LIBRARY_INFO));
+
+            if (!queryParams.isEmpty()) {
+                queryParams.forEach(kv -> request.withQueryParam(kv.getKey(), equalTo(kv.getValue())));
+            }
 
             if (withSignature) {
                 request.withHeader(TL_SIGNATURE, matching(".+"));
