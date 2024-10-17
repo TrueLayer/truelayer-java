@@ -20,7 +20,7 @@ public class UserData {
 
     String nationalIdentificationNumber;
 
-    String sex;
+    Sex sex;
 
     AccountDetails accountDetails;
 
@@ -55,7 +55,7 @@ public class UserData {
     }
 
     @JsonGetter
-    public Optional<String> getSex() {
+    public Optional<Sex> getSex() {
         return Optional.ofNullable(sex);
     }
 
