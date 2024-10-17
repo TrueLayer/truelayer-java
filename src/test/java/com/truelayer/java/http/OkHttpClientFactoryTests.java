@@ -11,7 +11,6 @@ import com.truelayer.java.ProxyConfiguration;
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.auth.AuthenticationHandler;
 import com.truelayer.java.auth.IAuthenticationHandler;
-import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
 import com.truelayer.java.http.interceptors.AuthenticationInterceptor;
 import com.truelayer.java.http.interceptors.IdempotencyKeyGeneratorInterceptor;
 import com.truelayer.java.http.interceptors.SignatureGeneratorInterceptor;
@@ -21,7 +20,6 @@ import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.Proxy;
 import java.net.URI;
-import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -181,7 +179,8 @@ class OkHttpClientFactoryTests {
                         customLogMessageConsumer,
                         null);
 
-        OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseApiClient, getClientCredentials());
+        OkHttpClient authClient =
+                getOkHttpClientFactory().buildAuthServerApiClient(baseApiClient, getClientCredentials());
 
         assertNotNull(authClient);
         assertTrue(
@@ -200,22 +199,50 @@ class OkHttpClientFactoryTests {
     }
 
     @Test
-    @DisplayName("It should build a Payments API client")
-    public void shouldThrowCredentialsMissingException() {
+    @DisplayName("It should build an authenticated API client")
+    public void shouldCreateAnAuthenticatedApiClient() {
         OkHttpClient baseHttpClient = getOkHttpClientFactory().buildBaseApiClient(null, null, null, null, null);
-        OkHttpClient authClient = getOkHttpClientFactory().buildAuthApiClient(baseHttpClient, getClientCredentials());
-
+        OkHttpClient authServerApiClient =
+                getOkHttpClientFactory().buildAuthServerApiClient(baseHttpClient, getClientCredentials());
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(getClientCredentials())
-                .httpClient(RetrofitFactory.build(authClient, URI.create("http://localhost")))
+                .httpClient(RetrofitFactory.build(baseHttpClient, URI.create("http://localhost")))
                 .build();
 
-        OkHttpClient paymentClient = getOkHttpClientFactory()
-                .buildPaymentsApiClient(
-                        authClient,
-                        authenticationHandler,
-                        TestUtils.getSigningOptions(),
-                        new SimpleCredentialsCache(Clock.systemUTC()));
+        OkHttpClient authenticatedApiClient =
+                getOkHttpClientFactory().buildAuthenticatedApiClient(authServerApiClient, authenticationHandler, null);
+
+        assertNotNull(authenticatedApiClient);
+        assertTrue(
+                authenticatedApiClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(IdempotencyKeyGeneratorInterceptor.class)),
+                "Idempotency interceptor not found");
+        assertTrue(
+                authenticatedApiClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(TrueLayerAgentInterceptor.class)),
+                "User agent interceptor not found");
+        assertTrue(
+                authenticatedApiClient.interceptors().stream()
+                        .anyMatch(i -> i.getClass().equals(AuthenticationInterceptor.class)),
+                "Authentication interceptor not found");
+        assertNotNull(authenticatedApiClient.authenticator());
+    }
+
+    @Test
+    @DisplayName("It should build a Payments API client")
+    public void shouldCreateAPaymentsApiClient() {
+        OkHttpClient baseHttpClient = getOkHttpClientFactory().buildBaseApiClient(null, null, null, null, null);
+        IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
+                .clientCredentials(getClientCredentials())
+                .httpClient(RetrofitFactory.build(baseHttpClient, URI.create("http://localhost")))
+                .build();
+        OkHttpClient authApiClient =
+                getOkHttpClientFactory().buildAuthServerApiClient(baseHttpClient, getClientCredentials());
+        OkHttpClient authenticatedApiClient =
+                getOkHttpClientFactory().buildAuthenticatedApiClient(authApiClient, authenticationHandler, null);
+
+        OkHttpClient paymentClient =
+                getOkHttpClientFactory().buildPaymentsApiClient(authenticatedApiClient, TestUtils.getSigningOptions());
 
         assertTrue(
                 paymentClient.interceptors().stream()

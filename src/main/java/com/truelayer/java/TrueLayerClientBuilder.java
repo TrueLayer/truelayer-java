@@ -221,11 +221,12 @@ public class TrueLayerClientBuilder {
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
                 timeout, connectionPoolOptions, requestExecutor, logMessageConsumer, proxyConfiguration);
 
-        OkHttpClient authHttpClient = httpClientFactory.buildAuthApiClient(baseHttpClient, clientCredentials);
+        OkHttpClient authServerApiHttpClient =
+                httpClientFactory.buildAuthServerApiClient(baseHttpClient, clientCredentials);
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
-                .httpClient(RetrofitFactory.build(authHttpClient, environment.getAuthApiUri()))
+                .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri()))
                 .build();
 
         IHostedPaymentPageLinkBuilder hppLinkBuilder =
@@ -233,18 +234,32 @@ public class TrueLayerClientBuilder {
 
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
-        ICommonApi commonApi = RetrofitFactory.build(authHttpClient, environment.getPaymentsApiUri())
+        ICommonApi commonApi = RetrofitFactory.build(authServerApiHttpClient, environment.getPaymentsApiUri())
                 .create(ICommonApi.class);
         ICommonHandler commonHandler = new CommonHandler(commonApi);
+
+        // We're building a client which has the authentication handler and the options to cache the token.
+        // this one represents the baseline for the client used for Signup+ and Payments
+        OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
+                authServerApiHttpClient, authenticationHandler, credentialsCache);
+        ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
+                .create(ISignupPlusApi.class);
+        SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
+                SignupPlusHandler.builder().signupPlusApi(signupPlusApi);
+        if (customScopesPresent()) {
+            signupPlusHandlerBuilder.scopes(globalScopes);
+        }
+        ISignupPlusHandler signupPlusHandler = signupPlusHandlerBuilder.build();
 
         // As per our RFC, if signing options is not configured we create a client which is able to interact
         // with the Authentication API only
         if (isEmpty(signingOptions)) {
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonHandler);
+            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonHandler, signupPlusHandler);
         }
 
-        OkHttpClient paymentsHttpClient = httpClientFactory.buildPaymentsApiClient(
-                authHttpClient, authenticationHandler, signingOptions, credentialsCache);
+        // The client used for PayIn endpoints has the authenticated as baseline, but adds the signature manager
+        OkHttpClient paymentsHttpClient =
+                httpClientFactory.buildPaymentsApiClient(authenticatedApiClient, signingOptions);
 
         IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
                 .create(IPaymentsApi.class);
@@ -294,17 +309,6 @@ public class TrueLayerClientBuilder {
             merchantAccountsHandlerBuilder.scopes(globalScopes);
         }
         IPayoutsHandler payoutsHandler = payoutsHandlerBuilder.build();
-
-        // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
-        // endpoint
-        ISignupPlusApi signupPlusApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
-                .create(ISignupPlusApi.class);
-        SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
-                SignupPlusHandler.builder().signupPlusApi(signupPlusApi);
-        if (customScopesPresent()) {
-            signupPlusHandlerBuilder.scopes(globalScopes);
-        }
-        ISignupPlusHandler signupPlusHandler = signupPlusHandlerBuilder.build();
 
         return new TrueLayerClient(
                 authenticationHandler,

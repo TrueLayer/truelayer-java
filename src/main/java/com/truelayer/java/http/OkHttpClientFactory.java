@@ -94,7 +94,7 @@ public class OkHttpClientFactory {
         return clientBuilder.build();
     }
 
-    public OkHttpClient buildAuthApiClient(OkHttpClient baseHttpClient, ClientCredentials clientCredentials) {
+    public OkHttpClient buildAuthServerApiClient(OkHttpClient baseHttpClient, ClientCredentials clientCredentials) {
 
         if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
@@ -107,17 +107,15 @@ public class OkHttpClientFactory {
         return clientBuilder.build();
     }
 
-    public OkHttpClient buildPaymentsApiClient(
-            OkHttpClient authApiHttpClient,
+    public OkHttpClient buildAuthenticatedApiClient(
+            OkHttpClient authServerApiClient,
             IAuthenticationHandler authenticationHandler,
-            SigningOptions signingOptions,
             ICredentialsCache credentialsCache) {
+
         // By using .newBuilder() we share internal OkHttpClient resources
         // we just need to add the signature and authentication interceptor
         // as all the others are inherited
-        OkHttpClient.Builder paymentsHttpClientBuilder = authApiHttpClient.newBuilder();
-
-        paymentsHttpClientBuilder.addInterceptor(new SignatureGeneratorInterceptor(signingOptions));
+        OkHttpClient.Builder authenticatedApiClientBuilder = authServerApiClient.newBuilder();
 
         AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
                 AccessTokenManager.builder().authenticationHandler(authenticationHandler);
@@ -127,13 +125,24 @@ public class OkHttpClientFactory {
             AccessTokenManager accessTokenManager =
                     accessTokenManagerBuilder.credentialsCache(credentialsCache).build();
 
-            paymentsHttpClientBuilder
+            authenticatedApiClientBuilder
                     .addInterceptor(new AuthenticationInterceptor(accessTokenManager))
                     .authenticator(new AccessTokenInvalidator(accessTokenManager));
         } else {
             AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
-            paymentsHttpClientBuilder.addInterceptor(new AuthenticationInterceptor(accessTokenManager));
+            authenticatedApiClientBuilder.addInterceptor(new AuthenticationInterceptor(accessTokenManager));
         }
+
+        return authenticatedApiClientBuilder.build();
+    }
+
+    public OkHttpClient buildPaymentsApiClient(OkHttpClient authenticatedApiClient, SigningOptions signingOptions) {
+        // By using .newBuilder() we share internal OkHttpClient resources
+        // we just need to add the signature and authentication interceptor
+        // as all the others are inherited
+        OkHttpClient.Builder paymentsHttpClientBuilder = authenticatedApiClient.newBuilder();
+
+        paymentsHttpClientBuilder.addInterceptor(new SignatureGeneratorInterceptor(signingOptions));
 
         return paymentsHttpClientBuilder.build();
     }
