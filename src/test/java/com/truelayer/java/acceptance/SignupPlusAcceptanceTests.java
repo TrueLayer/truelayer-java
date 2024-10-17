@@ -23,24 +23,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.Test;
 
 @Tag("acceptance")
 public class SignupPlusAcceptanceTests extends AcceptanceTests {
 
     public static final URI RETURN_URI = URI.create("http://localhost:3000/callback");
-    public static final String PROVIDER_ID = "mock-payments-gb-redirect";
 
-    @DisplayName("It should create a payment and get the associated identity data via Signup+")
-    @ParameterizedTest(name = "with provider={0} and currency={1}")
-    @CsvSource({"mock-payments-gb-redirect, GBP"})
+    @Test
+    @DisplayName("It should create a payment and get the associated identity data via Signup+ in UK")
     @SneakyThrows
-    public void itShouldAuthorizeAUkPaymentAndThenQueryTheAssociatedIdentityData(
-            String providerId, String currencyCodeString) {
+    public void itShouldAuthorizeAUkPaymentAndThenQueryTheAssociatedIdentityData() {
         // Create and authorize a payment
-        String paymentId = createAndAuthorizePayment(
-                "mock-payments-gb-redirect", CurrencyCode.valueOf(currencyCodeString), RETURN_URI);
+        String paymentId = createAndAuthorizePayment("mock-payments-gb-redirect", CurrencyCode.GBP, RETURN_URI);
         // wait for its settlement
         waitForPaymentStatusUpdate(tlClient, paymentId, Status.SETTLED);
 
