@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.truelayer.java.Constants.HeaderNames.*;
 import static com.truelayer.java.Utils.getObjectMapper;
 import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
@@ -16,6 +17,8 @@ import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
+import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
+import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.URI;
 import java.nio.file.Files;
@@ -24,11 +27,16 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import lombok.*;
 import okhttp3.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.awaitility.core.ConditionEvaluationListener;
+import org.awaitility.core.EvaluatedCondition;
+import org.awaitility.core.TimeoutEvent;
+import org.tinylog.Logger;
 
 public class TestUtils {
     public static final Pattern UUID_REGEX_PATTERN =
@@ -294,6 +302,29 @@ public class TestUtils {
                                 .getType());
                 break;
         }
+    }
+
+    public static void waitForPaymentStatusUpdate(
+            TrueLayerClient trueLayerClient, String paymentId, Status paymentStatus) {
+        await().with()
+                .conditionEvaluationListener(new ConditionEvaluationListener() {
+                    @Override
+                    public void conditionEvaluated(EvaluatedCondition condition) {}
+
+                    @Override
+                    public void onTimeout(TimeoutEvent timeoutEvent) {
+                        Logger.warn("Payment is taking too much time to update its status, status polling timed out.");
+                    }
+                })
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(30, TimeUnit.SECONDS)
+                .until(() -> {
+                    // get payment by id
+                    ApiResponse<PaymentDetail> getPaymentResponse =
+                            trueLayerClient.payments().getPayment(paymentId).get();
+                    assertNotError(getPaymentResponse);
+                    return getPaymentResponse.getData().getStatus().equals(paymentStatus);
+                });
     }
 
     public enum HeadlessResource {

@@ -2,7 +2,6 @@ package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.Constants.Scopes.PAYMENTS;
 import static com.truelayer.java.TestUtils.*;
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +33,7 @@ import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.PreselectedProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
-import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
+import com.truelayer.java.payments.entities.schemeselection.preselected.SchemeSelection;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
@@ -43,7 +42,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.*;
 import okhttp3.*;
@@ -52,7 +50,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.tinylog.Logger;
 
 @Tag("acceptance")
 public class PaymentsAcceptanceTests extends AcceptanceTests {
@@ -84,7 +81,9 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .providerIds(Collections.singletonList(PROVIDER_ID))
                         .build())
                 .schemeSelection(
-                        SchemeSelection.instantOnly().allowRemitterFee(true).build())
+                        com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection.instantOnly()
+                                .allowRemitterFee(true)
+                                .build())
                 .build();
         CreatePaymentRequest paymentRequest = buildPaymentRequestWithProviderSelection(userSelectionProvider, currency);
 
@@ -519,7 +518,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .build());
 
         // sometimes status change event has a bit of delay
-        waitForPaymentStatusUpdate(createPaymentResponse.getData().getId(), Status.ATTEMPT_FAILED);
+        waitForPaymentStatusUpdate(tlClient, createPaymentResponse.getData().getId(), Status.ATTEMPT_FAILED);
 
         // get by id
         ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
@@ -575,7 +574,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .resource(HeadlessResource.PAYMENTS)
                         .build());
 
-        waitForPaymentStatusUpdate(paymentId, Status.SETTLED);
+        waitForPaymentStatusUpdate(tlClient, paymentId, Status.SETTLED);
 
         // Create full payment refund
         CreatePaymentRefundRequest createPaymentRefundRequest = CreatePaymentRefundRequest.builder()
@@ -644,7 +643,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     private PreselectedProviderSelection buildPreselectedProviderSelection() {
         return ProviderSelection.preselected()
                 .providerId(PROVIDER_ID)
-                .schemeId(SchemeId.FASTER_PAYMENTS_SERVICE)
+                .schemeSelection(SchemeSelection.instantPreferred().build())
                 .remitter(Remitter.builder()
                         .accountHolderName("Andrea Di Lisio")
                         .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
@@ -769,28 +768,6 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         Request hppRequest = new Request.Builder().url(link.toURL()).build();
         Response hppResponse = getHttpClientInstance().newCall(hppRequest).execute();
         assertTrue(hppResponse.isSuccessful());
-    }
-
-    private void waitForPaymentStatusUpdate(String paymentId, Status paymentStatus) {
-        await().with()
-                .conditionEvaluationListener(new ConditionEvaluationListener() {
-                    @Override
-                    public void conditionEvaluated(EvaluatedCondition condition) {}
-
-                    @Override
-                    public void onTimeout(TimeoutEvent timeoutEvent) {
-                        Logger.warn("Payment is taking too much time to update its status, status polling timed out.");
-                    }
-                })
-                .pollInterval(1, TimeUnit.SECONDS)
-                .atMost(30, TimeUnit.SECONDS)
-                .until(() -> {
-                    // get payment by id
-                    ApiResponse<PaymentDetail> getPaymentResponse =
-                            tlClient.payments().getPayment(paymentId).get();
-                    assertNotError(getPaymentResponse);
-                    return getPaymentResponse.getData().getStatus().equals(paymentStatus);
-                });
     }
 
     // since the StartAuthorizationFlowRequest object does not support retry property
