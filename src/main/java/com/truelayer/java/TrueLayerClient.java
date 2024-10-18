@@ -11,6 +11,7 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsHandler;
+import com.truelayer.java.signupplus.ISignupPlusHandler;
 import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -30,6 +31,7 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IMerchantAccountsHandler merchantAccountsHandler;
     private IMandatesHandler mandatesHandler;
     private IPayoutsHandler payoutsHandler;
+    private ISignupPlusHandler signupPlusHandler;
     private ICommonHandler commonHandler;
 
     private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
@@ -37,10 +39,12 @@ public class TrueLayerClient implements ITrueLayerClient {
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
             IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
-            ICommonHandler commonHandler) {
+            ICommonHandler commonHandler,
+            ISignupPlusHandler signupPlusHandler) {
         this.authenticationHandler = authenticationHandler;
         this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
         this.commonHandler = commonHandler;
+        this.signupPlusHandler = signupPlusHandler;
     }
 
     /**
@@ -106,6 +110,14 @@ public class TrueLayerClient implements ITrueLayerClient {
             throw buildInitializationException("payouts");
         }
         return payoutsHandler;
+    }
+
+    @Override
+    public ISignupPlusHandler signupPlus() {
+        if (ObjectUtils.isEmpty(signupPlusHandler)) {
+            throw buildInitializationException("signup plus");
+        }
+        return signupPlusHandler;
     }
 
     /**

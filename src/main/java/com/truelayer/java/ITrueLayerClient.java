@@ -10,6 +10,7 @@ import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsHandler;
 import com.truelayer.java.paymentsproviders.IPaymentsProvidersHandler;
 import com.truelayer.java.payouts.IPayoutsHandler;
+import com.truelayer.java.signupplus.ISignupPlusHandler;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -52,6 +53,12 @@ public interface ITrueLayerClient {
      * @return a utility to interact with payouts endpoints.
      */
     IPayoutsHandler payouts();
+
+    /**
+     * Entrypoint for signup+ endpoints.
+     * @return a utility to interact with signup+ endpoints.
+     */
+    ISignupPlusHandler signupPlus();
 
     /**
      * Entrypoint for Hosted Payment Page related services.

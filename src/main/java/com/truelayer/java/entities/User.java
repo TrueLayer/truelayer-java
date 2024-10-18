@@ -25,22 +25,22 @@ public class User {
     private Address address;
 
     @JsonGetter
-    private Optional<String> getEmail() {
+    public Optional<String> getEmail() {
         return Optional.ofNullable(email);
     }
 
     @JsonGetter
-    private Optional<String> getPhone() {
+    public Optional<String> getPhone() {
         return Optional.ofNullable(phone);
     }
 
     @JsonGetter
-    private Optional<LocalDate> getDateOfBirth() {
+    public Optional<LocalDate> getDateOfBirth() {
         return Optional.ofNullable(dateOfBirth);
     }
 
     @JsonGetter
-    private Optional<Address> getAddress() {
+    public Optional<Address> getAddress() {
         return Optional.ofNullable(address);
     }
 }

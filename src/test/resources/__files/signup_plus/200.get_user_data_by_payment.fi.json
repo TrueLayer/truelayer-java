@@ -1,0 +1,19 @@
+{
+  "first_name": "Väinö",
+  "last_name": "Tunnistus",
+  "date_of_birth": "1970-07-07",
+  "national_identification_number": "070770-905D",
+  "sex": "M",
+  "address": {
+    "address_line1": "Sepänkatu 11 A 5",
+    "city": "KUOPIO",
+    "zip": "70100",
+    "country": "FI"
+  },
+  "account_details": {
+    "account_number": "41921234",
+    "sort_code": "04-01-02",
+    "iban": "GB71MONZ04435141923452",
+    "provider_id": "ob-monzo"
+  }
+}

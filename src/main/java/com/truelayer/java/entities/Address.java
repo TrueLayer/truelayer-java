@@ -22,7 +22,7 @@ public class Address {
     private String countryCode;
 
     @JsonGetter
-    private Optional<String> getAddressLine2() {
+    public Optional<String> getAddressLine2() {
         return Optional.ofNullable(addressLine2);
     }
 }

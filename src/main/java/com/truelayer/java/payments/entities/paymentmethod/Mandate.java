@@ -26,7 +26,7 @@ public class Mandate extends PaymentMethod {
     private Retry retry;
 
     @JsonGetter
-    private Optional<String> getReference() {
+    public Optional<String> getReference() {
         return Optional.ofNullable(reference);
     }
 }

@@ -1,0 +1,20 @@
+{
+  "title": "Mr",
+  "first_name": "Sherlock",
+  "last_name": "Holmes",
+  "date_of_birth": "1854-01-06",
+  "address": {
+    "address_line1": "221B Baker St",
+    "address_line2": "Flat 2",
+    "city": "London",
+    "state": "Greater London",
+    "zip": "NW1 6XE",
+    "country": "GB"
+  },
+  "account_details": {
+    "account_number": "41921234",
+    "sort_code": "04-01-02",
+    "iban": "GB71MONZ04435141923452",
+    "provider_id": "ob-monzo"
+  }
+}

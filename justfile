@@ -1,5 +1,5 @@
 alias b := build
-alias l := lint
+alias f := format
 alias ut := unit-test
 alias it := integration-test
 alias at := acceptance-test
@@ -8,7 +8,7 @@ alias t := test
 build:
     ./gradlew build -x test
 
-lint:
+format:
     ./gradlew spotlessApply
 
 unit-test:
