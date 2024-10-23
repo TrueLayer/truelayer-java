@@ -22,7 +22,8 @@ class TransactionTests {
                 100,
                 ZonedDateTime.now(Clock.systemUTC()),
                 new PaymentSource(UUID.randomUUID().toString(), null, null),
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertTrue(sut.isMerchantAccountPayment());
     }
@@ -37,7 +38,8 @@ class TransactionTests {
                 100,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertDoesNotThrow(sut::asMerchantAccountPayment);
     }
@@ -80,7 +82,8 @@ class TransactionTests {
                 100,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asExternalPayment);
 
@@ -99,7 +102,8 @@ class TransactionTests {
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 Payout.ContextCode.INTERNAL,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertTrue(sut.isPayout());
     }
@@ -116,7 +120,8 @@ class TransactionTests {
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
                 Payout.ContextCode.INTERNAL,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertDoesNotThrow(sut::asPayout);
     }
@@ -130,7 +135,8 @@ class TransactionTests {
                 100,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asPayout);
 
@@ -150,7 +156,8 @@ class TransactionTests {
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertTrue(sut.isRefund());
     }
@@ -168,7 +175,8 @@ class TransactionTests {
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         assertDoesNotThrow(sut::asRefund);
     }
@@ -182,7 +190,8 @@ class TransactionTests {
                 100,
                 ZonedDateTime.now(Clock.systemUTC()),
                 null,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                null);
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asRefund);
 
