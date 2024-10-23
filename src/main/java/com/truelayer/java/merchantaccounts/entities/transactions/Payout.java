@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,6 +46,13 @@ public class Payout extends Transaction {
     Payout.ContextCode contextCode;
 
     String payoutId;
+
+    Map<String, String> metadata;
+
+    @JsonGetter
+    public Optional<Map<String, String>> getMetadata() {
+        return Optional.ofNullable(metadata);
+    }
 
     @JsonGetter
     public Optional<ZonedDateTime> getExecutedAt() {

@@ -7,12 +7,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.Constants;
-import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.ListPaymentSourcesQuery;
 import com.truelayer.java.merchantaccounts.entities.ListTransactionsQuery;
 import com.truelayer.java.merchantaccounts.entities.UpdateSweepingRequest;
+import com.truelayer.java.merchantaccounts.entities.sweeping.Frequency;
 import com.truelayer.java.merchantaccounts.entities.transactions.TransactionTypeQuery;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -108,7 +108,7 @@ class MerchantAccountsHandlerTests {
     @DisplayName("It should call the update sweeping endpoint with empty headers map")
     public void shouldCallUpdateSweepingEndpoint() {
         UpdateSweepingRequest request =
-                UpdateSweepingRequest.builder().currency(CurrencyCode.GBP).build();
+                UpdateSweepingRequest.builder().frequency(Frequency.DAILY).build();
 
         sut.updateSweeping(A_MERCHANT_ACCOUNT_ID, request);
 
@@ -120,7 +120,7 @@ class MerchantAccountsHandlerTests {
     public void shouldCallUpdateSweepingEndpointWithCustomHeaders() {
         Headers customHeaders = buildTestHeaders();
         UpdateSweepingRequest request =
-                UpdateSweepingRequest.builder().currency(CurrencyCode.GBP).build();
+                UpdateSweepingRequest.builder().frequency(Frequency.DAILY).build();
 
         sut.updateSweeping(customHeaders, A_MERCHANT_ACCOUNT_ID, request);
 

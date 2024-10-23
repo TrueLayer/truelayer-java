@@ -8,7 +8,6 @@ import static com.truelayer.java.TestUtils.deserializeJsonFileTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils.RequestStub;
-import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.merchantaccounts.entities.*;
@@ -266,7 +265,6 @@ public class MerchantAccountsIntegrationTests extends IntegrationTests {
                 .build();
 
         UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
-                .currency(CurrencyCode.EUR)
                 .frequency(Frequency.DAILY)
                 .maxAmountInMinor(100)
                 .build();
