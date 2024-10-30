@@ -62,7 +62,6 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
         UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
                 .maxAmountInMinor(100)
                 .frequency(Frequency.DAILY)
-                .currency(CurrencyCode.GBP)
                 .build();
         ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
                 .updateSweeping(getMerchantAccount(CurrencyCode.GBP).getId(), updateSweepingRequest)
@@ -83,7 +82,6 @@ public class MerchantAccountsAcceptanceTests extends AcceptanceTests {
         UpdateSweepingRequest updateSweepingRequest = UpdateSweepingRequest.builder()
                 .maxAmountInMinor(100)
                 .frequency(Frequency.DAILY)
-                .currency(CurrencyCode.GBP)
                 .build();
         ApiResponse<SweepingSettings> updateSweepingResponse = tlClient.merchantAccounts()
                 .updateSweeping(getMerchantAccount(CurrencyCode.GBP).getId(), updateSweepingRequest)
