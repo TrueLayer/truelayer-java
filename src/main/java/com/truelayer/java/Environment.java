@@ -1,6 +1,7 @@
 package com.truelayer.java;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,6 +14,8 @@ public class Environment {
 
     private final URI hppUri;
 
+    private static final String PAYMENTS_API_DEFAULT_VERSION = "v3";
+
     /**
      * Builder for development environment
      * @return a development environment object
@@ -20,7 +23,7 @@ public class Environment {
     public static Environment development() {
         return new Environment(
                 URI.create("https://auth.t7r.dev"),
-                URI.create("https://api.t7r.dev"),
+                URI.create(MessageFormat.format("https://api.t7r.dev/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
                 URI.create("https://payment.t7r.dev"));
     }
 
@@ -31,7 +34,8 @@ public class Environment {
     public static Environment sandbox() {
         return new Environment(
                 URI.create("https://auth.truelayer-sandbox.com"),
-                URI.create("https://api.truelayer-sandbox.com"),
+                URI.create(
+                        MessageFormat.format("https://api.truelayer-sandbox.com/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
                 URI.create("https://payment.truelayer-sandbox.com"));
     }
 
@@ -42,7 +46,7 @@ public class Environment {
     public static Environment live() {
         return new Environment(
                 URI.create("https://auth.truelayer.com"),
-                URI.create("https://api.truelayer.com"),
+                URI.create(MessageFormat.format("https://api.truelayer.com/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
                 URI.create("https://payment.truelayer.com"));
     }
 
