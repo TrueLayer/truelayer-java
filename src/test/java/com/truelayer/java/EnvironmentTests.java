@@ -15,7 +15,7 @@ public class EnvironmentTests {
 
         assertEquals("https://auth.truelayer.com", environment.getAuthApiUri().toString());
         assertEquals(
-                "https://api.truelayer.com", environment.getPaymentsApiUri().toString());
+                "https://api.truelayer.com/v3/", environment.getPaymentsApiUri().toString());
         assertEquals("https://payment.truelayer.com", environment.getHppUri().toString());
     }
 
@@ -25,7 +25,7 @@ public class EnvironmentTests {
         Environment environment = Environment.development();
 
         assertEquals("https://auth.t7r.dev", environment.getAuthApiUri().toString());
-        assertEquals("https://api.t7r.dev", environment.getPaymentsApiUri().toString());
+        assertEquals("https://api.t7r.dev/v3/", environment.getPaymentsApiUri().toString());
         assertEquals("https://payment.t7r.dev", environment.getHppUri().toString());
     }
 
@@ -38,7 +38,7 @@ public class EnvironmentTests {
                 "https://auth.truelayer-sandbox.com",
                 environment.getAuthApiUri().toString());
         assertEquals(
-                "https://api.truelayer-sandbox.com",
+                "https://api.truelayer-sandbox.com/v3/",
                 environment.getPaymentsApiUri().toString());
         assertEquals(
                 "https://payment.truelayer-sandbox.com", environment.getHppUri().toString());

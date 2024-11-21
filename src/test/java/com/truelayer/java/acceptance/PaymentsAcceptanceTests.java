@@ -39,6 +39,7 @@ import com.truelayer.java.payments.entities.verification.Verification;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -824,8 +825,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         String requestJsonString = mapper.writeValueAsString(jsonNode);
 
         // build url
-        HttpUrl url = HttpUrl.parse(String.format(
-                "%s/payments/%s/authorization-flow",
+        HttpUrl url = HttpUrl.parse(MessageFormat.format(
+                "{0}payments/{1}/authorization-flow",
                 Environment.sandbox().getPaymentsApiUri().toString(), paymentId));
 
         RequestBody body = RequestBody.create(requestJsonString, MediaType.parse("application/json; charset=utf-8"));
