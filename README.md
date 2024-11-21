@@ -125,8 +125,8 @@ ApiResponse<CreatePaymentResponse> payment = paymentResponse.get();
 
 ### Build a link to our Hosted Payment Page (HPP)
 
-By default the Hosted Payment Page link builder creates a payment result page, so you can just pass 
-a resource id, a resource token and return uri parameters
+By default, the Hosted Payment Page link builder creates a payment result page, so you can just pass 
+a `resource_id`, a `resource_token` and `return_uri` parameters:
 ```java
 URI link = client.hppLinkBuilder()
         .resourceType(ResourceType.PAYMENT) // Either PAYMENT or MANDATE. Not mandatory, if not specified PAYMENT is used as default
