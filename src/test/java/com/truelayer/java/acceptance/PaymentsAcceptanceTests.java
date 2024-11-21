@@ -46,7 +46,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import lombok.*;
 import okhttp3.*;
-import org.awaitility.core.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -259,11 +258,11 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
 
         // open it in HPP
-        URI link = tlClient.hpp()
-                .getHostedPaymentPageLink(
-                        createPaymentResponse.getData().getId(),
-                        createPaymentResponse.getData().getResourceToken(),
-                        URI.create(RETURN_URI));
+        URI link = tlClient.hppLinkBuilder()
+                .resourceId(createPaymentResponse.getData().getId())
+                .resourceToken(createPaymentResponse.getData().getResourceToken())
+                .returnUri(URI.create(RETURN_URI))
+                .build();
 
         assertCanBrowseLink(link);
     }
@@ -480,7 +479,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.EXECUTE)
-                        .resource(HeadlessResource.PAYMENTS)
+                        .resource(ResourceType.PAYMENT)
                         .build());
     }
 
@@ -515,7 +514,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.REJECT_AUTHORISATION)
-                        .resource(HeadlessResource.PAYMENTS)
+                        .resource(ResourceType.PAYMENT)
                         .build());
 
         // sometimes status change event has a bit of delay
@@ -572,7 +571,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.EXECUTE)
-                        .resource(HeadlessResource.PAYMENTS)
+                        .resource(ResourceType.PAYMENT)
                         .build());
 
         waitForPaymentStatusUpdate(tlClient, paymentId, Status.SETTLED);

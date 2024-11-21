@@ -4,8 +4,11 @@ import java.net.URI;
 
 /**
  * Exposes all the Hosted Payment Page related capabilities of the library.
+ * @deprecated - use {@link com.truelayer.java.HostedPaymentPageLinkBuilder} instead
  */
+@Deprecated
 public interface IHostedPaymentPageLinkBuilder {
+
     /**
      * Builds a link to TrueLayer HPP with the given details
      * @param paymentId the id of the payment created with a previous call to the Create Payment endpoint

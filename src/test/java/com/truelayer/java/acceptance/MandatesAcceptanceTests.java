@@ -177,7 +177,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.AUTHORISE)
-                        .resource(HeadlessResource.MANDATES)
+                        .resource(ResourceType.MANDATE)
                         .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
@@ -240,7 +240,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.AUTHORISE)
-                        .resource(HeadlessResource.MANDATES)
+                        .resource(ResourceType.MANDATE)
                         .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
@@ -293,7 +293,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.AUTHORISE)
-                        .resource(HeadlessResource.MANDATES)
+                        .resource(ResourceType.MANDATE)
                         .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());
@@ -354,7 +354,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 HeadlessResourceAuthorization.builder()
                         .action(HeadlessResourceAction.AUTHORISE)
-                        .resource(HeadlessResource.MANDATES)
+                        .resource(ResourceType.MANDATE)
                         .build());
 
         waitForMandateToBeAuthorized(tlClient, createMandateResponse.getData().getId());

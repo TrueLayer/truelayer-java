@@ -5,7 +5,6 @@ import static com.truelayer.java.TestUtils.getSigningOptions;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.auth.IAuthenticationHandler;
-import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
 import com.truelayer.java.payments.IPaymentsHandler;
@@ -83,20 +82,21 @@ public class TrueLayerClientTests {
         ITrueLayerClient trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
-        IHostedPaymentPageLinkBuilder hppLinkBuilder = trueLayerClient.hpp();
+        HostedPaymentPageLinkBuilder hppLinkBuilder = trueLayerClient.hppLinkBuilder();
 
         assertNotNull(hppLinkBuilder);
     }
 
     @Test
-    @DisplayName("It should yield the same instance of the HPP link builder if hpp() is called multiple times")
+    @DisplayName(
+            "It should yield the same instance of the HPP link builder if hppLinkBuilder() is called multiple times")
     @SneakyThrows
     public void itShouldYieldTheSameHppLinkBuilder() {
         ITrueLayerClient trueLayerClient =
                 TrueLayerClient.New().clientCredentials(getClientCredentials()).build();
 
-        IHostedPaymentPageLinkBuilder hpp1 = trueLayerClient.hpp();
-        IHostedPaymentPageLinkBuilder hpp2 = trueLayerClient.hpp();
+        HostedPaymentPageLinkBuilder hpp1 = trueLayerClient.hppLinkBuilder();
+        HostedPaymentPageLinkBuilder hpp2 = trueLayerClient.hppLinkBuilder();
 
         assertSame(hpp1, hpp2);
     }

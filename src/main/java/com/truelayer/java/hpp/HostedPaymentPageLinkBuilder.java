@@ -9,13 +9,13 @@ import lombok.Getter;
 
 /**
  * {@inheritDoc}
+ * @deprecated - use {@link com.truelayer.java.HostedPaymentPageLinkBuilder} instead.
  */
 @Builder(builderMethodName = "New")
 @Getter
+@Deprecated
 public class HostedPaymentPageLinkBuilder implements IHostedPaymentPageLinkBuilder {
-    /**
-     * @param uri the hosted payment page URI
-     */
+
     private URI uri;
 
     @Override

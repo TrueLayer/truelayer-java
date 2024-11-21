@@ -34,17 +34,25 @@ public class TrueLayerClient implements ITrueLayerClient {
     private ISignupPlusHandler signupPlusHandler;
     private ICommonHandler commonHandler;
 
-    private IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
+    /**
+     * @deprecated - use {@link #hostedPaymentPageLinkBuilder} instead.
+     */
+    @Deprecated
+    private IHostedPaymentPageLinkBuilder hppLinkBuilder;
+
+    private HostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
             IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
             ICommonHandler commonHandler,
-            ISignupPlusHandler signupPlusHandler) {
+            ISignupPlusHandler signupPlusHandler,
+            HostedPaymentPageLinkBuilder hppLinkBuilder) {
         this.authenticationHandler = authenticationHandler;
-        this.hostedPaymentPageLinkBuilder = hostedPaymentPageLinkBuilder;
+        this.hppLinkBuilder = hostedPaymentPageLinkBuilder;
         this.commonHandler = commonHandler;
         this.signupPlusHandler = signupPlusHandler;
+        this.hostedPaymentPageLinkBuilder = hppLinkBuilder;
     }
 
     /**
@@ -124,7 +132,13 @@ public class TrueLayerClient implements ITrueLayerClient {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public IHostedPaymentPageLinkBuilder hpp() {
+        return this.hppLinkBuilder;
+    }
+
+    @Override
+    public HostedPaymentPageLinkBuilder hppLinkBuilder() {
         return this.hostedPaymentPageLinkBuilder;
     }
 

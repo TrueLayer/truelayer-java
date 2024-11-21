@@ -123,11 +123,30 @@ CompletableFuture<ApiResponse<CreatePaymentResponse>> paymentResponse = client
 ApiResponse<CreatePaymentResponse> payment = paymentResponse.get();
 ```
 
-### Build a link to our hosted createPaymentResponse page
+### Build a link to our Hosted Payment Page (HPP)
+
+By default the Hosted Payment Page link builder creates a payment result page, so you can just pass 
+a resource id, a resource token and return uri parameters
 ```java
-URI hppLink = client.hpp().getHostedPaymentPageLink("your-createPaymentResponse-id",
-        "your-createPaymentResponse-token",
-        URI.create("http://yourdomain.com"));
+URI link = client.hppLinkBuilder()
+        .resourceType(ResourceType.PAYMENT) // Either PAYMENT or MANDATE. Not mandatory, if not specified PAYMENT is used as default
+        .resourceId("$resourceId")
+        .resourceToken("$resourceToken")
+        .returnUri(URI.create("http://yourdomain.com"))
+        .build();
+```
+If needed, you can specify extra parameters as per our [public documentation](https://docs.truelayer.com/docs/authorise-payments-or-mandates-with-the-hpp#1-build-a-hpp-url),
+like `max_wait_for_result` and `signup`:
+
+```java
+URI link = client.hppLinkBuilder()
+        .resourceType(ResourceType.MANDATE)
+        .resourceId("$resourceId")
+        .resourceToken("$resourceToken")
+        .returnUri(URI.create("http://yourdomain.com"))
+        .maxWaitForResultSeconds(15)
+        .signup(true)
+        .build();
 ```
 
 ## Local setup
