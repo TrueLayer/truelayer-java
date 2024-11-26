@@ -1,7 +1,6 @@
 package com.truelayer.java.hpp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.TrueLayerException;
@@ -9,6 +8,10 @@ import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * To be removed at the next major release
+ */
+@Deprecated
 class HostedPaymentPageLinkBuilderTests {
 
     public static final String A_RETURN_URI = "https://a-redirect-uri.com";

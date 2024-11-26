@@ -15,6 +15,7 @@ import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.commonapi.entities.PaymentProviderReturnResource;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
+import com.truelayer.java.entities.ResourceType;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
@@ -271,7 +272,7 @@ public class TestUtils {
 
         // Mandates require some adjustments to the query string...
         // TODO: review if we want this to be a permanent solution
-        String query = headlessResourceAuthorization.resource == HeadlessResource.MANDATES
+        String query = headlessResourceAuthorization.getResourceType() == ResourceType.MANDATE
                 ? responseUrl.getQuery().replaceFirst("mandate-", "")
                 : responseUrl.getQuery();
 
@@ -284,8 +285,8 @@ public class TestUtils {
                         .get();
         assertNotError(submitPaymentReturnParametersResponse);
 
-        switch (headlessResourceAuthorization.resource) {
-            case PAYMENTS:
+        switch (headlessResourceAuthorization.getResourceType()) {
+            case PAYMENT:
                 assertEquals(
                         PaymentProviderReturnResource.Type.PAYMENT,
                         submitPaymentReturnParametersResponse
@@ -293,7 +294,7 @@ public class TestUtils {
                                 .getResource()
                                 .getType());
                 break;
-            case MANDATES:
+            case MANDATE:
                 assertEquals(
                         PaymentProviderReturnResource.Type.MANDATE,
                         submitPaymentReturnParametersResponse
@@ -327,11 +328,6 @@ public class TestUtils {
                 });
     }
 
-    public enum HeadlessResource {
-        PAYMENTS,
-        MANDATES
-    }
-
     @RequiredArgsConstructor
     @Getter
     public enum HeadlessResourceAction {
@@ -346,22 +342,22 @@ public class TestUtils {
     @Getter
     public static class HeadlessResourceAuthorization {
         private final HeadlessResourceAction action;
-        private final HeadlessResource resource;
+        private final ResourceType resourceType;
         private String path;
         private String payload;
 
         @Builder
         public static HeadlessResourceAuthorization newHeadlessResourceAuthorization(
-                HeadlessResource resource, HeadlessResourceAction action) {
+                ResourceType resource, HeadlessResourceAction action) {
             HeadlessResourceAuthorization testHeadlessResourceAuthorization =
                     new HeadlessResourceAuthorization(action, resource);
             testHeadlessResourceAuthorization.payload =
                     String.format("{\"action\":\"%s\", \"redirect\": false}", action.getAction());
             switch (resource) {
-                case PAYMENTS:
+                case PAYMENT:
                     testHeadlessResourceAuthorization.path = "single-immediate-payments";
                     break;
-                case MANDATES:
+                case MANDATE:
                     testHeadlessResourceAuthorization.path = "vrp-consents";
                     break;
             }

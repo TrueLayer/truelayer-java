@@ -63,8 +63,16 @@ public interface ITrueLayerClient {
     /**
      * Entrypoint for Hosted Payment Page related services.
      * @return a utility to build a Hosted Payment Page URL.
+     * @deprecated use {@link #hppLinkBuilder()} instead.
      */
+    @Deprecated
     IHostedPaymentPageLinkBuilder hpp();
+
+    /**
+     * Entrypoint for Hosted Payment Page related services.
+     * @return a utility to build a Hosted Payment Page URL.
+     */
+    HostedPaymentPageLinkBuilder hppLinkBuilder();
 
     /**
      * Utility to submit payment returns parameters.

@@ -9,7 +9,6 @@ import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.entities.RequestScopes;
-import com.truelayer.java.hpp.HostedPaymentPageLinkBuilder;
 import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
@@ -229,8 +228,9 @@ public class TrueLayerClientBuilder {
                 .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri()))
                 .build();
 
-        IHostedPaymentPageLinkBuilder hppLinkBuilder =
-                HostedPaymentPageLinkBuilder.New().uri(environment.getHppUri()).build();
+        IHostedPaymentPageLinkBuilder hppLinkBuilder = com.truelayer.java.hpp.HostedPaymentPageLinkBuilder.New()
+                .uri(environment.getHppUri())
+                .build();
 
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
@@ -254,7 +254,12 @@ public class TrueLayerClientBuilder {
         // As per our RFC, if signing options is not configured we create a client which is able to interact
         // with the Authentication API only
         if (isEmpty(signingOptions)) {
-            return new TrueLayerClient(authenticationHandler, hppLinkBuilder, commonHandler, signupPlusHandler);
+            return new TrueLayerClient(
+                    authenticationHandler,
+                    hppLinkBuilder,
+                    commonHandler,
+                    signupPlusHandler,
+                    new HostedPaymentPageLinkBuilder(environment));
         }
 
         // The client used for PayIn endpoints has the authenticated as baseline, but adds the signature manager
@@ -319,7 +324,8 @@ public class TrueLayerClientBuilder {
                 payoutsHandler,
                 signupPlusHandler,
                 commonHandler,
-                hppLinkBuilder);
+                hppLinkBuilder,
+                new HostedPaymentPageLinkBuilder(environment));
     }
 
     private boolean customScopesPresent() {

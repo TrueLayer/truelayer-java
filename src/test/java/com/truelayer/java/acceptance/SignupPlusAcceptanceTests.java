@@ -120,7 +120,7 @@ public class SignupPlusAcceptanceTests extends AcceptanceTests {
                 redirectUri,
                 TestUtils.HeadlessResourceAuthorization.builder()
                         .action(TestUtils.HeadlessResourceAction.EXECUTE)
-                        .resource(TestUtils.HeadlessResource.PAYMENTS)
+                        .resource(ResourceType.PAYMENT)
                         .build());
 
         return createPaymentResponse.getData().getId();
