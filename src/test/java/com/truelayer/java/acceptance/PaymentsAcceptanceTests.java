@@ -46,6 +46,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import lombok.*;
 import okhttp3.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -663,6 +664,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 return Beneficiary.merchantAccount()
                         .merchantAccountId(account.getId())
                         .reference(UUID.randomUUID().toString())
+                        .statementReference(RandomStringUtils.randomAlphanumeric(18))
                         .build();
             case PLN:
                 return Beneficiary.externalAccount()

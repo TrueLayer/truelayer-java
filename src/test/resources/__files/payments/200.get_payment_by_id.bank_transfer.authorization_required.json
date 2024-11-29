@@ -12,7 +12,8 @@
       "type":"merchant_account",
       "merchant_account_id":"e83c4c20-b2ad-4b73-8a32-***",
       "account_holder_name": "john smith",
-      "reference": "a-reference"
+      "reference": "a-reference",
+      "statement_reference": "a-statement-ref"
     }
   },
   "created_at":"2022-01-17T17:13:18.214924Z",
