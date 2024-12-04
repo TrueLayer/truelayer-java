@@ -659,12 +659,17 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
     private Beneficiary buildBeneficiary(CurrencyCode currencyCode) {
         switch (currencyCode) {
             case GBP:
-            case EUR:
-                MerchantAccount account = getMerchantAccount(currencyCode);
+                MerchantAccount gbpAccount = getMerchantAccount(currencyCode);
                 return Beneficiary.merchantAccount()
-                        .merchantAccountId(account.getId())
+                        .merchantAccountId(gbpAccount.getId())
                         .reference(UUID.randomUUID().toString())
                         .statementReference(RandomStringUtils.randomAlphanumeric(18))
+                        .build();
+            case EUR:
+                MerchantAccount eurAccount = getMerchantAccount(currencyCode);
+                return Beneficiary.merchantAccount()
+                        .merchantAccountId(eurAccount.getId())
+                        .reference(UUID.randomUUID().toString())
                         .build();
             case PLN:
                 return Beneficiary.externalAccount()
