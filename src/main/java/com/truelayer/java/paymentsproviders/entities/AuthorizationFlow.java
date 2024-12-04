@@ -6,6 +6,6 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class PaymentsCapabilities {
-    BankTransferCapabilities bankTransfer;
+public class AuthorizationFlow {
+    private Configuration configuration;
 }

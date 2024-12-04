@@ -10,7 +10,8 @@
     "beneficiary": {
       "type": "merchant_account",
       "reference": "5c3d16d6-1439-4b64-a084-***",
-      "merchant_account_id": "93e2c5f1-d935-47aa-90c0-***"
+      "merchant_account_id": "93e2c5f1-d935-47aa-90c0-***",
+      "statement_reference": "a-statement-ref"
     },
     "provider_selection": {
       "type": "preselected",

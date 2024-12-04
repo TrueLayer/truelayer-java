@@ -6,6 +6,6 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class PaymentsCapabilities {
-    BankTransferCapabilities bankTransfer;
+public class ProviderSelection {
+    private Icon icon;
 }

@@ -1,8 +1,11 @@
 package com.truelayer.java.paymentsproviders.entities;
 
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Builder
+@Getter
+@ToString
+@EqualsAndHashCode
 public class MandatesCapabilities {
     VrpSweepingCapabilities vrpSweeping;
 

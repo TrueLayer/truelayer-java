@@ -18,4 +18,6 @@ public class MerchantAccount extends Beneficiary {
     private String reference;
 
     private Verification verification;
+
+    private String statementReference;
 }

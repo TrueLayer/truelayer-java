@@ -3,9 +3,12 @@ package com.truelayer.java.paymentsproviders.entities;
 import com.truelayer.java.entities.ProviderAvailability;
 import com.truelayer.java.payments.entities.ReleaseChannel;
 import java.util.List;
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Builder
+@Getter
+@ToString
+@EqualsAndHashCode
 public class BankTransferCapabilities {
     ReleaseChannel releaseChannel;
 
