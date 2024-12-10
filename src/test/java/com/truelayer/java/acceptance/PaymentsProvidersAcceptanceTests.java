@@ -3,8 +3,17 @@ package com.truelayer.java.acceptance;
 import static com.truelayer.java.TestUtils.assertNotError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
-import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
+import com.truelayer.java.payments.entities.CountryCode;
+import com.truelayer.java.payments.entities.CustomerSegment;
+import com.truelayer.java.payments.entities.ReleaseChannel;
+import com.truelayer.java.paymentsproviders.entities.*;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.*;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.BankTransferCapabilities;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.Capabilities;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.PaymentsCapabilities;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -24,5 +33,32 @@ public class PaymentsProvidersAcceptanceTests extends AcceptanceTests {
 
         assertNotError(getPaymentsProviderResponse);
         assertEquals(getPaymentsProviderResponse.getData().getId(), PROVIDER_ID);
+    }
+
+    @Test
+    @DisplayName("It should search for payments providers")
+    @SneakyThrows
+    public void shouldSearchPaymentsProviders() {
+        SearchPaymentProvidersRequest request = SearchPaymentProvidersRequest.builder()
+                .countries(List.of(CountryCode.GB))
+                .currencies(List.of(CurrencyCode.GBP))
+                .releaseChannel(ReleaseChannel.PRIVATE_BETA)
+                .capabilities(Capabilities.builder()
+                        .payments(PaymentsCapabilities.builder()
+                                .bankTransfer(new BankTransferCapabilities())
+                                .build())
+                        .build())
+                .customerSegments(List.of(CustomerSegment.RETAIL))
+                .authorizationFlow(AuthorizationFlow.builder()
+                        .configuration(Configuration.builder()
+                                .redirect(Redirect.builder().build())
+                                .build())
+                        .build())
+                .build();
+
+        ApiResponse<SearchPaymentProvidersResponse> searchPaymentsProvidersResponse =
+                tlClient.paymentsProviders().searchProviders(request).get();
+
+        assertNotError(searchPaymentsProvidersResponse);
     }
 }

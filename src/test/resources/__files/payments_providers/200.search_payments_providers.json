@@ -1,0 +1,84 @@
+{
+  "items": [
+    {
+      "id": "mock-payments-gb-redirect",
+      "display_name": "Mock UK Payments - Redirect Flow",
+      "icon_uri": "https://providers-assets.truelayer.com/mock-payments-gb-redirect/icon.svg",
+      "logo_uri": "https://providers-assets.truelayer.com/mock-payments-gb-redirect/logo.svg",
+      "bg_color": "#44689a",
+      "country_code": "GB",
+      "swift_code": "MOCKGB05XXX",
+      "capabilities": {
+        "payments": {
+          "bank_transfer": {
+            "release_channel": "general_availability",
+            "availability": {
+              "recommended_status": "healthy",
+              "updated_at": "2024-12-04T10:16:27.0263076Z"
+            },
+            "schemes": [
+              {
+                "id": "faster_payments_service",
+                "requirements": [
+                  {
+                    "currencies": [
+                      "GBP"
+                    ],
+                    "account_identifier_types": [
+                      "sort_code_account_number"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "mandates": {
+          "vrp_sweeping": {
+            "release_channel": "private_beta"
+          },
+          "vrp_commercial": {
+            "release_channel": "private_beta"
+          }
+        }
+      },
+      "bin_ranges": []
+    },
+    {
+      "id": "mock-payments-gb-redirect-unhealthy",
+      "display_name": "Mock UK Payments - Redirect Flow (Unhealthy)",
+      "icon_uri": "https://providers-assets.truelayer.com/mock-payments-gb-redirect-unhealthy/icon.svg",
+      "logo_uri": "https://providers-assets.truelayer.com/mock-payments-gb-redirect-unhealthy/logo.svg",
+      "bg_color": "#44689a",
+      "country_code": "GB",
+      "swift_code": "MOCKGB06XXX",
+      "capabilities": {
+        "payments": {
+          "bank_transfer": {
+            "release_channel": "general_availability",
+            "availability": {
+              "recommended_status": "unhealthy",
+              "updated_at": "2024-12-04T10:16:27.0263076Z"
+            },
+            "schemes": [
+              {
+                "id": "faster_payments_service",
+                "requirements": [
+                  {
+                    "currencies": [
+                      "GBP"
+                    ],
+                    "account_identifier_types": [
+                      "sort_code_account_number"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "bin_ranges": []
+    }
+  ]
+}

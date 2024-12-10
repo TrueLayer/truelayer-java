@@ -6,6 +6,8 @@ import com.truelayer.java.IAuthenticatedHandler;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.SearchPaymentProvidersRequest;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.SearchPaymentProvidersResponse;
 import java.util.concurrent.CompletableFuture;
 import lombok.Builder;
 
@@ -28,5 +30,11 @@ public class PaymentsProvidersHandler implements IAuthenticatedHandler, IPayment
     @Override
     public CompletableFuture<ApiResponse<PaymentsProvider>> getProvider(String providerId) {
         return paymentsProvidersApi.getProvider(getRequestScopes(), providerId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<SearchPaymentProvidersResponse>> searchProviders(
+            SearchPaymentProvidersRequest request) {
+        return paymentsProvidersApi.searchPaymentProviders(getRequestScopes(), request);
     }
 }
