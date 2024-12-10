@@ -15,6 +15,11 @@ import com.truelayer.java.payments.entities.ReleaseChannel;
 import com.truelayer.java.paymentsproviders.entities.*;
 import java.util.Collections;
 import java.util.List;
+
+import com.truelayer.java.paymentsproviders.entities.searchproviders.*;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.BankTransferCapabilities;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.Capabilities;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.PaymentsCapabilities;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,7 +81,7 @@ public class PaymentsProvidersIntegrationTests extends IntegrationTests {
                 .releaseChannel(ReleaseChannel.PRIVATE_BETA)
                 .capabilities(Capabilities.builder()
                         .payments(PaymentsCapabilities.builder()
-                                .bankTransfer(BankTransferCapabilities.builder().build())
+                                .bankTransfer(new BankTransferCapabilities())
                                 .build())
                         .build())
                 .customerSegments(List.of(CustomerSegment.RETAIL))

@@ -2,10 +2,7 @@ package com.truelayer.java.paymentsproviders.entities;
 
 import lombok.*;
 
-@Builder
-@Getter
-@ToString
-@EqualsAndHashCode
+@Value
 public class PaymentsCapabilities {
     BankTransferCapabilities bankTransfer;
 }

@@ -5,10 +5,7 @@ import com.truelayer.java.payments.entities.ReleaseChannel;
 import java.util.List;
 import lombok.*;
 
-@Builder
-@Getter
-@ToString
-@EqualsAndHashCode
+@Value
 public class BankTransferCapabilities {
     ReleaseChannel releaseChannel;
 

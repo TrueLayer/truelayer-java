@@ -2,8 +2,8 @@ package com.truelayer.java.paymentsproviders;
 
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.paymentsproviders.entities.PaymentsProvider;
-import com.truelayer.java.paymentsproviders.entities.SearchPaymentProvidersRequest;
-import com.truelayer.java.paymentsproviders.entities.SearchPaymentProvidersResponse;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.SearchPaymentProvidersRequest;
+import com.truelayer.java.paymentsproviders.entities.searchproviders.SearchPaymentProvidersResponse;
 import java.util.concurrent.CompletableFuture;
 
 /**

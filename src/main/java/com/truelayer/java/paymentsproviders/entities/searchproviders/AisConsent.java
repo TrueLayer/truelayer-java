@@ -1,4 +1,4 @@
-package com.truelayer.java.paymentsproviders.entities;
+package com.truelayer.java.paymentsproviders.entities.searchproviders;
 
 import java.util.List;
 import lombok.*;
