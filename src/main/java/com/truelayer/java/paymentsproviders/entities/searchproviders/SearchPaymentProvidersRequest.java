@@ -5,7 +5,6 @@ import com.truelayer.java.payments.entities.CountryCode;
 import com.truelayer.java.payments.entities.CustomerSegment;
 import com.truelayer.java.payments.entities.ReleaseChannel;
 import java.util.List;
-
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

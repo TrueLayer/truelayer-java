@@ -9,12 +9,11 @@ import com.truelayer.java.payments.entities.CountryCode;
 import com.truelayer.java.payments.entities.CustomerSegment;
 import com.truelayer.java.payments.entities.ReleaseChannel;
 import com.truelayer.java.paymentsproviders.entities.*;
-import java.util.List;
-
 import com.truelayer.java.paymentsproviders.entities.searchproviders.*;
 import com.truelayer.java.paymentsproviders.entities.searchproviders.BankTransferCapabilities;
 import com.truelayer.java.paymentsproviders.entities.searchproviders.Capabilities;
 import com.truelayer.java.paymentsproviders.entities.searchproviders.PaymentsCapabilities;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
