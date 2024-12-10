@@ -1,6 +1,6 @@
 package com.truelayer.java.paymentsproviders.entities;
 
-import lombok.*;
+import lombok.Value;
 
 @Value
 public class Capabilities {
