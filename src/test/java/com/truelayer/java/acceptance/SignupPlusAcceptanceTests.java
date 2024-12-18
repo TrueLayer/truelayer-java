@@ -55,10 +55,8 @@ public class SignupPlusAcceptanceTests extends AcceptanceTests {
     public void itShouldAuthorizeAFinPaymentAndThenGenerateAnAuthUri() {
         // Create and authorize a payment
         String paymentId = createAndAuthorizePayment("mock-payments-fi-redirect", CurrencyCode.EUR, RETURN_URI);
-        // wait for its settlement
         waitForPaymentStatusUpdate(tlClient, paymentId, Status.EXECUTED);
 
-        // get the identity data associated with that
         ApiResponse<GenerateAuthUriResponse> generateAuthUriResponse = tlClient.signupPlus()
                 .generateAuthUri(
                         GenerateAuthUriRequest.builder().paymentId(paymentId).build())
