@@ -2,11 +2,11 @@ package com.truelayer.java.signupplus;
 
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriRequest;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriResponse;
 import com.truelayer.java.signupplus.entities.UserData;
 import java.util.concurrent.CompletableFuture;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Tag;
+import retrofit2.http.*;
 
 public interface ISignupPlusApi {
 
@@ -20,4 +20,8 @@ public interface ISignupPlusApi {
     @GET("/signup-plus/payments")
     CompletableFuture<ApiResponse<UserData>> getUserDataByPayment(
             @Tag RequestScopes scopes, @Query("payment_id") String paymentId);
+
+    @POST("/signup-plus/authuri")
+    CompletableFuture<ApiResponse<GenerateAuthUriResponse>> generateAuthUri(
+            @Tag RequestScopes scopes, @Body GenerateAuthUriRequest request);
 }

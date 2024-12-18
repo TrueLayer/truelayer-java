@@ -5,6 +5,8 @@ import static com.truelayer.java.Constants.Scopes.SIGNUP_PLUS;
 import com.truelayer.java.IAuthenticatedHandler;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.entities.ApiResponse;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriRequest;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriResponse;
 import com.truelayer.java.signupplus.entities.UserData;
 import java.util.concurrent.CompletableFuture;
 import lombok.Builder;
@@ -25,5 +27,10 @@ public class SignupPlusHandler implements IAuthenticatedHandler, ISignupPlusHand
     @Override
     public CompletableFuture<ApiResponse<UserData>> getUserDataByPayment(String paymentId) {
         return signupPlusApi.getUserDataByPayment(getRequestScopes(), paymentId);
+    }
+
+    @Override
+    public CompletableFuture<ApiResponse<GenerateAuthUriResponse>> generateAuthUri(GenerateAuthUriRequest request) {
+        return signupPlusApi.generateAuthUri(getRequestScopes(), request);
     }
 }
