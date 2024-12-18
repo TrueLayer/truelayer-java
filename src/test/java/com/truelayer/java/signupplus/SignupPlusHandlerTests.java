@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 
 import com.truelayer.java.Constants;
 import com.truelayer.java.entities.RequestScopes;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,19 @@ public class SignupPlusHandlerTests {
 
     @Test
     @DisplayName("It should call the get user data by payment endpoint")
-    public void shouldCallCreatePayoutEndpoint() {
+    public void shouldCallGetUserDataByPaymentEndpoint() {
         sut.getUserDataByPayment(A_PAYMENT_ID);
 
         verify(signupPlusApiMock, times(1)).getUserDataByPayment(SCOPES, A_PAYMENT_ID);
+    }
+
+    @Test
+    @DisplayName("It should call the generate auth URI endpoint")
+    public void shouldCallGenerateAuthUriEndpoint() {
+        var generateAuthUriRequest =
+                GenerateAuthUriRequest.builder().paymentId(A_PAYMENT_ID).build();
+        sut.generateAuthUri(generateAuthUriRequest);
+
+        verify(signupPlusApiMock, times(1)).generateAuthUri(SCOPES, generateAuthUriRequest);
     }
 }
