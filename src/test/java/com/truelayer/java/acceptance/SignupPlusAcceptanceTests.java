@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.TestUtils;
 import com.truelayer.java.entities.*;
+import com.truelayer.java.entities.accountidentifier.AccountIdentifier;
+import com.truelayer.java.entities.accountidentifier.IbanAccountIdentifier;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
@@ -14,6 +16,8 @@ import com.truelayer.java.payments.entities.paymentdetail.Status;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.preselected.SchemeSelection;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriRequest;
+import com.truelayer.java.signupplus.entities.GenerateAuthUriResponse;
 import com.truelayer.java.signupplus.entities.UserData;
 import java.net.URI;
 import java.time.LocalDate;
@@ -45,9 +49,33 @@ public class SignupPlusAcceptanceTests extends AcceptanceTests {
         assertNotError(userDataResponse);
     }
 
+    @Test
+    @DisplayName("It should create a payment and generate an auth URI via Signup+ in FI")
+    @SneakyThrows
+    public void itShouldAuthorizeAFinPaymentAndThenGenerateAnAuthUri() {
+        // Create and authorize a payment
+        String paymentId = createAndAuthorizePayment("mock-payments-fi-redirect", CurrencyCode.EUR, RETURN_URI);
+        waitForPaymentStatusUpdate(tlClient, paymentId, Status.EXECUTED);
+
+        ApiResponse<GenerateAuthUriResponse> generateAuthUriResponse = tlClient.signupPlus()
+                .generateAuthUri(
+                        GenerateAuthUriRequest.builder().paymentId(paymentId).build())
+                .get();
+        assertNotError(generateAuthUriResponse);
+    }
+
     @SneakyThrows
     private String createAndAuthorizePayment(String providerId, CurrencyCode currencyCode, URI returnUri) {
         MerchantAccount account = getMerchantAccount(currencyCode);
+
+        AccountIdentifier accountIdentifier = SortCodeAccountNumberAccountIdentifier.builder()
+                .accountNumber("31510604")
+                .sortCode("100000")
+                .build();
+        if (currencyCode == CurrencyCode.EUR) {
+            accountIdentifier =
+                    IbanAccountIdentifier.iban().iban("FI4950009420028730").build();
+        }
 
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(ThreadLocalRandom.current().nextInt(50, 500))
@@ -58,11 +86,8 @@ public class SignupPlusAcceptanceTests extends AcceptanceTests {
                                 .schemeSelection(
                                         SchemeSelection.instantPreferred().build())
                                 .remitter(Remitter.builder()
-                                        .accountHolderName("Andrea Di Lisio")
-                                        .accountIdentifier(SortCodeAccountNumberAccountIdentifier.builder()
-                                                .accountNumber("12345678")
-                                                .sortCode("123456")
-                                                .build())
+                                        .accountHolderName("John Doe")
+                                        .accountIdentifier(accountIdentifier)
                                         .build())
                                 .build())
                         .beneficiary(Beneficiary.merchantAccount()
