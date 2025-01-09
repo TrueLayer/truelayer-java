@@ -13,24 +13,26 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class SimpleCredentialsCacheTests {
+class InMemoryCredentialsCacheTests {
 
     static final RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
 
     @Test
     @DisplayName("It should store a token record")
     public void shouldStoreATokenRecord() {
-
         AccessToken expectedToken = buildAccessToken().getData();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
+        String clientId = UUID.randomUUID().toString();
+        String cacheKey = CredentialsCacheHelper.buildKey(clientId, scopes);
 
-        sut.storeToken(scopes, expectedToken);
+        sut.storeToken(cacheKey, expectedToken);
 
-        assertEquals(expectedToken, sut.getToken(scopes).get());
+        assertEquals(expectedToken, sut.getToken(cacheKey).get());
     }
 
     @Test
@@ -38,24 +40,31 @@ class SimpleCredentialsCacheTests {
     public void itShouldClearTheExistingToken() {
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         AccessToken accessToken = buildAccessToken().getData();
-        sut.storeToken(scopes, accessToken);
+        String clientId = UUID.randomUUID().toString();
+        String cacheKey = CredentialsCacheHelper.buildKey(clientId, scopes);
 
-        sut.clearToken(scopes);
+        sut.storeToken(cacheKey, accessToken);
 
-        assertFalse(sut.getToken(scopes).isPresent());
+        sut.clearToken(cacheKey);
+
+        assertFalse(sut.getToken(cacheKey).isPresent());
     }
 
     @Test
     @DisplayName("It should yield an empty optional if there are no cached tokens")
     public void itShouldYieldAnEmptyOptionalIfNoToken() {
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
+        String clientId = UUID.randomUUID().toString();
+        String cacheKey = CredentialsCacheHelper.buildKey(clientId, scopes);
 
-        assertFalse(sut.getToken(scopes).isPresent());
+        assertFalse(sut.getToken(cacheKey).isPresent());
     }
 
     @Test
     @DisplayName("It should yield an empty optional if token is expired")
     public void itShouldYieldAnEmptyOptionalIfTokenExpired() {
+        String clientId = UUID.randomUUID().toString();
+        String cacheKey = CredentialsCacheHelper.buildKey(clientId, scopes);
         AccessToken accessToken = buildAccessToken().getData();
         // now() will return an instant which is behind the current time of (accessToken.expiresIn + 5 seconds)
         Instant aPastInstant = Clock.systemUTC().instant().minus(accessToken.getExpiresIn() + 5, ChronoUnit.SECONDS);
@@ -67,43 +76,51 @@ class SimpleCredentialsCacheTests {
                 .thenReturn(Clock.systemUTC().instant());
         when(fakeClock.getZone()).thenReturn(ZoneOffset.UTC);
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(fakeClock);
-        sut.storeToken(scopes, accessToken);
+        sut.storeToken(cacheKey, accessToken);
 
-        assertFalse(sut.getToken(scopes).isPresent());
+        assertFalse(sut.getToken(cacheKey).isPresent());
     }
 
     @Test
     @DisplayName("It should yield an token if token is not expired")
     public void itShouldYieldAnToken() {
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
-        sut.storeToken(scopes, buildAccessToken().getData());
+        String clientId = UUID.randomUUID().toString();
+        String cacheKey = CredentialsCacheHelper.buildKey(clientId, scopes);
 
-        assertTrue(sut.getToken(scopes).isPresent());
+        sut.storeToken(cacheKey, buildAccessToken().getData());
+
+        assertTrue(sut.getToken(cacheKey).isPresent());
     }
 
     @Test
     @DisplayName("It should yield different tokens with different scopes")
     public void itShouldYieldDifferentTokensWithDifferentScopes() {
+        String clientId = UUID.randomUUID().toString();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
                 RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
 
+        String paymentsCacheKey = CredentialsCacheHelper.buildKey(clientId, paymentsScopes);
+        String vrpCacheKey = CredentialsCacheHelper.buildKey(clientId, vrpScopes);
+
         AccessToken paymentsAccessToken = buildAccessToken().getData();
         AccessToken vrpAccessToken = buildAccessToken().getData();
 
-        sut.storeToken(paymentsScopes, paymentsAccessToken);
-        sut.storeToken(vrpScopes, vrpAccessToken);
+        sut.storeToken(paymentsCacheKey, paymentsAccessToken);
+        sut.storeToken(vrpCacheKey, vrpAccessToken);
 
-        assertTrue(sut.getToken(paymentsScopes).isPresent());
-        assertEquals(paymentsAccessToken, sut.getToken(paymentsScopes).get());
-        assertTrue(sut.getToken(vrpScopes).isPresent());
-        assertEquals(vrpAccessToken, sut.getToken(vrpScopes).get());
+        assertTrue(sut.getToken(paymentsCacheKey).isPresent());
+        assertEquals(paymentsAccessToken, sut.getToken(paymentsCacheKey).get());
+        assertTrue(sut.getToken(vrpCacheKey).isPresent());
+        assertEquals(vrpAccessToken, sut.getToken(vrpCacheKey).get());
     }
 
     @Test
     @DisplayName("It should yield the token with same scopes in different order")
     public void itShouldYieldTokenWithSameScopesInDifferentOrder() {
+        String clientId = UUID.randomUUID().toString();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes storingScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
@@ -111,18 +128,21 @@ class SimpleCredentialsCacheTests {
         RequestScopes requestingScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
                 .build();
+        String storingScopesCacheKey = CredentialsCacheHelper.buildKey(clientId, storingScopes);
+        String requestingScopesCacheKey = CredentialsCacheHelper.buildKey(clientId, requestingScopes);
 
         AccessToken accessToken = buildAccessToken().getData();
 
-        sut.storeToken(storingScopes, accessToken);
+        sut.storeToken(storingScopesCacheKey, accessToken);
 
-        assertTrue(sut.getToken(requestingScopes).isPresent());
-        assertEquals(accessToken, sut.getToken(requestingScopes).get());
+        assertTrue(sut.getToken(requestingScopesCacheKey).isPresent());
+        assertEquals(accessToken, sut.getToken(requestingScopesCacheKey).get());
     }
 
     @Test
     @DisplayName("It should replace the token with same scopes in different order")
     public void itShouldReplaceTheTokenWithSameScopesInDifferentOrder() {
+        String clientId = UUID.randomUUID().toString();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes orderedStoringScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
@@ -131,39 +151,48 @@ class SimpleCredentialsCacheTests {
                 .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
                 .build();
 
+        String orderedStoringScopesCacheKey = CredentialsCacheHelper.buildKey(clientId, orderedStoringScopes);
+        String reverseOrderedStoringScopesCacheKey =
+                CredentialsCacheHelper.buildKey(clientId, reverseOrderedStoringScopes);
+
         AccessToken anAccessToken = buildAccessToken().getData();
         AccessToken anotherAccessToken = buildAccessToken().getData();
 
-        sut.storeToken(orderedStoringScopes, anAccessToken);
-        sut.storeToken(reverseOrderedStoringScopes, anotherAccessToken);
+        sut.storeToken(orderedStoringScopesCacheKey, anAccessToken);
+        sut.storeToken(reverseOrderedStoringScopesCacheKey, anotherAccessToken);
 
-        assertTrue(sut.getToken(orderedStoringScopes).isPresent());
-        assertEquals(anotherAccessToken, sut.getToken(orderedStoringScopes).get());
+        assertTrue(sut.getToken(orderedStoringScopesCacheKey).isPresent());
+        assertEquals(
+                anotherAccessToken, sut.getToken(orderedStoringScopesCacheKey).get());
     }
 
     @Test
     @DisplayName("It should clear the cache only for the required scopes")
     public void itShouldClearTheCacheOnlyForRequiredScopes() {
+        String clientId = UUID.randomUUID().toString();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
                 RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
+        String paymentsCacheKey = CredentialsCacheHelper.buildKey(clientId, paymentsScopes);
+        String vrpCacheKey = CredentialsCacheHelper.buildKey(clientId, vrpScopes);
 
         AccessToken paymentsAccessToken = buildAccessToken().getData();
         AccessToken vrpAccessToken = buildAccessToken().getData();
 
-        sut.storeToken(paymentsScopes, paymentsAccessToken);
-        sut.storeToken(vrpScopes, vrpAccessToken);
+        sut.storeToken(paymentsCacheKey, paymentsAccessToken);
+        sut.storeToken(vrpCacheKey, vrpAccessToken);
 
-        sut.clearToken(paymentsScopes);
+        sut.clearToken(paymentsCacheKey);
 
-        assertFalse(sut.getToken(paymentsScopes).isPresent());
-        assertTrue(sut.getToken(vrpScopes).isPresent());
+        assertFalse(sut.getToken(paymentsCacheKey).isPresent());
+        assertTrue(sut.getToken(vrpCacheKey).isPresent());
     }
 
     @Test
     @DisplayName("It should clear the cache with same scopes in different order")
     public void itShouldClearTheCacheWithSameScopesInDifferentOrder() {
+        String clientId = UUID.randomUUID().toString();
         InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes storingScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
@@ -172,11 +201,14 @@ class SimpleCredentialsCacheTests {
                 .scopes(Arrays.asList(RECURRING_PAYMENTS_SWEEPING, PAYMENTS))
                 .build();
 
+        String storingScopesCacheKey = CredentialsCacheHelper.buildKey(clientId, storingScopes);
+        String clearingScopesCacheKey = CredentialsCacheHelper.buildKey(clientId, clearCacheScopes);
+
         AccessToken accessToken = buildAccessToken().getData();
 
-        sut.storeToken(storingScopes, accessToken);
-        sut.clearToken(clearCacheScopes);
+        sut.storeToken(storingScopesCacheKey, accessToken);
+        sut.clearToken(clearingScopesCacheKey);
 
-        assertFalse(sut.getToken(storingScopes).isPresent());
+        assertFalse(sut.getToken(storingScopesCacheKey).isPresent());
     }
 }

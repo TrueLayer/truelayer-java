@@ -196,6 +196,7 @@ public class TrueLayerClientBuilder {
 
     /**
      * Utility to enable a custom cache for Oauth credentials.
+     * @param credentialsCache the custom cache implementation
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
@@ -223,7 +224,7 @@ public class TrueLayerClientBuilder {
             throw new TrueLayerException("client credentials must be set");
         }
 
-        if (inMemoryCredentialsCachingEnabled && isNotEmpty(customCredentialsCachingImplementation)){
+        if (inMemoryCredentialsCachingEnabled && isNotEmpty(customCredentialsCachingImplementation)) {
             throw new TrueLayerException("Invalid caching configuration");
         }
 
@@ -254,7 +255,10 @@ public class TrueLayerClientBuilder {
         // We're building a client which has the authentication handler and the options to cache the token.
         // this one represents the baseline for the client used for Signup+ and Payments
         OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
-                authServerApiHttpClient, authenticationHandler, getCredentialsCacheImplementation());
+                clientCredentials.clientId,
+                authServerApiHttpClient,
+                authenticationHandler,
+                getCredentialsCacheImplementation());
         ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
                 .create(ISignupPlusApi.class);
         SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
@@ -347,7 +351,7 @@ public class TrueLayerClientBuilder {
 
     private ICredentialsCache getCredentialsCacheImplementation() {
         if (this.inMemoryCredentialsCachingEnabled) {
-            return new InMemoryCredentialsCache(this.clientCredentials.clientId(), Clock.systemUTC());
+            return new InMemoryCredentialsCache(Clock.systemUTC());
         }
 
         if (isNotEmpty(this.customCredentialsCachingImplementation)) {

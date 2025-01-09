@@ -21,6 +21,7 @@ import com.truelayer.java.versioninfo.VersionInfo;
 import java.net.Proxy;
 import java.net.URI;
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -208,9 +209,10 @@ class OkHttpClientFactoryTests {
                 .clientCredentials(getClientCredentials())
                 .httpClient(RetrofitFactory.build(baseHttpClient, URI.create("http://localhost")))
                 .build();
+        String clientId = UUID.randomUUID().toString();
 
-        OkHttpClient authenticatedApiClient =
-                getOkHttpClientFactory().buildAuthenticatedApiClient(authServerApiClient, authenticationHandler, null);
+        OkHttpClient authenticatedApiClient = getOkHttpClientFactory()
+                .buildAuthenticatedApiClient(clientId, authServerApiClient, authenticationHandler, null);
 
         assertNotNull(authenticatedApiClient);
         assertTrue(
@@ -236,10 +238,11 @@ class OkHttpClientFactoryTests {
                 .clientCredentials(getClientCredentials())
                 .httpClient(RetrofitFactory.build(baseHttpClient, URI.create("http://localhost")))
                 .build();
+        String clientId = UUID.randomUUID().toString();
         OkHttpClient authApiClient =
                 getOkHttpClientFactory().buildAuthServerApiClient(baseHttpClient, getClientCredentials());
-        OkHttpClient authenticatedApiClient =
-                getOkHttpClientFactory().buildAuthenticatedApiClient(authApiClient, authenticationHandler, null);
+        OkHttpClient authenticatedApiClient = getOkHttpClientFactory()
+                .buildAuthenticatedApiClient(clientId, authApiClient, authenticationHandler, null);
 
         OkHttpClient paymentClient =
                 getOkHttpClientFactory().buildPaymentsApiClient(authenticatedApiClient, TestUtils.getSigningOptions());
