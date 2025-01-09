@@ -26,7 +26,7 @@ class SimpleCredentialsCacheTests {
     public void shouldStoreATokenRecord() {
 
         AccessToken expectedToken = buildAccessToken().getData();
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
 
         sut.storeToken(scopes, expectedToken);
 
@@ -36,7 +36,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should clear a token record")
     public void itShouldClearTheExistingToken() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         AccessToken accessToken = buildAccessToken().getData();
         sut.storeToken(scopes, accessToken);
 
@@ -48,7 +48,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should yield an empty optional if there are no cached tokens")
     public void itShouldYieldAnEmptyOptionalIfNoToken() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
 
         assertFalse(sut.getToken(scopes).isPresent());
     }
@@ -66,7 +66,7 @@ class SimpleCredentialsCacheTests {
                 .thenReturn(aPastInstant)
                 .thenReturn(Clock.systemUTC().instant());
         when(fakeClock.getZone()).thenReturn(ZoneOffset.UTC);
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(fakeClock);
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(fakeClock);
         sut.storeToken(scopes, accessToken);
 
         assertFalse(sut.getToken(scopes).isPresent());
@@ -75,7 +75,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should yield an token if token is not expired")
     public void itShouldYieldAnToken() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         sut.storeToken(scopes, buildAccessToken().getData());
 
         assertTrue(sut.getToken(scopes).isPresent());
@@ -84,7 +84,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should yield different tokens with different scopes")
     public void itShouldYieldDifferentTokensWithDifferentScopes() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
                 RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
@@ -104,7 +104,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should yield the token with same scopes in different order")
     public void itShouldYieldTokenWithSameScopesInDifferentOrder() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes storingScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
                 .build();
@@ -123,7 +123,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should replace the token with same scopes in different order")
     public void itShouldReplaceTheTokenWithSameScopesInDifferentOrder() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes orderedStoringScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
                 .build();
@@ -144,7 +144,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should clear the cache only for the required scopes")
     public void itShouldClearTheCacheOnlyForRequiredScopes() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
                 RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
@@ -164,7 +164,7 @@ class SimpleCredentialsCacheTests {
     @Test
     @DisplayName("It should clear the cache with same scopes in different order")
     public void itShouldClearTheCacheWithSameScopesInDifferentOrder() {
-        SimpleCredentialsCache sut = new SimpleCredentialsCache(Clock.systemUTC());
+        InMemoryCredentialsCache sut = new InMemoryCredentialsCache(Clock.systemUTC());
         RequestScopes storingScopes = RequestScopes.builder()
                 .scopes(Arrays.asList(PAYMENTS, RECURRING_PAYMENTS_SWEEPING))
                 .build();

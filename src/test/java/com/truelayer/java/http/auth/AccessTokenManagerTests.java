@@ -11,7 +11,7 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
-import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
+import com.truelayer.java.http.auth.cache.InMemoryCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +24,7 @@ class AccessTokenManagerTests {
     @DisplayName("It should get a cached token")
     public void itShouldGetACachedToken() {
         AccessToken expectedToken = buildAccessToken().getData();
-        ICredentialsCache cache = mock(SimpleCredentialsCache.class);
+        ICredentialsCache cache = mock(InMemoryCredentialsCache.class);
         RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
         when(cache.getToken(scopes)).thenReturn(Optional.of(expectedToken));
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
@@ -41,7 +41,7 @@ class AccessTokenManagerTests {
     @DisplayName("It should get a new token and store it in cache when requested scopes are not cached")
     public void itShouldGetAFreshTokenWhenRequestedScopesAreNotCached() {
         AccessToken expectedToken = buildAccessToken().getData();
-        ICredentialsCache cache = mock(SimpleCredentialsCache.class);
+        ICredentialsCache cache = mock(InMemoryCredentialsCache.class);
         RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();
         when(cache.getToken(scopes)).thenReturn(Optional.empty());
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
@@ -63,7 +63,7 @@ class AccessTokenManagerTests {
     public void itShouldGetAFreshTokenWhenDifferentRequestedScopesAreCached() {
         AccessToken expectedToken = buildAccessToken().getData();
         AccessToken storedPaymentsToken = buildAccessToken().getData();
-        ICredentialsCache cache = mock(SimpleCredentialsCache.class);
+        ICredentialsCache cache = mock(InMemoryCredentialsCache.class);
         RequestScopes paymentsScopes = RequestScopes.builder().scope(PAYMENTS).build();
         RequestScopes vrpScopes =
                 RequestScopes.builder().scope(RECURRING_PAYMENTS_SWEEPING).build();
@@ -86,7 +86,7 @@ class AccessTokenManagerTests {
     @Test
     @DisplayName("It should invalidate an existing token")
     public void itShouldInvalidateExistingToken() {
-        ICredentialsCache cache = mock(SimpleCredentialsCache.class);
+        ICredentialsCache cache = mock(InMemoryCredentialsCache.class);
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager sut = new AccessTokenManager(authenticationHandler, cache);
         RequestScopes scopes = RequestScopes.builder().scope(PAYMENTS).build();

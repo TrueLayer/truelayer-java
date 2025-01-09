@@ -13,7 +13,7 @@ import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
-import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
+import com.truelayer.java.http.auth.cache.InMemoryCredentialsCache;
 import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
 import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.mandates.IMandatesHandler;
@@ -72,7 +72,15 @@ public class TrueLayerClientBuilder {
 
     private Consumer<String> logMessageConsumer;
 
-    private ICredentialsCache credentialsCache;
+    /**
+     * In memory caching for access tokens is disabled by default
+     */
+    private Boolean inMemoryCredentialsCachingEnabled = Boolean.FALSE;
+
+    /**
+     * Holder for a custom implementation of the cache.
+     */
+    private ICredentialsCache customCredentialsCachingImplementation;
 
     private ProxyConfiguration proxyConfiguration;
 
@@ -182,7 +190,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching() {
-        this.credentialsCache = new SimpleCredentialsCache(Clock.systemUTC());
+        this.inMemoryCredentialsCachingEnabled = true;
         return this;
     }
 
@@ -191,7 +199,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
-        this.credentialsCache = credentialsCache;
+        this.customCredentialsCachingImplementation = credentialsCache;
         return this;
     }
 
@@ -215,6 +223,10 @@ public class TrueLayerClientBuilder {
             throw new TrueLayerException("client credentials must be set");
         }
 
+        if (inMemoryCredentialsCachingEnabled && isNotEmpty(customCredentialsCachingImplementation)){
+            throw new TrueLayerException("Invalid caching configuration");
+        }
+
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
 
         OkHttpClient baseHttpClient = httpClientFactory.buildBaseApiClient(
@@ -228,6 +240,7 @@ public class TrueLayerClientBuilder {
                 .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri()))
                 .build();
 
+        // TODO: shall we get rid of this now?
         IHostedPaymentPageLinkBuilder hppLinkBuilder = com.truelayer.java.hpp.HostedPaymentPageLinkBuilder.New()
                 .uri(environment.getHppUri())
                 .build();
@@ -241,7 +254,7 @@ public class TrueLayerClientBuilder {
         // We're building a client which has the authentication handler and the options to cache the token.
         // this one represents the baseline for the client used for Signup+ and Payments
         OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
-                authServerApiHttpClient, authenticationHandler, credentialsCache);
+                authServerApiHttpClient, authenticationHandler, getCredentialsCacheImplementation());
         ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
                 .create(ISignupPlusApi.class);
         SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
@@ -330,5 +343,17 @@ public class TrueLayerClientBuilder {
 
     private boolean customScopesPresent() {
         return isNotEmpty(globalScopes) && isNotEmpty(globalScopes.getScopes());
+    }
+
+    private ICredentialsCache getCredentialsCacheImplementation() {
+        if (this.inMemoryCredentialsCachingEnabled) {
+            return new InMemoryCredentialsCache(this.clientCredentials.clientId(), Clock.systemUTC());
+        }
+
+        if (isNotEmpty(this.customCredentialsCachingImplementation)) {
+            return this.customCredentialsCachingImplementation;
+        }
+
+        return null;
     }
 }
