@@ -4,18 +4,17 @@ import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
+import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import com.truelayer.java.payments.entities.beneficiary.ExternalAccount;
 import com.truelayer.java.payments.entities.paymentmethod.BankTransfer;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.quarkusmvc.models.DonationResult;
 import com.truelayer.quarkusmvc.models.DonationRequest;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.net.URI;
-
-import static com.truelayer.java.payments.entities.CreatePaymentRequest.builder;
 
 
 @ApplicationScoped
@@ -27,6 +26,9 @@ public class DonationService implements IDonationService {
     @SneakyThrows
     @Override
     public DonationResult getDonationById(String id) {
+
+
+
         var payment = tlClient.payments().getPayment(id).get();
 
         if(payment.isError()){
@@ -42,7 +44,7 @@ public class DonationService implements IDonationService {
     @SneakyThrows
     @Override
     public URI createDonationLink(DonationRequest req) {
-        var paymentRequest = builder()
+        var paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(req.getAmount())
                 .currency(CurrencyCode.GBP)
                 .paymentMethod(BankTransfer.builder()

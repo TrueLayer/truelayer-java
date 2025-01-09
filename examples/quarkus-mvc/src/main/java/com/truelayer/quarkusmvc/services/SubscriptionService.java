@@ -15,12 +15,11 @@ import com.truelayer.java.payments.entities.*;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.net.URI;
-import java.util.Collections;
 import java.util.UUID;
 
 import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;

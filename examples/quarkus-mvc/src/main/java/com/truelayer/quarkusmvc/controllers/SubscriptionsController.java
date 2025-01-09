@@ -4,12 +4,11 @@ import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.services.ISubscriptionService;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.annotations.Form;
-
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/subscriptions")
 public class SubscriptionsController {

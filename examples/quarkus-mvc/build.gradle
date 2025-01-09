@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "6.6"
+    id 'io.freefair.lombok' version '8.11'
 }
 
 repositories {
@@ -10,14 +10,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-qute'
     implementation 'io.quarkus:quarkus-resteasy-qute'
+    implementation 'io.quarkus:quarkus-opentelemetry'
 
-    // TL Java BE library
-    implementation 'com.truelayer:truelayer-java:4.0.0'
+    implementation 'com.truelayer:truelayer-java'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
@@ -27,10 +26,13 @@ group 'com.truelayer'
 version '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'
