@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [16.3.1] - 2025-01-10
+### Changed
+* Upgrades linting and test libraries
+* Upgrades quarkus-mvc test project and introduce CI workflow for that
+* Upgrades CI environment
+* Introduces CHANGELOG.md file 
+
+### Changed
+* feat(ACL-251): Adds method to generate SU+ Authentication URI for FI payments by @dili91 in https://github.com/TrueLayer/truelayer-java/pull/332
+
+
 ## [16.3.0] - 2025-01-08
 
 ### Added
