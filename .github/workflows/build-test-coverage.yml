@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 11, 17, 20, 21 ]
+        java-version: [ 11, 17, 20, 21, 22, 23 ]
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
