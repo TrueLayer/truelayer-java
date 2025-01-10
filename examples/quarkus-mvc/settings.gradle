@@ -10,4 +10,6 @@ pluginManagement {
 }
 rootProject.name='quarkus-mvc'
 
+// Required to reference the local Java library project.
+// Not required in projects that are referencing the library via Maven!
 includeBuild('../../')

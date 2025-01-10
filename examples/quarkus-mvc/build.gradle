@@ -17,6 +17,10 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-qute'
     implementation 'io.quarkus:quarkus-opentelemetry'
 
+    // Reference to the library version that's local to this project!
+    // Check out the main README for instructions on how to install
+    // the library in your project!
+    // https://github.com/TrueLayer/truelayer-java?tab=readme-ov-file#stable-releases
     implementation 'com.truelayer:truelayer-java'
 
     testImplementation 'io.quarkus:quarkus-junit5'
