@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'io.freefair.lombok' version '8.11'
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 repositories {
@@ -29,6 +30,13 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
+
+spotless {
+    java {
+        palantirJavaFormat()
+    }
+}
+
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
