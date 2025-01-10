@@ -4,7 +4,6 @@
 name: Workflow on example projects
 
 on:
-  workflow_dispatch:
   push:
     tags-ignore:
       - '**'
