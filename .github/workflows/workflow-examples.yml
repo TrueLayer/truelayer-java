@@ -10,11 +10,14 @@ on:
 
 jobs:
   build-test:
+    strategy:
+      matrix:
+        project-working-dir: ["quarkus-mvc"]
     name: Build and tests
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./examples/quarkus-mvc
+        working-directory: ./examples/${{ matrix.project-working-dir }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup JDK
