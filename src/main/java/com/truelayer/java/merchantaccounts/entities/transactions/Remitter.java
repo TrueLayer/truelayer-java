@@ -12,9 +12,9 @@ import lombok.Value;
  */
 @Value
 public class Remitter {
-    private List<AccountIdentifier> accountIdentifiers;
+    List<AccountIdentifier> accountIdentifiers;
 
-    private String accountHolderName;
+    String accountHolderName;
 
-    private String reference;
+    String reference;
 }
