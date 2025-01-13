@@ -23,6 +23,7 @@ import lombok.ToString;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SortCodeAccountNumberAccountIdentifier.class, name = "sort_code_account_number"),
     @JsonSubTypes.Type(value = IbanAccountIdentifier.class, name = "iban"),
+    @JsonSubTypes.Type(value = NrbAccountIdentifier.class, name = "nrb")
 })
 @ToString
 @EqualsAndHashCode
@@ -64,6 +65,7 @@ public abstract class AccountIdentifier {
     @RequiredArgsConstructor
     public enum Type {
         SORT_CODE_ACCOUNT_NUMBER("sort_code_account_number"),
+        NRB("nrb"),
         IBAN("iban");
 
         @JsonValue
