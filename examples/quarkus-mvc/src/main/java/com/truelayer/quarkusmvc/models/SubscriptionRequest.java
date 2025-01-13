@@ -1,8 +1,7 @@
 package com.truelayer.quarkusmvc.models;
 
+import jakarta.ws.rs.FormParam;
 import lombok.Data;
-
-import javax.ws.rs.FormParam;
 
 @Data
 public class SubscriptionRequest {

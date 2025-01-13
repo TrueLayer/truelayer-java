@@ -1,13 +1,14 @@
 package com.truelayer.quarkusmvc;
 
+import static io.restassured.RestAssured.given;
+
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-
 @QuarkusTest
-public class DonateControllerTest {
-    // todo
+class DonateControllerTest {
+    @Test
+    void testDonateEndpoint() {
+        given().when().get("/donations").then().statusCode(200);
+    }
 }

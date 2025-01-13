@@ -1,47 +1,62 @@
-# Quarkus MVC example project
+# quarkus-mvc
 
-A simple MVC project based on [Quarkus](https://quarkus.io), that comes with a UI to send donations and setup payment mandates
-via TrueLayer Payments API.
+This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-![home](./home.png)
+If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
 
+## Running the application in dev mode
 
-## Requirements
+You can run your application in dev mode that enables live coding using:
 
-To run the project it is enough to have Java 11 installed with  with `JAVA_HOME` environment variable configured appropriately;
-
-## Configuration
-
-This sample project leverages [Quarkus configuration framework](https://quarkus.io/guides/config) to specify the client 
-credentials and signing options required to initialise the TrueLayer client.
-
-In this sample application the client is configured for TrueLayer Sandbox environment. Make sure that you're
-using a proper set of Sandbox credentials or switch to your desired environment in [`TrueLayerClientProvider.java`](./src/main/java/com/truelayer/quarkusmvc/TrueLayerClientProvider.java#L33) class.
-
-The easiest way to setup the project with your credentials is to fill the [application.properties](./src/main/resources/application.properties) file or
-set the following environment variables: 
-- `TL_CLIENT_ID`
-- `TL_CLIENT_SECRET`
-- `TL_SIGNING_KEY_ID`
-- `TL_SIGNING_PRIVATE_KEY_LOCATION`
-In addition, make sure to properly configure the redirect URI in the [DonationService.createDonationLink()](./src/main/java/com/truelayer/quarkusmvc/services/DonationService.java#L71) method, so that the value is one of the redirect URIs set as allowed in your Console Application:
-```java
-return tlClient.hpp().getHostedPaymentPageLink(paymentResponse.getData().getId(), paymentResponse.getData().getResourceToken(),
-                URI.create("<redirect_url>"));
-```
-
-Make sure to whitelist the `<redirect_url>` value in your TrueLayer console.
-
-## Running the application
-
-To run the application, simply execute the following gradle task from the root directory of this sample project: 
-
-```shell
+```shell script
 ./gradlew quarkusDev
 ```
 
-Alternatively, you can load the project in your favorite IDE and rely on IDE plugins to boot the application.
+> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
 
-## Testing the application
+## Packaging and running the application
 
-Browse to http://localhost:8080/donations or http://localhost:8080/subscriptions
+The application can be packaged using:
+
+```shell script
+./gradlew build
+```
+
+It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+
+The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+
+If you want to build an _über-jar_, execute the following command:
+
+```shell script
+./gradlew build -Dquarkus.package.jar.type=uber-jar
+```
+
+The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+
+## Creating a native executable
+
+You can create a native executable using:
+
+```shell script
+./gradlew build -Dquarkus.native.enabled=true
+```
+
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+
+```shell script
+./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
+```
+
+You can then execute your native executable with: `./build/quarkus-mvc-1.0.0-SNAPSHOT-runner`
+
+If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
+
+## Provided Code
+
+### REST
+
+Easily start your REST Web Services
+
+[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
