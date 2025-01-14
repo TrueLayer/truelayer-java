@@ -75,7 +75,7 @@ public class TrueLayerClientBuilder {
     /**
      * In memory caching for access tokens is disabled by default
      */
-    private Boolean inMemoryCredentialsCacheEnabled = Boolean.FALSE;
+    private boolean inMemoryCredentialsCacheEnabled = false;
 
     /**
      * Holder for a custom implementation of the cache.
