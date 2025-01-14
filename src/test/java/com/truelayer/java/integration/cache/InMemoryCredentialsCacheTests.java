@@ -12,7 +12,7 @@ import com.truelayer.java.payments.entities.CreatePaymentRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
-public class DefaultAccessTokenCacheTests extends IntegrationTests {
+public class InMemoryCredentialsCacheTests extends IntegrationTests {
 
     @SneakyThrows
     @Test
