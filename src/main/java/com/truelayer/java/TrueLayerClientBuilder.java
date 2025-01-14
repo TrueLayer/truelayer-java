@@ -73,14 +73,9 @@ public class TrueLayerClientBuilder {
     private Consumer<String> logMessageConsumer;
 
     /**
-     * In memory caching for access tokens is disabled by default
+     * Holder for the cache implementation. Null if caching is disabled
      */
-    private boolean inMemoryCredentialsCacheEnabled = false;
-
-    /**
-     * Holder for a custom implementation of the cache.
-     */
-    private ICredentialsCache customCredentialsCacheImplementation;
+    private ICredentialsCache credentialsCache;
 
     private ProxyConfiguration proxyConfiguration;
 
@@ -190,7 +185,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching() {
-        this.inMemoryCredentialsCacheEnabled = true;
+        this.credentialsCache = new InMemoryCredentialsCache(Clock.systemUTC());
         return this;
     }
 
@@ -200,7 +195,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
-        this.customCredentialsCacheImplementation = credentialsCache;
+        this.credentialsCache = credentialsCache;
         return this;
     }
 
@@ -222,10 +217,6 @@ public class TrueLayerClientBuilder {
     public TrueLayerClient build() {
         if (isEmpty(clientCredentials)) {
             throw new TrueLayerException("client credentials must be set");
-        }
-
-        if (inMemoryCredentialsCacheEnabled && isNotEmpty(customCredentialsCacheImplementation)) {
-            throw new TrueLayerException("Invalid caching configuration");
         }
 
         OkHttpClientFactory httpClientFactory = new OkHttpClientFactory(new LibraryInfoLoader());
@@ -258,7 +249,7 @@ public class TrueLayerClientBuilder {
                 clientCredentials.clientId,
                 authServerApiHttpClient,
                 authenticationHandler,
-                getCredentialsCacheImplementation());
+                credentialsCache);
         ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
                 .create(ISignupPlusApi.class);
         SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
@@ -347,17 +338,5 @@ public class TrueLayerClientBuilder {
 
     private boolean customScopesPresent() {
         return isNotEmpty(globalScopes) && isNotEmpty(globalScopes.getScopes());
-    }
-
-    private ICredentialsCache getCredentialsCacheImplementation() {
-        if (this.inMemoryCredentialsCacheEnabled) {
-            return new InMemoryCredentialsCache(Clock.systemUTC());
-        }
-
-        if (isNotEmpty(this.customCredentialsCacheImplementation)) {
-            return this.customCredentialsCacheImplementation;
-        }
-
-        return null;
     }
 }
