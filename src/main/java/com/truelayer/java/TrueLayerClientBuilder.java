@@ -246,10 +246,7 @@ public class TrueLayerClientBuilder {
         // We're building a client which has the authentication handler and the options to cache the token.
         // this one represents the baseline for the client used for Signup+ and Payments
         OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
-                clientCredentials.clientId,
-                authServerApiHttpClient,
-                authenticationHandler,
-                credentialsCache);
+                clientCredentials.clientId, authServerApiHttpClient, authenticationHandler, credentialsCache);
         ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
                 .create(ISignupPlusApi.class);
         SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
