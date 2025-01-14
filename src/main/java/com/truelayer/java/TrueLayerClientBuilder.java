@@ -75,12 +75,12 @@ public class TrueLayerClientBuilder {
     /**
      * In memory caching for access tokens is disabled by default
      */
-    private Boolean inMemoryCredentialsCachingEnabled = Boolean.FALSE;
+    private Boolean inMemoryCredentialsCacheEnabled = Boolean.FALSE;
 
     /**
      * Holder for a custom implementation of the cache.
      */
-    private ICredentialsCache customCredentialsCachingImplementation;
+    private ICredentialsCache customCredentialsCacheImplementation;
 
     private ProxyConfiguration proxyConfiguration;
 
@@ -190,7 +190,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching() {
-        this.inMemoryCredentialsCachingEnabled = true;
+        this.inMemoryCredentialsCacheEnabled = true;
         return this;
     }
 
@@ -200,7 +200,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
-        this.customCredentialsCachingImplementation = credentialsCache;
+        this.customCredentialsCacheImplementation = credentialsCache;
         return this;
     }
 
@@ -224,7 +224,7 @@ public class TrueLayerClientBuilder {
             throw new TrueLayerException("client credentials must be set");
         }
 
-        if (inMemoryCredentialsCachingEnabled && isNotEmpty(customCredentialsCachingImplementation)) {
+        if (inMemoryCredentialsCacheEnabled && isNotEmpty(customCredentialsCacheImplementation)) {
             throw new TrueLayerException("Invalid caching configuration");
         }
 
@@ -350,12 +350,12 @@ public class TrueLayerClientBuilder {
     }
 
     private ICredentialsCache getCredentialsCacheImplementation() {
-        if (this.inMemoryCredentialsCachingEnabled) {
+        if (this.inMemoryCredentialsCacheEnabled) {
             return new InMemoryCredentialsCache(Clock.systemUTC());
         }
 
-        if (isNotEmpty(this.customCredentialsCachingImplementation)) {
-            return this.customCredentialsCachingImplementation;
+        if (isNotEmpty(this.customCredentialsCacheImplementation)) {
+            return this.customCredentialsCacheImplementation;
         }
 
         return null;
