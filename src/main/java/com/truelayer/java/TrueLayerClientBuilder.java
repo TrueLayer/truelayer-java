@@ -9,7 +9,6 @@ import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.entities.RequestScopes;
-import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
@@ -232,11 +231,6 @@ public class TrueLayerClientBuilder {
                 .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri()))
                 .build();
 
-        // TODO: shall we get rid of this now?
-        IHostedPaymentPageLinkBuilder hppLinkBuilder = com.truelayer.java.hpp.HostedPaymentPageLinkBuilder.New()
-                .uri(environment.getHppUri())
-                .build();
-
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
         ICommonApi commonApi = RetrofitFactory.build(authServerApiHttpClient, environment.getPaymentsApiUri())
@@ -261,7 +255,6 @@ public class TrueLayerClientBuilder {
         if (isEmpty(signingOptions)) {
             return new TrueLayerClient(
                     authenticationHandler,
-                    hppLinkBuilder,
                     commonHandler,
                     signupPlusHandler,
                     new HostedPaymentPageLinkBuilder(environment));
@@ -329,7 +322,6 @@ public class TrueLayerClientBuilder {
                 payoutsHandler,
                 signupPlusHandler,
                 commonHandler,
-                hppLinkBuilder,
                 new HostedPaymentPageLinkBuilder(environment));
     }
 

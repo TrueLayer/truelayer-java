@@ -3,7 +3,6 @@ package com.truelayer.java;
 import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
-import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
@@ -59,14 +58,6 @@ public interface ITrueLayerClient {
      * @return a utility to interact with signup+ endpoints.
      */
     ISignupPlusHandler signupPlus();
-
-    /**
-     * Entrypoint for Hosted Payment Page related services.
-     * @return a utility to build a Hosted Payment Page URL.
-     * @deprecated use {@link #hppLinkBuilder()} instead.
-     */
-    @Deprecated
-    IHostedPaymentPageLinkBuilder hpp();
 
     /**
      * Entrypoint for Hosted Payment Page related services.
