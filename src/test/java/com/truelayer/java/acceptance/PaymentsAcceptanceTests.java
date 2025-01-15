@@ -802,8 +802,9 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 .httpClient(RetrofitFactory.build(baseHttpClient, environment.getAuthApiUri()))
                 .build();
 
-        AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
-                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
+        AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder = AccessTokenManager.builder()
+                .clientId(System.getenv("TL_CLIENT_ID"))
+                .authenticationHandler(authenticationHandler);
         AccessTokenManager accessTokenManager = accessTokenManagerBuilder.build();
 
         OkHttpClient httpClient = baseHttpClient
