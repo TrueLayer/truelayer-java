@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,12 @@ public class CustomCredentialsCacheTests extends IntegrationTests {
                 .get()
                 .getValue()
                 .equals(expectedToken);
+    }
+
+    @Test
+    @DisplayName("Should keep credentials segregated when the same cache is used across different clients")
+    public void itShouldUse2IndependentClients() {
+        throw new NotImplementedException();
     }
 
     public static class MyCustomCache implements ICredentialsCache {
