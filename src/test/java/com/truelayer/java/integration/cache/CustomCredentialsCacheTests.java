@@ -34,7 +34,7 @@ public class CustomCredentialsCacheTests extends IntegrationTests {
     private TrueLayerClient tlClient2;
     private String clientId2;
 
-    // overrides the default implementation by setting a custom cache for credentials
+    // overrides the default implementation by setting a custom cache for credentials and creating a second client
     @BeforeEach
     @Override
     public void setup(WireMockRuntimeInfo wireMockRuntimeInfo) {
