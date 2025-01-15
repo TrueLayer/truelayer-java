@@ -16,6 +16,7 @@ import com.truelayer.java.http.auth.cache.InMemoryCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import okhttp3.Interceptor;
@@ -71,6 +72,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                         .build()));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .clientId(UUID.randomUUID().toString())
                 .credentialsCache(new InMemoryCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
@@ -93,6 +95,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
+                .clientId(UUID.randomUUID().toString())
                 .credentialsCache(new InMemoryCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
