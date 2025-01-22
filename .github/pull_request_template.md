@@ -16,7 +16,7 @@ Please select multiple options if required.
 # Checklist:
 
 - [ ] I have updated the `gradle.properties` file with the new version
-- [ ] I have updated the `CHANGELOG.md` file with the details of the new versio
+- [ ] I have updated the `CHANGELOG.md` file with the details of the new version
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code where necessary

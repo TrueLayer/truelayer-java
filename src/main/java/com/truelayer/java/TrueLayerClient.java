@@ -4,7 +4,6 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnRequest;
 import com.truelayer.java.commonapi.entities.SubmitPaymentsProviderReturnResponse;
-import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.mandates.IMandatesHandler;
 import com.truelayer.java.merchantaccounts.IMerchantAccountsHandler;
@@ -33,23 +32,14 @@ public class TrueLayerClient implements ITrueLayerClient {
     private IPayoutsHandler payoutsHandler;
     private ISignupPlusHandler signupPlusHandler;
     private ICommonHandler commonHandler;
-
-    /**
-     * @deprecated - use {@link #hostedPaymentPageLinkBuilder} instead.
-     */
-    @Deprecated
-    private IHostedPaymentPageLinkBuilder hppLinkBuilder;
-
     private HostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder;
 
     public TrueLayerClient(
             IAuthenticationHandler authenticationHandler,
-            IHostedPaymentPageLinkBuilder hostedPaymentPageLinkBuilder,
             ICommonHandler commonHandler,
             ISignupPlusHandler signupPlusHandler,
             HostedPaymentPageLinkBuilder hppLinkBuilder) {
         this.authenticationHandler = authenticationHandler;
-        this.hppLinkBuilder = hostedPaymentPageLinkBuilder;
         this.commonHandler = commonHandler;
         this.signupPlusHandler = signupPlusHandler;
         this.hostedPaymentPageLinkBuilder = hppLinkBuilder;
@@ -126,15 +116,6 @@ public class TrueLayerClient implements ITrueLayerClient {
             throw buildInitializationException("signup plus");
         }
         return signupPlusHandler;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public IHostedPaymentPageLinkBuilder hpp() {
-        return this.hppLinkBuilder;
     }
 
     @Override

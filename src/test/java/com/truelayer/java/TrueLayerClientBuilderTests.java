@@ -39,9 +39,7 @@ class TrueLayerClientBuilderTests {
                 .clientCredentials(getClientCredentials())
                 .signingOptions(getSigningOptions())
                 .withHttpLogs(System.out::println)
-                .withCredentialsCaching(mock(ICredentialsCache.class))
-                .withCredentialsCaching();
-
+                .withCredentialsCaching(mock(ICredentialsCache.class));
         assertDoesNotThrow(sut::build);
     }
 
