@@ -1,0 +1,36 @@
+# Workflow that runs on the examples projects.
+# Triggered by pushes on the main branch (excluding tags).
+# Build, test, run coverage analysis and release to Maven Central a final release.
+name: Workflow on example projects
+
+on:
+  push:
+    tags-ignore:
+      - '**'
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        project-working-dir: ["quarkus-mvc"]
+    name: Build and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./examples/${{ matrix.project-working-dir }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      - name: Lint
+        run: ./gradlew spotlessJavaCheck
+      - name: Build
+        run: ./gradlew build -x test
+      - name: Run tests
+        run: ./gradlew test

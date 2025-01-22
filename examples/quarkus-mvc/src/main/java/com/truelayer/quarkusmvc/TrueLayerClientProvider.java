@@ -1,5 +1,8 @@
 package com.truelayer.quarkusmvc;
 
+import static io.opentelemetry.semconv.ServiceAttributes.SERVICE_NAME;
+import static io.opentelemetry.semconv.ServiceAttributes.SERVICE_VERSION;
+
 import com.truelayer.java.*;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
@@ -8,16 +11,12 @@ import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
-import lombok.SneakyThrows;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static io.opentelemetry.semconv.ServiceAttributes.SERVICE_NAME;
-import static io.opentelemetry.semconv.ServiceAttributes.SERVICE_VERSION;
+import lombok.SneakyThrows;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class TrueLayerClientProvider {
@@ -42,22 +41,20 @@ public class TrueLayerClientProvider {
         return TrueLayerClient.New()
                 .withOpenTelemetry(buildOpenTelemetryConfig())
                 .environment(Environment.sandbox())
-                .clientCredentials(
-                        ClientCredentials.builder()
-                                .clientId(clientId)
-                                .clientSecret(clientSecret)
-                            .build()
-                )
-                /*.signingOptions(SigningOptions.builder()
+                .clientCredentials(ClientCredentials.builder()
+                        .clientId(clientId)
+                        .clientSecret(clientSecret)
+                        .build())
+                .signingOptions(SigningOptions.builder()
                         .keyId(signingKeyId)
                         .privateKey(Files.readAllBytes(Path.of(signingPrivateKeyLocation)))
-                        .build())*/
+                        .build())
                 .withHttpLogs(LOG::info)
                 .withCredentialsCaching()
                 .build();
     }
 
-    private OpenTelemetry buildOpenTelemetryConfig(){
+    private OpenTelemetry buildOpenTelemetryConfig() {
         Resource resource = Resource.getDefault().toBuilder()
                 .put(SERVICE_NAME, "truelayer-java")
                 .put(SERVICE_VERSION, "0.1.0")

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Simple test for a client built without credentials caching capabilities
  */
-public class NoAccessTokenCacheTests extends IntegrationTests {
+public class NoCredentialsCacheTests extends IntegrationTests {
 
     // overrides the default implementation by not setting the cache for credentials
     @BeforeEach

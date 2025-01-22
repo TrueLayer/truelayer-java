@@ -9,11 +9,10 @@ import com.truelayer.java.commonapi.CommonHandler;
 import com.truelayer.java.commonapi.ICommonApi;
 import com.truelayer.java.commonapi.ICommonHandler;
 import com.truelayer.java.entities.RequestScopes;
-import com.truelayer.java.hpp.IHostedPaymentPageLinkBuilder;
 import com.truelayer.java.http.OkHttpClientFactory;
 import com.truelayer.java.http.RetrofitFactory;
 import com.truelayer.java.http.auth.cache.ICredentialsCache;
-import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
+import com.truelayer.java.http.auth.cache.InMemoryCredentialsCache;
 import com.truelayer.java.http.interceptors.logging.DefaultLogConsumer;
 import com.truelayer.java.mandates.IMandatesApi;
 import com.truelayer.java.mandates.IMandatesHandler;
@@ -73,6 +72,9 @@ public class TrueLayerClientBuilder {
 
     private Consumer<String> logMessageConsumer;
 
+    /**
+     * Holder for the cache implementation. Null if caching is disabled
+     */
     private ICredentialsCache credentialsCache;
 
     private ProxyConfiguration proxyConfiguration;
@@ -185,7 +187,7 @@ public class TrueLayerClientBuilder {
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching() {
-        this.credentialsCache = new SimpleCredentialsCache(Clock.systemUTC());
+        this.credentialsCache = new InMemoryCredentialsCache(Clock.systemUTC());
         return this;
     }
 
@@ -236,10 +238,6 @@ public class TrueLayerClientBuilder {
                 .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri(), openTelemetry))
                 .build();
 
-        IHostedPaymentPageLinkBuilder hppLinkBuilder = com.truelayer.java.hpp.HostedPaymentPageLinkBuilder.New()
-                .uri(environment.getHppUri())
-                .build();
-
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
         ICommonApi commonApi = RetrofitFactory.build(
@@ -250,7 +248,7 @@ public class TrueLayerClientBuilder {
         // We're building a client which has the authentication handler and the options to cache the token.
         // this one represents the baseline for the client used for Signup+ and Payments
         OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
-                authServerApiHttpClient, authenticationHandler, credentialsCache);
+                clientCredentials.clientId, authServerApiHttpClient, authenticationHandler, credentialsCache);
         ISignupPlusApi signupPlusApi = RetrofitFactory.build(
                         authenticatedApiClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(ISignupPlusApi.class);
@@ -266,7 +264,6 @@ public class TrueLayerClientBuilder {
         if (isEmpty(signingOptions)) {
             return new TrueLayerClient(
                     authenticationHandler,
-                    hppLinkBuilder,
                     commonHandler,
                     signupPlusHandler,
                     new HostedPaymentPageLinkBuilder(environment));
@@ -337,7 +334,6 @@ public class TrueLayerClientBuilder {
                 payoutsHandler,
                 signupPlusHandler,
                 commonHandler,
-                hppLinkBuilder,
                 new HostedPaymentPageLinkBuilder(environment));
     }
 

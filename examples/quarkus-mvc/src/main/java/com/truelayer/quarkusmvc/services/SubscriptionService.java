@@ -1,5 +1,7 @@
 package com.truelayer.quarkusmvc.services;
 
+import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
+
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.User;
@@ -16,17 +18,14 @@ import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.quarkusmvc.models.SubscriptionRequest;
 import com.truelayer.quarkusmvc.models.SubscriptionResult;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.net.URI;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-import java.net.URI;
-import java.util.UUID;
-
-import static com.truelayer.java.mandates.entities.Constraints.PeriodicLimits.Limit.PeriodAlignment.CALENDAR;
-
 @ApplicationScoped
 @RequiredArgsConstructor
-public class SubscriptionService implements ISubscriptionService{
+public class SubscriptionService implements ISubscriptionService {
 
     public static final String PROVIDER_ID = "ob-uki-mock-bank";
 
@@ -67,7 +66,7 @@ public class SubscriptionService implements ISubscriptionService{
                 .build();
         var mandate = trueLayerClient.mandates().createMandate(createMandateReq).get();
 
-        if(mandate.isError()){
+        if (mandate.isError()) {
             throw new RuntimeException(String.format("create mandate error: %s", mandate.getError()));
         }
 
@@ -79,30 +78,40 @@ public class SubscriptionService implements ISubscriptionService{
                         .build())
                 .build();
 
-        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient.mandates()
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = trueLayerClient
+                .mandates()
                 .startAuthorizationFlow(mandate.getData().getId(), startAuthorizationFlowRequest)
                 .get();
 
-        if(startAuthorizationFlowResponse.isError()){
-            throw new RuntimeException(String.format("start auth flow error: %s",
-                    startAuthorizationFlowResponse.getError()));
+        if (startAuthorizationFlowResponse.isError()) {
+            throw new RuntimeException(
+                    String.format("start auth flow error: %s", startAuthorizationFlowResponse.getError()));
         }
 
-        if(startAuthorizationFlowResponse.getData().isAuthorizationFailed()){
-            throw new RuntimeException(String.format("start auth flow failed: %s",
-                    startAuthorizationFlowResponse.getData().asAuthorizationFailed().getFailureReason()));
+        if (startAuthorizationFlowResponse.getData().isAuthorizationFailed()) {
+            throw new RuntimeException(String.format(
+                    "start auth flow failed: %s",
+                    startAuthorizationFlowResponse
+                            .getData()
+                            .asAuthorizationFailed()
+                            .getFailureReason()));
         }
 
-        return startAuthorizationFlowResponse.getData()
+        return startAuthorizationFlowResponse
+                .getData()
                 .asAuthorizing()
                 .getAuthorizationFlow()
-                .getActions().getNext().asRedirect().getUri();
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
     }
 
     @SneakyThrows
     @Override
     public SubscriptionResult getSubscriptionById(String id) {
-        ApiResponse<MandateDetail> getMandateById = trueLayerClient.mandates().getMandate(id).get();
+        ApiResponse<MandateDetail> getMandateById =
+                trueLayerClient.mandates().getMandate(id).get();
 
         return SubscriptionResult.builder()
                 .status(getMandateById.getData().getStatus().getStatus())

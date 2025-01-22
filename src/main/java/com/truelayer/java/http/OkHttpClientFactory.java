@@ -108,6 +108,7 @@ public class OkHttpClientFactory {
     }
 
     public OkHttpClient buildAuthenticatedApiClient(
+            String clientId,
             OkHttpClient authServerApiClient,
             IAuthenticationHandler authenticationHandler,
             ICredentialsCache credentialsCache) {
@@ -118,7 +119,7 @@ public class OkHttpClientFactory {
         OkHttpClient.Builder authenticatedApiClientBuilder = authServerApiClient.newBuilder();
 
         AccessTokenManager.AccessTokenManagerBuilder accessTokenManagerBuilder =
-                AccessTokenManager.builder().authenticationHandler(authenticationHandler);
+                AccessTokenManager.builder().clientId(clientId).authenticationHandler(authenticationHandler);
 
         // setup credentials caching if required
         if (isNotEmpty(credentialsCache)) {

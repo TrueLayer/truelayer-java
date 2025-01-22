@@ -12,10 +12,11 @@ import com.truelayer.java.auth.IAuthenticationHandler;
 import com.truelayer.java.auth.entities.AccessToken;
 import com.truelayer.java.entities.RequestScopes;
 import com.truelayer.java.http.auth.AccessTokenManager;
-import com.truelayer.java.http.auth.cache.SimpleCredentialsCache;
+import com.truelayer.java.http.auth.cache.InMemoryCredentialsCache;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.ProblemDetails;
 import java.time.Clock;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import okhttp3.Interceptor;
@@ -45,7 +46,7 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
         arrangeRequest(request);
         IAuthenticationHandler authenticationHandler = mock(AuthenticationHandler.class);
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
+                .credentialsCache(new InMemoryCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
 
@@ -71,7 +72,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                         .build()));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
+                .clientId(UUID.randomUUID().toString())
+                .credentialsCache(new InMemoryCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
 
@@ -93,7 +95,8 @@ class AuthenticationInterceptorTests extends BaseInterceptorTests {
                 .thenReturn(CompletableFuture.completedFuture(expectedAccessToken));
 
         AccessTokenManager accessTokenManager = AccessTokenManager.builder()
-                .credentialsCache(new SimpleCredentialsCache(Clock.systemUTC()))
+                .clientId(UUID.randomUUID().toString())
+                .credentialsCache(new InMemoryCredentialsCache(Clock.systemUTC()))
                 .authenticationHandler(authenticationHandler)
                 .build();
 
