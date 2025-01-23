@@ -12,6 +12,7 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.SneakyThrows;
@@ -30,8 +31,8 @@ public class TrueLayerClientProvider {
     @ConfigProperty(name = "tl.signing.key_id")
     String signingKeyId;
 
-    @ConfigProperty(name = "tl.signing.private_key_location")
-    String signingPrivateKeyLocation;
+    @ConfigProperty(name = "tl.signing.private_key")
+    String signingPrivateKey;
 
     private static final Logger LOG = Logger.getLogger(TrueLayerClientProvider.class);
 
@@ -47,7 +48,7 @@ public class TrueLayerClientProvider {
                         .build())
                 .signingOptions(SigningOptions.builder()
                         .keyId(signingKeyId)
-                        .privateKey(Files.readAllBytes(Path.of(signingPrivateKeyLocation)))
+                        .privateKey(signingPrivateKey.getBytes(StandardCharsets.UTF_8))
                         .build())
                 .withHttpLogs(LOG::info)
                 .withCredentialsCaching()
