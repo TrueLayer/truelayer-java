@@ -33,6 +33,7 @@ import com.truelayer.java.signupplus.ISignupPlusApi;
 import com.truelayer.java.signupplus.ISignupPlusHandler;
 import com.truelayer.java.signupplus.SignupPlusHandler;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
+import io.opentelemetry.api.OpenTelemetry;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
@@ -77,6 +78,8 @@ public class TrueLayerClientBuilder {
     private ICredentialsCache credentialsCache;
 
     private ProxyConfiguration proxyConfiguration;
+
+    private OpenTelemetry openTelemetry = OpenTelemetry.noop();
 
     TrueLayerClientBuilder() {}
 
@@ -190,7 +193,6 @@ public class TrueLayerClientBuilder {
 
     /**
      * Utility to enable a custom cache for Oauth credentials.
-     * @param credentialsCache the custom cache implementation
      * @return the instance of the client builder used
      */
     public TrueLayerClientBuilder withCredentialsCaching(ICredentialsCache credentialsCache) {
@@ -205,6 +207,11 @@ public class TrueLayerClientBuilder {
      */
     public TrueLayerClientBuilder withProxyConfiguration(ProxyConfiguration proxyConfiguration) {
         this.proxyConfiguration = proxyConfiguration;
+        return this;
+    }
+
+    public TrueLayerClientBuilder withOpenTelemetry(OpenTelemetry openTelemetry) {
+        this.openTelemetry = openTelemetry;
         return this;
     }
 
@@ -228,12 +235,13 @@ public class TrueLayerClientBuilder {
 
         IAuthenticationHandler authenticationHandler = AuthenticationHandler.New()
                 .clientCredentials(clientCredentials)
-                .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri()))
+                .httpClient(RetrofitFactory.build(authServerApiHttpClient, environment.getAuthApiUri(), openTelemetry))
                 .build();
 
         // We're reusing a client with only User agent and Idempotency key interceptors and give it our base payment
         // endpoint
-        ICommonApi commonApi = RetrofitFactory.build(authServerApiHttpClient, environment.getPaymentsApiUri())
+        ICommonApi commonApi = RetrofitFactory.build(
+                        authServerApiHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(ICommonApi.class);
         ICommonHandler commonHandler = new CommonHandler(commonApi);
 
@@ -241,7 +249,8 @@ public class TrueLayerClientBuilder {
         // this one represents the baseline for the client used for Signup+ and Payments
         OkHttpClient authenticatedApiClient = httpClientFactory.buildAuthenticatedApiClient(
                 clientCredentials.clientId, authServerApiHttpClient, authenticationHandler, credentialsCache);
-        ISignupPlusApi signupPlusApi = RetrofitFactory.build(authenticatedApiClient, environment.getPaymentsApiUri())
+        ISignupPlusApi signupPlusApi = RetrofitFactory.build(
+                        authenticatedApiClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(ISignupPlusApi.class);
         SignupPlusHandler.SignupPlusHandlerBuilder signupPlusHandlerBuilder =
                 SignupPlusHandler.builder().signupPlusApi(signupPlusApi);
@@ -264,7 +273,8 @@ public class TrueLayerClientBuilder {
         OkHttpClient paymentsHttpClient =
                 httpClientFactory.buildPaymentsApiClient(authenticatedApiClient, signingOptions);
 
-        IPaymentsApi paymentsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPaymentsApi paymentsApi = RetrofitFactory.build(
+                        paymentsHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(IPaymentsApi.class);
 
         PaymentsHandler.PaymentsHandlerBuilder paymentsHandlerBuilder =
@@ -275,7 +285,7 @@ public class TrueLayerClientBuilder {
         IPaymentsHandler paymentsHandler = paymentsHandlerBuilder.build();
 
         IPaymentsProvidersApi paymentsProvidersApi = RetrofitFactory.build(
-                        paymentsHttpClient, environment.getPaymentsApiUri())
+                        paymentsHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(IPaymentsProvidersApi.class);
 
         PaymentsProvidersHandler.PaymentsProvidersHandlerBuilder paymentsProvidersHandlerBuilder =
@@ -286,7 +296,7 @@ public class TrueLayerClientBuilder {
         IPaymentsProvidersHandler paymentsProvidersHandler = paymentsProvidersHandlerBuilder.build();
 
         IMerchantAccountsApi merchantAccountsApi = RetrofitFactory.build(
-                        paymentsHttpClient, environment.getPaymentsApiUri())
+                        paymentsHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(IMerchantAccountsApi.class);
         MerchantAccountsHandler.MerchantAccountsHandlerBuilder merchantAccountsHandlerBuilder =
                 MerchantAccountsHandler.builder().merchantAccountsApi(merchantAccountsApi);
@@ -295,7 +305,8 @@ public class TrueLayerClientBuilder {
         }
         IMerchantAccountsHandler merchantAccountsHandler = merchantAccountsHandlerBuilder.build();
 
-        IMandatesApi mandatesApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IMandatesApi mandatesApi = RetrofitFactory.build(
+                        paymentsHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(IMandatesApi.class);
         MandatesHandler.MandatesHandlerBuilder mandatesHandlerBuilder =
                 MandatesHandler.builder().mandatesApi(mandatesApi);
@@ -304,7 +315,8 @@ public class TrueLayerClientBuilder {
         }
         IMandatesHandler mandatesHandler = mandatesHandlerBuilder.build();
 
-        IPayoutsApi payoutsApi = RetrofitFactory.build(paymentsHttpClient, environment.getPaymentsApiUri())
+        IPayoutsApi payoutsApi = RetrofitFactory.build(
+                        paymentsHttpClient, environment.getPaymentsApiUri(), openTelemetry)
                 .create(IPayoutsApi.class);
         PayoutsHandler.PayoutsHandlerBuilder payoutsHandlerBuilder =
                 PayoutsHandler.builder().payoutsApi(payoutsApi);
