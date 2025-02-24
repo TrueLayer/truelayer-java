@@ -115,7 +115,7 @@ dependencies {
     testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.10.0'
 
     // Wait test utility
-    testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.2'
+    testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
 
     // Transitive dependencies constraints
     constraints {
