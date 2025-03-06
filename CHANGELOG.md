@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [17.1.0] - 2025-03-07
+### Added
+* Add support for PLN payouts
+
 ## [17.0.0] - 2025-01-15
 ### Changed
 * ⚠️ Breaking: removed deprecated HPP link builder
 * ⚠️ Breaking: Aligned custom cache implementation to other officially supported client libraries
-
-## [16.4.0] - 2025-03-07
-### Added
-* Add support for PLN payouts
 
 ## [16.3.1] - 2025-01-10
 ### Changed
