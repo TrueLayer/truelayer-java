@@ -16,35 +16,35 @@ import com.truelayer.java.payouts.entities.submerchants.BusinessClient;
 import com.truelayer.java.payouts.entities.submerchants.SubMerchants;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("acceptance")
 public class PayoutsAcceptanceTests extends AcceptanceTests {
 
-    @Test
-    @DisplayName("It should create a payout and get the details")
+    @ParameterizedTest(name = "It should create a {0} payout and get the details")
+    @MethodSource("providePayoutsArgumentsForDifferentCurrencies")
     @SneakyThrows
-    public void shouldCreateAPayoutAndGetPayoutsDetails() {
+    public void shouldCreateAPayoutAndGetPayoutsDetails(
+            CurrencyCode currencyCode, AccountIdentifier accountIdentifier, SchemeSelection schemeSelection) {
         // find a merchant to execute the payout from
-        MerchantAccount merchantAccount = getMerchantAccount(CurrencyCode.GBP);
+        MerchantAccount merchantAccount = getMerchantAccount(currencyCode);
 
         // create the payout
         CreatePayoutRequest createPayoutRequest = CreatePayoutRequest.builder()
                 .merchantAccountId(merchantAccount.getId())
                 .amountInMinor(ThreadLocalRandom.current().nextInt(10, 100))
-                .currency(CurrencyCode.GBP)
+                .currency(currencyCode)
                 .beneficiary(Beneficiary.externalAccount()
-                        .accountIdentifier(AccountIdentifier.sortCodeAccountNumber()
-                                .accountNumber("00009650")
-                                .sortCode("040668")
-                                .build())
-                        .reference("Java SDK payout test")
+                        .accountIdentifier(accountIdentifier)
+                        .reference(String.format("Java SDK %s payout test", currencyCode.name()))
                         .accountHolderName("LucaB merchant")
                         .build())
-                .schemeSelection(SchemeSelection.instantPreferred().build())
+                .schemeSelection(schemeSelection)
                 .subMerchants(SubMerchants.builder()
                         .ultimateCounterparty(BusinessClient.businessClient()
                                 .tradingName("A sub merchant trading name")
@@ -68,5 +68,22 @@ public class PayoutsAcceptanceTests extends AcceptanceTests {
         assertNotError(getPayoutResponse);
         assertEquals(payoutId, getPayoutResponse.getData().getId());
         assertEquals(merchantAccount.getId(), getPayoutResponse.getData().getMerchantAccountId());
+    }
+
+    public static Stream<Arguments> providePayoutsArgumentsForDifferentCurrencies() {
+        return Stream.of(
+                Arguments.of(
+                        CurrencyCode.GBP,
+                        AccountIdentifier.sortCodeAccountNumber()
+                                .accountNumber("00009650")
+                                .sortCode("040668")
+                                .build(),
+                        SchemeSelection.instantPreferred().build()),
+                Arguments.of(
+                        CurrencyCode.PLN,
+                        AccountIdentifier.iban().iban("GB25CLRB04066800046876").build(),
+                        SchemeSelection.preselected()
+                                .schemeId("polish_domestic_express")
+                                .build()));
     }
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class NrbAccountIdentifier extends AccountIdentifier {
-    private final Type type = Type.IBAN;
+    private final Type type = Type.NRB;
 
-    private String iban;
+    private String nrb;
 }

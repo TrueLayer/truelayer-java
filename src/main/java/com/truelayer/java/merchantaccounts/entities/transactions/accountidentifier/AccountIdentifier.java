@@ -42,6 +42,11 @@ public abstract class AccountIdentifier {
     }
 
     @JsonIgnore
+    public boolean isNrbIdentifier() {
+        return this instanceof NrbAccountIdentifier;
+    }
+
+    @JsonIgnore
     public SortCodeAccountNumberAccountIdentifier asSortCodeAccountNumber() {
         if (!isSortCodeAccountNumberIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -55,6 +60,14 @@ public abstract class AccountIdentifier {
             throw new TrueLayerException(buildErrorMessage());
         }
         return (IbanAccountIdentifier) this;
+    }
+
+    @JsonIgnore
+    public NrbAccountIdentifier asNrb() {
+        if (!isNrbIdentifier()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (NrbAccountIdentifier) this;
     }
 
     private String buildErrorMessage() {

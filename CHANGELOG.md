@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [16.4.0] - 2025-03-07
+### Added
+* Add support for PLN payouts
+
 ## [16.3.1] - 2025-01-10
 ### Changed
 * Upgrades linting and test libraries

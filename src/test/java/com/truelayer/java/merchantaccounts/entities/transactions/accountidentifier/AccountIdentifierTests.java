@@ -68,4 +68,33 @@ class AccountIdentifierTests {
 
         assertEquals(String.format("Identifier is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type NrbAccountIdentifier")
+    public void shouldYieldTrueIfNrb() {
+        AccountIdentifier sut = new NrbAccountIdentifier("12345678");
+
+        assertTrue(sut.isNrbIdentifier());
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("It should convert to an instance of class NrbAccountIdentifier")
+    public void shouldConvertToNrb() {
+        AccountIdentifier sut = new NrbAccountIdentifier("12345678");
+
+        assertDoesNotThrow(sut::asNrb);
+        assertEquals(
+                "{\"nrb\":\"12345678\",\"type\":\"nrb\"}", getObjectMapper().writeValueAsString(sut));
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to NrbAccountIdentifier")
+    public void shouldNotConvertToNrbAccountIdentifier() {
+        AccountIdentifier sut = new SortCodeAccountNumberAccountIdentifier("123456", "12345678");
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asNrb);
+
+        assertEquals(String.format("Identifier is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
 }
