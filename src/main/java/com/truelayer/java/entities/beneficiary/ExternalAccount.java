@@ -10,11 +10,11 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class ExternalAccount extends Beneficiary {
-    private final Type type = EXTERNAL_ACCOUNT;
+    Type type = EXTERNAL_ACCOUNT;
 
-    private String reference;
+    String reference;
 
-    private String accountHolderName;
+    String accountHolderName;
 
-    private List<AccountIdentifier> accountIdentifiers;
+    List<AccountIdentifier> accountIdentifiers;
 }

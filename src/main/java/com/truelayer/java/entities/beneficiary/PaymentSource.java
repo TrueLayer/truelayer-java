@@ -10,15 +10,15 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class PaymentSource extends Beneficiary {
-    private final Type type = PAYMENT_SOURCE;
+    Type type = PAYMENT_SOURCE;
 
-    private String paymentSourceId;
+    String paymentSourceId;
 
-    private String userId;
+    String userId;
 
-    private String reference;
+    String reference;
 
-    private String accountHolderName;
+    String accountHolderName;
 
     private List<AccountIdentifier> accountIdentifiers;
 }

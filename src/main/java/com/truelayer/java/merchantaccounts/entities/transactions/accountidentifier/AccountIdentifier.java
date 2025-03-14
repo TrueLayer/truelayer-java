@@ -23,6 +23,7 @@ import lombok.ToString;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SortCodeAccountNumberAccountIdentifier.class, name = "sort_code_account_number"),
     @JsonSubTypes.Type(value = IbanAccountIdentifier.class, name = "iban"),
+    @JsonSubTypes.Type(value = NrbAccountIdentifier.class, name = "nrb"),
 })
 @ToString
 @EqualsAndHashCode
@@ -41,6 +42,11 @@ public abstract class AccountIdentifier {
     }
 
     @JsonIgnore
+    public boolean isNrbIdentifier() {
+        return this instanceof NrbAccountIdentifier;
+    }
+
+    @JsonIgnore
     public SortCodeAccountNumberAccountIdentifier asSortCodeAccountNumber() {
         if (!isSortCodeAccountNumberIdentifier()) {
             throw new TrueLayerException(buildErrorMessage());
@@ -56,6 +62,14 @@ public abstract class AccountIdentifier {
         return (IbanAccountIdentifier) this;
     }
 
+    @JsonIgnore
+    public NrbAccountIdentifier asNrb() {
+        if (!isNrbIdentifier()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (NrbAccountIdentifier) this;
+    }
+
     private String buildErrorMessage() {
         return String.format("Identifier is of type %s.", this.getClass().getSimpleName());
     }
@@ -64,7 +78,8 @@ public abstract class AccountIdentifier {
     @RequiredArgsConstructor
     public enum Type {
         SORT_CODE_ACCOUNT_NUMBER("sort_code_account_number"),
-        IBAN("iban");
+        IBAN("iban"),
+        NRB("nrb");
 
         @JsonValue
         private final String type;

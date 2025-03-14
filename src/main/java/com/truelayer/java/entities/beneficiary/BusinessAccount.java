@@ -10,11 +10,11 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class BusinessAccount extends Beneficiary {
-    private final Type type = BUSINESS_ACCOUNT;
+    Type type = BUSINESS_ACCOUNT;
 
-    private String reference;
+    String reference;
 
-    private String accountHolderName;
+    String accountHolderName;
 
-    private List<AccountIdentifier> accountIdentifiers;
+    List<AccountIdentifier> accountIdentifiers;
 }
