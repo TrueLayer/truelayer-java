@@ -112,7 +112,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.15.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.16.1'
     testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.12.1'
 
     // Wait test utility
