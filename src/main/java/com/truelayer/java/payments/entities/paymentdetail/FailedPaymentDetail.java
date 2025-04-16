@@ -21,6 +21,8 @@ public class FailedPaymentDetail extends PaymentDetail {
 
     ZonedDateTime failedAt;
 
+    ZonedDateTime creditableAt;
+
     FailureStage failureStage;
 
     String failureReason;
