@@ -1,0 +1,4 @@
+alias r:= run
+
+run:
+    docker compose up
