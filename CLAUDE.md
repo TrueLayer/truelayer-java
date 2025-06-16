@@ -18,39 +18,11 @@ Use `just` for all development tasks:
 
 Run `just -l` to see all available commands.
 
-## Code Style
-- Uses Palantir Java Format via Spotless
-- **Always run `just format` before committing**
-- Formatting is enforced in CI
-
-## Project Structure
-
-### Core Packages
-- `com.truelayer.java.auth` - Authentication handling
-- `com.truelayer.java.payments` - Payment operations
-- `com.truelayer.java.mandates` - Mandate operations
-- `com.truelayer.java.payouts` - Payout operations
-- `com.truelayer.java.merchantaccounts` - Merchant account operations
-- `com.truelayer.java.paymentsproviders` - Payment provider operations
-- `com.truelayer.java.http` - HTTP client and interceptors
-- `com.truelayer.java.entities` - Data models and DTOs
-
-### Key Files
-- `TrueLayerClient.java` - Main client entry point
-- `TrueLayerClientBuilder.java` - Client configuration
-- `Environment.java` - Environment configuration (sandbox/production)
 
 ## Testing
 - Unit tests in `src/test/java/com/truelayer/java/`
 - Integration tests require mock responses in `src/test/resources/__files/`
 - Acceptance tests require environment variables (see README)
-
-## Common Patterns
-- Use builder pattern for request objects
-- All API calls return `CompletableFuture<ApiResponse<T>>`
-- Error handling via `ApiResponse` wrapper
-- Retrofit for HTTP client
-- OkHttp for connection management
 
 ## Pull Request Guidelines
 
