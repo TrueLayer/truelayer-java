@@ -4,13 +4,7 @@ This document provides essential information for using Claude to contribute to t
 
 ## Project Overview
 
-This is the official TrueLayer Java client library that provides convenient access to TrueLayer APIs. It supports:
-- Payments processing
-- Mandates management
-- Merchant accounts
-- Payouts
-- Payment providers
-- Signup Plus functionality
+@import README.md
 
 ## Build & Test Commands
 
@@ -70,26 +64,6 @@ Format: `[ACL-XXX]` in the PR title for JIRA ticket references.
 ### CI Optimization
 When making changes that don't affect the Java artifact (CODEOWNERS, CI workflows, documentation, etc.), consider adding `[skip ci]` to the squash merge commit message to avoid unnecessary CI runs, following GitHub's best practices.
 
-## API Development Guidelines
-
-When developing new features or modifying HTTP endpoint integrations:
-
-1. **Check TrueLayer's API Specifications**
-   - Visit https://docs.truelayer.com/reference/welcome-api-reference
-   - Download the relevant OpenAPI (OAS) specification files for:
-     - Authentication server
-     - Payments API v3
-     - Data API v1
-     - Client Tracking API
-     - Signup+
-     - Verification API
-   - Use these specs to understand endpoint details, parameters, and data models
-
-2. **API Integration Best Practices**
-   - Match request/response models exactly to the OpenAPI spec
-   - Follow existing patterns in the codebase for similar endpoints
-   - Ensure proper error handling for all documented error responses
-   - Add comprehensive integration tests with mock responses
 
 ## Development Tips
 - Check existing similar functionality before implementing new features
