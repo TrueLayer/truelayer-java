@@ -24,7 +24,11 @@ In order to submit changes to the TrueLayer Java project the following steps are
 2. Make sure to add proper tests in case of code changes. 
 3. Make sure to update the documentation in case of API changes.
 4. Make sure the project version is changed as needed, as well as the `CHANGELOG` file. 
-5. Once the CI pipeline passes, you can raise a pull request. 
+5. Once the CI pipeline passes, you can raise a pull request.
+
+## Development with Claude Code
+
+When developing with Claude Code, you can provide user-specific preferences by creating a `~/.claude/truelayer-java.md` file. This file will be automatically imported by the project's Claude development guide to customize the development experience based on your preferences. 
 
 ## Code of conduct
 Make sure you adhere to our [code of conduct](./CODE_OF_CONDUCT.md).
