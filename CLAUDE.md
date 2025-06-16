@@ -67,6 +67,9 @@ When creating a PR, Claude will ask for a JIRA ticket reference if:
 
 Format: `[ACL-XXX]` in the PR title for JIRA ticket references.
 
+### CI Optimization
+When making changes that don't affect the Java artifact (CODEOWNERS, CI workflows, documentation, etc.), consider adding `[skip ci]` to the squash merge commit message to avoid unnecessary CI runs, following GitHub's best practices.
+
 ## API Development Guidelines
 
 When developing new features or modifying HTTP endpoint integrations:
