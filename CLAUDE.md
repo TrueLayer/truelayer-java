@@ -4,7 +4,13 @@ This document provides essential information for using Claude to contribute to t
 
 ## Project Overview
 
+For detailed project information, setup instructions, and API documentation, see:
+
 @import README.md
+
+## User-Specific Preferences
+
+@import ~/.claude/truelayer-java.md
 
 ## Build & Test Commands
 
