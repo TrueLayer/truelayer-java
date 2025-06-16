@@ -51,3 +51,13 @@ When making changes that don't affect the Java artifact (CODEOWNERS, CI workflow
 - Ensure proper error handling and logging
 - If you are adding fields to the requests or responses, verify that the response test data included in the integration tests is updated accordingly
 - When running acceptance tests, check the README.md how to run acceptance tests and warn me if requirements are not met
+
+## Release Guidelines
+
+When making changes to Java code:
+
+1. **Version Updates**: Always update the version value in `gradle.properties`. When opening a PR or making it ready, suggest the user give you permissions to amend the version if needed.
+
+2. **Semantic Versioning**: Follow semantic versioning principles. Any change that breaks the build on projects referencing this library is considered a breaking change.
+
+3. **Backward Compatibility**: Strive to adopt backward compatible changes whenever possible. When backward compatibility cannot be maintained, create a new major version.
