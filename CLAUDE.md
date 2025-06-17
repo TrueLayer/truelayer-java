@@ -1,7 +1,3 @@
-# Claude Development Guide
-
-This document provides essential information for using Claude to contribute to the TrueLayer Java SDK.
-
 ## Project Overview
 
 For detailed project information, setup instructions, and API documentation, see:
@@ -48,7 +44,6 @@ When making changes that don't affect the Java artifact (CODEOWNERS, CI workflow
 - Follow existing naming conventions
 - Add unit tests for new functionality
 - Use mock JSON responses for integration tests
-- Ensure proper error handling and logging
 - If you are adding fields to the requests or responses, verify that the response test data included in the integration tests is updated accordingly
 - When running acceptance tests, check the README.md how to run acceptance tests and warn me if requirements are not met
 
