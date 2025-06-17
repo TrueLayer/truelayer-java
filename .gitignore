@@ -9,3 +9,6 @@ build
 
 #OSX
 .DS_Store
+
+# Claude local configuration
+CLAUDE.local.md
