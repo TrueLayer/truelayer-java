@@ -12,4 +12,6 @@ build
 
 #Claude Code
 .claude/
+
+# Claude local configuration
 CLAUDE.local.md
