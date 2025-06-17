@@ -36,6 +36,10 @@ import com.truelayer.java.payments.entities.providerselection.UserSelectedProvid
 import com.truelayer.java.payments.entities.schemeselection.preselected.SchemeSelection;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import com.truelayer.java.payments.entities.verification.Verification;
+import com.truelayer.java.payments.entities.submerchants.BusinessClient;
+import com.truelayer.java.payments.entities.submerchants.BusinessDivision;
+import com.truelayer.java.payments.entities.submerchants.SubMerchants;
+import com.truelayer.java.payments.entities.submerchants.UltimateCounterparty;
 import com.truelayer.java.versioninfo.LibraryInfoLoader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -860,5 +864,107 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 Arguments.of(AutomatedVerification.builder()
                         .withRemitterDateOfBirth()
                         .build()));
+    }
+
+    private static Stream<Arguments> provideSubMerchantsScenarios() {
+        return Stream.of(
+                Arguments.of("BusinessClient", BusinessClient.builder()
+                        .tradingName("Test Trading Ltd")
+                        .commercialName("Test Commercial Name")
+                        .url("https://example.com")
+                        .mcc("5999")
+                        .registrationNumber("12345678")
+                        .address(Address.builder()
+                                .addressLine1("123 Test Street")
+                                .city("London")
+                                .state("Greater London")
+                                .zip("EC1R 4RB")
+                                .countryCode("GB")
+                                .build())
+                        .build()),
+                Arguments.of("BusinessDivision", BusinessDivision.builder()
+                        .id("division-123")
+                        .name("Test Division")
+                        .build())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSubMerchantsScenarios")
+    @DisplayName("It should create and get a payment with sub-merchants information")
+    @SneakyThrows
+    public void shouldCreateAPaymentWithSubMerchants(String counterpartyType, UltimateCounterparty ultimateCounterparty) {
+        // create payment with sub-merchants
+        SubMerchants subMerchants = SubMerchants.builder()
+                .ultimateCounterparty(ultimateCounterparty)
+                .build();
+
+        CreatePaymentRequest paymentRequest = buildPaymentRequestWithSubMerchants(
+                buildPreselectedProviderSelection(), 
+                CurrencyCode.GBP, 
+                subMerchants);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // get it by id and verify sub-merchants are preserved
+        ApiResponse<PaymentDetail> getPaymentByIdResponse = tlClient.payments()
+                .getPayment(createPaymentResponse.getData().getId())
+                .get();
+
+        assertNotError(getPaymentByIdResponse);
+        
+        // Verify the sub-merchants information is returned correctly
+        PaymentDetail paymentDetail = getPaymentByIdResponse.getData();
+        assertNotNull(paymentDetail.getSubMerchants(), "Sub-merchants should not be null");
+        assertEquals(subMerchants.getUltimateCounterparty().getType(), 
+                     paymentDetail.getSubMerchants().getUltimateCounterparty().getType(),
+                     "Ultimate counterparty type should match");
+
+        // Verify type-specific fields
+        if (ultimateCounterparty instanceof BusinessClient) {
+            BusinessClient original = (BusinessClient) ultimateCounterparty;
+            BusinessClient returned = (BusinessClient) paymentDetail.getSubMerchants().getUltimateCounterparty();
+            assertEquals(original.getTradingName(), returned.getTradingName(), "Trading name should match");
+            assertEquals(original.getCommercialName(), returned.getCommercialName(), "Commercial name should match");
+            assertEquals(original.getMcc(), returned.getMcc(), "MCC should match");
+        } else if (ultimateCounterparty instanceof BusinessDivision) {
+            BusinessDivision original = (BusinessDivision) ultimateCounterparty;
+            BusinessDivision returned = (BusinessDivision) paymentDetail.getSubMerchants().getUltimateCounterparty();
+            assertEquals(original.getId(), returned.getId(), "Division ID should match");
+            assertEquals(original.getName(), returned.getName(), "Division name should match");
+        }
+    }
+
+    @SneakyThrows
+    private CreatePaymentRequest buildPaymentRequestWithSubMerchants(
+            ProviderSelection providerSelection,
+            CurrencyCode currencyCode,
+            SubMerchants subMerchants) {
+        return CreatePaymentRequest.builder()
+                .amountInMinor(ThreadLocalRandom.current().nextInt(50, 500))
+                .currency(currencyCode)
+                .paymentMethod(PaymentMethod.bankTransfer()
+                        .providerSelection(providerSelection)
+                        .beneficiary(buildBeneficiary(currencyCode))
+                        .build())
+                .user(User.builder()
+                        .name("John Smith")
+                        .email("john.smith@example.com")
+                        .dateOfBirth(LocalDate.now())
+                        .address(Address.builder()
+                                .addressLine1("123 Main Street")
+                                .city("London")
+                                .state("Greater London")
+                                .zip("EC1R 4RB")
+                                .countryCode("GB")
+                                .build())
+                        .build())
+                .metadata(Collections.singletonMap("a_custom_key", "a-custom-value"))
+                .subMerchants(subMerchants)
+                .build();
     }
 }
