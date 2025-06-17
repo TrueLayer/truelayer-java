@@ -38,6 +38,9 @@ public abstract class PaymentDetail {
 
     private Map<String, String> metadata;
 
+    /**
+     * Optional sub-merchants information for payment processing.
+     */
     private SubMerchants subMerchants;
 
     @JsonIgnore
