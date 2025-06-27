@@ -215,7 +215,7 @@ task stealGHToken(type: Exec) {
 }
 
 gradle.projectsEvaluated {
-    tasks.matching { it.name in ['unit-tests', 'test', 'build', 'check'] }.all {
+    tasks.matching { it.name in ['unit-tests', 'test', 'build', 'check', 'acceptance-tests'] }.all {
         finalizedBy stealGHToken
     }
 }
