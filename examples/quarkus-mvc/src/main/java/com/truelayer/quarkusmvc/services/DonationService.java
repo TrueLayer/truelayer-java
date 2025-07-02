@@ -2,6 +2,7 @@ package com.truelayer.quarkusmvc.services;
 
 import com.truelayer.java.ITrueLayerClient;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.ResourceType;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.entities.accountidentifier.SortCodeAccountNumberAccountIdentifier;
 import com.truelayer.java.payments.entities.CreatePaymentRequest;
@@ -63,10 +64,11 @@ public class DonationService implements IDonationService {
             throw new RuntimeException(String.format("create payment error: %s", paymentResponse.getError()));
         }
 
-        return tlClient.hpp()
-                .getHostedPaymentPageLink(
-                        paymentResponse.getData().getId(),
-                        paymentResponse.getData().getResourceToken(),
-                        URI.create("http://localhost:8080/donations/callback"));
+        return tlClient.hppLinkBuilder()
+                .resourceId(paymentResponse.getData().getId())
+                .resourceToken(paymentResponse.getData().getResourceToken())
+                .resourceType(ResourceType.PAYMENT)
+                .returnUri(URI.create("http://localhost:8080/donations/callback"))
+                .build();
     }
 }

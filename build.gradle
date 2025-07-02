@@ -94,6 +94,9 @@ dependencies {
     // TL signing library
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.6'
 
+    // OpenTelemetry
+    implementation group: 'io.opentelemetry.instrumentation', name: 'opentelemetry-okhttp-3.0', version: '2.11.0-alpha'
+
     // Serialization
     def jacksonVersion = '2.14.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion

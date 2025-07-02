@@ -9,9 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.jboss.resteasy.annotations.Form;
 
 @Path("/donations")
@@ -33,19 +31,6 @@ public class DonationsController {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance home() {
         return donations.instance();
-    }
-
-    @GET
-    @Path("/test")
-    @SneakyThrows
-    public Response test() {
-        var token = trueLayerClient.auth().getOauthToken(List.of("payments")).get();
-
-        if (token.isError()) {
-            return Response.serverError().build();
-        }
-
-        return Response.ok("token expires in " + token.getData().getExpiresIn()).build();
     }
 
     @POST
