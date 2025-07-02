@@ -39,7 +39,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
+        uses: gradle/actions/wrapper-validation@v4
       - name: Acceptance tests in sandbox
         env:
           TL_CLIENT_ID: ${{ secrets.tl_client_id }}
@@ -64,7 +64,7 @@ jobs:
         with:
           name: test-results
           path: ./build/test-results
-      - uses: dili91/testvox@v0.2.0
+      - uses: dili91/testvox@v0.2.1
         name: Generate Slack report from Junit results
         id: generate_slack_report
         with:

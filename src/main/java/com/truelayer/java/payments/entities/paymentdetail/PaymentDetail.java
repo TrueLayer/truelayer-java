@@ -7,6 +7,7 @@ import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.commonapi.entities.UserDetail;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import com.truelayer.java.payments.entities.submerchants.SubMerchants;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import lombok.*;
@@ -36,6 +37,11 @@ public abstract class PaymentDetail {
     private ZonedDateTime createdAt;
 
     private Map<String, String> metadata;
+
+    /**
+     * Optional sub-merchants information for payment processing.
+     */
+    private SubMerchants subMerchants;
 
     @JsonIgnore
     public abstract Status getStatus();

@@ -39,7 +39,7 @@ jobs:
           distribution: ${{ matrix.java-distribution }}
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
+        uses: gradle/actions/wrapper-validation@v4
       - name: Get project version
         id: get_project_version
         run: |
@@ -74,7 +74,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
+        uses: gradle/actions/wrapper-validation@v4
       - name: Test coverage
         run: ./gradlew unit-tests jacocoTestReport coveralls
         env:

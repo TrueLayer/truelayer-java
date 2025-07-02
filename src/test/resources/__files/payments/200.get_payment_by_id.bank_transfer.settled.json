@@ -51,6 +51,7 @@
   },
   "succeeded_at":"2022-01-17T17:13:18.214924Z",
   "settled_at":"2022-01-17T17:13:18.214924Z",
+  "creditable_at":"2022-01-18T17:13:18.214924Z",
   "settlement_risk": {
     "category": "low_risk"
   },

@@ -25,6 +25,8 @@ public class SettledPaymentDetail extends PaymentDetail {
 
     ZonedDateTime executedAt;
 
+    ZonedDateTime creditableAt;
+
     AuthorizationFlowWithConfiguration authorizationFlow;
 
     SettlementRisk settlementRisk;

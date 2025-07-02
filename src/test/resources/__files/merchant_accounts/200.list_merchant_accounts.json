@@ -1,18 +1,31 @@
 {
   "items":[
     {
-      "id":"string",
+      "id":"46b7db25-d222-4fe2-aa0d-dfde1c751f39",
       "currency":"GBP",
       "account_identifiers":[
         {
           "type":"sort_code_account_number",
-          "sort_code":"string",
-          "account_number":"string"
+          "sort_code":"112233",
+          "account_number":"12345678"
         }
       ],
       "available_balance_in_minor":0,
       "current_balance_in_minor":0,
-      "account_holder_name":"string"
+      "account_holder_name":"Bob Smith"
+    },
+    {
+      "id":"c1431155-5fde-4e74-8f5d-c90c76d6d668",
+      "currency":"PLN",
+      "account_identifiers":[
+        {
+          "type":"nrb",
+          "nrb":"61109010140000071219812874"
+        }
+      ],
+      "available_balance_in_minor":0,
+      "current_balance_in_minor":0,
+      "account_holder_name":"John doe"
     }
   ]
 }

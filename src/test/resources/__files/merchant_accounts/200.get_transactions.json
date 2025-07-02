@@ -65,9 +65,8 @@
         "account_holder_name":"john smith",
         "account_identifiers":[
           {
-            "type":"sort_code_account_number",
-            "sort_code":"040662",
-            "account_number":"00002723"
+            "type":"nrb",
+            "nrb":"PL61109010140000071219812874"
           },
           {
             "type":"iban",

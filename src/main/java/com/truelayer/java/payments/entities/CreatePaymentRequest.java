@@ -4,6 +4,7 @@ import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
+import com.truelayer.java.payments.entities.submerchants.SubMerchants;
 import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -34,4 +35,9 @@ public class CreatePaymentRequest {
      * Optional field for configuring risk assessment and the payment_creditable webhook
      */
     private RiskAssessment riskAssessment;
+
+    /**
+     * Optional field for sub-merchant details
+     */
+    private SubMerchants subMerchants;
 }
