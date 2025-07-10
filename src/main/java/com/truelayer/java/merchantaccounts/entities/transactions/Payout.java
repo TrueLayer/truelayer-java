@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.Beneficiary;
+import com.truelayer.java.payouts.entities.SchemeId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +48,8 @@ public class Payout extends Transaction {
 
     String payoutId;
 
+    SchemeId schemeId;
+
     Map<String, String> metadata;
 
     @JsonGetter
@@ -57,6 +60,11 @@ public class Payout extends Transaction {
     @JsonGetter
     public Optional<ZonedDateTime> getExecutedAt() {
         return Optional.ofNullable(executedAt);
+    }
+
+    @JsonGetter
+    public Optional<SchemeId> getSchemeId() {
+        return Optional.ofNullable(schemeId);
     }
 
     @RequiredArgsConstructor
