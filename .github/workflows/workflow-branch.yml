@@ -40,8 +40,6 @@ jobs:
       checkout_ref: ${{ github.ref }}
       project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
-      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
-      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
       maven_central_username: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralUsername }}
       maven_central_password: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralPassword}}
       maven_central_signing_key: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKey }}

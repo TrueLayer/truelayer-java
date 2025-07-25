@@ -15,10 +15,6 @@ on:
         required: true
         type: string
     secrets:
-      sonatype_username:
-        required: true
-      sonatype_password:
-        required: true
       maven_central_username:
         required: true
       maven_central_password:
@@ -62,8 +58,6 @@ jobs:
       - name: Publish snapshot to Maven Central
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToMavenCentral
         env:
-          SONATYPE_USERNAME: ${{ secrets.sonatype_username }}
-          SONATYPE_PASSWORD: ${{ secrets.sonatype_password }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.maven_central_username }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.maven_central_password }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.maven_central_signing_key }}
