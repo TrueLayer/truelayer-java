@@ -1,5 +1,7 @@
-# Reusable workflow to release to Nexus snapshot repository, referenced by workflow-*.yml pipelines.
-name: Release to Nexus snapshots repository
+# Reusable workflow to release to Maven Central, referenced by workflow-*.yml pipelines.
+name: Release to Maven Central
+permissions:
+  contents: read
 
 on:
   workflow_call:
@@ -17,10 +19,18 @@ on:
         required: true
       sonatype_password:
         required: true
+      maven_central_username:
+        required: true
+      maven_central_password:
+        required: true
+      maven_central_signing_key:
+        required: true
+      maven_central_signing_key_password:
+        required: true
 
 jobs:
   release-snapshot:
-    name: Release to Nexus snapshots repository
+    name: Release to Maven Central
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,8 +59,12 @@ jobs:
           else
               echo "Project version ${{env.project_version_snapshot}} is not valid"; exit 1;
           fi
-      - name: Publish to Sonatype snapshot repository
-        run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToSonatype
+      - name: Publish snapshot to Maven Central
+        run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToMavenCentral
         env:
           SONATYPE_USERNAME: ${{ secrets.sonatype_username }}
           SONATYPE_PASSWORD: ${{ secrets.sonatype_password }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.maven_central_username }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.maven_central_password }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.maven_central_signing_key }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.maven_central_signing_key_password }}

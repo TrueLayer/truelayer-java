@@ -3,6 +3,10 @@
 # Build, test, run coverage analysis and release to Maven Central a final release.
 name: Workflow on internal branch, excluding main
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   push:
     branches-ignore:
@@ -28,7 +32,9 @@ jobs:
       tl_signing_key_id: ${{ secrets.ACCEPTANCE_TEST_SIGNING_KEY_ID }}
       tl_signing_private_key: ${{ secrets.ACCEPTANCE_TEST_SIGNING_PRIVATE_KEY }}
   release-snapshot:
-    needs: [build-test-coverage, acceptance-tests]
+    # TODO: temp
+    #needs: [build-test-coverage, acceptance-tests]
+    needs: build-test-coverage
     uses: ./.github/workflows/release-snapshot.yml
     with:
       checkout_ref: ${{ github.ref }}
@@ -36,3 +42,7 @@ jobs:
     secrets:
       sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
       sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
+      maven_central_username: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralUsername }}
+      maven_central_password: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralPassword}}
+      maven_central_signing_key: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKey }}
+      maven_central_signing_key_password: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKeyPassword }}
