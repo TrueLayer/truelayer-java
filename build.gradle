@@ -160,7 +160,7 @@ tasks.register('javadocJar', Jar) {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral(true)
     signAllPublications()
 
     // Use the sources and javadoc jars
