@@ -37,7 +37,7 @@ To use on of those release with Gradle, make sure you have the following reposit
 repositories {
     // ... all your existing repos here
     
-     maven {
+    maven {
         url = 'https://central.sonatype.com/repository/maven-snapshots/'
     }  
 }
