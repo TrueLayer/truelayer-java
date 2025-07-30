@@ -12,8 +12,6 @@ plugins {
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
-    // signing
-    id 'signing'
     // maven central publishing
     id "com.vanniktech.maven.publish" version "0.34.0"
 }
