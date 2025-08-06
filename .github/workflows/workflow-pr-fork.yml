@@ -52,7 +52,7 @@ jobs:
       checkout_ref: ${{ github.event.pull_request.head.sha }}
       project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
-      maven_central_username: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralUsername }}
-      maven_central_password: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralPassword}}
-      maven_central_signing_key: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKey }}
-      maven_central_signing_key_password: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKeyPassword }}
+      maven_central_username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      maven_central_password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      maven_central_signing_key: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY }}
+      maven_central_signing_key_password: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY_PASSWORD }}
