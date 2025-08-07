@@ -75,7 +75,8 @@
         ]
       },
       "context_code":"withdrawal",
-      "payout_id":"string"
+      "payout_id":"string",
+      "scheme_id":"faster_payments_service"
     },
     {
       "type":"payout",
@@ -104,7 +105,8 @@
         "payout_id": "an-id"
       },
       "context_code":"withdrawal",
-      "payout_id":"string"
+      "payout_id":"string",
+      "scheme_id":"sepa_credit_transfer"
     },
     {
       "type":"payout",
@@ -131,7 +133,8 @@
         ]
       },
       "context_code":"withdrawal",
-      "payout_id":"string"
+      "payout_id":"string",
+      "scheme_id":"internal_transfer"
     },
     {
       "type":"refund",
@@ -162,7 +165,8 @@
       },
       "context_code":"withdrawal",
       "refund_id":"an-id",
-      "payment_id":"another-id"
+      "payment_id":"another-id",
+      "scheme_id":"faster_payments_service"
     }
   ],
   "pagination": {

@@ -103,6 +103,7 @@ class TransactionTests {
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
+                null,
                 null);
 
         assertTrue(sut.isPayout());
@@ -121,6 +122,7 @@ class TransactionTests {
                 null,
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
+                null,
                 null);
 
         assertDoesNotThrow(sut::asPayout);
@@ -157,6 +159,7 @@ class TransactionTests {
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(),
+                null,
                 null);
 
         assertTrue(sut.isRefund());
@@ -176,6 +179,7 @@ class TransactionTests {
                 Payout.ContextCode.INTERNAL,
                 UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(),
+                null,
                 null);
 
         assertDoesNotThrow(sut::asRefund);

@@ -3,6 +3,7 @@ package com.truelayer.java.merchantaccounts.entities.transactions;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.beneficiary.PaymentSource;
+import com.truelayer.java.payouts.entities.SchemeId;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +38,8 @@ public class Refund extends Transaction {
 
     String paymentId;
 
+    SchemeId schemeId;
+
     Map<String, String> metadata;
 
     @JsonGetter
@@ -47,5 +50,10 @@ public class Refund extends Transaction {
     @JsonGetter
     public Optional<ZonedDateTime> getExecutedAt() {
         return Optional.ofNullable(executedAt);
+    }
+
+    @JsonGetter
+    public Optional<SchemeId> getSchemeId() {
+        return Optional.ofNullable(schemeId);
     }
 }
