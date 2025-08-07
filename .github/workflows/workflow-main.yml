@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          checkout_ref: ${{ github.ref }}
+          ref: ${{ github.ref }}
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
@@ -55,10 +55,10 @@ jobs:
         with:
           tag_name: ${{ steps.create_tag.outputs.new_tag }}
           generate_release_notes: true
-      - name: Publish to Sonatype and Maven Central
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+      - name: Publish to Maven Central
+        run: ./gradlew publishToMavenCentral
         env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_GPG_KEY: ${{ secrets.SONATYPE_GPG_KEY }}
-          SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY_PASSWORD }}

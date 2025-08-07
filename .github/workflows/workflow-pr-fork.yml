@@ -52,5 +52,7 @@ jobs:
       checkout_ref: ${{ github.event.pull_request.head.sha }}
       project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
-      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
-      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
+      maven_central_username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      maven_central_password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      maven_central_signing_key: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY }}
+      maven_central_signing_key_password: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY_PASSWORD }}
