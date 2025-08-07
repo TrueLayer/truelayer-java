@@ -40,7 +40,6 @@ jobs:
       checkout_ref: ${{ github.ref }}
       project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
-      test: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralUsername }}
       maven_central_username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
       maven_central_password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
       maven_central_signing_key: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY }}

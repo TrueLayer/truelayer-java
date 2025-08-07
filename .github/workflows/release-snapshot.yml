@@ -17,8 +17,6 @@ on:
     secrets:
       maven_central_username:
         required: true
-      test:
-        required: false
       maven_central_password:
         required: true
       maven_central_signing_key:
@@ -60,7 +58,6 @@ jobs:
       - name: Publish snapshot to Maven Central
         run: ./gradlew -Pversion=${{env.project_version_snapshot}} publishToMavenCentral
         env:
-          TEST: ${{ secrets.test }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.maven_central_username }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.maven_central_password }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.maven_central_signing_key }}
