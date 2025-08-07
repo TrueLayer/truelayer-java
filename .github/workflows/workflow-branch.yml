@@ -3,6 +3,10 @@
 # Build, test, run coverage analysis and release to Maven Central a final release.
 name: Workflow on internal branch, excluding main
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   push:
     branches-ignore:
@@ -34,5 +38,7 @@ jobs:
       checkout_ref: ${{ github.ref }}
       project_version: ${{ needs.build-test-coverage.outputs.project_version }}
     secrets:
-      sonatype_username: ${{ secrets.SONATYPE_USERNAME }}
-      sonatype_password: ${{ secrets.SONATYPE_PASSWORD }}
+      maven_central_username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      maven_central_password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      maven_central_signing_key: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY }}
+      maven_central_signing_key_password: ${{ secrets.PGP_SIGNING_IN_MEMORY_KEY_PASSWORD }}

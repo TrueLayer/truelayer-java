@@ -63,10 +63,10 @@ public class DonationService implements IDonationService {
             throw new RuntimeException(String.format("create payment error: %s", paymentResponse.getError()));
         }
 
-        return tlClient.hpp()
-                .getHostedPaymentPageLink(
-                        paymentResponse.getData().getId(),
-                        paymentResponse.getData().getResourceToken(),
-                        URI.create("http://localhost:8080/donations/callback"));
+        return tlClient.hppLinkBuilder()
+                .resourceId(paymentResponse.getData().getId())
+                .resourceToken(paymentResponse.getData().getResourceToken())
+                .returnUri(URI.create("http://localhost:8080/donations/callback"))
+                .build();
     }
 }
