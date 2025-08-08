@@ -84,7 +84,7 @@ tasks.register('acceptance-tests', Test) {
 
 dependencies {
     // Utilities
-    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.11.0'
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.12.0'
 
     // HTTP client
     def retrofitVersion = '2.9.0'
