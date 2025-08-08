@@ -8,7 +8,7 @@ plugins {
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // code linting
-    id "com.diffplug.spotless" version "7.0.3"
+    id "com.diffplug.spotless" version "7.2.1"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
