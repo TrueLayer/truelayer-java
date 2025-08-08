@@ -4,7 +4,7 @@ import com.vanniktech.maven.publish.JavadocJar
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "8.13.1"
+    id "io.freefair.lombok" version "8.14"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // code linting
