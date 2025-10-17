@@ -55,9 +55,41 @@ public class PayoutsIntegrationTests extends IntegrationTests {
         assertEquals(expected, response.getData());
     }
 
+    @Test
+    @DisplayName("It should create a payout with authorization required")
+    @SneakyThrows
+    public void shouldCreateAPayoutWithAuthorizationRequired() {
+        String jsonResponseFile = "payouts/202.create_payout.authorization_required.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payouts"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(202)
+                .bodyFile(jsonResponseFile)
+                .build();
+        CreatePayoutRequest payoutRequest = CreatePayoutRequest.builder().build();
+
+        ApiResponse<CreatePayoutResponse> response =
+                tlClient.payouts().createPayout(payoutRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        assertNotError(response);
+        CreatePayoutResponse expected = TestUtils.deserializeJsonFileTo(jsonResponseFile, CreatePayoutResponse.class);
+        assertEquals(expected, response.getData());
+        assertTrue(response.getData().isAuthorizationRequired());
+    }
+
     @DisplayName("It should get payout details")
     @ParameterizedTest(name = "of a payout with status {0}")
-    @ValueSource(strings = {"PENDING", "AUTHORIZED", "EXECUTED", "FAILED"})
+    @ValueSource(strings = {"PENDING", "AUTHORIZED", "EXECUTED", "FAILED", "AUTHORIZATION_REQUIRED", "AUTHORIZING"})
     @SneakyThrows
     public void shouldReturnPayoutDetails(Payout.Status expectedStatus) {
         String jsonResponseFile = "payouts/200.get_payout_by_id." + expectedStatus.getStatus() + ".json";

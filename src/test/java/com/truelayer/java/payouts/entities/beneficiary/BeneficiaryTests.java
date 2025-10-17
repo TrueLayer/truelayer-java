@@ -122,4 +122,42 @@ class BeneficiaryTests {
 
         assertEquals(String.format("Beneficiary is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type UserDetermined")
+    public void shouldYieldTrueIfUserDetermined() {
+        Beneficiary sut = Beneficiary.userDetermined()
+                .reference("a-reference")
+                .user(com.truelayer.java.entities.User.builder()
+                        .name("John Doe")
+                        .build())
+                .build();
+
+        assertTrue(sut.isUserDetermined());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class UserDetermined")
+    public void shouldConvertToUserDetermined() {
+        Beneficiary sut = Beneficiary.userDetermined()
+                .reference("a-reference")
+                .user(com.truelayer.java.entities.User.builder()
+                        .name("John Doe")
+                        .build())
+                .build();
+
+        assertDoesNotThrow(sut::asUserDetermined);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to UserDetermined")
+    public void shouldNotConvertToUserDetermined() {
+        Beneficiary sut = new BusinessAccount.BusinessAccountBuilder()
+                .reference("a-reference")
+                .build();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asUserDetermined);
+
+        assertEquals(String.format("Beneficiary is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
 }
