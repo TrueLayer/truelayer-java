@@ -27,23 +27,22 @@ class ProviderSelectionTests {
     @Test
     @DisplayName("It should throw an error when converting to UserSelectedProviderSelection")
     public void shouldNotConvertToUserSelectedProviderSelection() {
-        ProviderSelection sut = ProviderSelection.preselected()
-                .providerId("a-provider-id")
-                .build();
+        ProviderSelection sut =
+                ProviderSelection.preselected().providerId("a-provider-id").build();
 
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asUserSelected);
 
         assertEquals(
-                String.format("Provider selection is of type %s.", sut.getClass().getSimpleName()),
+                String.format(
+                        "Provider selection is of type %s.", sut.getClass().getSimpleName()),
                 thrown.getMessage());
     }
 
     @Test
     @DisplayName("It should yield true if instance is of type PreselectedProviderSelection")
     public void shouldYieldTrueIfPreselectedProviderSelection() {
-        ProviderSelection sut = ProviderSelection.preselected()
-                .providerId("a-provider-id")
-                .build();
+        ProviderSelection sut =
+                ProviderSelection.preselected().providerId("a-provider-id").build();
 
         assertTrue(sut.isPreselected());
     }
@@ -51,9 +50,8 @@ class ProviderSelectionTests {
     @Test
     @DisplayName("It should convert to an instance of class PreselectedProviderSelection")
     public void shouldConvertToPreselectedProviderSelection() {
-        ProviderSelection sut = ProviderSelection.preselected()
-                .providerId("a-provider-id")
-                .build();
+        ProviderSelection sut =
+                ProviderSelection.preselected().providerId("a-provider-id").build();
 
         assertDoesNotThrow(sut::asPreselected);
     }
@@ -66,7 +64,8 @@ class ProviderSelectionTests {
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asPreselected);
 
         assertEquals(
-                String.format("Provider selection is of type %s.", sut.getClass().getSimpleName()),
+                String.format(
+                        "Provider selection is of type %s.", sut.getClass().getSimpleName()),
                 thrown.getMessage());
     }
 }

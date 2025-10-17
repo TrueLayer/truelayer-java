@@ -32,7 +32,8 @@ class CreatePayoutResponseTests {
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asCreated);
 
         assertEquals(
-                String.format("Create payout response is of type %s.", sut.getClass().getSimpleName()),
+                String.format(
+                        "Create payout response is of type %s.", sut.getClass().getSimpleName()),
                 thrown.getMessage());
     }
 
@@ -60,7 +61,8 @@ class CreatePayoutResponseTests {
         Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizationRequired);
 
         assertEquals(
-                String.format("Create payout response is of type %s.", sut.getClass().getSimpleName()),
+                String.format(
+                        "Create payout response is of type %s.", sut.getClass().getSimpleName()),
                 thrown.getMessage());
     }
 }
