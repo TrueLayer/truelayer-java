@@ -69,7 +69,7 @@ public class TestUtils {
     }
 
     public static Environment getTestEnvironment(URI endpointUrl) {
-        return Environment.custom(endpointUrl, endpointUrl, endpointUrl);
+        return Environment.custom(endpointUrl, endpointUrl, endpointUrl, endpointUrl);
     }
 
     private TestUtils() {}

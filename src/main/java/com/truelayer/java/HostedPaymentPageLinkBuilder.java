@@ -64,7 +64,7 @@ public class HostedPaymentPageLinkBuilder {
 
         URI hppLink = URI.create(MessageFormat.format(
                 "{0}/{1}#{2}={3}&resource_token={4}&return_uri={5}",
-                environment.getHppUri(),
+                getHppLinkForResourceType(resourceType, environment),
                 resourceType.getHppLinkPath(),
                 resourceType.getHppLinkQueryParameter(),
                 resourceId,
@@ -80,5 +80,9 @@ public class HostedPaymentPageLinkBuilder {
         }
 
         return hppLink;
+    }
+
+    private URI getHppLinkForResourceType(ResourceType resourceType, Environment environment) {
+        return resourceType == ResourceType.PAYOUT ? environment.getHp2Uri() : environment.getHppUri();
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum ResourceType {
     PAYMENT("payments", "payment_id"),
     MANDATE("mandates", "mandate_id"),
+    PAYOUT("payouts", "payout_id"),
     ;
 
     private final String hppLinkPath;
