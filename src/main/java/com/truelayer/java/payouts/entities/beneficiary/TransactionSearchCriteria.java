@@ -1,7 +1,9 @@
 package com.truelayer.java.payouts.entities.beneficiary;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.truelayer.java.entities.CurrencyCode;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,5 +21,7 @@ public class TransactionSearchCriteria {
 
     private CurrencyCode currency;
 
-    private ZonedDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateFlexibleDeserializer.class)
+    private LocalDate createdAt;
 }

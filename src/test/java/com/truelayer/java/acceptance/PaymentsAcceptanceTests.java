@@ -774,13 +774,6 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         return buildPaymentRequestWithProviderSelection(userSelectionProvider, currencyCode);
     }
 
-    @SneakyThrows
-    private void assertCanBrowseLink(URI link) {
-        Request hppRequest = new Request.Builder().url(link.toURL()).build();
-        Response hppResponse = getHttpClientInstance().newCall(hppRequest).execute();
-        assertTrue(hppResponse.isSuccessful());
-    }
-
     // since the StartAuthorizationFlowRequest object does not support retry property
     // we need to do a raw HTTP call with a JSON string request body
     @SneakyThrows

@@ -1,17 +1,22 @@
 package com.truelayer.java.acceptance;
 
 import static com.truelayer.java.TestUtils.assertNotError;
+import static com.truelayer.java.TestUtils.getHttpClientInstance;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.truelayer.java.*;
 import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.merchantaccounts.entities.ListMerchantAccountsResponse;
 import com.truelayer.java.merchantaccounts.entities.MerchantAccount;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 
@@ -64,5 +69,12 @@ public abstract class AcceptanceTests {
         merchantAccounts.put(currencyCode, merchantAccount);
 
         return merchantAccount;
+    }
+
+    @SneakyThrows
+    protected void assertCanBrowseLink(URI link) {
+        Request hppRequest = new Request.Builder().url(link.toURL()).build();
+        Response hppResponse = getHttpClientInstance().newCall(hppRequest).execute();
+        assertTrue(hppResponse.isSuccessful());
     }
 }
