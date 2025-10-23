@@ -83,6 +83,16 @@ public class HostedPaymentPageLinkBuilder {
     }
 
     private URI getHppLinkForResourceType(ResourceType resourceType, Environment environment) {
-        return resourceType == ResourceType.PAYOUT ? environment.getHp2Uri() : environment.getHppUri();
+        URI hostedPageUri;
+        switch (resourceType.getHostedPageType()) {
+            case HP2:
+                hostedPageUri = environment.getHp2Uri();
+                break;
+            case HPP:
+            default:
+                hostedPageUri = environment.getHppUri();
+                break;
+        }
+        return hostedPageUri;
     }
 }
