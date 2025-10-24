@@ -17,7 +17,7 @@ import lombok.ToString;
 public class TransactionSearchCriteria {
     private List<String> tokens;
 
-    private Integer amountInMinor;
+    private int amountInMinor;
 
     private CurrencyCode currency;
 
