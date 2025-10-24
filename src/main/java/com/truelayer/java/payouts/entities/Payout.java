@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "status", defaultImpl = PendingPayout.class)
 @JsonSubTypes({
+    @JsonSubTypes.Type(value = AuthorizationRequiredPayoutDetail.class, name = "authorization_required"),
+    @JsonSubTypes.Type(value = AuthorizingPayout.class, name = "authorizing"),
     @JsonSubTypes.Type(value = PendingPayout.class, name = "pending"),
     @JsonSubTypes.Type(value = AuthorizedPayout.class, name = "authorized"),
     @JsonSubTypes.Type(value = ExecutedPayout.class, name = "executed"),
@@ -29,9 +31,20 @@ public abstract class Payout {
     private Map<String, String> metadata;
     private SchemeId schemeId;
     private ZonedDateTime createdAt;
+    private PayoutUser user;
 
     @JsonIgnore
     public abstract Status getStatus();
+
+    @JsonIgnore
+    public boolean isAuthorizationRequired() {
+        return this instanceof AuthorizationRequiredPayoutDetail;
+    }
+
+    @JsonIgnore
+    public boolean isAuthorizing() {
+        return this instanceof AuthorizingPayout;
+    }
 
     @JsonIgnore
     public boolean isPending() {
@@ -51,6 +64,18 @@ public abstract class Payout {
     @JsonIgnore
     public boolean isFailed() {
         return this instanceof FailedPayout;
+    }
+
+    @JsonIgnore
+    public AuthorizationRequiredPayoutDetail asAuthorizationRequiredPayout() {
+        if (!isAuthorizationRequired()) throw new TrueLayerException(buildErrorMessage());
+        return (AuthorizationRequiredPayoutDetail) this;
+    }
+
+    @JsonIgnore
+    public AuthorizingPayout asAuthorizingPayout() {
+        if (!isAuthorizing()) throw new TrueLayerException(buildErrorMessage());
+        return (AuthorizingPayout) this;
     }
 
     @JsonIgnore
@@ -84,6 +109,8 @@ public abstract class Payout {
     @Getter
     @RequiredArgsConstructor
     public enum Status {
+        AUTHORIZATION_REQUIRED("authorization_required"),
+        AUTHORIZING("authorizing"),
         PENDING("pending"),
         AUTHORIZED("authorized"),
         EXECUTED("executed"),

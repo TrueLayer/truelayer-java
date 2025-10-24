@@ -14,6 +14,8 @@ public class Environment {
 
     private final URI hppUri;
 
+    private final URI hp2Uri;
+
     private static final String PAYMENTS_API_DEFAULT_VERSION = "v3";
 
     /**
@@ -24,7 +26,8 @@ public class Environment {
         return new Environment(
                 URI.create("https://auth.t7r.dev"),
                 URI.create(MessageFormat.format("https://api.t7r.dev/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
-                URI.create("https://payment.t7r.dev"));
+                URI.create("https://payment.t7r.dev"),
+                URI.create("https://app.t7r.dev"));
     }
 
     /**
@@ -36,7 +39,8 @@ public class Environment {
                 URI.create("https://auth.truelayer-sandbox.com"),
                 URI.create(
                         MessageFormat.format("https://api.truelayer-sandbox.com/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
-                URI.create("https://payment.truelayer-sandbox.com"));
+                URI.create("https://payment.truelayer-sandbox.com"),
+                URI.create("https://app.truelayer-sandbox.com"));
     }
 
     /**
@@ -47,7 +51,8 @@ public class Environment {
         return new Environment(
                 URI.create("https://auth.truelayer.com"),
                 URI.create(MessageFormat.format("https://api.truelayer.com/{0}/", PAYMENTS_API_DEFAULT_VERSION)),
-                URI.create("https://payment.truelayer.com"));
+                URI.create("https://payment.truelayer.com"),
+                URI.create("https://app.truelayer.com"));
     }
 
     /**
@@ -55,9 +60,10 @@ public class Environment {
      * @param authApiUri the authentication API endpoint
      * @param paymentsApiUri the Payments API endpoint
      * @param hppUri the <i>Hosted Payment Page</i> endpoint
+     * @param hp2Uri the new <i>Hosted Payment Page</i> endpoint
      * @return a custom environment object
      */
-    public static Environment custom(URI authApiUri, URI paymentsApiUri, URI hppUri) {
-        return new Environment(authApiUri, paymentsApiUri, hppUri);
+    public static Environment custom(URI authApiUri, URI paymentsApiUri, URI hppUri, URI hp2Uri) {
+        return new Environment(authApiUri, paymentsApiUri, hppUri, hp2Uri);
     }
 }

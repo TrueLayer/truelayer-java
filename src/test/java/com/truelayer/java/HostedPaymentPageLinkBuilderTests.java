@@ -64,8 +64,10 @@ public class HostedPaymentPageLinkBuilderTests {
     }
 
     @ParameterizedTest
-    @DisplayName("It should yield an HPP link for a resource of type")
-    @EnumSource(ResourceType.class)
+    @DisplayName("It should yield an HPP link for payments and mandates")
+    @EnumSource(
+            value = ResourceType.class,
+            names = {"PAYMENT", "MANDATE"})
     public void itShouldYieldAnHppLink(ResourceType resourceType) {
         Environment environment = Environment.live();
         String resourceId = UUID.randomUUID().toString();
@@ -83,6 +85,36 @@ public class HostedPaymentPageLinkBuilderTests {
                 MessageFormat.format(
                         "{0}/{1}#{2}={3}&resource_token={4}&return_uri={5}",
                         environment.getHppUri().toString(),
+                        resourceType.getHppLinkPath(),
+                        resourceType.getHppLinkQueryParameter(),
+                        resourceId,
+                        resourceToken,
+                        returnUri),
+                uri.toString());
+    }
+
+    @ParameterizedTest
+    @DisplayName("It should yield an HP2 link for payouts")
+    @EnumSource(
+            value = ResourceType.class,
+            names = {"PAYOUT"})
+    public void itShouldYieldAnHp2Link(ResourceType resourceType) {
+        Environment environment = Environment.live();
+        String resourceId = UUID.randomUUID().toString();
+        String resourceToken = UUID.randomUUID().toString();
+        URI returnUri = URI.create("https://example.com");
+
+        URI uri = new HostedPaymentPageLinkBuilder(environment)
+                .resourceType(resourceType)
+                .resourceId(resourceId)
+                .resourceToken(resourceToken)
+                .returnUri(returnUri)
+                .build();
+
+        assertEquals(
+                MessageFormat.format(
+                        "{0}/{1}#{2}={3}&resource_token={4}&return_uri={5}",
+                        environment.getHp2Uri().toString(),
                         resourceType.getHppLinkPath(),
                         resourceType.getHppLinkQueryParameter(),
                         resourceId,

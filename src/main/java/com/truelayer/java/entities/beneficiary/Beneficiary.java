@@ -20,7 +20,8 @@ import lombok.ToString;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
     @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account"),
-    @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source")
+    @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source"),
+    @JsonSubTypes.Type(value = UserDetermined.class, name = "user_determined")
 })
 @ToString
 @EqualsAndHashCode
@@ -43,6 +44,11 @@ public abstract class Beneficiary {
     @JsonIgnore
     public boolean isBusinessAccount() {
         return this instanceof BusinessAccount;
+    }
+
+    @JsonIgnore
+    public boolean isUserDetermined() {
+        return this instanceof UserDetermined;
     }
 
     @JsonIgnore
@@ -69,6 +75,14 @@ public abstract class Beneficiary {
         return (PaymentSource) this;
     }
 
+    @JsonIgnore
+    public UserDetermined asUserDetermined() {
+        if (!isUserDetermined()) {
+            throw new TrueLayerException(buildErrorMessage());
+        }
+        return (UserDetermined) this;
+    }
+
     private String buildErrorMessage() {
         return String.format("Beneficiary is of type %s.", this.getClass().getSimpleName());
     }
@@ -78,7 +92,8 @@ public abstract class Beneficiary {
     public enum Type {
         EXTERNAL_ACCOUNT("external_account"),
         PAYMENT_SOURCE("payment_source"),
-        BUSINESS_ACCOUNT("business_account");
+        BUSINESS_ACCOUNT("business_account"),
+        USER_DETERMINED("user_determined");
 
         @JsonValue
         private final String type;

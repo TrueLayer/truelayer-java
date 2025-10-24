@@ -1,0 +1,28 @@
+{
+  "id": "d234567-890b-cdef-0123-***",
+  "merchant_account_id": "f84d5d31-c3be-5c84-9b43-***",
+  "amount_in_minor": 250,
+  "currency": "GBP",
+  "beneficiary": {
+    "type": "user_determined",
+    "reference": "verified-payout-ref",
+    "account_holder_name": "Jane Smith",
+    "user": {
+      "id": "user-789012"
+    },
+    "verification": {
+      "verify_name": true,
+      "transaction_search_criteria": {
+        "tokens": ["token123", "token456"],
+        "amount_in_minor": 250,
+        "currency": "GBP",
+        "created_at": "2025-10-17T16:30:00.000000Z"
+      }
+    }
+  },
+  "status": "authorization_required",
+  "user": {
+    "id": "user-789012"
+  },
+  "created_at": "2025-10-17T16:30:00.000000Z"
+}

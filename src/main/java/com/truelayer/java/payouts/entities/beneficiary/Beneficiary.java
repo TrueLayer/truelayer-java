@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = ExternalAccount.class, name = "external_account"),
     @JsonSubTypes.Type(value = PaymentSource.class, name = "payment_source"),
-    @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account")
+    @JsonSubTypes.Type(value = BusinessAccount.class, name = "business_account"),
+    @JsonSubTypes.Type(value = UserDetermined.class, name = "user_determined")
 })
 public abstract class Beneficiary {
     @JsonIgnore
@@ -35,6 +36,11 @@ public abstract class Beneficiary {
     @JsonIgnore
     public boolean isBusinessAccount() {
         return this instanceof BusinessAccount;
+    }
+
+    @JsonIgnore
+    public boolean isUserDetermined() {
+        return this instanceof UserDetermined;
     }
 
     @JsonIgnore
@@ -61,10 +67,20 @@ public abstract class Beneficiary {
         return new BusinessAccount.BusinessAccountBuilder();
     }
 
+    public static UserDetermined.UserDeterminedBuilder userDetermined() {
+        return new UserDetermined.UserDeterminedBuilder();
+    }
+
     @JsonIgnore
     public BusinessAccount asBusinessAccount() {
         if (!isBusinessAccount()) throw new TrueLayerException(buildErrorMessage());
         return (BusinessAccount) this;
+    }
+
+    @JsonIgnore
+    public UserDetermined asUserDetermined() {
+        if (!isUserDetermined()) throw new TrueLayerException(buildErrorMessage());
+        return (UserDetermined) this;
     }
 
     private String buildErrorMessage() {
@@ -76,7 +92,8 @@ public abstract class Beneficiary {
     public enum Type {
         EXTERNAL_ACCOUNT("external_account"),
         PAYMENT_SOURCE("payment_source"),
-        BUSINESS_ACCOUNT("business_account");
+        BUSINESS_ACCOUNT("business_account"),
+        USER_DETERMINED("user_determined");
 
         @JsonValue
         private final String type;

@@ -1,0 +1,8 @@
+{
+  "id": "c123456-789a-bcde-f012-***",
+  "status": "authorization_required",
+  "resource_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U",
+  "user": {
+    "id": "user-123456"
+  }
+}

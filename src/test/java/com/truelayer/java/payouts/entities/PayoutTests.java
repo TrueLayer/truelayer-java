@@ -113,4 +113,56 @@ public class PayoutTests {
 
         assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
     }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type AuthorizationRequiredPayoutDetail")
+    public void shouldYieldTrueIfAuthorizationRequiredPayoutDetail() {
+        Payout sut = new AuthorizationRequiredPayoutDetail();
+
+        assertTrue(sut.isAuthorizationRequired());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class AuthorizationRequiredPayoutDetail")
+    public void shouldConvertToAuthorizationRequiredPayoutDetail() {
+        Payout sut = new AuthorizationRequiredPayoutDetail();
+
+        assertDoesNotThrow(sut::asAuthorizationRequiredPayout);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to AuthorizationRequiredPayoutDetail")
+    public void shouldNotConvertToAuthorizationRequiredPayoutDetail() {
+        Payout sut = new PendingPayout();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizationRequiredPayout);
+
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("It should yield true if instance is of type AuthorizingPayout")
+    public void shouldYieldTrueIfAuthorizingPayout() {
+        Payout sut = new AuthorizingPayout();
+
+        assertTrue(sut.isAuthorizing());
+    }
+
+    @Test
+    @DisplayName("It should convert to an instance of class AuthorizingPayout")
+    public void shouldConvertToAuthorizingPayout() {
+        Payout sut = new AuthorizingPayout();
+
+        assertDoesNotThrow(sut::asAuthorizingPayout);
+    }
+
+    @Test
+    @DisplayName("It should throw an error when converting to AuthorizingPayout")
+    public void shouldNotConvertToAuthorizingPayout() {
+        Payout sut = new PendingPayout();
+
+        Throwable thrown = assertThrows(TrueLayerException.class, sut::asAuthorizingPayout);
+
+        assertEquals(String.format("Payout is of type %s.", sut.getClass().getSimpleName()), thrown.getMessage());
+    }
 }

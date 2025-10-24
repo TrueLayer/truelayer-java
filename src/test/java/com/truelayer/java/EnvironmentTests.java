@@ -50,7 +50,8 @@ public class EnvironmentTests {
         URI customAuthUri = URI.create("http://localhost/auth");
         URI customPaymentsUri = URI.create("http://localhost/pay");
         URI customHppUri = URI.create("http://localhost/hpp");
-        Environment environment = Environment.custom(customAuthUri, customPaymentsUri, customHppUri);
+        URI customHp2Uri = URI.create("http://localhost/hp2");
+        Environment environment = Environment.custom(customAuthUri, customPaymentsUri, customHppUri, customHp2Uri);
 
         assertEquals(customAuthUri, environment.getAuthApiUri());
         assertEquals(customPaymentsUri, environment.getPaymentsApiUri());
