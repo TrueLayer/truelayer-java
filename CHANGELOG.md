@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [17.5.0]
+## [17.5.1] - 2025-10-31
+### Fixed
+* Update Sonatype Central badge url in order to show latest version
+
+## [17.5.0] - 2025-10-24
 ### Added
 * Add support for Verified Payouts with user-determined beneficiary type
 * Add HPP link builder support for payouts
