@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Java dependencies
   - package-ecosystem: gradle
     directory: "/"
     schedule:
@@ -9,3 +10,16 @@ updates:
     labels:
       - "skip-release"
       - "dependencies"
+      - "java"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "skip-release"
+      - "dependencies"
+      - "ci"
