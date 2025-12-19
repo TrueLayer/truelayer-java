@@ -146,7 +146,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // start auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create(RETURN_URI))
                         .build())
@@ -209,7 +210,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // start auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create(RETURN_URI))
                         .build())
@@ -323,7 +325,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
         // start auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create(RETURN_URI))
                         .build())
@@ -449,7 +452,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     private ApiResponse<AuthorizationFlowResponse> startAuthFlowForMandate(String mandateId) {
         // start auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                         .returnUri(URI.create(RETURN_URI))
                         .build())

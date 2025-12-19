@@ -4,11 +4,11 @@ import com.vanniktech.maven.publish.JavadocJar
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "8.13.1"
+    id "io.freefair.lombok" version "9.1.0"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // code linting
-    id "com.diffplug.spotless" version "7.0.3"
+    id "com.diffplug.spotless" version "8.1.0"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
@@ -112,8 +112,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.17.0'
-    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.12.1'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.21.0'
+    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.13.2'
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'

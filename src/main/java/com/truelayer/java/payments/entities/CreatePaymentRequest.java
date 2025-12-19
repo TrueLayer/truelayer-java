@@ -40,4 +40,9 @@ public class CreatePaymentRequest {
      * Optional field for sub-merchant details
      */
     private SubMerchants subMerchants;
+
+    /**
+     * Optional field for configuring the authorization flow
+     */
+    private StartAuthorizationFlowRequest authorizationFlow;
 }

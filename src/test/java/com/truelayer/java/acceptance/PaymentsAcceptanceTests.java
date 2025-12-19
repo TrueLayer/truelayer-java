@@ -288,7 +288,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
@@ -332,7 +333,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .form(StartAuthorizationFlowRequest.Form.builder()
                         .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE, Input.Type.SELECT))
@@ -424,7 +426,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
@@ -464,7 +467,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
@@ -556,7 +560,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(paymentId, startAuthorizationFlowRequest)
@@ -818,7 +823,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
 
         // serialize the base object to json and append retry object

@@ -1,17 +1,21 @@
 package com.truelayer.java.payments.entities;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 @ToString
 @EqualsAndHashCode
 public class StartAuthorizationFlowRequest {
 
     private final ProviderSelection providerSelection;
+
+    private final Map<String, String> schemeSelection;
 
     private final Redirect redirect;
 
@@ -19,9 +23,33 @@ public class StartAuthorizationFlowRequest {
 
     private final Form form;
 
+    @Builder
     @ToString
     @EqualsAndHashCode
-    public static class ProviderSelection {}
+    public static class ProviderSelection {
+        private final Icon icon;
+
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @EqualsAndHashCode
+        @ToString
+        public static class Icon {
+            IconType type;
+
+            @RequiredArgsConstructor
+            @Getter
+            public enum IconType {
+                DEFAULT("default"),
+                EXTENDED("extended"),
+                EXTENDED_SMALL("extended_small"),
+                EXTENDED_MEDIUM("extended_medium"),
+                EXTENDED_LARGE("extended_large");
+
+                @JsonValue
+                private final String type;
+            }
+        }
+    }
 
     @Builder
     @Getter
@@ -44,44 +72,5 @@ public class StartAuthorizationFlowRequest {
     @EqualsAndHashCode
     public static class Form {
         List<Input.Type> inputTypes;
-    }
-
-    public static StartAuthorizationFlowRequestBuilder builder() {
-        return new StartAuthorizationFlowRequestBuilder();
-    }
-
-    public static class StartAuthorizationFlowRequestBuilder {
-        private boolean withProviderSelection;
-
-        private Redirect redirect;
-
-        private Consent consent;
-
-        private Form form;
-
-        public StartAuthorizationFlowRequestBuilder withProviderSelection() {
-            this.withProviderSelection = true;
-            return this;
-        }
-
-        public StartAuthorizationFlowRequestBuilder redirect(Redirect redirect) {
-            this.redirect = redirect;
-            return this;
-        }
-
-        public StartAuthorizationFlowRequestBuilder consent(Consent consent) {
-            this.consent = consent;
-            return this;
-        }
-
-        public StartAuthorizationFlowRequestBuilder form(Form form) {
-            this.form = form;
-            return this;
-        }
-
-        public StartAuthorizationFlowRequest build() {
-            return new StartAuthorizationFlowRequest(
-                    withProviderSelection ? new ProviderSelection() : null, redirect, consent, form);
-        }
     }
 }

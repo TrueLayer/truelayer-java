@@ -319,7 +319,15 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(400)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .authorizationFlow(StartAuthorizationFlowRequest.builder()
+                        .schemeSelection(Collections.singletonMap("foo", "bar"))
+                        .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                                .icon(new StartAuthorizationFlowRequest.ProviderSelection.Icon(
+                                        StartAuthorizationFlowRequest.ProviderSelection.Icon.IconType.DEFAULT))
+                                .build())
+                        .build())
+                .build();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
