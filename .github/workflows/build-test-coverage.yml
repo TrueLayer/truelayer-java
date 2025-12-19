@@ -29,7 +29,7 @@ jobs:
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.checkout_ref }}
       - name: Setup JDK ${{ matrix.java }}
@@ -64,7 +64,7 @@ jobs:
     name: Test coverage analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.checkout_ref }}
       - name: Setup JDK

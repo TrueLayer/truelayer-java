@@ -29,7 +29,7 @@ jobs:
     name: Release to Maven Central
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.checkout_ref }}
       - name: Setup JDK
