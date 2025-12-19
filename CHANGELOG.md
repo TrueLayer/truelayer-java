@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [18.0.0] - 2025-x-x
 ### Added 
-* icon object to ProviderSelection in authorization flow requests
+* New Icon object to ProviderSelection in authorization flow requests
+* New Consent type properties within the authorization flow request
 
 ### Changed
 * ⚠️ Breaking: replaced the `withProviderSelection()` flag on authorization flow request builder with a `providerSelection(...)` utility
-that helps to set the provider icon object if needed.
+that helps to set the provider icon object if needed
 * Various dependency updates
 
 ## [17.5.1] - 2025-10-31

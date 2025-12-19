@@ -45,4 +45,8 @@ public class CreatePaymentRequest {
      * Optional field for configuring the authorization flow
      */
     private StartAuthorizationFlowRequest authorizationFlow;
+
+    // TODO: hosted page
+
+    // TODO: user consent
 }

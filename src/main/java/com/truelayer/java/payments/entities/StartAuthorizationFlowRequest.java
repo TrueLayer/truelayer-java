@@ -23,6 +23,8 @@ public class StartAuthorizationFlowRequest {
 
     private final Form form;
 
+    private final Map<String, String> userAccountSelection;
+
     @Builder
     @ToString
     @EqualsAndHashCode
@@ -34,7 +36,7 @@ public class StartAuthorizationFlowRequest {
         @EqualsAndHashCode
         @ToString
         public static class Icon {
-            IconType type;
+            private IconType type;
 
             @RequiredArgsConstructor
             @Getter
@@ -56,15 +58,52 @@ public class StartAuthorizationFlowRequest {
     @ToString
     @EqualsAndHashCode
     public static class Redirect {
-        URI returnUri;
+        private final URI returnUri;
 
-        URI directReturnUri;
+        private final URI directReturnUri;
     }
 
     @Builder
     @ToString
     @EqualsAndHashCode
-    public static class Consent {}
+    public static class Consent {
+        private final ActionType actionType;
+        private final Requirements requirements;
+
+        @RequiredArgsConstructor
+        @Getter
+        public enum ActionType {
+            EXPLICIT("explicit"),
+            ADJACENT("adjacent");
+
+            @JsonValue
+            private final String type;
+        }
+
+        @ToString
+        @EqualsAndHashCode
+        @Builder
+        public static class Requirements {
+            private final Map<String, String> pis;
+
+            @Builder
+            @ToString
+            @EqualsAndHashCode
+            public static class AisRequirements {
+
+                @RequiredArgsConstructor
+                @Getter
+                public enum Scope {
+                    ACCOUNTS("accounts"),
+                    BALANCE("balance"),
+                    ;
+
+                    @JsonValue
+                    private final String value;
+                }
+            }
+        }
+    }
 
     @Builder
     @Getter
