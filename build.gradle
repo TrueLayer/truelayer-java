@@ -58,7 +58,17 @@ testlogger {
     theme 'mocha'
 }
 
+tasks.withType(Test) {
+    testlogger {
+        theme 'mocha'
+    }
+}
+
 tasks.register('unit-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         excludeTags "integration"
@@ -67,6 +77,10 @@ tasks.register('unit-tests', Test) {
 }
 
 tasks.register('integration-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "integration"
@@ -74,6 +88,10 @@ tasks.register('integration-tests', Test) {
 }
 
 tasks.register('acceptance-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "acceptance"
@@ -95,12 +113,13 @@ dependencies {
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.6'
 
     // Serialization
-    def jacksonVersion = '2.14.1'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    def jacksonVersion = '3.0.3'
+    implementation group: 'tools.jackson.core', name: 'jackson-core', version: jacksonVersion
+    implementation group: 'tools.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    def jacksonDatatypeVersion = '2.20.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonDatatypeVersion
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonDatatypeVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.20'
 
     // Logging
     def tinyLogVersion = '2.5.0'
