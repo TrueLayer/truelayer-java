@@ -122,7 +122,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.20'
 
     // Logging
-    def tinyLogVersion = '2.5.0'
+    def tinyLogVersion = '2.7.0'
     implementation group: 'org.tinylog', name: 'tinylog-api', version: tinyLogVersion
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
