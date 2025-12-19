@@ -58,7 +58,7 @@ testlogger {
     theme 'mocha'
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     testlogger {
         theme 'mocha'
     }
@@ -102,10 +102,10 @@ tasks.register('acceptance-tests', Test) {
 
 dependencies {
     // Utilities
-    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.11.0'
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.13.0'
 
     // HTTP client
-    def retrofitVersion = '2.9.0'
+    def retrofitVersion = '3.0.0'
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
@@ -136,13 +136,6 @@ dependencies {
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
-
-    // Transitive dependencies constraints
-    constraints {
-        implementation('com.squareup.okhttp3:okhttp:4.12.0') {
-            because 'version 3.14.9 used by com.squareup.retrofit2:retrofit:2.9.0 has known vulnerabilities'
-        }
-    }
 }
 
 jacocoTestReport {
@@ -151,7 +144,7 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
-    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/unit-tests.exec"))
+    getExecutionData().setFrom(fileTree(rootProject.layout.buildDirectory).include("/jacoco/unit-tests.exec"))
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
