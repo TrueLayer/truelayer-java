@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [18.0.0] - 2025-x-x
+## [17.6.0] - 2025-x-x
 ### Added 
+* New ProviderSelection builder method on the StartAuthorizationFlowRequest builder
 * New Icon object to ProviderSelection in authorization flow requests
 * New Consent type properties within the authorization flow request
 
 ### Changed
-* ⚠️ Breaking: replaced the `withProviderSelection()` flag on authorization flow request builder with a `providerSelection(...)` utility
-that helps to set the provider icon object if needed
+* ⚠️ Deprecated `withProviderSelection()` flag on authorization flow request builder
 * Various dependency updates
 
 ## [17.5.1] - 2025-10-31

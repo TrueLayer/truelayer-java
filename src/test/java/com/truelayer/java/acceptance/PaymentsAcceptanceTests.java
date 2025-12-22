@@ -450,6 +450,45 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
 
     @SneakyThrows
     @Test
+    @Deprecated
+    @DisplayName(
+            "It should complete an authorization flow for a payment with a preselected provider with deprecated provider selection method")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithPreselectedProviderDeprecatedProviderSelection() {
+        // create payment
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
+                .withProviderSelection()
+                .build();
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // assert that the link returned is good to be browsed
+        URI bankPage = startAuthorizationFlowResponse
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        assertCanBrowseLink(bankPage);
+    }
+
+    @SneakyThrows
+    @Test
     @DisplayName("It should complete an authorization flow for a payment with provider return")
     public void shouldCompleteAnAuthorizationFlowForAPaymentWithProviderReturn() {
         // create payment

@@ -8,7 +8,7 @@ import java.util.Map;
 import lombok.*;
 
 @Getter
-@Builder
+@RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class StartAuthorizationFlowRequest {
@@ -25,11 +25,85 @@ public class StartAuthorizationFlowRequest {
 
     private final Map<String, String> userAccountSelection;
 
+    public static StartAuthorizationFlowRequestBuilder builder() {
+        return new StartAuthorizationFlowRequestBuilder();
+    }
+
+    // TODO: remove in future major version, as we will no longer support empty provider selection
+    public static class StartAuthorizationFlowRequestBuilder {
+        private boolean withProviderSelection;
+
+        private ProviderSelection providerSelection;
+
+        private Map<String, String> schemeSelection;
+
+        private Redirect redirect;
+
+        private Consent consent;
+
+        private Form form;
+
+        private Map<String, String> userAccountSelection;
+
+        /**
+         * Include an empty provider selection object in the request
+         * @deprecated use providerSelection(ProviderSelection) instead
+         * @return the builder object
+         */
+        @Deprecated
+        public StartAuthorizationFlowRequestBuilder withProviderSelection() {
+            this.withProviderSelection = true;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder providerSelection(ProviderSelection providerSelection) {
+            this.providerSelection = providerSelection;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder schemeSelection(Map<String, String> schemeSelection) {
+            this.schemeSelection = schemeSelection;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder redirect(Redirect redirect) {
+            this.redirect = redirect;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder consent(Consent consent) {
+            this.consent = consent;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder form(Form form) {
+            this.form = form;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequestBuilder userAccountSelection(Map<String, String> userAccountSelection) {
+            this.userAccountSelection = userAccountSelection;
+            return this;
+        }
+
+        public StartAuthorizationFlowRequest build() {
+            if (withProviderSelection && providerSelection == null) {
+                providerSelection = new ProviderSelection();
+            }
+
+            return new StartAuthorizationFlowRequest(
+                    providerSelection, schemeSelection, redirect, consent, form, userAccountSelection);
+        }
+    }
+
     @Builder
     @ToString
     @EqualsAndHashCode
+    @AllArgsConstructor
     public static class ProviderSelection {
-        private final Icon icon;
+        private Icon icon;
+
+        public ProviderSelection() {}
 
         @NoArgsConstructor
         @AllArgsConstructor
