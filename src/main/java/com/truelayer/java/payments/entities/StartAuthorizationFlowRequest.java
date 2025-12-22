@@ -100,11 +100,13 @@ public class StartAuthorizationFlowRequest {
     @ToString
     @EqualsAndHashCode
     @AllArgsConstructor
+    @Getter
     public static class ProviderSelection {
         private Icon icon;
 
         public ProviderSelection() {}
 
+        @Getter
         @NoArgsConstructor
         @AllArgsConstructor
         @EqualsAndHashCode
@@ -140,6 +142,7 @@ public class StartAuthorizationFlowRequest {
     @Builder
     @ToString
     @EqualsAndHashCode
+    @Getter
     public static class Consent {
         private final ActionType actionType;
         private final Requirements requirements;
@@ -157,13 +160,19 @@ public class StartAuthorizationFlowRequest {
         @ToString
         @EqualsAndHashCode
         @Builder
+        @Getter
         public static class Requirements {
             private final Map<String, String> pis;
+
+            private final AisRequirements ais;
 
             @Builder
             @ToString
             @EqualsAndHashCode
+            @Getter
             public static class AisRequirements {
+
+                private final List<Scope> scopes;
 
                 @RequiredArgsConstructor
                 @Getter
