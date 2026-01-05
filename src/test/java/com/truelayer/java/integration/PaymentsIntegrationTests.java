@@ -19,16 +19,20 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Consent.Requirements.AisRequirements.Scope;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.ProviderSelection.Icon;
 import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.ProviderSelection.Icon.IconType;
 import com.truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
+import com.truelayer.java.payments.entities.submerchants.SubMerchants;
+import com.truelayer.java.payments.entities.submerchants.UltimateCounterparty;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import java.net.URI;
 import java.util.*;
@@ -636,7 +640,6 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withRequestBody(matchingJsonPath("$.authorization_flow.provider_selection", equalToJson("{}"))));
     }
 
-    @Deprecated
     @Test
     @DisplayName("It should create a payment with authorization_flow")
     @SneakyThrows
@@ -664,13 +667,15 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .authorizationFlow(StartAuthorizationFlowRequest.builder()
                         .redirect(StartAuthorizationFlowRequest.Redirect.builder()
                                 .returnUri(URI.create("https://example.com/return"))
-                                .directReturnUri(URI.create("http://example.com/direct-return"))
+                                .directReturnUri(URI.create("https://example.com/direct-return"))
                                 .build())
                         .schemeSelection(Collections.singletonMap("foo", "bar"))
                         .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
                                 .icon(new Icon(IconType.EXTENDED))
                                 .build())
-                        .form(StartAuthorizationFlowRequest.Form.builder().build())
+                        .form(StartAuthorizationFlowRequest.Form.builder()
+                                .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE))
+                                .build())
                         .consent(StartAuthorizationFlowRequest.Consent.builder()
                                 .actionType(StartAuthorizationFlowRequest.Consent.ActionType.ADJACENT)
                                 .requirements(StartAuthorizationFlowRequest.Consent.Requirements.builder()
@@ -678,11 +683,19 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                                         .ais(
                                                 StartAuthorizationFlowRequest.Consent.Requirements.AisRequirements
                                                         .builder()
-                                                        // scopes
+                                                        .scopes(Arrays.asList(Scope.ACCOUNTS, Scope.BALANCE))
                                                         .build())
                                         .build())
                                 .build())
+                        .userAccountSelection(Collections.singletonMap("bar", "baz"))
                         .build())
+                .subMerchants(SubMerchants.builder()
+                        .ultimateCounterparty(UltimateCounterparty.businessDivision()
+                                .id("an-id")
+                                .name("business-name")
+                                .build())
+                        .build())
+                .riskAssessment(RiskAssessment.builder().segment("Flights").build())
                 .build();
 
         tlClient.payments().createPayment(paymentRequest).get();
@@ -694,7 +707,28 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withRequestBody(matchingJsonPath("$.payment_method.type", equalTo("bank_transfer")))
                 .withRequestBody(matchingJsonPath(
                         "$.authorization_flow.redirect.return_uri", equalTo("https://example.com/return")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.redirect.direct_return_uri",
+                        equalTo("https://example.com/direct-return")))
                 .withRequestBody(
-                        matchingJsonPath("$.authorization_flow.provider_selection.icon.type", equalTo("extended"))));
+                        matchingJsonPath("$.authorization_flow.provider_selection.icon.type", equalTo("extended")))
+                .withRequestBody(
+                        matchingJsonPath("$.authorization_flow.scheme_selection", equalToJson("{\"foo\": \"bar\"}")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.form.input_types", equalToJson("[\"text\", \"text_with_image\"]")))
+                .withRequestBody(matchingJsonPath("$.authorization_flow.consent.action_type", equalTo("adjacent")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.consent.requirements.pis", equalToJson("{\"req1\": \"foo\"}")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.consent.requirements.ais.scopes",
+                        equalToJson("[\"accounts\", \"balance\"]")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.user_account_selection", equalToJson("{\"bar\": \"baz\"}")))
+                .withRequestBody(
+                        matchingJsonPath("$.sub_merchants.ultimate_counterparty.type", equalTo("business_division")))
+                .withRequestBody(matchingJsonPath("$.sub_merchants.ultimate_counterparty.id", equalTo("an-id")))
+                .withRequestBody(
+                        matchingJsonPath("$.sub_merchants.ultimate_counterparty.name", equalTo("business-name")))
+                .withRequestBody(matchingJsonPath("$.risk_assessment.segment", equalTo("Flights"))));
     }
 }
