@@ -33,8 +33,12 @@ import com.truelayer.java.payments.entities.providerselection.UserSelectedProvid
 import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
 import com.truelayer.java.payments.entities.submerchants.SubMerchants;
 import com.truelayer.java.payments.entities.submerchants.UltimateCounterparty;
+import com.truelayer.java.payments.entities.userconsent.AuthorizationFlowCapturedConsent;
+import com.truelayer.java.payments.entities.userconsent.PrecapturedConsent;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
 import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -660,6 +664,8 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .bodyFile("payments/201.create_payment.AUTHORIZATION_REQUIRED.json")
                 .build();
 
+        ZonedDateTime consentCapturedAt = ZonedDateTime.now();
+
         CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(100)
                 .currency(CurrencyCode.GBP)
@@ -696,6 +702,9 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                                 .build())
                         .build())
                 .riskAssessment(RiskAssessment.builder().segment("Flights").build())
+                .userConsent(PrecapturedConsent.builder()
+                        .capturedAt(consentCapturedAt)
+                        .build())
                 .build();
 
         tlClient.payments().createPayment(paymentRequest).get();
@@ -729,6 +738,61 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .withRequestBody(matchingJsonPath("$.sub_merchants.ultimate_counterparty.id", equalTo("an-id")))
                 .withRequestBody(
                         matchingJsonPath("$.sub_merchants.ultimate_counterparty.name", equalTo("business-name")))
-                .withRequestBody(matchingJsonPath("$.risk_assessment.segment", equalTo("Flights"))));
+                .withRequestBody(matchingJsonPath("$.risk_assessment.segment", equalTo("Flights")))
+                .withRequestBody(matchingJsonPath("$.user_consent.type", equalTo("precaptured")))
+                .withRequestBody(matchingJsonPath(
+                        "$.user_consent.captured_at",
+                        equalTo(consentCapturedAt
+                                .truncatedTo(java.time.temporal.ChronoUnit.SECONDS)
+                                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))));
+    }
+
+    @Test
+    @DisplayName("It should create a payment with hosted_page_parameters")
+    @SneakyThrows
+    public void shouldCreatePaymentWithHostedPageParameters() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("payments/201.create_payment.AUTHORIZATION_REQUIRED.json")
+                .build();
+
+        ZonedDateTime consentCapturedAt = ZonedDateTime.now();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .hostedPage(HostedPageParameters.builder()
+                        .returnUri(URI.create("https://example.com/callback"))
+                        .countryCode(CountryCode.GB)
+                        .languageCode("en")
+                        .maxWaitForResults(300)
+                        .build())
+                .userConsent(AuthorizationFlowCapturedConsent.builder().build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.amount_in_minor", equalTo("100")))
+                .withRequestBody(matchingJsonPath("$.currency", equalTo("GBP")))
+                .withRequestBody(matchingJsonPath("$.payment_method.type", equalTo("bank_transfer")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.return_uri", equalTo("https://example.com/callback")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.country_code", equalTo("GB")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.language_code", equalTo("en")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.max_wait_for_results", equalTo("300")))
+                .withRequestBody(matchingJsonPath("$.user_consent.type", equalTo("authorization_flow_captured"))));
     }
 }

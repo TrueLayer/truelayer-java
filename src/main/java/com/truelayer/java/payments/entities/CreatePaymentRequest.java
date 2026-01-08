@@ -5,6 +5,7 @@ import com.truelayer.java.entities.RelatedProducts;
 import com.truelayer.java.entities.User;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.submerchants.SubMerchants;
+import com.truelayer.java.payments.entities.userconsent.UserConsent;
 import java.util.Map;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -46,7 +47,13 @@ public class CreatePaymentRequest {
      */
     private StartAuthorizationFlowRequest authorizationFlow;
 
-    // TODO: hosted page
+    /**
+     * Optional field for configuring the hosted payment page
+     */
+    private HostedPageParameters hostedPage;
 
-    // TODO: user consent
+    /**
+     * Optional field for user consent details
+     */
+    private UserConsent userConsent;
 }
