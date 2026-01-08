@@ -50,6 +50,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 import lombok.*;
 import okhttp3.*;
+import okhttp3.MediaType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -288,7 +289,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
@@ -332,7 +334,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .consent(StartAuthorizationFlowRequest.Consent.builder().build())
                 .form(StartAuthorizationFlowRequest.Form.builder()
                         .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE, Input.Type.SELECT))
@@ -424,6 +427,46 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
         // start the auth flow
         StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
                 .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
+                .build();
+        ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
+                .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
+                .get();
+
+        assertNotError(startAuthorizationFlowResponse);
+
+        // assert that the link returned is good to be browsed
+        URI bankPage = startAuthorizationFlowResponse
+                .getData()
+                .asAuthorizing()
+                .getAuthorizationFlow()
+                .getActions()
+                .getNext()
+                .asRedirect()
+                .getUri();
+        assertCanBrowseLink(bankPage);
+    }
+
+    @SneakyThrows
+    @Test
+    @Deprecated
+    @DisplayName(
+            "It should complete an authorization flow for a payment with a preselected provider with deprecated provider selection method")
+    public void shouldCompleteAnAuthorizationFlowForAPaymentWithPreselectedProviderDeprecatedProviderSelection() {
+        // create payment
+        CreatePaymentRequest paymentRequest =
+                buildPaymentRequestWithProviderSelection(buildPreselectedProviderSelection(), CurrencyCode.GBP);
+
+        ApiResponse<CreatePaymentResponse> createPaymentResponse =
+                tlClient.payments().createPayment(paymentRequest).get();
+
+        assertNotError(createPaymentResponse);
+        assertTrue(createPaymentResponse.getData().isAuthorizationRequired());
+
+        // start the auth flow
+        StartAuthorizationFlowRequest startAuthorizationFlowRequest = StartAuthorizationFlowRequest.builder()
+                .redirect(Redirect.builder().returnUri(URI.create(RETURN_URI)).build())
                 .withProviderSelection()
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
@@ -464,7 +507,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(createPaymentResponse.getData().getId(), startAuthorizationFlowRequest)
@@ -556,7 +600,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(paymentId, startAuthorizationFlowRequest)
@@ -818,7 +863,8 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                         .returnUri(URI.create(RETURN_URI))
                         .directReturnUri(URI.create(RETURN_URI))
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
 
         // serialize the base object to json and append retry object

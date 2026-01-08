@@ -4,11 +4,11 @@ import com.vanniktech.maven.publish.JavadocJar
 plugins {
     id 'java-library'
     // to unleash the lombok magic
-    id "io.freefair.lombok" version "8.13.1"
+    id "io.freefair.lombok" version "9.1.0"
     // to make our tests output more fancy
     id 'com.adarshr.test-logger' version '4.0.0'
     // code linting
-    id "com.diffplug.spotless" version "7.0.3"
+    id "com.diffplug.spotless" version "8.1.0"
     //  test coverage
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.12.2'
@@ -58,7 +58,17 @@ testlogger {
     theme 'mocha'
 }
 
+tasks.withType(Test).configureEach {
+    testlogger {
+        theme 'mocha'
+    }
+}
+
 tasks.register('unit-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         excludeTags "integration"
@@ -67,6 +77,10 @@ tasks.register('unit-tests', Test) {
 }
 
 tasks.register('integration-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "integration"
@@ -74,6 +88,10 @@ tasks.register('integration-tests', Test) {
 }
 
 tasks.register('acceptance-tests', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    dependsOn testClasses
     outputs.upToDateWhen { false }
     useJUnitPlatform{
         includeTags "acceptance"
@@ -84,10 +102,10 @@ tasks.register('acceptance-tests', Test) {
 
 dependencies {
     // Utilities
-    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.11.0'
+    implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.13.0'
 
     // HTTP client
-    def retrofitVersion = '2.9.0'
+    def retrofitVersion = '3.0.0'
     implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
     implementation group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
@@ -95,35 +113,29 @@ dependencies {
     implementation group: 'com.truelayer', name: 'truelayer-signing', version: '0.2.6'
 
     // Serialization
-    def jacksonVersion = '2.14.1'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    def jacksonVersion = '3.0.3'
+    implementation group: 'tools.jackson.core', name: 'jackson-core', version: jacksonVersion
+    implementation group: 'tools.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    def jacksonDatatypeVersion = '2.20.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonDatatypeVersion
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonDatatypeVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.20'
 
     // Logging
-    def tinyLogVersion = '2.5.0'
+    def tinyLogVersion = '2.7.0'
     implementation group: 'org.tinylog', name: 'tinylog-api', version: tinyLogVersion
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: tinyLogVersion
 
     // JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.12.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '6.0.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Mocking libraries
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.17.0'
-    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.12.1'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.21.0'
+    testImplementation group: 'org.wiremock', name: 'wiremock', version: '3.13.2'
 
     // Wait test utility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
-
-    // Transitive dependencies constraints
-    constraints {
-        implementation('com.squareup.okhttp3:okhttp:4.12.0') {
-            because 'version 3.14.9 used by com.squareup.retrofit2:retrofit:2.9.0 has known vulnerabilities'
-        }
-    }
 }
 
 jacocoTestReport {
@@ -132,7 +144,7 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
-    getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/unit-tests.exec"))
+    getExecutionData().setFrom(fileTree(rootProject.layout.buildDirectory).include("/jacoco/unit-tests.exec"))
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [

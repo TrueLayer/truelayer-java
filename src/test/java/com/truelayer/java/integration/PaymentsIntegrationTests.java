@@ -19,17 +19,27 @@ import com.truelayer.java.http.entities.ApiResponse;
 import com.truelayer.java.http.entities.Headers;
 import com.truelayer.java.http.entities.ProblemDetails;
 import com.truelayer.java.payments.entities.*;
+import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.Consent.Requirements.AisRequirements.Scope;
+import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.ProviderSelection.Icon;
+import com.truelayer.java.payments.entities.StartAuthorizationFlowRequest.ProviderSelection.Icon.IconType;
 import com.truelayer.java.payments.entities.beneficiary.MerchantAccount;
 import com.truelayer.java.payments.entities.paymentdetail.PaymentDetail;
 import com.truelayer.java.payments.entities.paymentdetail.Status;
+import com.truelayer.java.payments.entities.paymentdetail.forminput.Input;
 import com.truelayer.java.payments.entities.paymentmethod.PaymentMethod;
 import com.truelayer.java.payments.entities.paymentrefund.PaymentRefund;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import com.truelayer.java.payments.entities.providerselection.UserSelectedProviderSelection;
 import com.truelayer.java.payments.entities.schemeselection.userselected.SchemeSelection;
+import com.truelayer.java.payments.entities.submerchants.SubMerchants;
+import com.truelayer.java.payments.entities.submerchants.UltimateCounterparty;
+import com.truelayer.java.payments.entities.userconsent.AuthorizationFlowCapturedConsent;
+import com.truelayer.java.payments.entities.userconsent.PrecapturedConsent;
 import com.truelayer.java.payments.entities.verification.AutomatedVerification;
-import java.util.Collections;
-import java.util.UUID;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -319,7 +329,14 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 .status(400)
                 .bodyFile(jsonResponseFile)
                 .build();
-        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder().build();
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .authorizationFlow(StartAuthorizationFlowRequest.builder()
+                        .schemeSelection(Collections.singletonMap("foo", "bar"))
+                        .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                                .icon(new Icon(IconType.DEFAULT))
+                                .build())
+                        .build())
+                .build();
 
         ApiResponse<CreatePaymentResponse> paymentResponse =
                 tlClient.payments().createPayment(paymentRequest).get();
@@ -585,5 +602,197 @@ public class PaymentsIntegrationTests extends IntegrationTests {
                 Arguments.of(AutomatedVerification.builder()
                         .withRemitterDateOfBirth()
                         .build()));
+    }
+
+    @Deprecated
+    @Test
+    @DisplayName("It should create a payment with authorization_flow with deprecated provider selection")
+    @SneakyThrows
+    public void shouldCreatePaymentWithAuthorizationFlowDeprecated() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("payments/201.create_payment.AUTHORIZATION_REQUIRED.json")
+                .build();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .authorizationFlow(StartAuthorizationFlowRequest.builder()
+                        .withProviderSelection()
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.amount_in_minor", equalTo("100")))
+                .withRequestBody(matchingJsonPath("$.currency", equalTo("GBP")))
+                .withRequestBody(matchingJsonPath("$.payment_method.type", equalTo("bank_transfer")))
+                .withRequestBody(matchingJsonPath("$.authorization_flow.provider_selection", equalToJson("{}"))));
+    }
+
+    @Test
+    @DisplayName("It should create a payment with authorization_flow")
+    @SneakyThrows
+    public void shouldCreatePaymentWithAuthorizationFlow() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("payments/201.create_payment.AUTHORIZATION_REQUIRED.json")
+                .build();
+
+        ZonedDateTime consentCapturedAt = ZonedDateTime.now();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .authorizationFlow(StartAuthorizationFlowRequest.builder()
+                        .redirect(StartAuthorizationFlowRequest.Redirect.builder()
+                                .returnUri(URI.create("https://example.com/return"))
+                                .directReturnUri(URI.create("https://example.com/direct-return"))
+                                .build())
+                        .schemeSelection(Collections.singletonMap("foo", "bar"))
+                        .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                                .icon(new Icon(IconType.EXTENDED))
+                                .build())
+                        .form(StartAuthorizationFlowRequest.Form.builder()
+                                .inputTypes(Arrays.asList(Input.Type.TEXT, Input.Type.TEXT_WITH_IMAGE))
+                                .build())
+                        .consent(StartAuthorizationFlowRequest.Consent.builder()
+                                .actionType(StartAuthorizationFlowRequest.Consent.ActionType.ADJACENT)
+                                .requirements(StartAuthorizationFlowRequest.Consent.Requirements.builder()
+                                        .pis(Collections.singletonMap("req1", "foo"))
+                                        .ais(
+                                                StartAuthorizationFlowRequest.Consent.Requirements.AisRequirements
+                                                        .builder()
+                                                        .scopes(Arrays.asList(Scope.ACCOUNTS, Scope.BALANCE))
+                                                        .build())
+                                        .build())
+                                .build())
+                        .userAccountSelection(Collections.singletonMap("bar", "baz"))
+                        .build())
+                .subMerchants(SubMerchants.builder()
+                        .ultimateCounterparty(UltimateCounterparty.businessDivision()
+                                .id("an-id")
+                                .name("business-name")
+                                .build())
+                        .build())
+                .riskAssessment(RiskAssessment.builder().segment("Flights").build())
+                .userConsent(PrecapturedConsent.builder()
+                        .capturedAt(consentCapturedAt)
+                        .build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.amount_in_minor", equalTo("100")))
+                .withRequestBody(matchingJsonPath("$.currency", equalTo("GBP")))
+                .withRequestBody(matchingJsonPath("$.payment_method.type", equalTo("bank_transfer")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.redirect.return_uri", equalTo("https://example.com/return")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.redirect.direct_return_uri",
+                        equalTo("https://example.com/direct-return")))
+                .withRequestBody(
+                        matchingJsonPath("$.authorization_flow.provider_selection.icon.type", equalTo("extended")))
+                .withRequestBody(
+                        matchingJsonPath("$.authorization_flow.scheme_selection", equalToJson("{\"foo\": \"bar\"}")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.form.input_types", equalToJson("[\"text\", \"text_with_image\"]")))
+                .withRequestBody(matchingJsonPath("$.authorization_flow.consent.action_type", equalTo("adjacent")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.consent.requirements.pis", equalToJson("{\"req1\": \"foo\"}")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.consent.requirements.ais.scopes",
+                        equalToJson("[\"accounts\", \"balance\"]")))
+                .withRequestBody(matchingJsonPath(
+                        "$.authorization_flow.user_account_selection", equalToJson("{\"bar\": \"baz\"}")))
+                .withRequestBody(
+                        matchingJsonPath("$.sub_merchants.ultimate_counterparty.type", equalTo("business_division")))
+                .withRequestBody(matchingJsonPath("$.sub_merchants.ultimate_counterparty.id", equalTo("an-id")))
+                .withRequestBody(
+                        matchingJsonPath("$.sub_merchants.ultimate_counterparty.name", equalTo("business-name")))
+                .withRequestBody(matchingJsonPath("$.risk_assessment.segment", equalTo("Flights")))
+                .withRequestBody(matchingJsonPath("$.user_consent.type", equalTo("precaptured")))
+                .withRequestBody(matchingJsonPath(
+                        "$.user_consent.captured_at",
+                        equalTo(consentCapturedAt
+                                .truncatedTo(java.time.temporal.ChronoUnit.SECONDS)
+                                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))));
+    }
+
+    @Test
+    @DisplayName("It should create a payment with hosted_page_parameters")
+    @SneakyThrows
+    public void shouldCreatePaymentWithHostedPageParameters() {
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/payments"))
+                .withAuthorization()
+                .withSignature()
+                .withIdempotencyKey()
+                .status(201)
+                .bodyFile("payments/201.create_payment.AUTHORIZATION_REQUIRED.json")
+                .build();
+
+        ZonedDateTime consentCapturedAt = ZonedDateTime.now();
+
+        CreatePaymentRequest paymentRequest = CreatePaymentRequest.builder()
+                .amountInMinor(100)
+                .currency(CurrencyCode.GBP)
+                .paymentMethod(PaymentMethod.bankTransfer().build())
+                .hostedPage(HostedPageParameters.builder()
+                        .returnUri(URI.create("https://example.com/callback"))
+                        .countryCode(CountryCode.GB)
+                        .languageCode("en")
+                        .maxWaitForResults(300)
+                        .build())
+                .userConsent(AuthorizationFlowCapturedConsent.builder().build())
+                .build();
+
+        tlClient.payments().createPayment(paymentRequest).get();
+
+        verifyGeneratedToken(Collections.singletonList(PAYMENTS));
+        verify(postRequestedFor(urlPathEqualTo("/payments"))
+                .withRequestBody(matchingJsonPath("$.amount_in_minor", equalTo("100")))
+                .withRequestBody(matchingJsonPath("$.currency", equalTo("GBP")))
+                .withRequestBody(matchingJsonPath("$.payment_method.type", equalTo("bank_transfer")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.return_uri", equalTo("https://example.com/callback")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.country_code", equalTo("GB")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.language_code", equalTo("en")))
+                .withRequestBody(matchingJsonPath("$.hosted_page.max_wait_for_results", equalTo("300")))
+                .withRequestBody(matchingJsonPath("$.user_consent.type", equalTo("authorization_flow_captured"))));
     }
 }

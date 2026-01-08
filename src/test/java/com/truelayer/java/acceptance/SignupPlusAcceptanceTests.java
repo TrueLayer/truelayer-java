@@ -125,7 +125,8 @@ public class SignupPlusAcceptanceTests extends AcceptanceTests {
                         .returnUri(returnUri)
                         .directReturnUri(returnUri)
                         .build())
-                .withProviderSelection()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
                 .build();
         ApiResponse<AuthorizationFlowResponse> startAuthorizationFlowResponse = tlClient.payments()
                 .startAuthorizationFlow(paymentId, startAuthorizationFlowRequest)

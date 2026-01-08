@@ -83,8 +83,10 @@ class PaymentsHandlerTests {
     @Test
     @DisplayName("It should call the start authorization flow endpoint")
     public void shouldCallStartAuthorizationFlow() {
-        StartAuthorizationFlowRequest request =
-                StartAuthorizationFlowRequest.builder().withProviderSelection().build();
+        StartAuthorizationFlowRequest request = StartAuthorizationFlowRequest.builder()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
+                .build();
 
         sut.startAuthorizationFlow(A_PAYMENT_ID, request);
 
@@ -95,8 +97,10 @@ class PaymentsHandlerTests {
     @DisplayName("It should call the start authorization flow endpoint with additional headers")
     public void shouldCallStartAuthorizationFlowWithCustomHeaders() {
         Headers customHeaders = buildTestHeaders();
-        StartAuthorizationFlowRequest request =
-                StartAuthorizationFlowRequest.builder().withProviderSelection().build();
+        StartAuthorizationFlowRequest request = StartAuthorizationFlowRequest.builder()
+                .providerSelection(StartAuthorizationFlowRequest.ProviderSelection.builder()
+                        .build())
+                .build();
 
         sut.startAuthorizationFlow(customHeaders, A_PAYMENT_ID, request);
 
