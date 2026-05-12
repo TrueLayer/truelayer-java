@@ -16,6 +16,8 @@ public final class Constants {
         public static final String RECURRING_PAYMENTS_COMMERCIAL = "recurring_payments:commercial";
 
         public static final String SIGNUP_PLUS = "signupplus";
+        
+        public static final String TEST = "test";
     }
 
     /**
