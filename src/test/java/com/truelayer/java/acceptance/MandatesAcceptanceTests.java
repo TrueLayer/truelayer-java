@@ -83,7 +83,8 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                         ProviderSelection.preselected().providerId(PROVIDER_ID).build(),
                         RelatedProducts.builder()
                                 .signupPlus(Collections.emptyMap())
-                                .build()))
+                                .build(),
+                        null))
                 .get();
 
         assertNotError(createMandateResponse);
@@ -309,7 +310,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @ParameterizedTest(name = "with retry {0}")
     @MethodSource("provideItShouldCreateAPaymentOnMandateTestParameters")
     @SneakyThrows
-    public void itShouldCreateAPaymentOnMandate(String mandatesScope, Mandate.Type mandateType, Retry retry) {
+    public void itShouldCreateAPaymentOnMandate(String mandatesScope, Mandate.Type mandateType, Retry retry, UseCase useCase, UserInteraction userInteraction) {
         // create client with required scopes
         var tlClient = buildMandatesTlClient(mandatesScope);
 
@@ -317,7 +318,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
         ProviderSelection preselectedProvider =
                 ProviderSelection.preselected().providerId(PROVIDER_ID).build();
         ApiResponse<CreateMandateResponse> createMandateResponse = tlClient.mandates()
-                .createMandate(createMandateRequest(mandateType, preselectedProvider))
+                .createMandate(createMandateRequest(mandateType, preselectedProvider, null, useCase))
                 .get();
         assertNotError(createMandateResponse);
 
@@ -375,6 +376,10 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
             mandateBuilder.retry(retry);
         }
 
+        if (ObjectUtils.isNotEmpty(userInteraction)) {
+            mandateBuilder.userInteraction(userInteraction);
+        }
+
         // create a payment on mandate
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .amountInMinor(getMandateResponse.getData().getConstraints().getMaximumIndividualAmount())
@@ -389,11 +394,11 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     }
 
     private CreateMandateRequest createMandateRequest(Mandate.Type type, ProviderSelection providerSelection) {
-        return createMandateRequest(type, providerSelection, null);
+        return createMandateRequest(type, providerSelection, null, null);
     }
 
     private CreateMandateRequest createMandateRequest(
-            Mandate.Type type, ProviderSelection providerSelection, RelatedProducts relatedProducts) {
+            Mandate.Type type, ProviderSelection providerSelection, RelatedProducts relatedProducts, UseCase useCase) {
         Mandate mandate = null;
         if (type.equals(Mandate.Type.COMMERCIAL)) {
             mandate = Mandate.vrpCommercialMandate()
@@ -405,6 +410,7 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
                                     .build())
                             .accountHolderName("Andrea Java SDK")
                             .build())
+                    .useCase(useCase)
                     .build();
         } else {
             mandate = Mandate.vrpSweepingMandate()
@@ -542,30 +548,47 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
 
     private static Stream<Arguments> provideItShouldCreateAPaymentOnMandateTestParameters() {
         return Stream.of(
-                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, null),
-                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, null),
+                Arguments.of(RECURRING_PAYMENTS_SWEEPING, SWEEPING, null, null, null),
+                Arguments.of(RECURRING_PAYMENTS_COMMERCIAL, COMMERCIAL, null, null, null),
                 Arguments.of(
                         RECURRING_PAYMENTS_SWEEPING,
                         SWEEPING,
-                        Retry.standard().forDuration("30m").build()),
+                        Retry.standard().forDuration("30m").build(),
+                        null,
+                        null),
                 Arguments.of(
                         RECURRING_PAYMENTS_COMMERCIAL,
                         COMMERCIAL,
-                        Retry.standard().forDuration("30m").build()),
+                        Retry.standard().forDuration("30m").build(),
+                        null,
+                        null),
                 Arguments.of(
                         RECURRING_PAYMENTS_SWEEPING,
                         SWEEPING,
                         Retry.smart()
                                 .forDuration("90d")
                                 .ensureMinimumBalanceInMinor(100)
-                                .build()),
+                                .build(),
+                        null,
+                        null),
                 Arguments.of(
                         RECURRING_PAYMENTS_COMMERCIAL,
                         COMMERCIAL,
                         Retry.smart()
                                 .forDuration("90d")
                                 .ensureMinimumBalanceInMinor(100)
-                                .build()));
+                                .build(),
+                        null,
+                        null),
+                Arguments.of(
+                        RECURRING_PAYMENTS_COMMERCIAL,
+                        COMMERCIAL,
+                        Retry.smart()
+                                .forDuration("90d")
+                                .ensureMinimumBalanceInMinor(100)
+                                .build(),
+                        UseCase.FINANCIAL_SERVICES,
+                        UserInteraction.PRESENT));
     }
 
     private static Stream<Arguments> provideMandatesScopesAndTypes() {
