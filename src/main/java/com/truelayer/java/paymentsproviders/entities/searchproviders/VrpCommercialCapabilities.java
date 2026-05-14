@@ -1,6 +1,6 @@
 package com.truelayer.java.paymentsproviders.entities.searchproviders;
 
-import com.truelayer.java.payments.entities.UseCase;
+import com.truelayer.java.entities.UseCase;
 import lombok.Value;
 
 import java.util.List;
