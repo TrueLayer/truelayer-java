@@ -141,6 +141,33 @@ public class MandatesIntegrationTests extends IntegrationTests {
         assertEquals(expected, response.getData());
     }
 
+    @Test
+    @SneakyThrows
+    @DisplayName("It should get the commercial mandate details")
+    public void shouldGetACommercialMandateById() {
+        String jsonResponseFile = "mandates/200.get_commercial_mandate_by_id.json";
+        RequestStub.New()
+                .method("post")
+                .path(urlPathEqualTo("/connect/token"))
+                .status(200)
+                .bodyFile("auth/200.access_token.json")
+                .build();
+        RequestStub.New()
+                .method("get")
+                .path(urlPathMatching("/mandates/" + A_MANDATE_ID))
+                .withAuthorization()
+                .status(200)
+                .bodyFile(jsonResponseFile)
+                .build();
+
+        ApiResponse<MandateDetail> response =
+                tlClient.mandates().getMandate(A_MANDATE_ID).get();
+
+        verifyGeneratedToken(Collections.singletonList(RECURRING_PAYMENTS_SWEEPING));
+        MandateDetail expected = deserializeJsonFileTo(jsonResponseFile, MandateDetail.class);
+        assertEquals(expected, response.getData());
+    }
+
     @SneakyThrows
     @ParameterizedTest(name = "and get a response of type {0}")
     @ValueSource(strings = {"provider_selection", "redirect", "wait"})

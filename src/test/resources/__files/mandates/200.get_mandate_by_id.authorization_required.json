@@ -1,6 +1,7 @@
 {
   "status": "authorization_required",
   "id": "string",
+  "type": "sweeping",
   "currency": "GBP",
   "beneficiary": {
     "type": "merchant_account",

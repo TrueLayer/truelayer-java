@@ -1,32 +1,49 @@
 {
-  "status": "revoked",
+  "status": "authorized",
   "id": "string",
-  "type": "sweeping",
-  "revocation_source": "a revocation source",
+  "type": "commercial",
+  "use_case": "financial_services",
+  "authorization_flow":{
+    "actions":{
+      "next":{
+        "type":"provider_selection",
+        "providers":[
+          {
+            "provider_id":"ob-bank-name",
+            "display_name":"Bank Name",
+            "icon_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/icon/generic.svg",
+            "logo_uri":"https://truelayer-provider-assets.s3.amazonaws.com/global/logos/generic.svg",
+            "bg_color":"#000000",
+            "country_code":"GB"
+          }
+        ]
+      }
+    }
+  },
   "currency": "GBP",
   "beneficiary": {
     "type": "merchant_account",
     "id": "string",
     "account_holder_name": "string"
   },
+  "reference": "a-mandate-ref",
   "provider_selection":{
     "type":"preselected",
     "provider_id": "a-provider-id",
     "remitter": {
       "account_holder_name": "Andrea Di Lisio",
       "account_identifier": {
-        "type":"iban",
-        "iban":"GB53CLRB04066200002723"
+        "type":"sort_code_account_number",
+        "sort_code":"040662",
+        "account_number":"00002723"
       }
     }
   },
-  "reference": "a-mandate-ref",
   "user": {
     "id": "f9b48c9d-176b-46dd-b2da-fe1a2b77350c"
   },
   "created_at": "2022-01-17T17:13:18.214924Z",
   "authorized_at": "2022-01-17T17:13:18.214924Z",
-  "revoked_at": "2022-01-17T17:13:18.214924Z",
   "constraints": {
     "valid_from": "2022-01-17T17:13:18.214924Z",
     "valid_to": "2023-01-17T17:13:18.214924Z",
@@ -44,5 +61,12 @@
   },
   "metadata": {
     "a_custom_key": "a-value"
+  },
+  "remitter": {
+    "account_holder_name": "Andrea Di Lisio",
+    "account_identifier": {
+      "type":"iban",
+      "iban":"GB53CLRB04066200002723"
+    }
   }
 }
