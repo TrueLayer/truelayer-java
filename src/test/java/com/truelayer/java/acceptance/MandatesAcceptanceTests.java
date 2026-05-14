@@ -310,7 +310,12 @@ public class MandatesAcceptanceTests extends AcceptanceTests {
     @ParameterizedTest(name = "with retry {0}")
     @MethodSource("provideItShouldCreateAPaymentOnMandateTestParameters")
     @SneakyThrows
-    public void itShouldCreateAPaymentOnMandate(String mandatesScope, Mandate.Type mandateType, Retry retry, UseCase useCase, UserInteraction userInteraction) {
+    public void itShouldCreateAPaymentOnMandate(
+            String mandatesScope,
+            Mandate.Type mandateType,
+            Retry retry,
+            UseCase useCase,
+            UserInteraction userInteraction) {
         // create client with required scopes
         var tlClient = buildMandatesTlClient(mandatesScope);
 
