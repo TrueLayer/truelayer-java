@@ -51,6 +51,7 @@
   "sub_merchants": {
     "ultimate_counterparty": {
       "type": "business_client",
+      "id": "client-123",
       "trading_name": "Example Trading Ltd",
       "commercial_name": "Example Commercial Name",
       "url": "https://example.com",
