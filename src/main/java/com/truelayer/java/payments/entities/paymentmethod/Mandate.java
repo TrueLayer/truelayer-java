@@ -3,6 +3,7 @@ package com.truelayer.java.payments.entities.paymentmethod;
 import static com.truelayer.java.payments.entities.paymentmethod.PaymentMethod.Type.MANDATE;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.truelayer.java.payments.entities.UserInteraction;
 import com.truelayer.java.payments.entities.retry.Retry;
 import java.util.Optional;
 import lombok.Builder;
@@ -29,4 +30,6 @@ public class Mandate extends PaymentMethod {
     public Optional<String> getReference() {
         return Optional.ofNullable(reference);
     }
+
+    private UserInteraction userInteraction;
 }

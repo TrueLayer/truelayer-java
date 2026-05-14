@@ -13,7 +13,8 @@
       "type": "smart",
       "for": "90d",
       "ensure_minimum_balance_in_minor": 2500
-    }
+    },
+    "user_interaction": "not_present"
   },
   "status": "failed",
   "created_at": "2022-12-14T16:14:40.723135Z",
