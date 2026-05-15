@@ -39,7 +39,7 @@
           },
           "vrp_commercial": {
             "release_channel": "private_beta",
-            "supported_use_cases": [
+            "use_cases": [
               "charity",
               "financial_services",
               "government",

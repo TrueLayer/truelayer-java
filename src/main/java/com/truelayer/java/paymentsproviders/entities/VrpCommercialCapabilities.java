@@ -12,5 +12,5 @@ public class VrpCommercialCapabilities {
 
     ProviderAvailability availability;
 
-    List<UseCase> supportedUseCases;
+    List<UseCase> useCases;
 }
