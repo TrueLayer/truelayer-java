@@ -8,6 +8,7 @@ import com.truelayer.java.entities.CurrencyCode;
 import com.truelayer.java.entities.UseCase;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
+import com.truelayer.java.mandates.entities.mandate.Mandate;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -43,7 +44,7 @@ public abstract class MandateDetail {
 
     private UseCase useCase;
 
-    private String type;
+    private Mandate.Type type;
 
     public abstract Status getStatus();
 

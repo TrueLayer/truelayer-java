@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [17.6.0] - 2026-05-15
 ### Added
-* * Add support for `user_interaction` and `use_cases` fields in payment API for commercial mandate 
+* Add support for `user_interaction` and `use_cases` fields in payment API for commercial mandate 
 
 ## [17.5.1] - 2025-10-31
 ### Fixed
