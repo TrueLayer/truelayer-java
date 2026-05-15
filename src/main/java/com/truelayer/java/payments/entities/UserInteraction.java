@@ -11,5 +11,5 @@ public enum UserInteraction {
     NOT_PRESENT("not_present");
 
     @JsonValue
-    public final String userInteraction;
+    private final String userInteraction;
 }
