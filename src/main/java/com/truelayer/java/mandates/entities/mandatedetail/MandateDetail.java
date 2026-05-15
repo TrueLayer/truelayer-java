@@ -44,7 +44,7 @@ public abstract class MandateDetail {
 
     private UseCase useCase;
 
-    private Mandate.Type type;
+    private String type;
 
     public abstract Status getStatus();
 
