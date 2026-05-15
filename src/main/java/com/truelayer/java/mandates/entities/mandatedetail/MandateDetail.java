@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.truelayer.java.TrueLayerException;
 import com.truelayer.java.commonapi.entities.UserDetail;
 import com.truelayer.java.entities.CurrencyCode;
+import com.truelayer.java.entities.UseCase;
 import com.truelayer.java.mandates.entities.Constraints;
 import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
@@ -39,6 +40,10 @@ public abstract class MandateDetail {
     private Map<String, String> metadata;
 
     private ProviderSelection providerSelection;
+
+    private UseCase useCase;
+
+    private String type;
 
     public abstract Status getStatus();
 

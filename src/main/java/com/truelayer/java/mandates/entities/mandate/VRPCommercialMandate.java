@@ -2,6 +2,7 @@ package com.truelayer.java.mandates.entities.mandate;
 
 import static com.truelayer.java.mandates.entities.mandate.Mandate.Type.COMMERCIAL;
 
+import com.truelayer.java.entities.UseCase;
 import com.truelayer.java.mandates.entities.beneficiary.Beneficiary;
 import com.truelayer.java.payments.entities.providerselection.ProviderSelection;
 import lombok.Builder;
@@ -20,4 +21,6 @@ public class VRPCommercialMandate extends Mandate {
     private Beneficiary beneficiary;
 
     private String reference;
+
+    private UseCase useCase;
 }

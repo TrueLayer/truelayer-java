@@ -1,6 +1,7 @@
 {
   "status": "failed",
   "id": "string",
+  "type": "sweeping",
   "failure_stage": "authorization_required",
   "failure_reason": "a failure reason",
   "currency": "GBP",

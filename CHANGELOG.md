@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [17.6.0] - 2026-05-15
+### Added
+* Add support for `user_interaction` and `use_cases` fields in payment API for commercial mandates
+
 ## [17.5.1] - 2025-10-31
 ### Fixed
 * Update Sonatype Central badge url in order to show latest version

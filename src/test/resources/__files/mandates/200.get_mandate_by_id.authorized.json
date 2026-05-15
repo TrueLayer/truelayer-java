@@ -1,6 +1,7 @@
 {
   "status": "authorized",
   "id": "string",
+  "type": "sweeping",
   "authorization_flow":{
     "actions":{
       "next":{

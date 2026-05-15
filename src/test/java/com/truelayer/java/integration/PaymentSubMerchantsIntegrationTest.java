@@ -57,6 +57,7 @@ class PaymentSubMerchantsIntegrationTest extends IntegrationTests {
         assertTrue(ultimateCounterparty.isBusinessClient());
 
         BusinessClient businessClient = ultimateCounterparty.asBusinessClient();
+        assertEquals("client-123", businessClient.getId());
         assertEquals("Example Trading Ltd", businessClient.getTradingName());
         assertEquals("Example Commercial Name", businessClient.getCommercialName());
         assertEquals("https://example.com", businessClient.getUrl());

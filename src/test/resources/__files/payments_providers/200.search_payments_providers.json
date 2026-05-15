@@ -38,7 +38,13 @@
             "release_channel": "private_beta"
           },
           "vrp_commercial": {
-            "release_channel": "private_beta"
+            "release_channel": "private_beta",
+            "use_cases": [
+              "charity",
+              "financial_services",
+              "government",
+              "utilities"
+            ]
           }
         }
       },

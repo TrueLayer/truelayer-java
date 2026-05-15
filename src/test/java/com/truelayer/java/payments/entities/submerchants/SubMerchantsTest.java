@@ -17,6 +17,7 @@ class SubMerchantsTest {
                 .build();
 
         BusinessClient businessClient = UltimateCounterparty.businessClient()
+                .id("client-123")
                 .tradingName("Test Trading Name")
                 .commercialName("Test Commercial Name")
                 .url("https://example.com")

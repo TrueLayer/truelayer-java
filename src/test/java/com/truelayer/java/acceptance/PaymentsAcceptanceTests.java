@@ -864,6 +864,7 @@ public class PaymentsAcceptanceTests extends AcceptanceTests {
                 Arguments.of(
                         "BusinessClient",
                         BusinessClient.builder()
+                                .id("client-123")
                                 .tradingName("Test Trading Ltd")
                                 .commercialName("Test Commercial Name")
                                 .url("https://example.com")
